@@ -12,7 +12,7 @@ export default defineConfig({
     monkey({
       entry: 'src/main.ts',
       userscript: {
-        icon: './src/assets/icon.png',
+        icon: 'https://raw.githubusercontent.com/Yueby/userscripts/refs/heads/main/packages/booth/src/assets/icon.svg',
         namespace: 'yueby.booth',
         match: ['https://*.booth.pm/*'],
         name: {
