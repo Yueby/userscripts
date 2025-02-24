@@ -2,10 +2,10 @@
 // @name               Booth Enhancer
 // @name:zh-CN         Booth 网站功能增强
 // @namespace          yueby.booth
-// @version            0.1.1
+// @version            0.1.2
 // @author             Yueby
 // @description        A userscript for enhancing Booth experience
-// @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译等功能
+// @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能
 // @icon               https://raw.githubusercontent.com/Yueby/userscripts/refs/heads/main/packages/booth/src/assets/icon.svg
 // @match              https://*.booth.pm/*
 // @connect            raw.githubusercontent.com
@@ -386,6 +386,7 @@
       try {
         this.addButtonToItem(item);
         this.addVariationNumbersToItem(item);
+        this.addTotalStats(item);
         item.setAttribute("data-processed", "true");
       } catch (error) {
         handleError(error);
@@ -397,9 +398,9 @@
       if (!variationList) return;
       const variations = variationList.querySelectorAll(".row");
       variations.forEach((variation, index) => {
-        let numberSpan = variation.querySelector(".variation-number");
         const labelArea = variation.querySelector(".dashboard-items-variation-label");
         if (!labelArea) return;
+        let numberSpan = variation.querySelector(".variation-number");
         if (!numberSpan) {
           numberSpan = document.createElement("span");
           numberSpan.className = "variation-number";
@@ -532,6 +533,119 @@ ${errorText}`);
         handleError(error);
       }
     }
+    // 新增方法：添加总销量和总收益统计
+    addTotalStats(item) {
+      const variations = item.querySelectorAll(".dashboard-items-variation .row");
+      if (!variations.length) return;
+      variations.forEach((variation) => {
+        const labelArea = variation.querySelector(".dashboard-items-variation-label");
+        if (!labelArea || labelArea.querySelector(".variation-checkbox")) return;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "variation-checkbox";
+        checkbox.checked = true;
+        checkbox.style.cssText = `
+                margin: 0 4px;
+                cursor: pointer;
+                display: none;
+            `;
+        checkbox.onchange = () => this.updateStats(item);
+        labelArea.insertBefore(checkbox, labelArea.firstChild);
+      });
+      const itemLabel = item.querySelector(".cell.item-label");
+      if (!itemLabel) return;
+      let statsElement = item.querySelector(".total-stats");
+      if (!statsElement) {
+        statsElement = document.createElement("div");
+        statsElement.className = "total-stats";
+        statsElement.style.cssText = `
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                padding: 2px 6px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 12px;
+                color: #666;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+        const toggleContainer = document.createElement("div");
+        toggleContainer.className = "stats-toggle-container";
+        toggleContainer.style.cssText = `
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            `;
+        const toggle = document.createElement("input");
+        toggle.type = "checkbox";
+        toggle.className = "stats-toggle";
+        toggle.style.cssText = `
+                margin: 0;
+                cursor: pointer;
+                vertical-align: middle;
+            `;
+        const label = document.createElement("label");
+        label.textContent = "过滤模式";
+        label.style.cssText = `
+                cursor: pointer;
+                font-size: 12px;
+                color: #666;
+                user-select: none;
+                vertical-align: middle;
+            `;
+        toggleContainer.appendChild(toggle);
+        toggleContainer.appendChild(label);
+        const statsInfo = document.createElement("div");
+        statsInfo.className = "stats-info";
+        statsElement.appendChild(toggleContainer);
+        statsElement.appendChild(statsInfo);
+        if (itemLabel) {
+          itemLabel.style.position = "relative";
+          itemLabel.appendChild(statsElement);
+        }
+        toggle.onchange = () => {
+          const checkboxes = item.querySelectorAll(".variation-checkbox");
+          checkboxes.forEach((checkbox) => {
+            checkbox.style.display = toggle.checked ? "inline-block" : "none";
+            if (!toggle.checked) {
+              checkbox.checked = true;
+            }
+          });
+          this.updateStats(item);
+        };
+      }
+      this.updateStats(item);
+    }
+    // 更新统计信息
+    updateStats(item) {
+      let totalSales = 0;
+      let totalRevenue = 0;
+      item.querySelectorAll(".dashboard-items-variation .row").forEach((variation) => {
+        var _a, _b;
+        const checkbox = variation.querySelector(".variation-checkbox");
+        if (!checkbox || !checkbox.checked) return;
+        const salesCount = (_a = variation.querySelector(".sales_quantity .count")) == null ? void 0 : _a.textContent;
+        if (salesCount) {
+          totalSales += parseInt(salesCount, 10) || 0;
+        }
+        const revenue = (_b = variation.querySelector(".sales_subtotal")) == null ? void 0 : _b.textContent;
+        if (revenue) {
+          const revenueNum = parseInt(revenue.replace(/[^\d]/g, ""), 10) || 0;
+          totalRevenue += revenueNum;
+        }
+      });
+      const statsInfo = item.querySelector(".total-stats .stats-info");
+      if (statsInfo) {
+        statsInfo.innerHTML = `
+                总销量: <strong>${totalSales}</strong> | 
+                总收益: <strong>${totalRevenue.toLocaleString()}</strong> JPY
+            `;
+      }
+    }
     cleanup() {
       const observer = this.context.observers.get("page");
       if (observer instanceof MutationObserver) {
@@ -548,7 +662,7 @@ ${errorText}`);
           delete item.variationObserver;
         }
       });
-      document.querySelectorAll(".tag-copy-btn, .variation-number").forEach((el) => el.remove());
+      document.querySelectorAll(".tag-copy-btn, .variation-number, .variation-checkbox, .total-stats, .stats-toggle-container").forEach((el) => el.remove());
     }
   }
   class TranslatorCommand extends PageCommand {

@@ -21,10 +21,10 @@ export default defineConfig({
         },
         description: {
           '': 'A userscript for enhancing Booth experience',
-          'zh-CN': '增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译等功能'
+          'zh-CN': '增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能'
         },
         author: 'Yueby',
-        version: '0.1.1',
+        version: '0.1.2',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

@@ -41,6 +41,8 @@ export class ItemManageCommand extends PageCommand {
             this.addButtonToItem(item);
             // 添加变体序号
             this.addVariationNumbersToItem(item);
+            // 添加统计功能（包含复选框和统计信息）
+            this.addTotalStats(item);
             // 标记该元素已处理
             item.setAttribute('data-processed', 'true');
         } catch (error) {
@@ -55,18 +57,16 @@ export class ItemManageCommand extends PageCommand {
 
         const variations = variationList.querySelectorAll('.row');
         variations.forEach((variation, index) => {
-            let numberSpan = variation.querySelector('.variation-number');
             const labelArea = variation.querySelector('.dashboard-items-variation-label');
-            
             if (!labelArea) return;
 
+            let numberSpan = variation.querySelector('.variation-number');
             if (!numberSpan) {
                 numberSpan = document.createElement('span');
                 numberSpan.className = 'variation-number';
                 (numberSpan as HTMLElement).style.cssText = 'margin-right: 8px; color: #666;';
                 labelArea.insertBefore(numberSpan, labelArea.firstChild);
             }
-            
             numberSpan.textContent = `#${index + 1}`;
         });
 
@@ -143,10 +143,10 @@ export class ItemManageCommand extends PageCommand {
         deleteBtn.innerHTML = '删除';
         deleteBtn.onclick = async (e) => {
             e.preventDefault();
-            
+
             // 第一次确认
             if (!confirm('确定要删除这个商品吗？此操作不可恢复。')) return;
-            
+
             // 第二次确认，显示商品ID
             const itemName = item.querySelector('.nav')?.textContent?.trim() || '未知商品';
             if (!confirm(`再次确认删除商品：\n${itemName}\nID: ${itemId}`)) return;
@@ -230,6 +230,150 @@ export class ItemManageCommand extends PageCommand {
         }
     }
 
+    // 新增方法：添加总销量和总收益统计
+    private addTotalStats(item: HTMLElement): void {
+        const variations = item.querySelectorAll('.dashboard-items-variation .row');
+        if (!variations.length) return;
+
+        // 为每个 variation 添加复选框
+        variations.forEach(variation => {
+            const labelArea = variation.querySelector('.dashboard-items-variation-label');
+            if (!labelArea || labelArea.querySelector('.variation-checkbox')) return;
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'variation-checkbox';
+            checkbox.checked = true;
+            checkbox.style.cssText = `
+                margin: 0 4px;
+                cursor: pointer;
+                display: none;
+            `;
+            checkbox.onchange = () => this.updateStats(item);
+            labelArea.insertBefore(checkbox, labelArea.firstChild);
+        });
+
+        const itemLabel: HTMLElement | null = item.querySelector('.cell.item-label');
+        if (!itemLabel) return;
+
+        // 创建统计信息元素
+        let statsElement: HTMLElement | null = item.querySelector('.total-stats');
+        if (!statsElement) {
+            statsElement = document.createElement('div');
+            statsElement.className = 'total-stats';
+            statsElement.style.cssText = `
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                padding: 2px 6px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 12px;
+                color: #666;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+
+            // 创建开关容器
+            const toggleContainer = document.createElement('div');
+            toggleContainer.className = 'stats-toggle-container';
+            toggleContainer.style.cssText = `
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            `;
+
+            const toggle = document.createElement('input');
+            toggle.type = 'checkbox';
+            toggle.className = 'stats-toggle';
+            toggle.style.cssText = `
+                margin: 0;
+                cursor: pointer;
+                vertical-align: middle;
+            `;
+
+            const label = document.createElement('label');
+            label.textContent = '过滤模式';
+            label.style.cssText = `
+                cursor: pointer;
+                font-size: 12px;
+                color: #666;
+                user-select: none;
+                vertical-align: middle;
+            `;
+
+            toggleContainer.appendChild(toggle);
+            toggleContainer.appendChild(label);
+
+            // 创建统计信息容器
+            const statsInfo = document.createElement('div');
+            statsInfo.className = 'stats-info';
+
+            // 按顺序添加元素
+            statsElement.appendChild(toggleContainer);
+            statsElement.appendChild(statsInfo);
+
+            if (itemLabel) {
+                itemLabel.style.position = 'relative';
+                itemLabel.appendChild(statsElement);
+            }
+
+            // 添加开关事件
+            toggle.onchange = () => {
+                const checkboxes = item.querySelectorAll('.variation-checkbox') as NodeListOf<HTMLInputElement>;
+                checkboxes.forEach(checkbox => {
+                    checkbox.style.display = toggle.checked ? 'inline-block' : 'none';
+                    // 关闭开关时自动勾选所有复选框
+                    if (!toggle.checked) {
+                        checkbox.checked = true;
+                    }
+                });
+                // 更新统计信息
+                this.updateStats(item);
+            };
+        }
+
+        // 初始计算统计信息
+        this.updateStats(item);
+    }
+
+    // 更新统计信息
+    private updateStats(item: HTMLElement): void {
+        let totalSales = 0;
+        let totalRevenue = 0;
+
+        // 只统计勾选的 variation
+        item.querySelectorAll('.dashboard-items-variation .row').forEach(variation => {
+            const checkbox = variation.querySelector('.variation-checkbox') as HTMLInputElement;
+            if (!checkbox || !checkbox.checked) return;
+
+            // 获取销量
+            const salesCount = variation.querySelector('.sales_quantity .count')?.textContent;
+            if (salesCount) {
+                totalSales += parseInt(salesCount, 10) || 0;
+            }
+
+            // 获取收益
+            const revenue = variation.querySelector('.sales_subtotal')?.textContent;
+            if (revenue) {
+                const revenueNum = parseInt(revenue.replace(/[^\d]/g, ''), 10) || 0;
+                totalRevenue += revenueNum;
+            }
+        });
+
+        // 更新统计信息显示
+        const statsInfo = item.querySelector('.total-stats .stats-info');
+        if (statsInfo) {
+            statsInfo.innerHTML = `
+                总销量: <strong>${totalSales}</strong> | 
+                总收益: <strong>${totalRevenue.toLocaleString()}</strong> JPY
+            `;
+        }
+    }
+
     cleanup(): void {
         // 清理所有观察器
         const observer = this.context.observers.get('page');
@@ -251,7 +395,7 @@ export class ItemManageCommand extends PageCommand {
             }
         });
 
-        // 移除所有已添加的按钮和序号
-        document.querySelectorAll('.tag-copy-btn, .variation-number').forEach(el => el.remove());
+        // 移除所有已添加的元素
+        document.querySelectorAll('.tag-copy-btn, .variation-number, .variation-checkbox, .total-stats, .stats-toggle-container').forEach(el => el.remove());
     }
 } 
