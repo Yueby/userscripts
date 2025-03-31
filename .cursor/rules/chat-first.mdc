@@ -1,0 +1,9 @@
+---
+description: This rule for every conversation.
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- 每个对话以"🐥"起头

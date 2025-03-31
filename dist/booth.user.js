@@ -2,13 +2,15 @@
 // @name               Booth Enhancer
 // @name:zh-CN         Booth 网站功能增强
 // @namespace          yueby.booth
-// @version            0.1.2
+// @version            0.1.3
 // @author             Yueby
 // @description        A userscript for enhancing Booth experience
 // @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能
 // @icon               https://raw.githubusercontent.com/Yueby/userscripts/refs/heads/main/packages/booth/src/assets/icon.svg
 // @match              https://*.booth.pm/*
+// @require            https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js
 // @connect            raw.githubusercontent.com
+// @connect            manage.booth.pm
 // @grant              GM_notification
 // @grant              GM_registerMenuCommand
 // @grant              GM_setClipboard
@@ -52,32 +54,6 @@
         await new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve));
       }
     }
-    // 检查当前页面是否需要特定功能
-    static shouldEnableFeature(feature) {
-      const path = window.location.pathname;
-      switch (feature) {
-        case "variations":
-        case "tags":
-          return /^\/items\/\d+\/edit(_pre)?$/.test(path);
-        case "dashboard":
-          return path === "/items" || path === "/items/";
-        case "session":
-          return true;
-        default:
-          return false;
-      }
-    }
-    // 获取当前页面类型
-    static getCurrentPageType() {
-      const path = window.location.pathname;
-      if (/^\/items\/\d+\/edit(_pre)?$/.test(path)) {
-        return "itemEdit";
-      }
-      if (path === "/items" || path === "/items/") {
-        return "dashboard";
-      }
-      return "other";
-    }
     // 优化的按钮状态更新
     static updateButtonState(button, success = true, originalHtml) {
       if (!button) return;
@@ -105,19 +81,28 @@
       }
     }
   }
-  class PageCommand {
+  class Feature {
     constructor(context) {
       __publicField(this, "context");
       __publicField(this, "path");
       this.context = context;
       this.path = window.location.pathname;
     }
+    /**
+     * 判断当前页面是否应该执行此功能
+     */
     shouldExecute() {
       return false;
     }
-    execute() {
+    /**
+     * 执行页面功能
+     */
+    async execute() {
       console.log(`${this.constructor.name} 执行`);
     }
+    /**
+     * 清理资源
+     */
     cleanup() {
     }
   }
@@ -125,165 +110,154 @@
   var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
   var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
   var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  class SessionCommand extends PageCommand {
-    shouldExecute() {
-      return true;
+  class Simulate {
+    /**
+     * 模拟用户输入文本
+     * @param element 目标输入元素
+     * @param text 要输入的文本
+     */
+    static input(element, text) {
+      var _a;
+      const nativeInputValueSetter = (_a = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")) == null ? void 0 : _a.set;
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(element, text);
+      }
+      const ev2 = new Event("input", { bubbles: true });
+      element.dispatchEvent(ev2);
     }
-    execute() {
-      super.execute();
-      _GM_registerMenuCommand("获取Booth Session", () => this.getSession());
-    }
-    extractCookieInfo(headers) {
-      var _a, _b;
-      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
-      if (!cookieHeader) return null;
-      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
-      const expires = (_b = (_a = cookieHeader.match(/expires=([^;]+)/i)) == null ? void 0 : _a[1]) == null ? void 0 : _b.trim();
-      return {
-        value,
-        expires: expires ? new Date(expires).toISOString() : null
-      };
-    }
-    getSession() {
-      _GM_xmlhttpRequest({
-        method: "GET",
-        url: "https://manage.booth.pm/orders",
-        headers: {
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-          "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
-        },
-        onload: (response) => {
-          const cookieInfo = this.extractCookieInfo(response.responseHeaders);
-          if (cookieInfo) {
-            const cookieData = {
-              _plaza_session_nktz7u: cookieInfo.value,
-              updated_at: (/* @__PURE__ */ new Date()).toISOString(),
-              expires_at: cookieInfo.expires
-            };
-            _GM_setClipboard(JSON.stringify(cookieData, null, 2), "Booth Session");
-            _GM_notification({
-              text: cookieInfo.expires ? `Session已复制
-过期时间: ${new Date(cookieInfo.expires).toLocaleString()}` : "Session已复制到剪贴板",
-              title: "获取成功",
-              timeout: 3e3
-            });
-          } else {
-            _GM_notification({
-              text: "未找到有效的 Session",
-              title: "获取失败",
-              timeout: 3e3
-            });
-          }
-        },
-        onerror: () => {
-          _GM_notification({
-            text: "请求出错，请检查网络连接",
-            title: "错误",
-            timeout: 3e3
-          });
-        }
+    /**
+     * 模拟键盘按下事件
+     * @param element 目标元素
+     * @param keyCode 键码
+     */
+    static keyDown(element, keyCode) {
+      const keyboardEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        key: "Enter",
+        code: "Enter",
+        keyCode,
+        which: keyCode,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false
       });
+      element.dispatchEvent(keyboardEvent);
+    }
+    /**
+     * 模拟按下回车键
+     * @param element 目标元素
+     */
+    static pressEnter(element) {
+      this.keyDown(element, 13);
     }
   }
-  class ItemEditCommand extends PageCommand {
+  class ItemEditFeature extends Feature {
     shouldExecute() {
       return /^\/items\/\d+\/edit(_pre)?$/.test(this.path);
     }
-    execute() {
+    async execute() {
       super.execute();
       this.addVariationNumbers();
-      this.setupVariationObserver();
       this.addTagButtons();
     }
     // 变体序号功能
     addVariationNumbers() {
-      const variations = document.querySelectorAll(".js-variation");
-      variations.forEach((variation, index) => {
-        let numberSpan = variation.querySelector(".variation-number");
-        const titleArea = variation.querySelector(".u-flex-1.handle");
-        if (!titleArea) return;
+      const ul = document.querySelector("ul.grid.gap-16");
+      if (!ul) {
+        const observer2 = new MutationObserver((_, obs) => {
+          const ul2 = document.querySelector("ul.grid.gap-16");
+          if (ul2) {
+            obs.disconnect();
+            this.addVariationNumbers();
+          }
+        });
+        observer2.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+        this.context.observers.set("variation-numbers-wait", observer2);
+        return;
+      }
+      const lis = ul.querySelectorAll(":scope > li");
+      lis.forEach((li, index) => {
+        let numberSpan = li.querySelector(".variation-number");
+        const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+        if (!titleContainer) return;
         if (!numberSpan) {
           numberSpan = document.createElement("span");
-          numberSpan.className = "variation-number";
+          numberSpan.className = "variation-number typography-14 inline-block font-semibold";
           numberSpan.style.cssText = "margin-right: 8px; color: #666;";
-          titleArea.insertBefore(numberSpan, titleArea.firstChild);
+          titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
         }
         numberSpan.textContent = `#${index + 1}`;
       });
-    }
-    setupVariationObserver() {
-      const pageObserver = new MutationObserver(Utils.throttle((_mutations, _observer) => {
-        const variations2 = document.querySelector(".js-variations");
-        const hasObserver = this.context.observers.has("variation");
-        if (variations2 && !hasObserver) {
-          this.setupVariationsObserver(variations2);
+      const observer = new MutationObserver((mutations) => {
+        const hasRelevantChanges = mutations.some((mutation) => {
+          const hasUlChanges = Array.from(mutation.addedNodes).some(
+            (node) => node instanceof HTMLElement && (node.matches("ul.grid.gap-16") || node.querySelector("ul.grid.gap-16"))
+          );
+          const hasLiChanges = Array.from(mutation.addedNodes).some(
+            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
+          );
+          const hasLiRemoved = Array.from(mutation.removedNodes).some(
+            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
+          );
+          return hasUlChanges || hasLiChanges || hasLiRemoved;
+        });
+        if (hasRelevantChanges) {
           this.addVariationNumbers();
-        } else if (!variations2 && hasObserver) {
-          const observer = this.context.observers.get("variation");
-          if (observer instanceof MutationObserver) {
-            observer.disconnect();
-          }
-          this.context.observers.delete("variation");
-          document.querySelectorAll(".variation-number").forEach((span) => span.remove());
         }
-      }, Config.throttleDelay));
-      pageObserver.observe(document.body, {
+      });
+      observer.observe(document.body, {
         childList: true,
         subtree: true
       });
-      this.context.observers.set("page", pageObserver);
-      const variations = document.querySelector(".js-variations");
-      if (variations) {
-        this.setupVariationsObserver(variations);
-        this.addVariationNumbers();
-      }
-    }
-    setupVariationsObserver(variations) {
-      const observer = new MutationObserver(Utils.throttle(() => {
-        const needsUpdate = Array.from(variations.children).some((variation, index) => {
-          const numberSpan = variation.querySelector(".variation-number");
-          return !numberSpan || numberSpan.textContent !== `#${index + 1}`;
-        });
-        if (needsUpdate) {
-          requestAnimationFrame(() => this.addVariationNumbers());
-        }
-      }, Config.throttleDelay));
-      observer.observe(variations, {
-        childList: true,
-        subtree: false
-      });
-      this.context.observers.set("variation", observer);
+      this.context.observers.set("variation-numbers", observer);
     }
     // 标签功能
     addTagButtons() {
-      var _a;
-      const tagLabel = document.querySelector("#item_tag .u-tpg-label");
-      if (!tagLabel) return;
-      const buttonContainer = document.createElement("div");
-      buttonContainer.className = "u-d-inline-block u-ml-300";
-      buttonContainer.style.display = "inline-flex";
-      buttonContainer.style.gap = "8px";
-      buttonContainer.style.verticalAlign = "middle";
-      const copyBtn = document.createElement("a");
-      copyBtn.className = "btn calm small";
-      copyBtn.innerHTML = "复制标签";
-      copyBtn.onclick = () => this.copyTags();
-      const pasteBtn = document.createElement("a");
-      pasteBtn.className = "btn calm small";
-      pasteBtn.innerHTML = "粘贴标签";
-      pasteBtn.onclick = () => this.pasteTags();
-      const clearBtn = document.createElement("a");
-      clearBtn.className = "btn calm small";
-      clearBtn.innerHTML = "清空标签";
-      clearBtn.onclick = () => this.clearTags();
-      buttonContainer.appendChild(copyBtn);
-      buttonContainer.appendChild(pasteBtn);
-      buttonContainer.appendChild(clearBtn);
-      (_a = tagLabel.parentNode) == null ? void 0 : _a.insertBefore(buttonContainer, tagLabel.nextSibling);
+      const observer = new MutationObserver((_, obs) => {
+        const inputContainer = document.querySelector("#item_tag .item-search-input__container");
+        if (inputContainer) {
+          const buttonContainer = document.createElement("div");
+          buttonContainer.className = "flex gap-2";
+          buttonContainer.style.alignItems = "center";
+          buttonContainer.style.position = "absolute";
+          buttonContainer.style.right = "8px";
+          buttonContainer.style.top = "50%";
+          buttonContainer.style.transform = "translateY(-50%)";
+          const copyBtn = document.createElement("a");
+          copyBtn.className = "btn calm small";
+          copyBtn.innerHTML = "复制标签";
+          copyBtn.onclick = () => this.copyTags();
+          const pasteBtn = document.createElement("a");
+          pasteBtn.className = "btn calm small";
+          pasteBtn.innerHTML = "粘贴标签";
+          pasteBtn.onclick = () => this.pasteTags();
+          const clearBtn = document.createElement("a");
+          clearBtn.className = "btn calm small";
+          clearBtn.innerHTML = "清空标签";
+          clearBtn.onclick = () => this.clearTags();
+          buttonContainer.appendChild(copyBtn);
+          buttonContainer.appendChild(pasteBtn);
+          buttonContainer.appendChild(clearBtn);
+          inputContainer.appendChild(buttonContainer);
+          obs.disconnect();
+        }
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      this.context.observers.set("tag-buttons", observer);
     }
     copyTags() {
       try {
-        const tags = Array.from(document.querySelectorAll(".selectize-input .item")).map((item) => item.getAttribute("data-value")).filter(Boolean);
+        const tags = Array.from(document.querySelectorAll("#item_tag .bg-secondary500 .font-bold")).map((tag) => {
+          var _a;
+          return (_a = tag.textContent) == null ? void 0 : _a.trim();
+        }).filter(Boolean);
         if (tags.length === 0) {
           alert("没有找到标签");
           return;
@@ -302,18 +276,29 @@
       try {
         const text = await navigator.clipboard.readText();
         const tags = JSON.parse(text);
-        if (!Array.isArray(tags)) {
+        if (!Array.isArray(tags) || tags.length === 0) {
           throw new Error("无效的标签数据");
         }
-        const select = document.querySelector(".js-item-tags-array");
-        if (!select || !select.selectize) {
+        const input = document.querySelector(".js-item-tags-array");
+        if (!input) {
           throw new Error("找不到标签输入框");
         }
-        select.selectize.clear();
-        tags.forEach((tag) => {
-          select.selectize.addOption({ value: tag, text: tag });
-          select.selectize.addItem(tag);
-        });
+        const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
+        for (let i = deleteButtons.length - 1; i >= 0; i--) {
+          const button = deleteButtons[i];
+          const clickableAnchor = button.closest("a");
+          if (clickableAnchor) {
+            clickableAnchor.click();
+            await Utils.sleep(20);
+          }
+        }
+        for (const tag of tags) {
+          input.focus();
+          Simulate.input(input, tag);
+          await Utils.sleep(10);
+          Simulate.pressEnter(input);
+          await Utils.sleep(10);
+        }
         const pasteBtn = document.querySelector("#item_tag .btn:nth-child(2)");
         if (pasteBtn instanceof HTMLElement) {
           Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
@@ -324,14 +309,18 @@
         });
       }
     }
-    clearTags() {
+    async clearTags() {
       try {
         if (!confirm("确定要清空所有标签吗？")) return;
-        const select = document.querySelector(".js-item-tags-array");
-        if (!select || !select.selectize) {
-          throw new Error("找不到标签输入框");
+        const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
+        for (let i = deleteButtons.length - 1; i >= 0; i--) {
+          const button = deleteButtons[i];
+          const clickableAnchor = button.closest("a");
+          if (clickableAnchor) {
+            clickableAnchor.click();
+            await Utils.sleep(10);
+          }
         }
-        select.selectize.clear();
         const clearBtn = document.querySelector("#item_tag .btn:nth-child(3)");
         if (clearBtn instanceof HTMLElement) {
           Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
@@ -341,7 +330,7 @@
       }
     }
     cleanup() {
-      ["variation", "page"].forEach((observerName) => {
+      ["variation", "page", "tag-buttons"].forEach((observerName) => {
         const observer = this.context.observers.get(observerName);
         if (observer instanceof MutationObserver) {
           observer.disconnect();
@@ -356,7 +345,7 @@
       });
     }
   }
-  class ItemManageCommand extends PageCommand {
+  class ItemManageFeature extends Feature {
     constructor(context) {
       super(context);
       __publicField(this, "itemObserver");
@@ -377,8 +366,8 @@
     shouldExecute() {
       return this.path === "/items" || this.path === "/items/";
     }
-    execute() {
-      super.execute();
+    async execute() {
+      await super.execute();
       this.setupItemsObserver();
     }
     // 处理单个商品卡片
@@ -665,312 +654,63 @@ ${errorText}`);
       document.querySelectorAll(".tag-copy-btn, .variation-number, .variation-checkbox, .total-stats, .stats-toggle-container").forEach((el) => el.remove());
     }
   }
-  class TranslatorCommand extends PageCommand {
-    constructor(context) {
-      super(context);
-      __publicField(this, "config", {
-        translations: {},
-        specialRules: [],
-        selectors: {
-          static: [],
-          dynamic: [],
-          exclude: [],
-          attributes: {
-            translate: [],
-            observe: []
-          }
-        }
-      });
-      __publicField(this, "settings", {
-        checkInterval: 600,
-        throttleDelay: 100,
-        maxLanguageSelectorAttempts: 10,
-        languageSelectorInterval: 500,
-        batchSize: 10
-      });
-      __publicField(this, "visibilityObserver");
-      __publicField(this, "processing", false);
-      this.visibilityObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const target = entry.target;
-            if (entry.isIntersecting && !target.dataset.translated) {
-              this.translateNode(target);
-              target.dataset.translated = "true";
-              this.visibilityObserver.unobserve(target);
-            }
-          });
-        },
-        {
-          threshold: 0.1,
-          // 元素10%可见时触发
-          rootMargin: "100px"
-          // 提前100px开始加载，提供更平滑的体验
-        }
-      );
-    }
+  class SessionFeature extends Feature {
     shouldExecute() {
       return true;
     }
     async execute() {
-      super.execute();
-      try {
-        const isChineseUI = await this.detectLanguage();
-        if (!isChineseUI) {
-          console.log("当前不是简体中文界面，跳过翻译功能");
-          return;
-        }
-        await this.loadConfig();
-        this.startObserver();
-      } catch (error) {
-        handleError(error);
-      }
+      await super.execute();
+      _GM_registerMenuCommand("获取Booth Session", () => this.getSession());
     }
-    async detectLanguage() {
-      var _a;
-      for (let i = 0; i < this.settings.maxLanguageSelectorAttempts; i++) {
-        const languageSwitcher = document.querySelector(".js-locale-switcher");
-        const currentLanguage = languageSwitcher == null ? void 0 : languageSwitcher.querySelector(".bg-ui-background200");
-        if (currentLanguage) {
-          const text = ((_a = currentLanguage.textContent) == null ? void 0 : _a.trim()) || "";
-          console.log("检测到的语言:", text);
-          return text.includes("简体中文");
-        }
-        console.log(`等待语言选择器加载... (${i + 1}/${this.settings.maxLanguageSelectorAttempts})`);
-        await Utils.sleep(this.settings.languageSelectorInterval);
-      }
-      console.log("语言选择器加载超时");
-      return false;
-    }
-    async loadConfig() {
-      return new Promise((resolve, reject) => {
-        _GM_xmlhttpRequest({
-          method: "GET",
-          url: "https://raw.githubusercontent.com/Yueby/tampermonkey-scripts/refs/heads/booth-scripts/booth-translate-config.json",
-          onload: (response) => {
-            var _a, _b, _c, _d, _e, _f, _g;
-            try {
-              const config = JSON.parse(response.responseText);
-              this.config = {
-                translations: config.translations || {},
-                specialRules: config.specialRules || [],
-                selectors: {
-                  static: ((_a = config.selectors) == null ? void 0 : _a.static) || [],
-                  dynamic: ((_b = config.selectors) == null ? void 0 : _b.dynamic) || [],
-                  exclude: ((_c = config.selectors) == null ? void 0 : _c.exclude) || [],
-                  attributes: {
-                    translate: ((_e = (_d = config.selectors) == null ? void 0 : _d.attributes) == null ? void 0 : _e.translate) || [],
-                    observe: ((_g = (_f = config.selectors) == null ? void 0 : _f.attributes) == null ? void 0 : _g.observe) || []
-                  }
-                }
-              };
-              resolve();
-            } catch (error) {
-              console.error("解析配置文件失败:", error);
-              reject(error);
-            }
-          },
-          onerror: (error) => {
-            console.error("加载配置文件失败:", error);
-            reject(error);
-          }
-        });
-      });
-    }
-    startObserver() {
-      const pageObserver = new MutationObserver(Utils.throttle(this.handleMutations.bind(this), this.settings.throttleDelay));
-      pageObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: [...this.config.selectors.attributes.translate, ...this.config.selectors.attributes.observe],
-        characterData: true,
-        attributeOldValue: true
-      });
-      this.context.observers.set("translate", pageObserver);
-      this.observeVisibleElements();
-    }
-    observeVisibleElements() {
-      const allSelectors = [...this.config.selectors.static, ...this.config.selectors.dynamic];
-      allSelectors.forEach((selector) => {
-        try {
-          document.querySelectorAll(selector).forEach((element) => {
-            const htmlElement = element;
-            if (!htmlElement.dataset.translated && this.shouldTranslate(htmlElement)) {
-              this.visibilityObserver.observe(htmlElement);
-            }
-          });
-        } catch (error) {
-          console.error(`选择器 ${selector} 查询失败:`, error);
-        }
-      });
-    }
-    handleMutations(mutations) {
-      if (this.processing) return;
-      this.processing = true;
-      try {
-        mutations.forEach((mutation) => {
-          if (mutation.type === "childList") {
-            mutation.addedNodes.forEach((node) => {
-              if (node.nodeType === Node.ELEMENT_NODE) {
-                const element = node;
-                if (this.shouldTranslate(element)) {
-                  this.visibilityObserver.observe(element);
-                }
-                const allSelectors = [...this.config.selectors.static, ...this.config.selectors.dynamic];
-                allSelectors.forEach((selector) => {
-                  try {
-                    element.querySelectorAll(selector).forEach((el) => {
-                      const htmlElement = el;
-                      if (!htmlElement.dataset.translated && this.shouldTranslate(htmlElement)) {
-                        this.visibilityObserver.observe(htmlElement);
-                      }
-                    });
-                  } catch (error) {
-                    console.error(`选择器 ${selector} 查询失败:`, error);
-                  }
-                });
-              }
-            });
-          } else if (mutation.type === "attributes") {
-            const target = mutation.target;
-            if (!target.dataset.translated && this.shouldTranslate(target)) {
-              this.visibilityObserver.observe(target);
-            }
-          }
-        });
-      } catch (error) {
-        console.error("处理DOM变化时出错:", error);
-      } finally {
-        this.processing = false;
-      }
-    }
-    shouldTranslate(element) {
+    extractCookieInfo(headers) {
       var _a, _b;
-      if (element instanceof HTMLElement && element.dataset.translated === "true") {
-        return false;
-      }
-      const isExcluded = (el) => {
-        if (!el) return false;
-        return this.config.selectors.exclude.some((selector) => {
-          return el.matches(selector) || el.closest(selector);
-        });
+      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+      if (!cookieHeader) return null;
+      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+      const expires = (_b = (_a = cookieHeader.match(/expires=([^;]+)/i)) == null ? void 0 : _a[1]) == null ? void 0 : _b.trim();
+      return {
+        value,
+        expires: expires ? new Date(expires).toISOString() : null
       };
-      if (element.nodeType === Node.TEXT_NODE) {
-        const parent = element.parentElement;
-        if (!parent || isExcluded(parent)) {
-          return false;
-        }
-        return ((_a = element.textContent) == null ? void 0 : _a.trim()) !== "";
-      }
-      if (element.nodeType === Node.ELEMENT_NODE && element instanceof HTMLElement) {
-        if (element.tagName === "SCRIPT" || element.tagName === "STYLE") {
-          return false;
-        }
-        if (isExcluded(element)) {
-          return element.hasAttribute("title") || element.hasAttribute("placeholder");
-        }
-        if (element.dataset.translated) {
-          return ((_b = element.textContent) == null ? void 0 : _b.trim()) !== "";
-        }
-      }
-      return true;
     }
-    translateNode(node) {
-      if (node.nodeType === Node.TEXT_NODE && node instanceof Text) {
-        this.translateTextNode(node);
-      } else if (node.nodeType === Node.ELEMENT_NODE && node instanceof HTMLElement) {
-        this.translateElement(node);
-      }
-    }
-    translateTextNode(node) {
-      var _a;
-      const text = (_a = node.textContent) == null ? void 0 : _a.trim();
-      if (!text) return;
-      const translated = this.translate(text, node.parentElement);
-      if (translated !== text && node.textContent) {
-        node.textContent = node.textContent.replace(text, translated);
-      }
-    }
-    translateElement(element) {
-      let hasTranslation = false;
-      this.config.selectors.attributes.translate.forEach((attr) => {
-        if (element.hasAttribute(attr)) {
-          const value = element.getAttribute(attr);
-          if (value) {
-            const translated = this.translate(value, element);
-            if (translated !== value) {
-              element.setAttribute(attr, translated);
-              element.dataset[`translated${attr}`] = "true";
-              hasTranslation = true;
-            }
+    getSession() {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: "https://manage.booth.pm/orders",
+        headers: {
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
+        },
+        onload: (response) => {
+          const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+          if (cookieInfo) {
+            const cookieData = {
+              _plaza_session_nktz7u: cookieInfo.value,
+              updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+              expires_at: cookieInfo.expires
+            };
+            _GM_setClipboard(JSON.stringify(cookieData, null, 2), "Booth Session");
+            _GM_notification({
+              text: cookieInfo.expires ? `Session已复制
+过期时间: ${new Date(cookieInfo.expires).toLocaleString()}` : "Session已复制到剪贴板",
+              title: "获取成功",
+              timeout: 3e3
+            });
+          } else {
+            _GM_notification({
+              text: "未找到有效的 Session",
+              title: "获取失败",
+              timeout: 3e3
+            });
           }
+        },
+        onerror: () => {
+          _GM_notification({
+            text: "请求出错，请检查网络连接",
+            title: "错误",
+            timeout: 3e3
+          });
         }
-      });
-      const isExcluded = this.config.selectors.exclude.some((selector) => {
-        return element.matches(selector) || element.closest(selector);
-      });
-      if (!isExcluded || element.hasAttribute("title") || element.hasAttribute("placeholder")) {
-        element.childNodes.forEach((node) => {
-          var _a;
-          if (this.shouldTranslate(node)) {
-            const text = (_a = node.textContent) == null ? void 0 : _a.trim();
-            if (text && node.textContent) {
-              const translated = this.translate(text, element);
-              if (translated !== text) {
-                if (node.nodeType === Node.TEXT_NODE && node instanceof Text) {
-                  node.textContent = node.textContent.replace(text, translated);
-                } else {
-                  this.translateNode(node);
-                }
-                hasTranslation = true;
-              }
-            }
-          }
-        });
-      }
-      if (hasTranslation) {
-        element.dataset.translated = "true";
-      }
-    }
-    translate(text, element) {
-      if (!text) return text;
-      let result = text;
-      let currentRule;
-      if (element) {
-        currentRule = this.config.specialRules.find((rule) => element.matches(rule.selector));
-      }
-      const sortedTranslations = Object.entries(this.config.translations).sort((a, b) => b[0].length - a[0].length);
-      for (const [source, target] of sortedTranslations) {
-        if (result.includes(source)) {
-          const escapedSource = source.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const regex = new RegExp(escapedSource, "g");
-          let replacement = target;
-          if (currentRule) {
-            if (currentRule.prepend) {
-              replacement = currentRule.prepend + replacement;
-            }
-            if (currentRule.append) {
-              replacement = replacement + currentRule.append;
-            }
-          }
-          result = result.replace(regex, replacement);
-        }
-      }
-      return result;
-    }
-    cleanup() {
-      const observer = this.context.observers.get("translate");
-      if (observer instanceof MutationObserver) {
-        observer.disconnect();
-        this.context.observers.delete("translate");
-      }
-      if (this.visibilityObserver) {
-        this.visibilityObserver.disconnect();
-      }
-      document.querySelectorAll("[data-translated]").forEach((el) => {
-        const htmlElement = el;
-        delete htmlElement.dataset.translated;
       });
     }
   }
@@ -980,20 +720,20 @@ ${errorText}`);
         observers: /* @__PURE__ */ new Map(),
         cachedElements: /* @__PURE__ */ new Map()
       });
-      __publicField(this, "commands", [
-        new SessionCommand(this.context),
-        new ItemEditCommand(this.context),
-        new ItemManageCommand(this.context),
-        new TranslatorCommand(this.context)
+      __publicField(this, "features", [
+        // new OrderAnalysisFeature(this.context),
+        new ItemEditFeature(this.context),
+        new ItemManageFeature(this.context),
+        new SessionFeature(this.context)
       ]);
     }
     async init() {
       try {
         await Utils.waitForDOMReady();
-        for (const command of this.commands) {
+        for (const feature of this.features) {
           try {
-            if (command.shouldExecute()) {
-              await command.execute();
+            if (feature.shouldExecute()) {
+              await feature.execute();
             }
           } catch (error) {
             handleError(error);
@@ -1008,7 +748,7 @@ ${errorText}`);
     }
     destroy() {
       try {
-        this.commands.forEach((command) => command.cleanup());
+        this.features.forEach((feature) => feature.cleanup());
         this.context.observers.clear();
         this.context.cachedElements.clear();
       } catch (error) {

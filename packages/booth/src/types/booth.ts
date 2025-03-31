@@ -1,9 +1,3 @@
-// 页面类型
-export type PageType = 'itemEdit' | 'dashboard' | 'other';
-
-// 功能特性
-export type Feature = 'variations' | 'tags' | 'dashboard' | 'session' | 'translate';
-
 // 翻译相关
 export interface TranslationRule {
     selector: string;
@@ -37,7 +31,11 @@ export interface SessionData {
     expires_at: string | null;
 } 
 
-export interface CommandContext {
+/**
+ * 页面上下文
+ * 包含页面功能所需的共享资源
+ */
+export interface FeatureContext {
     observers: Map<string, MutationObserver | IntersectionObserver>;
     cachedElements: Map<string, HTMLElement>;
 }

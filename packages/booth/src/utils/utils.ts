@@ -32,37 +32,6 @@ export class Utils {
         }
     }
 
-    // 检查当前页面是否需要特定功能
-    static shouldEnableFeature(feature: 'variations' | 'tags' | 'dashboard' | 'session') {
-        const path = window.location.pathname;
-        switch (feature) {
-            case 'variations':
-            case 'tags':
-                // 商品编辑页面 https://manage.booth.pm/items/***/edit_pre
-                return /^\/items\/\d+\/edit(_pre)?$/.test(path);
-            case 'dashboard':
-                // 商品管理页面 https://manage.booth.pm/items
-                return path === '/items' || path === '/items/';
-            case 'session':
-                // 所有页面都可以获取session
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    // 获取当前页面类型
-    static getCurrentPageType(): 'itemEdit' | 'dashboard' | 'other' {
-        const path = window.location.pathname;
-        if (/^\/items\/\d+\/edit(_pre)?$/.test(path)) {
-            return 'itemEdit';
-        }
-        if (path === '/items' || path === '/items/') {
-            return 'dashboard';
-        }
-        return 'other';
-    }
-
     // 优化的按钮状态更新
     static updateButtonState(button: HTMLElement, success = true, originalHtml: string) {
         if (!button) return;

@@ -1,13 +1,17 @@
-import { CommandContext } from "../types";
-import { Config } from "../utils/config";
-import { handleError } from "../utils/error";
-import { Utils } from "../utils/utils";
-import { PageCommand } from "./base";
+import { FeatureContext } from "../../types";
+import { Config } from "../../utils/config";
+import { handleError } from "../../utils/error";
+import { Utils } from "../../utils/utils";
+import { Feature } from "../base";
 
-export class ItemManageCommand extends PageCommand {
+/**
+ * Booth网站商品管理页面
+ * 提供商品列表增强功能，包括变体序号、标签复制、统计信息等
+ */
+export class ItemManageFeature extends Feature {
     private itemObserver: IntersectionObserver;
 
-    constructor(context: CommandContext) {
+    constructor(context: FeatureContext) {
         super(context);
         // 创建Intersection Observer
         this.itemObserver = new IntersectionObserver(
@@ -29,8 +33,8 @@ export class ItemManageCommand extends PageCommand {
         return this.path === '/items' || this.path === '/items/';
     }
 
-    execute(): void {
-        super.execute();
+    async execute(): Promise<void> {
+        await super.execute();
         this.setupItemsObserver();
     }
 

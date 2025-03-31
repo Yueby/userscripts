@@ -1,33 +1,28 @@
 import { Utils } from './utils/utils';
 import { handleError } from './utils/error';
-import {
-    SessionCommand,
-    ItemEditCommand,
-    ItemManageCommand,
-    TranslatorCommand
-} from './commands';
-import { CommandContext } from "./types";
+import { FeatureContext } from "./types";
+import { ItemEditFeature, ItemManageFeature, SessionFeature } from "./features";
 
 class BoothEnhancer {
-    private context: CommandContext = {
+    private context: FeatureContext = {
         observers: new Map(),
         cachedElements: new Map()
     };
-    private commands = [
-        new SessionCommand(this.context),
-        new ItemEditCommand(this.context),
-        new ItemManageCommand(this.context),
-        new TranslatorCommand(this.context)
+    private features = [
+        // new OrderAnalysisFeature(this.context),
+        new ItemEditFeature(this.context),
+        new ItemManageFeature(this.context),
+        new SessionFeature(this.context)
     ];
 
     async init() {
         try {
             await Utils.waitForDOMReady();
 
-            for (const command of this.commands) {
+            for (const feature of this.features) {
                 try {
-                    if (command.shouldExecute()) {
-                        await command.execute();
+                    if (feature.shouldExecute()) {
+                        await feature.execute();
                     }
                 } catch (error) {
                     handleError(error);
@@ -44,7 +39,7 @@ class BoothEnhancer {
 
     destroy() {
         try {
-            this.commands.forEach(command => command.cleanup());
+            this.features.forEach(feature => feature.cleanup());
             this.context.observers.clear();
             this.context.cachedElements.clear();
         } catch (error) {

@@ -34,3 +34,4 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+booth_orders_20250302004356.csv

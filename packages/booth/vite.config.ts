@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
-import monkey from 'vite-plugin-monkey';
+import vue from '@vitejs/plugin-vue';
+import monkey, { cdn } from 'vite-plugin-monkey';
 import { resolve } from 'path';
 
 // https://vitejs.dev/config/
@@ -9,6 +10,7 @@ export default defineConfig({
     emptyOutDir: true
   },
   plugins: [
+    vue(),
     monkey({
       entry: 'src/main.ts',
       userscript: {
@@ -24,14 +26,29 @@ export default defineConfig({
           'zh-CN': '增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能'
         },
         author: 'Yueby',
-        version: '0.1.2',
-        connect: ['raw.githubusercontent.com'],
+        version: '0.1.3',
+        connect: [
+          'raw.githubusercontent.com',
+          'manage.booth.pm'
+        ],
         grant: [
           'GM_xmlhttpRequest',
           'GM_setClipboard',
           'GM_notification',
           'GM_registerMenuCommand'
-        ]
+        ],
+      },
+      build: {
+        externalGlobals: {
+          vue: cdn.jsdelivr('Vue', 'dist/vue.global.prod.js'),
+          papaparse: cdn.jsdelivr('Papa', 'papaparse.min.js'),
+          'element-plus': cdn.jsdelivr('ElementPlus', 'dist/index.full.min.js'),
+          '@element-plus/icons-vue': cdn.jsdelivr('ElementPlusIconsVue', 'dist/index.iife.min.js'),
+          'echarts': cdn.jsdelivr('echarts', 'dist/echarts.min.js')
+        },
+        externalResource: {
+          'element-plus/dist/index.css': cdn.jsdelivr()
+        }
       }
     }),
   ],
