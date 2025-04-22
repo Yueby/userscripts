@@ -2,7 +2,7 @@
 // @name               Booth Enhancer
 // @name:zh-CN         Booth 网站功能增强
 // @namespace          yueby.booth
-// @version            0.1.4
+// @version            0.1.5
 // @author             Yueby
 // @description        A userscript for enhancing Booth experience
 // @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能
@@ -23,6 +23,87 @@
   var __defProp = Object.defineProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  class Feature {
+    constructor(context) {
+      __publicField(this, "context");
+      __publicField(this, "path");
+      this.context = context;
+      this.path = window.location.pathname;
+    }
+    /**
+     * 判断当前页面是否应该执行此功能
+     */
+    shouldExecute() {
+      return false;
+    }
+    /**
+     * 执行页面功能
+     */
+    async execute() {
+      console.log(`${this.constructor.name} executed`);
+    }
+    /**
+     * 清理资源
+     */
+    cleanup() {
+    }
+  }
+  var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
+  var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
+  var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  function handleError(error, fallback) {
+    console.error("Booth Helper Error:", error);
+    if (fallback) {
+      try {
+        fallback();
+      } catch (e) {
+        console.error("Fallback handler failed:", e);
+      }
+    }
+  }
+  class Simulate {
+    /**
+     * 模拟用户输入文本
+     * @param element 目标输入元素
+     * @param text 要输入的文本
+     */
+    static input(element, text) {
+      var _a;
+      const nativeInputValueSetter = (_a = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")) == null ? void 0 : _a.set;
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(element, text);
+      }
+      const ev2 = new Event("input", { bubbles: true });
+      element.dispatchEvent(ev2);
+    }
+    /**
+     * 模拟键盘按下事件
+     * @param element 目标元素
+     * @param keyCode 键码
+     */
+    static keyDown(element, keyCode) {
+      const keyboardEvent = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        key: "Enter",
+        code: "Enter",
+        keyCode,
+        which: keyCode,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false
+      });
+      element.dispatchEvent(keyboardEvent);
+    }
+    /**
+     * 模拟按下回车键
+     * @param element 目标元素
+     */
+    static pressEnter(element) {
+      this.keyDown(element, 13);
+    }
+  }
   const Config = {
     throttleDelay: 100,
     animationDelay: 1e3
@@ -71,87 +152,6 @@
     }
   }
   __publicField(Utils, "throttleCache", /* @__PURE__ */ new Map());
-  function handleError(error, fallback) {
-    console.error("Booth Helper Error:", error);
-    if (fallback) {
-      try {
-        fallback();
-      } catch (e) {
-        console.error("Fallback handler failed:", e);
-      }
-    }
-  }
-  class Feature {
-    constructor(context) {
-      __publicField(this, "context");
-      __publicField(this, "path");
-      this.context = context;
-      this.path = window.location.pathname;
-    }
-    /**
-     * 判断当前页面是否应该执行此功能
-     */
-    shouldExecute() {
-      return false;
-    }
-    /**
-     * 执行页面功能
-     */
-    async execute() {
-      console.log(`${this.constructor.name} executed`);
-    }
-    /**
-     * 清理资源
-     */
-    cleanup() {
-    }
-  }
-  var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
-  var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
-  var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
-  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  class Simulate {
-    /**
-     * 模拟用户输入文本
-     * @param element 目标输入元素
-     * @param text 要输入的文本
-     */
-    static input(element, text) {
-      var _a;
-      const nativeInputValueSetter = (_a = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")) == null ? void 0 : _a.set;
-      if (nativeInputValueSetter) {
-        nativeInputValueSetter.call(element, text);
-      }
-      const ev2 = new Event("input", { bubbles: true });
-      element.dispatchEvent(ev2);
-    }
-    /**
-     * 模拟键盘按下事件
-     * @param element 目标元素
-     * @param keyCode 键码
-     */
-    static keyDown(element, keyCode) {
-      const keyboardEvent = new KeyboardEvent("keydown", {
-        bubbles: true,
-        cancelable: true,
-        key: "Enter",
-        code: "Enter",
-        keyCode,
-        which: keyCode,
-        shiftKey: false,
-        ctrlKey: false,
-        metaKey: false
-      });
-      element.dispatchEvent(keyboardEvent);
-    }
-    /**
-     * 模拟按下回车键
-     * @param element 目标元素
-     */
-    static pressEnter(element) {
-      this.keyDown(element, 13);
-    }
-  }
   class ItemEditFeature extends Feature {
     shouldExecute() {
       return /^\/items\/\d+\/edit(_pre)?$/.test(this.path);
@@ -165,17 +165,17 @@
     addNumbers() {
       const allUlElements = document.querySelectorAll("ul.grid.gap-16");
       if (allUlElements.length === 0) {
-        const observer2 = new MutationObserver((_, obs) => {
+        const observer = new MutationObserver((_, obs) => {
           if (document.querySelectorAll("ul.grid.gap-16").length > 0) {
             obs.disconnect();
             this.addNumbers();
           }
         });
-        observer2.observe(document.body, {
+        observer.observe(document.body, {
           childList: true,
           subtree: true
         });
-        this.context.observers.set("variation-numbers-wait", observer2);
+        this.context.observers.set("variation-numbers-wait", observer);
         return;
       }
       allUlElements.forEach((variationList) => {
@@ -200,28 +200,71 @@
           titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
         });
       });
-      const observer = new MutationObserver((mutations) => {
-        const hasRelevantChanges = mutations.some((mutation) => {
-          const hasContainerChanges = Array.from(mutation.addedNodes).some(
-            (node) => node instanceof HTMLElement && (node.querySelector(".variation-box-head") || node.querySelector('li[class*="group"][class*="relative"][class*="list-none"]'))
-          );
-          const hasLiChanges = Array.from(mutation.addedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
-          );
-          const hasLiRemoved = Array.from(mutation.removedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
-          );
-          return hasContainerChanges || hasLiChanges || hasLiRemoved;
-        });
-        if (hasRelevantChanges) {
+      allUlElements.forEach((ul) => {
+        if (ul.querySelector("li .variation-box-head")) {
+          const observer = new MutationObserver(() => {
+            this.processUlNumbers(ul);
+          });
+          observer.observe(ul, {
+            childList: true,
+            // 监听子元素的添加和删除
+            subtree: false
+            // 不监听深层子元素的变化
+          });
+          const observerId = `ul-${Date.now()}`;
+          this.context.observers.set(observerId, observer);
+        }
+      });
+      const bodyObserver = new MutationObserver((mutations) => {
+        let newUlAdded = false;
+        for (const mutation of mutations) {
+          for (const node of Array.from(mutation.addedNodes)) {
+            if (node instanceof HTMLElement) {
+              if (node.tagName === "UL" && node.classList.contains("grid") && node.classList.contains("gap-16") || node.querySelector("ul.grid.gap-16")) {
+                newUlAdded = true;
+                break;
+              }
+            }
+          }
+          if (newUlAdded) break;
+        }
+        if (newUlAdded) {
+          Array.from(this.context.observers.entries()).filter(([key]) => key.startsWith("ul-")).forEach(([key, observer]) => {
+            if (observer instanceof MutationObserver) {
+              observer.disconnect();
+              this.context.observers.delete(key);
+            }
+          });
           this.addNumbers();
         }
       });
-      observer.observe(document.body, {
+      bodyObserver.observe(document.body, {
         childList: true,
         subtree: true
       });
-      this.context.observers.set("variation-numbers", observer);
+      this.context.observers.set("body-observer", bodyObserver);
+    }
+    /**
+     * 处理单个UL元素内的序号
+     * @param ul 要处理的UL元素
+     */
+    processUlNumbers(ul) {
+      const variationItems = ul.querySelectorAll("li");
+      variationItems.forEach((li, index) => {
+        const existingNumberSpan = li.querySelector(".variation-number");
+        if (existingNumberSpan) {
+          existingNumberSpan.remove();
+        }
+        const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+        if (!titleContainer) {
+          return;
+        }
+        const numberSpan = document.createElement("span");
+        numberSpan.className = "variation-number typography-14 inline-block font-semibold";
+        numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+        numberSpan.textContent = `#${index + 1}`;
+        titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
+      });
     }
     // 标签功能
     addTagButtons() {
@@ -402,7 +445,7 @@
       }
     }
     cleanup() {
-      ["variation-numbers", "variation-numbers-wait", "tag-buttons"].forEach((observerName) => {
+      ["variation-numbers-wait", "body-observer", "tag-buttons"].forEach((observerName) => {
         const observer = this.context.observers.get(observerName);
         if (observer instanceof MutationObserver) {
           observer.disconnect();
@@ -811,10 +854,10 @@ ${errorText}`);
             handleError(error);
           }
         }
-        console.log("Booth功能增强已启动");
+        console.log("Booth Enhancer 已启动");
       } catch (error) {
         handleError(error, () => {
-          console.error("Booth功能增强启动失败");
+          console.error("Booth Enhancer 启动失败");
         });
       }
     }

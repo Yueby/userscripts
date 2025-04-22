@@ -18,6 +18,7 @@ interface ProgressTip {
  * 提供变体序号显示和标签管理功能
  */
 export class ItemEditFeature extends Feature {
+
     shouldExecute(): boolean {
         return /^\/items\/\d+\/edit(_pre)?$/.test(this.path);
     }
@@ -93,44 +94,106 @@ export class ItemEditFeature extends Feature {
             });
         });
 
-        // 添加MutationObserver来监听整个文档的变化
-        const observer = new MutationObserver((mutations) => {
-            // 检查是否有变体项的变化
-            const hasRelevantChanges = mutations.some(mutation => {
-                // 检查是否有变体容器的变化
-                const hasContainerChanges = Array.from(mutation.addedNodes).some(node =>
-                    node instanceof HTMLElement &&
-                    (node.querySelector('.variation-box-head') ||
-                     node.querySelector('li[class*="group"][class*="relative"][class*="list-none"]'))
-                );
+        // 只监听包含变体项的ul元素，而不是整个document
+        allUlElements.forEach(ul => {
+            // 只为包含变体项的ul添加监听
+            if (ul.querySelector('li .variation-box-head')) {
+                const observer = new MutationObserver(() => {
+                    // 当ul内部变化时，只重新处理这个ul内的序号
+                    this.processUlNumbers(ul);
+                });
 
-                // 检查是否有li元素的变化
-                const hasLiChanges = Array.from(mutation.addedNodes).some(node =>
-                    node instanceof HTMLElement &&
-                    (node.matches('li') || node.querySelector('li'))
-                );
+                // 只监听ul内部的变化
+                observer.observe(ul, {
+                    childList: true, // 监听子元素的添加和删除
+                    subtree: false   // 不监听深层子元素的变化
+                });
 
-                // 检查是否有li元素被删除
-                const hasLiRemoved = Array.from(mutation.removedNodes).some(node =>
-                    node instanceof HTMLElement &&
-                    (node.matches('li') || node.querySelector('li'))
-                );
+                // 保存观察者以便后续清理
+                const observerId = `ul-${Date.now()}`;
+                this.context.observers.set(observerId, observer);
+            }
+        });
 
-                return hasContainerChanges || hasLiChanges || hasLiRemoved;
-            });
+        // 添加一个监听器来检测新的ul元素
+        const bodyObserver = new MutationObserver((mutations) => {
+            let newUlAdded = false;
 
-            if (hasRelevantChanges) {
+            // 只检查是否有新的ul元素添加
+            for (const mutation of mutations) {
+                for (const node of Array.from(mutation.addedNodes)) {
+                    if (node instanceof HTMLElement) {
+                        // 检查是否是ul元素或包含ul元素
+                        if ((node.tagName === 'UL' && node.classList.contains('grid') && node.classList.contains('gap-16')) ||
+                            node.querySelector('ul.grid.gap-16')) {
+                            newUlAdded = true;
+                            break;
+                        }
+                    }
+                }
+                if (newUlAdded) break;
+            }
+
+            // 只在添加了新的ul元素时才重新处理
+            if (newUlAdded) {
+                // 清理旧的ul监听器
+                // 找到所有以 'ul-' 开头的观察者并清理
+                Array.from(this.context.observers.entries())
+                    .filter(([key]) => key.startsWith('ul-'))
+                    .forEach(([key, observer]) => {
+                        if (observer instanceof MutationObserver) {
+                            observer.disconnect();
+                            this.context.observers.delete(key);
+                        }
+                    });
+
+                // 重新添加序号和监听器
                 this.addNumbers();
             }
         });
 
-        observer.observe(document.body, {
+        // 只监听直接子元素的变化，不监听深层子元素
+        bodyObserver.observe(document.body, {
             childList: true,
             subtree: true
         });
 
         // 保存observer以便后续清理
-        this.context.observers.set('variation-numbers', observer);
+        this.context.observers.set('body-observer', bodyObserver);
+    }
+
+    /**
+     * 处理单个UL元素内的序号
+     * @param ul 要处理的UL元素
+     */
+    private processUlNumbers(ul: Element): void {
+        // 查找所有变体项
+        const variationItems = ul.querySelectorAll('li');
+
+        // 遍历当前ul中的所有变体项
+        variationItems.forEach((li, index) => {
+            // 先移除已存在的序号，避免重复添加
+            const existingNumberSpan = li.querySelector('.variation-number');
+            if (existingNumberSpan) {
+                existingNumberSpan.remove();
+            }
+
+            // 查找标题容器
+            const titleContainer = li.querySelector('.variation-box-head .flex.items-center.gap-4');
+
+            if (!titleContainer) {
+                return;
+            }
+
+            // 创建序号元素
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'variation-number typography-14 inline-block font-semibold';
+            numberSpan.style.cssText = 'margin-right: 8px; color: #666;';
+            numberSpan.textContent = `#${index + 1}`;
+
+            // 插入到flex容器的最前面
+            titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
+        });
     }
 
     // 标签功能
@@ -363,7 +426,8 @@ export class ItemEditFeature extends Feature {
     }
 
     cleanup(): void {
-        ['variation-numbers', 'variation-numbers-wait', 'tag-buttons'].forEach(observerName => {
+        // 清理观察者
+        ['variation-numbers-wait', 'body-observer', 'tag-buttons'].forEach(observerName => {
             const observer = this.context.observers.get(observerName);
             if (observer instanceof MutationObserver) {
                 observer.disconnect();
