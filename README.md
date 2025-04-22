@@ -12,7 +12,7 @@
 
 | 脚本 | 描述 | 安装 |
 |------|------|------|
-| ![](https://img.shields.io/badge/Booth-Enhancer-fc4c53) | **Booth 网站功能增强**<br>• 变体序号标识<br>• 标签管理(复制/粘贴/清空)<br>• 商品快速删除<br>• Session管理<br>• 界面自动翻译<br>• 销量统计(总销量/总收益，支持过滤) | [![](https://img.shields.io/badge/Install-Userscript-blue)](https://github.com/Yueby/userscripts/raw/refs/heads/main/dist/booth.user.js) |
+| ![](https://img.shields.io/badge/Booth-Enhancer-fc4c53) | **Booth 网站功能增强**<br>• 变体序号标识<br>• 标签管理(复制/粘贴/清空)<br>• 商品快速删除<br>• Session管理<br>• 销量统计(总销量/总收益，支持过滤) | [![](https://img.shields.io/badge/Install-Userscript-blue)](https://github.com/Yueby/userscripts/raw/refs/heads/main/dist/booth.user.js) |
 
 ## 🤝 贡献
 
