@@ -2,7 +2,7 @@
 // @name               Booth Enhancer
 // @name:zh-CN         Booth 网站功能增强
 // @namespace          yueby.booth
-// @version            0.1.3
+// @version            0.1.4
 // @author             Yueby
 // @description        A userscript for enhancing Booth experience
 // @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能
@@ -98,7 +98,7 @@
      * 执行页面功能
      */
     async execute() {
-      console.log(`${this.constructor.name} 执行`);
+      console.log(`${this.constructor.name} executed`);
     }
     /**
      * 清理资源
@@ -158,18 +158,17 @@
     }
     async execute() {
       super.execute();
-      this.addVariationNumbers();
+      this.addNumbers();
       this.addTagButtons();
     }
     // 变体序号功能
-    addVariationNumbers() {
-      const ul = document.querySelector("ul.grid.gap-16");
-      if (!ul) {
+    addNumbers() {
+      const allUlElements = document.querySelectorAll("ul.grid.gap-16");
+      if (allUlElements.length === 0) {
         const observer2 = new MutationObserver((_, obs) => {
-          const ul2 = document.querySelector("ul.grid.gap-16");
-          if (ul2) {
+          if (document.querySelectorAll("ul.grid.gap-16").length > 0) {
             obs.disconnect();
-            this.addVariationNumbers();
+            this.addNumbers();
           }
         });
         observer2.observe(document.body, {
@@ -179,23 +178,32 @@
         this.context.observers.set("variation-numbers-wait", observer2);
         return;
       }
-      const lis = ul.querySelectorAll(":scope > li");
-      lis.forEach((li, index) => {
-        let numberSpan = li.querySelector(".variation-number");
-        const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
-        if (!titleContainer) return;
-        if (!numberSpan) {
-          numberSpan = document.createElement("span");
+      allUlElements.forEach((variationList) => {
+        const hasVariationItems = variationList.querySelector("li .variation-box-head") !== null;
+        if (!hasVariationItems) {
+          return;
+        }
+        const variationItems = variationList.querySelectorAll("li");
+        variationItems.forEach((li, index) => {
+          const existingNumberSpan = li.querySelector(".variation-number");
+          if (existingNumberSpan) {
+            existingNumberSpan.remove();
+          }
+          const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+          if (!titleContainer) {
+            return;
+          }
+          const numberSpan = document.createElement("span");
           numberSpan.className = "variation-number typography-14 inline-block font-semibold";
           numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+          numberSpan.textContent = `#${index + 1}`;
           titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
-        }
-        numberSpan.textContent = `#${index + 1}`;
+        });
       });
       const observer = new MutationObserver((mutations) => {
         const hasRelevantChanges = mutations.some((mutation) => {
-          const hasUlChanges = Array.from(mutation.addedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("ul.grid.gap-16") || node.querySelector("ul.grid.gap-16"))
+          const hasContainerChanges = Array.from(mutation.addedNodes).some(
+            (node) => node instanceof HTMLElement && (node.querySelector(".variation-box-head") || node.querySelector('li[class*="group"][class*="relative"][class*="list-none"]'))
           );
           const hasLiChanges = Array.from(mutation.addedNodes).some(
             (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
@@ -203,10 +211,10 @@
           const hasLiRemoved = Array.from(mutation.removedNodes).some(
             (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
           );
-          return hasUlChanges || hasLiChanges || hasLiRemoved;
+          return hasContainerChanges || hasLiChanges || hasLiRemoved;
         });
         if (hasRelevantChanges) {
-          this.addVariationNumbers();
+          this.addNumbers();
         }
       });
       observer.observe(document.body, {
@@ -272,36 +280,86 @@
         handleError(error);
       }
     }
+    createProgressTip(container) {
+      const tipContainer = document.createElement("div");
+      tipContainer.style.cssText = "margin-bottom: 12px; background: #f5f7fa; border-radius: 4px; padding: 12px; position: relative;";
+      const textElement = document.createElement("div");
+      textElement.style.cssText = "color: #666; font-size: 14px; margin-bottom: 8px;";
+      const progressBarContainer = document.createElement("div");
+      progressBarContainer.style.cssText = "background: #e4e7ed; height: 6px; border-radius: 3px; overflow: hidden;";
+      const progressBar = document.createElement("div");
+      progressBar.style.cssText = `
+            width: 0%;
+            height: 100%;
+            background: #409EFF;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        `;
+      progressBarContainer.appendChild(progressBar);
+      tipContainer.appendChild(textElement);
+      tipContainer.appendChild(progressBarContainer);
+      const inputContainer = container.querySelector(".item-search-input__container");
+      if (inputContainer == null ? void 0 : inputContainer.parentElement) {
+        inputContainer.parentElement.insertBefore(tipContainer, inputContainer);
+      } else {
+        container.insertBefore(tipContainer, container.firstChild);
+      }
+      return {
+        container: tipContainer,
+        progressBar,
+        textElement,
+        updateProgress: (current, total, message) => {
+          const percentage = current / total * 100;
+          progressBar.style.width = `${percentage}%`;
+          textElement.textContent = message || `处理中... (${current}/${total})`;
+        },
+        complete: (message) => {
+          progressBar.style.width = "100%";
+          progressBar.style.background = "#67C23A";
+          textElement.textContent = message;
+          setTimeout(() => tipContainer.remove(), 2e3);
+        },
+        remove: () => tipContainer.remove()
+      };
+    }
     async pasteTags() {
       try {
         const text = await navigator.clipboard.readText();
-        const tags = JSON.parse(text);
-        if (!Array.isArray(tags) || tags.length === 0) {
+        const newTags = JSON.parse(text);
+        if (!Array.isArray(newTags) || newTags.length === 0) {
           throw new Error("无效的标签数据");
         }
         const input = document.querySelector(".js-item-tags-array");
-        if (!input) {
-          throw new Error("找不到标签输入框");
+        if (!input) throw new Error("找不到标签输入框");
+        const container = document.querySelector("#item_tag");
+        if (!container) throw new Error("找不到标签容器");
+        const existingTags = Array.from(document.querySelectorAll("#item_tag .bg-secondary500 .font-bold")).map((tag) => {
+          var _a;
+          return (_a = tag.textContent) == null ? void 0 : _a.trim();
+        }).filter(Boolean);
+        const tagsToAdd = newTags.filter((tag) => !existingTags.includes(tag));
+        if (tagsToAdd.length === 0) {
+          alert("所有标签都已存在，无需添加");
+          return;
         }
-        const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
-        for (let i = deleteButtons.length - 1; i >= 0; i--) {
-          const button = deleteButtons[i];
-          const clickableAnchor = button.closest("a");
-          if (clickableAnchor) {
-            clickableAnchor.click();
-            await Utils.sleep(20);
+        const progress = this.createProgressTip(container);
+        try {
+          for (let i = 0; i < tagsToAdd.length; i++) {
+            progress.updateProgress(i + 1, tagsToAdd.length);
+            input.focus();
+            Simulate.input(input, tagsToAdd[i]);
+            await Utils.sleep(10);
+            Simulate.pressEnter(input);
+            await Utils.sleep(10);
           }
-        }
-        for (const tag of tags) {
-          input.focus();
-          Simulate.input(input, tag);
-          await Utils.sleep(10);
-          Simulate.pressEnter(input);
-          await Utils.sleep(10);
-        }
-        const pasteBtn = document.querySelector("#item_tag .btn:nth-child(2)");
-        if (pasteBtn instanceof HTMLElement) {
-          Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+          progress.complete(`处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`);
+          const pasteBtn = document.querySelector("#item_tag .btn:nth-child(2)");
+          if (pasteBtn instanceof HTMLElement) {
+            Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+          }
+        } catch (error) {
+          progress.remove();
+          throw error;
         }
       } catch (error) {
         handleError(error, () => {
@@ -312,25 +370,39 @@
     async clearTags() {
       try {
         if (!confirm("确定要清空所有标签吗？")) return;
+        const container = document.querySelector("#item_tag");
+        if (!container) throw new Error("找不到标签容器");
         const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
-        for (let i = deleteButtons.length - 1; i >= 0; i--) {
-          const button = deleteButtons[i];
-          const clickableAnchor = button.closest("a");
-          if (clickableAnchor) {
-            clickableAnchor.click();
-            await Utils.sleep(10);
-          }
+        if (deleteButtons.length === 0) {
+          alert("没有找到需要清空的标签");
+          return;
         }
-        const clearBtn = document.querySelector("#item_tag .btn:nth-child(3)");
-        if (clearBtn instanceof HTMLElement) {
-          Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+        const progress = this.createProgressTip(container);
+        try {
+          for (let i = deleteButtons.length - 1; i >= 0; i--) {
+            progress.updateProgress(deleteButtons.length - i, deleteButtons.length);
+            const button = deleteButtons[i];
+            const clickableAnchor = button.closest("a");
+            if (clickableAnchor) {
+              clickableAnchor.click();
+              await Utils.sleep(1);
+            }
+          }
+          progress.complete(`处理完成！已清空 ${deleteButtons.length} 个标签。`);
+          const clearBtn = document.querySelector("#item_tag .btn:nth-child(3)");
+          if (clearBtn instanceof HTMLElement) {
+            Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+          }
+        } catch (error) {
+          progress.remove();
+          throw error;
         }
       } catch (error) {
         handleError(error);
       }
     }
     cleanup() {
-      ["variation", "page", "tag-buttons"].forEach((observerName) => {
+      ["variation-numbers", "variation-numbers-wait", "tag-buttons"].forEach((observerName) => {
         const observer = this.context.observers.get(observerName);
         if (observer instanceof MutationObserver) {
           observer.disconnect();
