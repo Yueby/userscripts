@@ -64,11 +64,11 @@ export class ItemEditFeature extends Feature {
                 return; // 跳过这个ul，继续foreach循环
             }
 
-            // 查找所有变体项
-            const variationItems = variationList.querySelectorAll('li');
+            // 直接获取ul的直接子元素li，而不是使用querySelectorAll
+            const children = Array.from(variationList.children).filter(child => child.tagName.toLowerCase() === 'li');
 
-            // 遍历当前ul中的所有变体项
-            variationItems.forEach((li, index) => {
+            // 遍历当前ul中的所有li元素
+            children.forEach((li, index) => {
             // 先移除已存在的序号，避免重复添加
             const existingNumberSpan = li.querySelector('.variation-number');
             if (existingNumberSpan) {
@@ -167,11 +167,11 @@ export class ItemEditFeature extends Feature {
      * @param ul 要处理的UL元素
      */
     private processUlNumbers(ul: Element): void {
-        // 查找所有变体项
-        const variationItems = ul.querySelectorAll('li');
+        // 直接获取ul的直接子元素li，而不是使用querySelectorAll
+        const children = Array.from(ul.children).filter(child => child.tagName.toLowerCase() === 'li');
 
-        // 遍历当前ul中的所有变体项
-        variationItems.forEach((li, index) => {
+        // 遍历当前ul中的所有li元素
+        children.forEach((li, index) => {
             // 先移除已存在的序号，避免重复添加
             const existingNumberSpan = li.querySelector('.variation-number');
             if (existingNumberSpan) {

@@ -2,7 +2,7 @@
 // @name               Booth Enhancer
 // @name:zh-CN         Booth 网站功能增强
 // @namespace          yueby.booth
-// @version            0.1.5
+// @version            0.1.6
 // @author             Yueby
 // @description        A userscript for enhancing Booth experience
 // @description:zh-CN  增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能
@@ -183,8 +183,8 @@
         if (!hasVariationItems) {
           return;
         }
-        const variationItems = variationList.querySelectorAll("li");
-        variationItems.forEach((li, index) => {
+        const children = Array.from(variationList.children).filter((child) => child.tagName.toLowerCase() === "li");
+        children.forEach((li, index) => {
           const existingNumberSpan = li.querySelector(".variation-number");
           if (existingNumberSpan) {
             existingNumberSpan.remove();
@@ -249,8 +249,8 @@
      * @param ul 要处理的UL元素
      */
     processUlNumbers(ul) {
-      const variationItems = ul.querySelectorAll("li");
-      variationItems.forEach((li, index) => {
+      const children = Array.from(ul.children).filter((child) => child.tagName.toLowerCase() === "li");
+      children.forEach((li, index) => {
         const existingNumberSpan = li.querySelector(".variation-number");
         if (existingNumberSpan) {
           existingNumberSpan.remove();

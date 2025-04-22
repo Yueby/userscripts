@@ -26,7 +26,7 @@ export default defineConfig({
           'zh-CN': '增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译、销量统计等功能'
         },
         author: 'Yueby',
-        version: '0.1.5',
+        version: '0.1.6',
         connect: [
           'raw.githubusercontent.com',
           'manage.booth.pm'
