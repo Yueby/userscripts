@@ -1,13 +1,17 @@
-import { GM_xmlhttpRequest, GM_setClipboard, GM_notification, GM_registerMenuCommand } from '$';
-import { PageCommand } from './base';
+import { GM_notification, GM_registerMenuCommand, GM_setClipboard, GM_xmlhttpRequest } from '$';
+import { Feature } from "../base";
 
-export class SessionCommand extends PageCommand {
+/**
+ * Booth网站会话管理页面
+ * 提供获取和管理会话信息的功能
+ */
+export class SessionFeature extends Feature {
     shouldExecute(): boolean {
         return true;
     }
 
-    execute(): void {
-        super.execute();
+    async execute(): Promise<void> {
+        await super.execute();
         GM_registerMenuCommand("获取Booth Session", () => this.getSession());
     }
 

@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.4
+// @version            0.1.7
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -21,80 +21,6 @@
   var __defProp = Object.defineProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  const Config = {
-    throttleDelay: 100,
-    animationDelay: 1e3
-  };
-  class Utils {
-    // 优化的节流函数，使用Map缓存
-    static throttle(func, limit) {
-      const key = func.toString();
-      if (!this.throttleCache.has(key)) {
-        let inThrottle;
-        const throttled = function(...args) {
-          if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-          }
-        };
-        this.throttleCache.set(key, throttled);
-      }
-      return this.throttleCache.get(key);
-    }
-    // 等待指定时间
-    static sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-    // 等待DOM加载完成
-    static async waitForDOMReady() {
-      if (document.readyState === "loading") {
-        await new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve));
-      }
-    }
-    // 检查当前页面是否需要特定功能
-    static shouldEnableFeature(feature) {
-      const path = window.location.pathname;
-      switch (feature) {
-        case "variations":
-        case "tags":
-          return /^\/items\/\d+\/edit(_pre)?$/.test(path);
-        case "dashboard":
-          return path === "/items" || path === "/items/";
-        case "session":
-          return true;
-        default:
-          return false;
-      }
-    }
-    // 获取当前页面类型
-    static getCurrentPageType() {
-      const path = window.location.pathname;
-      if (/^\/items\/\d+\/edit(_pre)?$/.test(path)) {
-        return "itemEdit";
-      }
-      if (path === "/items" || path === "/items/") {
-        return "dashboard";
-      }
-      return "other";
-    }
-    // 优化的按钮状态更新
-    static updateButtonState(button, success = true, originalHtml) {
-      if (!button) return;
-      const newHtml = success ? '<i class="icon-check"></i><span class="cmd-label">已完成</span>' : originalHtml;
-      button.innerHTML = newHtml;
-      button.classList.toggle("calm", !success);
-      button.classList.toggle("primary", success);
-      if (success) {
-        setTimeout(() => {
-          button.innerHTML = originalHtml;
-          button.classList.add("calm");
-          button.classList.remove("primary");
-        }, Config.animationDelay);
-      }
-    }
-  }
-  __publicField(Utils, "throttleCache", /* @__PURE__ */ new Map());
   function handleError(error, fallback) {
     console.error("Booth Helper Error:", error);
     if (fallback) {
@@ -103,86 +29,6 @@
       } catch (e) {
         console.error("Fallback handler failed:", e);
       }
-    }
-  }
-  class PageCommand {
-    constructor(context) {
-      __publicField(this, "context");
-      __publicField(this, "path");
-      this.context = context;
-      this.path = window.location.pathname;
-    }
-    shouldExecute() {
-      return false;
-    }
-    execute() {
-      console.log(`${this.constructor.name} 执行`);
-    }
-    cleanup() {
-    }
-  }
-  var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
-  var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
-  var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
-  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  class SessionCommand extends PageCommand {
-    shouldExecute() {
-      return true;
-    }
-    execute() {
-      super.execute();
-      _GM_registerMenuCommand("获取Booth Session", () => this.getSession());
-    }
-    extractCookieInfo(headers) {
-      var _a, _b;
-      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
-      if (!cookieHeader) return null;
-      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
-      const expires = (_b = (_a = cookieHeader.match(/expires=([^;]+)/i)) == null ? void 0 : _a[1]) == null ? void 0 : _b.trim();
-      return {
-        value,
-        expires: expires ? new Date(expires).toISOString() : null
-      };
-    }
-    getSession() {
-      _GM_xmlhttpRequest({
-        method: "GET",
-        url: "https://manage.booth.pm/orders",
-        headers: {
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-          "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
-        },
-        onload: (response) => {
-          const cookieInfo = this.extractCookieInfo(response.responseHeaders);
-          if (cookieInfo) {
-            const cookieData = {
-              _plaza_session_nktz7u: cookieInfo.value,
-              updated_at: (/* @__PURE__ */ new Date()).toISOString(),
-              expires_at: cookieInfo.expires
-            };
-            _GM_setClipboard(JSON.stringify(cookieData, null, 2), "Booth Session");
-            _GM_notification({
-              text: cookieInfo.expires ? `Session已复制
-过期时间: ${new Date(cookieInfo.expires).toLocaleString()}` : "Session已复制到剪贴板",
-              title: "获取成功",
-              timeout: 3e3
-            });
-          } else {
-            _GM_notification({
-              text: "未找到有效的 Session",
-              title: "获取失败",
-              timeout: 3e3
-            });
-          }
-        },
-        onerror: () => {
-          _GM_notification({
-            text: "请求出错，请检查网络连接",
-            title: "错误",
-            timeout: 3e3
-          });
-        }
-      });
     }
   }
   class Simulate {
@@ -227,68 +73,192 @@
       this.keyDown(element, 13);
     }
   }
-  class ItemEditCommand extends PageCommand {
+  const Config = {
+    throttleDelay: 100,
+    animationDelay: 1e3
+  };
+  class Utils {
+    // 优化的节流函数，使用Map缓存
+    static throttle(func, limit) {
+      const key = func.toString();
+      if (!this.throttleCache.has(key)) {
+        let inThrottle;
+        const throttled = function(...args) {
+          if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+          }
+        };
+        this.throttleCache.set(key, throttled);
+      }
+      return this.throttleCache.get(key);
+    }
+    // 等待指定时间
+    static sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    // 等待DOM加载完成
+    static async waitForDOMReady() {
+      if (document.readyState === "loading") {
+        await new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve));
+      }
+    }
+    // 优化的按钮状态更新
+    static updateButtonState(button, success = true, originalHtml) {
+      if (!button) return;
+      const newHtml = success ? '<i class="icon-check"></i><span class="cmd-label">已完成</span>' : originalHtml;
+      button.innerHTML = newHtml;
+      button.classList.toggle("calm", !success);
+      button.classList.toggle("primary", success);
+      if (success) {
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+          button.classList.add("calm");
+          button.classList.remove("primary");
+        }, Config.animationDelay);
+      }
+    }
+  }
+  __publicField(Utils, "throttleCache", /* @__PURE__ */ new Map());
+  class Feature {
+    constructor(context) {
+      __publicField(this, "context");
+      __publicField(this, "path");
+      this.context = context;
+      this.path = window.location.pathname;
+    }
+    /**
+     * 判断当前页面是否应该执行此功能
+     */
+    shouldExecute() {
+      return false;
+    }
+    /**
+     * 执行页面功能
+     */
+    async execute() {
+      console.log(`${this.constructor.name} executed`);
+    }
+    /**
+     * 清理资源
+     */
+    cleanup() {
+    }
+  }
+  class ItemEditFeature extends Feature {
     shouldExecute() {
       return /^\/items\/\d+\/edit(_pre)?$/.test(this.path);
     }
-    execute() {
+    async execute() {
       super.execute();
-      this.addVariationNumbers();
+      this.addNumbers();
       this.addTagButtons();
     }
     // 变体序号功能
-    addVariationNumbers() {
-      const ul = document.querySelector("ul.grid.gap-16");
-      if (!ul) {
-        const observer2 = new MutationObserver((_, obs) => {
-          const ul2 = document.querySelector("ul.grid.gap-16");
-          if (ul2) {
+    addNumbers() {
+      const allUlElements = document.querySelectorAll("ul.grid.gap-16");
+      if (allUlElements.length === 0) {
+        const observer = new MutationObserver((_, obs) => {
+          if (document.querySelectorAll("ul.grid.gap-16").length > 0) {
             obs.disconnect();
-            this.addVariationNumbers();
+            this.addNumbers();
           }
         });
-        observer2.observe(document.body, {
+        observer.observe(document.body, {
           childList: true,
           subtree: true
         });
-        this.context.observers.set("variation-numbers-wait", observer2);
+        this.context.observers.set("variation-numbers-wait", observer);
         return;
       }
-      const lis = ul.querySelectorAll(":scope > li");
-      lis.forEach((li, index) => {
-        let numberSpan = li.querySelector(".variation-number");
-        const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
-        if (!titleContainer) return;
-        if (!numberSpan) {
-          numberSpan = document.createElement("span");
+      allUlElements.forEach((variationList) => {
+        const hasVariationItems = variationList.querySelector("li .variation-box-head") !== null;
+        if (!hasVariationItems) {
+          return;
+        }
+        const children = Array.from(variationList.children).filter((child) => child.tagName.toLowerCase() === "li");
+        children.forEach((li, index) => {
+          const existingNumberSpan = li.querySelector(".variation-number");
+          if (existingNumberSpan) {
+            existingNumberSpan.remove();
+          }
+          const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+          if (!titleContainer) {
+            return;
+          }
+          const numberSpan = document.createElement("span");
           numberSpan.className = "variation-number typography-14 inline-block font-semibold";
           numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+          numberSpan.textContent = `#${index + 1}`;
           titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
-        }
-        numberSpan.textContent = `#${index + 1}`;
-      });
-      const observer = new MutationObserver((mutations) => {
-        const hasRelevantChanges = mutations.some((mutation) => {
-          const hasUlChanges = Array.from(mutation.addedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("ul.grid.gap-16") || node.querySelector("ul.grid.gap-16"))
-          );
-          const hasLiChanges = Array.from(mutation.addedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
-          );
-          const hasLiRemoved = Array.from(mutation.removedNodes).some(
-            (node) => node instanceof HTMLElement && (node.matches("li") || node.querySelector("li"))
-          );
-          return hasUlChanges || hasLiChanges || hasLiRemoved;
         });
-        if (hasRelevantChanges) {
-          this.addVariationNumbers();
+      });
+      allUlElements.forEach((ul) => {
+        if (ul.querySelector("li .variation-box-head")) {
+          const observer = new MutationObserver(() => {
+            this.processUlNumbers(ul);
+          });
+          observer.observe(ul, {
+            childList: true,
+            // 监听子元素的添加和删除
+            subtree: false
+            // 不监听深层子元素的变化
+          });
+          const observerId = `ul-${Date.now()}`;
+          this.context.observers.set(observerId, observer);
         }
       });
-      observer.observe(document.body, {
+      const bodyObserver = new MutationObserver((mutations) => {
+        let newUlAdded = false;
+        for (const mutation of mutations) {
+          for (const node of Array.from(mutation.addedNodes)) {
+            if (node instanceof HTMLElement) {
+              if (node.tagName === "UL" && node.classList.contains("grid") && node.classList.contains("gap-16") || node.querySelector("ul.grid.gap-16")) {
+                newUlAdded = true;
+                break;
+              }
+            }
+          }
+          if (newUlAdded) break;
+        }
+        if (newUlAdded) {
+          Array.from(this.context.observers.entries()).filter(([key]) => key.startsWith("ul-")).forEach(([key, observer]) => {
+            if (observer instanceof MutationObserver) {
+              observer.disconnect();
+              this.context.observers.delete(key);
+            }
+          });
+          this.addNumbers();
+        }
+      });
+      bodyObserver.observe(document.body, {
         childList: true,
         subtree: true
       });
-      this.context.observers.set("variation-numbers", observer);
+      this.context.observers.set("body-observer", bodyObserver);
+    }
+    /**
+     * 处理单个UL元素内的序号
+     * @param ul 要处理的UL元素
+     */
+    processUlNumbers(ul) {
+      const children = Array.from(ul.children).filter((child) => child.tagName.toLowerCase() === "li");
+      children.forEach((li, index) => {
+        const existingNumberSpan = li.querySelector(".variation-number");
+        if (existingNumberSpan) {
+          existingNumberSpan.remove();
+        }
+        const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+        if (!titleContainer) {
+          return;
+        }
+        const numberSpan = document.createElement("span");
+        numberSpan.className = "variation-number typography-14 inline-block font-semibold";
+        numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+        numberSpan.textContent = `#${index + 1}`;
+        titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
+      });
     }
     // 标签功能
     addTagButtons() {
@@ -347,36 +317,86 @@
         handleError(error);
       }
     }
+    createProgressTip(container) {
+      const tipContainer = document.createElement("div");
+      tipContainer.style.cssText = "margin-bottom: 12px; background: #f5f7fa; border-radius: 4px; padding: 12px; position: relative;";
+      const textElement = document.createElement("div");
+      textElement.style.cssText = "color: #666; font-size: 14px; margin-bottom: 8px;";
+      const progressBarContainer = document.createElement("div");
+      progressBarContainer.style.cssText = "background: #e4e7ed; height: 6px; border-radius: 3px; overflow: hidden;";
+      const progressBar = document.createElement("div");
+      progressBar.style.cssText = `
+            width: 0%;
+            height: 100%;
+            background: #409EFF;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        `;
+      progressBarContainer.appendChild(progressBar);
+      tipContainer.appendChild(textElement);
+      tipContainer.appendChild(progressBarContainer);
+      const inputContainer = container.querySelector(".item-search-input__container");
+      if (inputContainer == null ? void 0 : inputContainer.parentElement) {
+        inputContainer.parentElement.insertBefore(tipContainer, inputContainer);
+      } else {
+        container.insertBefore(tipContainer, container.firstChild);
+      }
+      return {
+        container: tipContainer,
+        progressBar,
+        textElement,
+        updateProgress: (current, total, message) => {
+          const percentage = current / total * 100;
+          progressBar.style.width = `${percentage}%`;
+          textElement.textContent = message || `处理中... (${current}/${total})`;
+        },
+        complete: (message) => {
+          progressBar.style.width = "100%";
+          progressBar.style.background = "#67C23A";
+          textElement.textContent = message;
+          setTimeout(() => tipContainer.remove(), 2e3);
+        },
+        remove: () => tipContainer.remove()
+      };
+    }
     async pasteTags() {
       try {
         const text = await navigator.clipboard.readText();
-        const tags = JSON.parse(text);
-        if (!Array.isArray(tags) || tags.length === 0) {
+        const newTags = JSON.parse(text);
+        if (!Array.isArray(newTags) || newTags.length === 0) {
           throw new Error("无效的标签数据");
         }
         const input = document.querySelector(".js-item-tags-array");
-        if (!input) {
-          throw new Error("找不到标签输入框");
+        if (!input) throw new Error("找不到标签输入框");
+        const container = document.querySelector("#item_tag");
+        if (!container) throw new Error("找不到标签容器");
+        const existingTags = Array.from(document.querySelectorAll("#item_tag .bg-secondary500 .font-bold")).map((tag) => {
+          var _a;
+          return (_a = tag.textContent) == null ? void 0 : _a.trim();
+        }).filter(Boolean);
+        const tagsToAdd = newTags.filter((tag) => !existingTags.includes(tag));
+        if (tagsToAdd.length === 0) {
+          alert("所有标签都已存在，无需添加");
+          return;
         }
-        const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
-        for (let i = deleteButtons.length - 1; i >= 0; i--) {
-          const button = deleteButtons[i];
-          const clickableAnchor = button.closest("a");
-          if (clickableAnchor) {
-            clickableAnchor.click();
-            await Utils.sleep(20);
+        const progress = this.createProgressTip(container);
+        try {
+          for (let i = 0; i < tagsToAdd.length; i++) {
+            progress.updateProgress(i + 1, tagsToAdd.length);
+            input.focus();
+            Simulate.input(input, tagsToAdd[i]);
+            await Utils.sleep(10);
+            Simulate.pressEnter(input);
+            await Utils.sleep(10);
           }
-        }
-        for (const tag of tags) {
-          input.focus();
-          Simulate.input(input, tag);
-          await Utils.sleep(10);
-          Simulate.pressEnter(input);
-          await Utils.sleep(10);
-        }
-        const pasteBtn = document.querySelector("#item_tag .btn:nth-child(2)");
-        if (pasteBtn instanceof HTMLElement) {
-          Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+          progress.complete(`处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`);
+          const pasteBtn = document.querySelector("#item_tag .btn:nth-child(2)");
+          if (pasteBtn instanceof HTMLElement) {
+            Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+          }
+        } catch (error) {
+          progress.remove();
+          throw error;
         }
       } catch (error) {
         handleError(error, () => {
@@ -387,25 +407,39 @@
     async clearTags() {
       try {
         if (!confirm("确定要清空所有标签吗？")) return;
+        const container = document.querySelector("#item_tag");
+        if (!container) throw new Error("找不到标签容器");
         const deleteButtons = Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'));
-        for (let i = deleteButtons.length - 1; i >= 0; i--) {
-          const button = deleteButtons[i];
-          const clickableAnchor = button.closest("a");
-          if (clickableAnchor) {
-            clickableAnchor.click();
-            await Utils.sleep(10);
-          }
+        if (deleteButtons.length === 0) {
+          alert("没有找到需要清空的标签");
+          return;
         }
-        const clearBtn = document.querySelector("#item_tag .btn:nth-child(3)");
-        if (clearBtn instanceof HTMLElement) {
-          Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+        const progress = this.createProgressTip(container);
+        try {
+          for (let i = deleteButtons.length - 1; i >= 0; i--) {
+            progress.updateProgress(deleteButtons.length - i, deleteButtons.length);
+            const button = deleteButtons[i];
+            const clickableAnchor = button.closest("a");
+            if (clickableAnchor) {
+              clickableAnchor.click();
+              await Utils.sleep(1);
+            }
+          }
+          progress.complete(`处理完成！已清空 ${deleteButtons.length} 个标签。`);
+          const clearBtn = document.querySelector("#item_tag .btn:nth-child(3)");
+          if (clearBtn instanceof HTMLElement) {
+            Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+          }
+        } catch (error) {
+          progress.remove();
+          throw error;
         }
       } catch (error) {
         handleError(error);
       }
     }
     cleanup() {
-      ["variation", "page", "tag-buttons"].forEach((observerName) => {
+      ["variation-numbers-wait", "body-observer", "tag-buttons"].forEach((observerName) => {
         const observer = this.context.observers.get(observerName);
         if (observer instanceof MutationObserver) {
           observer.disconnect();
@@ -420,7 +454,7 @@
       });
     }
   }
-  class ItemManageCommand extends PageCommand {
+  class ItemManageFeature extends Feature {
     constructor(context) {
       super(context);
       __publicField(this, "itemObserver");
@@ -441,8 +475,8 @@
     shouldExecute() {
       return this.path === "/items" || this.path === "/items/";
     }
-    execute() {
-      super.execute();
+    async execute() {
+      await super.execute();
       this.setupItemsObserver();
     }
     // 处理单个商品卡片
@@ -450,6 +484,7 @@
       try {
         this.addButtonToItem(item);
         this.addVariationNumbersToItem(item);
+        this.addTotalStats(item);
         item.setAttribute("data-processed", "true");
       } catch (error) {
         handleError(error);
@@ -461,9 +496,9 @@
       if (!variationList) return;
       const variations = variationList.querySelectorAll(".row");
       variations.forEach((variation, index) => {
-        let numberSpan = variation.querySelector(".variation-number");
         const labelArea = variation.querySelector(".dashboard-items-variation-label");
         if (!labelArea) return;
+        let numberSpan = variation.querySelector(".variation-number");
         if (!numberSpan) {
           numberSpan = document.createElement("span");
           numberSpan.className = "variation-number";
@@ -596,6 +631,119 @@ ${errorText}`);
         handleError(error);
       }
     }
+    // 新增方法：添加总销量和总收益统计
+    addTotalStats(item) {
+      const variations = item.querySelectorAll(".dashboard-items-variation .row");
+      if (!variations.length) return;
+      variations.forEach((variation) => {
+        const labelArea = variation.querySelector(".dashboard-items-variation-label");
+        if (!labelArea || labelArea.querySelector(".variation-checkbox")) return;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "variation-checkbox";
+        checkbox.checked = true;
+        checkbox.style.cssText = `
+                margin: 0 4px;
+                cursor: pointer;
+                display: none;
+            `;
+        checkbox.onchange = () => this.updateStats(item);
+        labelArea.insertBefore(checkbox, labelArea.firstChild);
+      });
+      const itemLabel = item.querySelector(".cell.item-label");
+      if (!itemLabel) return;
+      let statsElement = item.querySelector(".total-stats");
+      if (!statsElement) {
+        statsElement = document.createElement("div");
+        statsElement.className = "total-stats";
+        statsElement.style.cssText = `
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                padding: 2px 6px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 12px;
+                color: #666;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+        const toggleContainer = document.createElement("div");
+        toggleContainer.className = "stats-toggle-container";
+        toggleContainer.style.cssText = `
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            `;
+        const toggle = document.createElement("input");
+        toggle.type = "checkbox";
+        toggle.className = "stats-toggle";
+        toggle.style.cssText = `
+                margin: 0;
+                cursor: pointer;
+                vertical-align: middle;
+            `;
+        const label = document.createElement("label");
+        label.textContent = "过滤模式";
+        label.style.cssText = `
+                cursor: pointer;
+                font-size: 12px;
+                color: #666;
+                user-select: none;
+                vertical-align: middle;
+            `;
+        toggleContainer.appendChild(toggle);
+        toggleContainer.appendChild(label);
+        const statsInfo = document.createElement("div");
+        statsInfo.className = "stats-info";
+        statsElement.appendChild(toggleContainer);
+        statsElement.appendChild(statsInfo);
+        if (itemLabel) {
+          itemLabel.style.position = "relative";
+          itemLabel.appendChild(statsElement);
+        }
+        toggle.onchange = () => {
+          const checkboxes = item.querySelectorAll(".variation-checkbox");
+          checkboxes.forEach((checkbox) => {
+            checkbox.style.display = toggle.checked ? "inline-block" : "none";
+            if (!toggle.checked) {
+              checkbox.checked = true;
+            }
+          });
+          this.updateStats(item);
+        };
+      }
+      this.updateStats(item);
+    }
+    // 更新统计信息
+    updateStats(item) {
+      let totalSales = 0;
+      let totalRevenue = 0;
+      item.querySelectorAll(".dashboard-items-variation .row").forEach((variation) => {
+        var _a, _b;
+        const checkbox = variation.querySelector(".variation-checkbox");
+        if (!checkbox || !checkbox.checked) return;
+        const salesCount = (_a = variation.querySelector(".sales_quantity .count")) == null ? void 0 : _a.textContent;
+        if (salesCount) {
+          totalSales += parseInt(salesCount, 10) || 0;
+        }
+        const revenue = (_b = variation.querySelector(".sales_subtotal")) == null ? void 0 : _b.textContent;
+        if (revenue) {
+          const revenueNum = parseInt(revenue.replace(/[^\d]/g, ""), 10) || 0;
+          totalRevenue += revenueNum;
+        }
+      });
+      const statsInfo = item.querySelector(".total-stats .stats-info");
+      if (statsInfo) {
+        statsInfo.innerHTML = `
+                总销量: <strong>${totalSales}</strong> | 
+                总收益: <strong>${totalRevenue.toLocaleString()}</strong> JPY
+            `;
+      }
+    }
     cleanup() {
       const observer = this.context.observers.get("page");
       if (observer instanceof MutationObserver) {
@@ -612,7 +760,71 @@ ${errorText}`);
           delete item.variationObserver;
         }
       });
-      document.querySelectorAll(".tag-copy-btn, .variation-number").forEach((el) => el.remove());
+      document.querySelectorAll(".tag-copy-btn, .variation-number, .variation-checkbox, .total-stats, .stats-toggle-container").forEach((el) => el.remove());
+    }
+  }
+  var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
+  var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
+  var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  class SessionFeature extends Feature {
+    shouldExecute() {
+      return true;
+    }
+    async execute() {
+      await super.execute();
+      _GM_registerMenuCommand("获取Booth Session", () => this.getSession());
+    }
+    extractCookieInfo(headers) {
+      var _a, _b;
+      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+      if (!cookieHeader) return null;
+      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+      const expires = (_b = (_a = cookieHeader.match(/expires=([^;]+)/i)) == null ? void 0 : _a[1]) == null ? void 0 : _b.trim();
+      return {
+        value,
+        expires: expires ? new Date(expires).toISOString() : null
+      };
+    }
+    getSession() {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: "https://manage.booth.pm/orders",
+        headers: {
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
+        },
+        onload: (response) => {
+          const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+          if (cookieInfo) {
+            const cookieData = {
+              _plaza_session_nktz7u: cookieInfo.value,
+              updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+              expires_at: cookieInfo.expires
+            };
+            _GM_setClipboard(JSON.stringify(cookieData, null, 2), "Booth Session");
+            _GM_notification({
+              text: cookieInfo.expires ? `Session已复制
+过期时间: ${new Date(cookieInfo.expires).toLocaleString()}` : "Session已复制到剪贴板",
+              title: "获取成功",
+              timeout: 3e3
+            });
+          } else {
+            _GM_notification({
+              text: "未找到有效的 Session",
+              title: "获取失败",
+              timeout: 3e3
+            });
+          }
+        },
+        onerror: () => {
+          _GM_notification({
+            text: "请求出错，请检查网络连接",
+            title: "错误",
+            timeout: 3e3
+          });
+        }
+      });
     }
   }
   class BoothEnhancer {
@@ -621,34 +833,35 @@ ${errorText}`);
         observers: /* @__PURE__ */ new Map(),
         cachedElements: /* @__PURE__ */ new Map()
       });
-      __publicField(this, "commands", [
-        new SessionCommand(this.context),
-        new ItemEditCommand(this.context),
-        new ItemManageCommand(this.context)
+      __publicField(this, "features", [
+        // new OrderAnalysisFeature(this.context),
+        new ItemEditFeature(this.context),
+        new ItemManageFeature(this.context),
+        new SessionFeature(this.context)
       ]);
     }
     async init() {
       try {
         await Utils.waitForDOMReady();
-        for (const command of this.commands) {
+        for (const feature of this.features) {
           try {
-            if (command.shouldExecute()) {
-              await command.execute();
+            if (feature.shouldExecute()) {
+              await feature.execute();
             }
           } catch (error) {
             handleError(error);
           }
         }
-        console.log("Booth功能增强已启动");
+        console.log("Booth Enhancer 已启动");
       } catch (error) {
         handleError(error, () => {
-          console.error("Booth功能增强启动失败");
+          console.error("Booth Enhancer 启动失败");
         });
       }
     }
     destroy() {
       try {
-        this.commands.forEach((command) => command.cleanup());
+        this.features.forEach((feature) => feature.cleanup());
         this.context.observers.clear();
         this.context.cachedElements.clear();
       } catch (error) {
