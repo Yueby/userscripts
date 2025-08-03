@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import ItemIcon from '../ItemIcon/index.vue';
+import MaskedText from '../MaskedText/index.vue';
 import { ItemManager } from '../../utils/booth/item-manager';
 import type { Order } from '../../types/order';
 
@@ -12,10 +13,12 @@ interface Props {
   };
   size?: string;
   allOrders?: Order[]; // 所有订单数据，用于计算总销量
+  privacyMode?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: '20px'
+  size: '20px',
+  privacyMode: false
 });
 
 const showTooltip = ref(false);
@@ -70,8 +73,11 @@ const handleMouseLeave = () => {
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
-    <ItemIcon :itemId="item.itemId" :size="size" />
-    <span class="item-name">{{ item.name }} × {{ item.quantity }}</span>
+    <ItemIcon :itemId="item.itemId" :size="size" :privacy-mode="props.privacyMode" />
+    <span class="item-name">
+      <MaskedText :value="item.name" :masked="props.privacyMode" :mask-char="'商品'" /> × 
+      <MaskedText :value="item.quantity" :masked="props.privacyMode" />
+    </span>
     
     <!-- 悬浮气泡提示 -->
     <div 
@@ -82,44 +88,61 @@ const handleMouseLeave = () => {
         top: tooltipPosition.y + 'px'
       }"
     >
-      <div class="tooltip-header">
-        <img 
-          v-if="itemDetails.iconUrl" 
-          :src="itemDetails.iconUrl" 
-          :alt="itemDetails.name"
-          class="tooltip-icon"
-        />
-        <div class="tooltip-title">{{ itemDetails.name }}</div>
-      </div>
+             <div class="tooltip-header">
+         <img 
+           v-if="!props.privacyMode && itemDetails.iconUrl" 
+           :src="itemDetails.iconUrl" 
+           :alt="itemDetails.name"
+           class="tooltip-icon"
+         />
+         <div v-else-if="props.privacyMode" class="tooltip-icon-placeholder">
+           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+             <rect width="32" height="32" rx="4" fill="#f3f4f6"/>
+             <path d="M16 8c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="#9ca3af"/>
+           </svg>
+         </div>
+         <div class="tooltip-title">
+           <MaskedText :value="itemDetails.name" :masked="props.privacyMode" :mask-char="'商品'" />
+         </div>
+       </div>
       
       <div class="tooltip-content">
-        <div class="tooltip-row">
-          <span class="tooltip-label">商品ID:</span>
-          <span class="tooltip-value">{{ item.itemId }}</span>
-        </div>
-        <div class="tooltip-row">
-          <span class="tooltip-label">状态:</span>
-          <span class="tooltip-value">{{ itemDetails.stateLabel }}</span>
-        </div>
-        <div class="tooltip-row">
-          <span class="tooltip-label">订单数量:</span>
-          <span class="tooltip-value">{{ item.quantity }}</span>
-        </div>
-        <div class="tooltip-row">
-          <span class="tooltip-label">总销量:</span>
-          <span class="tooltip-value sales-highlight">{{ itemDetails.totalSales }}</span>
-        </div>
-        <div class="tooltip-row">
-          <span class="tooltip-label">链接:</span>
-          <a 
-            v-if="itemDetails.url" 
-            :href="itemDetails.url" 
-            target="_blank"
-            class="tooltip-link"
-          >
-            查看商品
-          </a>
-        </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">商品ID:</span>
+           <span class="tooltip-value">
+             <MaskedText :value="item.itemId" :masked="props.privacyMode" />
+           </span>
+         </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">状态:</span>
+           <span class="tooltip-value">
+             <MaskedText :value="itemDetails.stateLabel" :masked="props.privacyMode" />
+           </span>
+         </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">订单数量:</span>
+           <span class="tooltip-value">
+             <MaskedText :value="item.quantity" :masked="props.privacyMode" />
+           </span>
+         </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">总销量:</span>
+           <span class="tooltip-value sales-highlight">
+             <MaskedText :value="itemDetails.totalSales" :masked="props.privacyMode" />
+           </span>
+         </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">链接:</span>
+           <a 
+             v-if="!props.privacyMode && itemDetails.url" 
+             :href="itemDetails.url" 
+             target="_blank"
+             class="tooltip-link"
+           >
+             查看商品
+           </a>
+           <span v-else-if="props.privacyMode" class="tooltip-value">****</span>
+         </div>
       </div>
     </div>
   </div>
@@ -175,6 +198,17 @@ const handleMouseLeave = () => {
   border-radius: 4px;
   object-fit: cover;
   flex-shrink: 0;
+}
+
+.tooltip-icon-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
 }
 
 .tooltip-title {

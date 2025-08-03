@@ -16,15 +16,15 @@ export default defineConfig({
         namespace: 'yueby.booth',
         match: ['https://*.booth.pm/*'],
         name: {
-          '': 'Booth Enhancer',
-          'zh-CN': 'Booth 网站功能增强'
+          '': 'Booth ItemPage Enhancer',
+          'zh-CN': 'Booth 商品页面增强'
         },
         description: {
-          '': 'A userscript for enhancing Booth experience',
-          'zh-CN': '增强 Booth 网站的功能体验，包括变体序号、标签管理、自动翻译等功能'
+          '': 'A userscript for enhancing Booth item page experience',
+          'zh-CN': '增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能'
         },
         author: 'Yueby',
-        version: '0.1.3',
+        version: '0.1.4',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

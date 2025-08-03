@@ -3,7 +3,7 @@
         <div class="chart-header">
             <h4>收入走势</h4>
             <div class="chart-info">
-                <span class="data-points">{{ dataPoints.length }} 个数据点</span>
+                <span class="data-points">{{ displayData.length }} 个数据点</span>
             </div>
         </div>
         <div class="chart-wrapper">
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
 import type { ChartDataPoint } from '../../utils/analysis/chart-data-processor';
 import { ChartDataProcessor } from '../../utils/analysis/chart-data-processor';
@@ -22,18 +22,50 @@ import { logger } from '../../utils/core/logger';
 interface Props {
     dataPoints: ChartDataPoint[];
     targetCurrency?: string;
+    privacyMode?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    privacyMode: false
+});
 
 const chartCanvas = ref<HTMLCanvasElement>();
 let chart: Chart | null = null;
 
+// 生成虚假数据
+const generateFakeData = (originalData: ChartDataPoint[]): ChartDataPoint[] => {
+  if (!props.privacyMode) {
+    return originalData;
+  }
+  
+  // 生成虚假的收入走势数据
+  const fakeData: ChartDataPoint[] = [];
+  const baseDate = new Date();
+  
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(baseDate);
+    date.setDate(date.getDate() - (6 - i));
+    
+    fakeData.push({
+      date: date.toISOString().split('T')[0],
+      revenue: Math.floor(Math.random() * 50000) + 10000, // 10000-60000之间的随机收入
+      orders: Math.floor(Math.random() * 20) + 5 // 5-25之间的随机订单数
+    });
+  }
+  
+  return fakeData.sort((a, b) => a.date.localeCompare(b.date));
+};
+
+// 计算显示数据
+const displayData = computed(() => {
+  return generateFakeData(props.dataPoints);
+});
+
 // 创建图表配置
 const createChartConfig = (): ChartConfiguration => {
-    const labels = props.dataPoints.map(point => ChartDataProcessor.formatDateForDisplay(point.date));
-    const revenueData = props.dataPoints.map(point => point.revenue);
-    const orderData = props.dataPoints.map(point => point.orders);
+    const labels = displayData.value.map(point => ChartDataProcessor.formatDateForDisplay(point.date));
+    const revenueData = displayData.value.map(point => point.revenue);
+    const orderData = displayData.value.map(point => point.orders);
 
     return {
         type: 'line' as ChartType,
@@ -188,7 +220,7 @@ const destroyChart = () => {
 };
 
 // 监听数据变化
-watch(() => props.dataPoints, () => {
+watch([() => props.dataPoints, () => props.privacyMode], () => {
     if (chart) {
         updateChart();
     }

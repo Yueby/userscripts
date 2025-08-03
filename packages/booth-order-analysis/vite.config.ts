@@ -19,14 +19,14 @@ export default defineConfig({
         match: ['https://*.booth.pm/*'],
         name: {
           '': 'Booth Order Analysis',
-          'zh-CN': 'Booth 订单分析工具'
+          'zh-CN': 'Booth 订单分析'
         },
         description: {
           '': 'A userscript for analyzing Booth orders and sales data',
           'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
         },
         author: 'Yueby',
-        version: '0.1.0',
+        version: '0.1.1',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

@@ -4,6 +4,7 @@ import { CurrencyConverter } from '../../utils/currency/currency-converter';
 import { calculateNetAmount, formatNetAmount, calculateBoothFee, formatBoothFee } from '../../utils/booth/booth-fee-calculator';
 import { TimezoneConverter } from '../../utils/timezone-converter';
 import ItemEntry from './ItemEntry.vue';
+import MaskedText from '../MaskedText/index.vue';
 import type { Order } from '../../types/order';
 import type { Currency, UserSettings } from '../../types/settings';
 
@@ -227,41 +228,53 @@ const getVisiblePages = () => {
          <div v-for="order in paginatedOrders" :key="order.orderNumber" class="table-row">
            <div v-for="column in columns" :key="column.key" class="table-cell" :class="getCellClass(column.key)" :style="{ width: column.width }">
              <!-- 订单编号 -->
-             <span v-if="column.key === 'orderNumber'" class="order-number">{{ order.orderNumber }}</span>
+                     <span v-if="column.key === 'orderNumber'" class="order-number">
+          <MaskedText :value="order.orderNumber" :masked="userSettings?.privacyMode || false" />
+        </span>
              
              <!-- 订单时间 -->
              <div v-else-if="column.key === 'createdAt'" class="date-cell">
-               <div class="date-main">{{ formatOriginalDateTime(order.createdAt) }}</div>
-               <div v-if="formatConvertedDateTime(order.createdAt)" class="date-converted">{{ formatConvertedDateTime(order.createdAt) }}</div>
+               <div class="date-main">
+                 <MaskedText :value="formatOriginalDateTime(order.createdAt)" :masked="userSettings?.privacyMode || false" />
+               </div>
+               <div v-if="!userSettings?.privacyMode && formatConvertedDateTime(order.createdAt)" class="date-converted">{{ formatConvertedDateTime(order.createdAt) }}</div>
              </div>
              
                            <!-- 商品 -->
               <div v-else-if="column.key === 'items'" class="items">
                 <div v-if="order.items && order.items.length > 0" class="item-list">
-                  <ItemEntry v-for="item in order.items" :key="item.itemId" :item="item" :allOrders="orders" size="20px" />
+                  <ItemEntry v-for="item in order.items" :key="item.itemId" :item="item" :allOrders="orders" size="20px" :privacy-mode="userSettings?.privacyMode || false" />
                 </div>
                 <div v-else class="no-items">无商品信息</div>
               </div>
              
              <!-- 支付方式 -->
-             <span v-else-if="column.key === 'paymentMethod'" class="payment-method">{{ order.paymentMethod }}</span>
+             <span v-else-if="column.key === 'paymentMethod'" class="payment-method">
+               <MaskedText :value="order.paymentMethod" :masked="userSettings?.privacyMode || false" />
+             </span>
              
              <!-- 金额 -->
              <div v-else-if="column.key === 'totalPrice'" class="price-cell">
-               <div class="price-main">{{ formatJPY(order.totalPrice) }}</div>
-               <div v-if="formatConverted(order.totalPrice)" class="price-converted">{{ formatConverted(order.totalPrice) }}</div>
+                               <div class="price-main">
+                  <MaskedText :value="formatJPY(order.totalPrice)" :masked="userSettings?.privacyMode || false" />
+                </div>
+               <div v-if="!userSettings?.privacyMode && formatConverted(order.totalPrice)" class="price-converted">{{ formatConverted(order.totalPrice) }}</div>
              </div>
              
              <!-- 手续费 -->
              <div v-else-if="column.key === 'boothFee'" class="booth-fee-cell">
-               <div class="price-main">{{ formatBoothFeeForOrder(order) }}</div>
-               <div v-if="formatBoothFeeConverted(order)" class="price-converted">{{ formatBoothFeeConverted(order) }}</div>
+                               <div class="price-main">
+                  <MaskedText :value="formatBoothFeeForOrder(order)" :masked="userSettings?.privacyMode || false" />
+                </div>
+               <div v-if="!userSettings?.privacyMode && formatBoothFeeConverted(order)" class="price-converted">{{ formatBoothFeeConverted(order) }}</div>
              </div>
              
              <!-- 到手金额 -->
              <div v-else-if="column.key === 'netAmount'" class="net-amount-cell">
-               <div class="price-main">{{ formatNetAmountForOrder(order) }}</div>
-               <div v-if="formatNetAmountConverted(order)" class="price-converted">{{ formatNetAmountConverted(order) }}</div>
+                               <div class="price-main">
+                  <MaskedText :value="formatNetAmountForOrder(order)" :masked="userSettings?.privacyMode || false" />
+                </div>
+               <div v-if="!userSettings?.privacyMode && formatNetAmountConverted(order)" class="price-converted">{{ formatNetAmountConverted(order) }}</div>
              </div>
            </div>
          </div>
@@ -362,7 +375,7 @@ const getVisiblePages = () => {
 }
 
 .table-content {
-  max-height: 400px;
+  max-height: 600px;
   overflow-y: auto;
 }
 
@@ -392,7 +405,6 @@ const getVisiblePages = () => {
 }
 
 .order-number {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 13px;
   color: #1f2937;
   font-weight: 500;
@@ -562,7 +574,7 @@ const getVisiblePages = () => {
   }
 
   .table-content {
-    max-height: 300px;
+    max-height: 500px;
   }
 
   .table-cell {

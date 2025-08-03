@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Statistics, OrderTable, Settings, ExchangeRateStatus } from './components';
 import { DataLoader } from './utils/core/data-loader';
 import { OrderAnalyzer } from './utils/analysis/order-analyzer';
 import { DataFilter as DataFilterUtil, type TimePeriod, type CustomDateRange } from './utils/analysis/data-filter';
 import { SettingsManager } from './utils/settings/settings-manager';
-import { TimezoneConverter } from './utils/timezone-converter';
 import { logger } from './utils/core/logger';
 import type { UserSettings as SettingsType } from './types/settings';
 
@@ -17,7 +16,8 @@ const showSettings = ref(false);
 const userSettings = ref<SettingsType>({
   timezone: 'Asia/Shanghai',
   displayName: '中国标准时间',
-  targetCurrency: 'CNY'
+  targetCurrency: 'CNY',
+  privacyMode: false
 });
 
 // 过滤器状态
@@ -118,7 +118,7 @@ onMounted(() => {
     <!-- 顶栏 -->
     <div class="header">
       <div class="header-left">
-        <h1 class="title">Booth 订单分析工具</h1>
+        <h1 class="title">Booth 订单分析</h1>
       </div>
       <div class="header-right">
         <ExchangeRateStatus :target-currency="userSettings.targetCurrency" />
@@ -151,7 +151,7 @@ onMounted(() => {
     <!-- 内容区域 -->
     <div class="content">
       <Statistics :statistics="statistics" :orders="filteredOrders" :model-value="selectedPeriod" :custom-range="customRange"
-        :target-currency="userSettings.targetCurrency" @update:model-value="handlePeriodChange"
+        :target-currency="userSettings.targetCurrency" :user-settings="userSettings" @update:model-value="handlePeriodChange"
         @update:custom-range="handleCustomRangeChange" />
 
       <OrderTable :orders="filteredOrders" :target-currency="userSettings.targetCurrency" :user-settings="userSettings" />
@@ -235,6 +235,7 @@ onMounted(() => {
   justify-content: center;
   width: 36px;
   height: 36px;
+  overflow: hidden;
 }
 
 .refresh-btn:hover:not(:disabled) {
@@ -249,10 +250,12 @@ onMounted(() => {
 .refresh-icon {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 .refresh-icon.loading {
   animation: spin 1s linear infinite;
+  transform-origin: center;
 }
 
 .close-btn {
@@ -313,12 +316,14 @@ onMounted(() => {
     width: 32px;
     height: 32px;
     padding: 6px;
+    overflow: hidden;
   }
 
   .settings-icon,
   .refresh-icon {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
   }
 
   .close-btn {
@@ -346,12 +351,14 @@ onMounted(() => {
     width: 28px;
     height: 28px;
     padding: 4px;
+    overflow: hidden;
   }
 
   .settings-icon,
   .refresh-icon {
     width: 14px;
     height: 14px;
+    flex-shrink: 0;
   }
 
   .close-btn {

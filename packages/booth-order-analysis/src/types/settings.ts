@@ -6,13 +6,15 @@ export interface UserSettings {
   timezone: string;        // 用户时区，如 'Asia/Shanghai'
   displayName: string;     // 时区显示名称，如 '中国标准时间'
   targetCurrency: Currency; // 目标货币，默认CNY
+  privacyMode: boolean;    // 隐私模式，默认false
 }
 
 // 默认设置
 export const DEFAULT_SETTINGS: UserSettings = {
   timezone: 'Asia/Shanghai',
   displayName: '中国标准时间',
-  targetCurrency: 'CNY'
+  targetCurrency: 'CNY',
+  privacyMode: false
 };
 
 // 常用时区选项

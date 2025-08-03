@@ -1,23 +1,23 @@
 <template>
   <div class="item-icon-container">
     <img 
-      v-if="iconUrl" 
+      v-if="!props.privacyMode && iconUrl" 
       :src="iconUrl" 
       :alt="alt" 
       @error="onImageError"
       class="item-icon"
     />
-    <div v-else class="default-icon">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zM8 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="currentColor"/>
-        <path d="M8 4c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1s1-.45 1-1V5c0-.55-.45-1-1-1zM8 11c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z" fill="currentColor"/>
+    <div v-else class="privacy-icon">
+      <svg :width="iconSize" :height="iconSize" viewBox="0 0 16 16" fill="none">
+        <rect width="16" height="16" rx="2" fill="#f3f4f6"/>
+        <path d="M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#9ca3af"/>
       </svg>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { ItemManager } from '../../utils/booth/item-manager';
 
 interface Props {
@@ -25,14 +25,22 @@ interface Props {
   items?: any[];
   size?: string;
   alt?: string;
+  privacyMode?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: '32px',
-  alt: '商品图标'
+  alt: '商品图标',
+  privacyMode: false
 });
 
 const iconUrl = ref<string>('');
+
+// 计算图标尺寸
+const iconSize = computed(() => {
+  const size = parseInt(props.size);
+  return Math.min(size, 16);
+});
 
 // 获取图标URL
 const loadIcon = () => {
@@ -92,13 +100,13 @@ onMounted(() => {
   object-fit: cover;
 }
 
-.default-icon {
+.privacy-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  background: #f9fafb;
-  color: #6b7280;
+  background: #f3f4f6;
+  color: #9ca3af;
 }
 </style> 

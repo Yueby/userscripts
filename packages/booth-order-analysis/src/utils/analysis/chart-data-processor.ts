@@ -1,5 +1,6 @@
 import type { Order } from '../../types/order';
 import { logger } from '../core/logger';
+import { ItemManager } from '../booth/item-manager';
 
 export interface ChartDataPoint {
   date: string;
@@ -95,6 +96,8 @@ export class ChartDataProcessor {
       return [];
     }
 
+    const itemManager = ItemManager.getInstance();
+
     // 统计每个商品的销量数据
     const productStats = new Map<string, {
       name: string;
@@ -106,7 +109,7 @@ export class ChartDataProcessor {
     orders.forEach(order => {
       order.items.forEach(item => {
         const existing = productStats.get(item.itemId) || {
-          name: item.name,
+          name: item.name, // 默认使用订单中的名称
           totalQuantity: 0,
           totalRevenue: 0,
           orderCount: 0
@@ -117,22 +120,26 @@ export class ChartDataProcessor {
         const itemRatio = item.quantity / order.items.reduce((sum, i) => sum + i.quantity, 0);
         existing.totalRevenue += order.totalPrice * itemRatio;
         existing.orderCount += 1;
-        existing.name = item.name; // 使用最新的商品名称
 
         productStats.set(item.itemId, existing);
       });
     });
 
-    // 转换为数组并计算平均价格
+    // 转换为数组并计算平均价格，使用 ItemManager 中的商品名称
     const result: ProductSalesData[] = Array.from(productStats.entries())
-      .map(([itemId, stats]) => ({
-        itemId,
-        name: stats.name,
-        totalQuantity: stats.totalQuantity,
-        totalRevenue: Math.round(stats.totalRevenue),
-        orderCount: stats.orderCount,
-        averagePrice: stats.totalQuantity > 0 ? Math.round(stats.totalRevenue / stats.totalQuantity) : 0
-      }))
+      .map(([itemId, stats]) => {
+        // 优先使用 ItemManager 中的商品名称，如果没有则使用订单中的名称
+        const itemName = itemManager.getItemName(itemId) || stats.name;
+        
+        return {
+          itemId,
+          name: itemName,
+          totalQuantity: stats.totalQuantity,
+          totalRevenue: Math.round(stats.totalRevenue),
+          orderCount: stats.orderCount,
+          averagePrice: stats.totalQuantity > 0 ? Math.round(stats.totalRevenue / stats.totalQuantity) : 0
+        };
+      })
       .sort((a, b) => b.totalQuantity - a.totalQuantity); // 按销量降序排列
 
     return result;

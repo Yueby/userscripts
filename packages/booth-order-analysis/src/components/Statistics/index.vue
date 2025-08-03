@@ -5,9 +5,10 @@ import { CurrencyConverter } from '../../utils/currency/currency-converter';
 import { ChartDataProcessor } from '../../utils/analysis/chart-data-processor';
 import type { OrderStats } from '../../types/order';
 import type { Order } from '../../types/order';
-import type { Currency } from '../../types/settings';
+import type { Currency, UserSettings } from '../../types/settings';
 import { logger } from '../../utils/core/logger';
 import { RevenueTrendChart, PaymentMethodChart } from '../Charts';
+import MaskedText from '../MaskedText/index.vue';
 import ItemRanking from './ItemRanking.vue';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
   modelValue?: TimePeriod;
   customRange?: CustomDateRange;
   targetCurrency?: Currency;
+  userSettings?: UserSettings;
 }
 
 interface Emits {
@@ -137,22 +139,28 @@ const productRankingData = computed(() => {
       <div class="stats-grid">
         <div class="stat-card orders-card">
           <div class="stat-content">
-            <div class="stat-value">{{ statistics.totalOrders }}</div>
+                      <div class="stat-value">
+            <MaskedText :value="statistics.totalOrders" :masked="userSettings?.privacyMode || false" />
+          </div>
           </div>
           <div class="stat-label">总订单数</div>
         </div>
         <div class="stat-card revenue-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatJPY(statistics.totalRevenue) }}</div>
-            <div v-if="formatConverted(statistics.totalRevenue)" class="stat-converted">{{
+                      <div class="stat-value">
+            <MaskedText :value="formatJPY(statistics.totalRevenue)" :masked="userSettings?.privacyMode || false" />
+          </div>
+            <div v-if="!userSettings?.privacyMode && formatConverted(statistics.totalRevenue)" class="stat-converted">{{
               formatConverted(statistics.totalRevenue) }}</div>
           </div>
           <div class="stat-label">总收入</div>
         </div>
         <div class="stat-card net-revenue-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatJPY(statistics.totalNetRevenue) }}</div>
-            <div v-if="formatConverted(statistics.totalNetRevenue)" class="stat-converted">{{
+                      <div class="stat-value">
+            <MaskedText :value="formatJPY(statistics.totalNetRevenue)" :masked="userSettings?.privacyMode || false" />
+          </div>
+            <div v-if="!userSettings?.privacyMode && formatConverted(statistics.totalNetRevenue)" class="stat-converted">{{
               formatConverted(statistics.totalNetRevenue) }}</div>
           </div>
           <div class="stat-label">到手收入</div>
@@ -207,9 +215,9 @@ const productRankingData = computed(() => {
     <div v-if="revenueTrendData.length > 0 || paymentMethodData.length > 0 || productRankingData.length > 0" class="charts-section">
       <div class="charts-grid">
         <RevenueTrendChart v-if="revenueTrendData.length > 0" :data-points="revenueTrendData"
-          :target-currency="targetCurrency" />
-        <PaymentMethodChart v-if="paymentMethodData.length > 0" :payment-data="paymentMethodData" />
-                  <ItemRanking v-if="productRankingData.length > 0" :product-data="productRankingData" :target-currency="targetCurrency" :max-items="10" />
+          :target-currency="targetCurrency" :privacy-mode="userSettings?.privacyMode || false" />
+        <PaymentMethodChart v-if="paymentMethodData.length > 0" :payment-data="paymentMethodData" :privacy-mode="userSettings?.privacyMode || false" />
+                  <ItemRanking v-if="productRankingData.length > 0" :product-data="productRankingData" :target-currency="targetCurrency" :max-items="10" :user-settings="userSettings" />
       </div>
     </div>
   </div>
@@ -287,7 +295,7 @@ const productRankingData = computed(() => {
 }
 
 .net-revenue-card::before {
-  background: linear-gradient(90deg, #059669, #047857);
+  background: linear-gradient(90deg, #f59e0b, #d97706);
 }
 
 .pending-card::before {

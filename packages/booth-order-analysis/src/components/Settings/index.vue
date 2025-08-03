@@ -21,7 +21,8 @@ const emit = defineEmits<Emits>();
 const settings = ref<UserSettings>({
   timezone: 'Asia/Shanghai',
   displayName: '中国标准时间',
-  targetCurrency: 'CNY'
+  targetCurrency: 'CNY',
+  privacyMode: false
 });
 
 const isSaving = ref(false);
@@ -145,6 +146,25 @@ onMounted(() => {
           <div class="exchange-rate-info">
             <span>当前汇率：1 JPY = {{ getExchangeRateDisplay }}</span>
             <span class="update-time">{{ getExchangeRateUpdateTime }}</span>
+          </div>
+        </div>
+
+        <div class="setting-section">
+          <h3>隐私设置</h3>
+          <p class="setting-description">
+            开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。
+          </p>
+
+          <div class="setting-item">
+            <label class="privacy-toggle">
+              <input 
+                type="checkbox" 
+                v-model="settings.privacyMode" 
+                class="privacy-checkbox"
+              />
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">隐私模式</span>
+            </label>
           </div>
         </div>
 
@@ -310,5 +330,57 @@ onMounted(() => {
 
 .reset-btn:hover {
   background: #e5e7eb;
+}
+
+/* 隐私模式开关样式 */
+.privacy-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.privacy-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 12px;
+  transition: background 0.3s;
+}
+
+.toggle-slider:before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.privacy-checkbox:checked + .toggle-slider {
+  background: #10b981;
+}
+
+.privacy-checkbox:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
 }
 </style>

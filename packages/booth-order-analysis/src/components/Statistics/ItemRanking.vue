@@ -2,13 +2,16 @@
 import { computed, ref } from 'vue';
 import { CurrencyConverter } from '../../utils/currency/currency-converter';
 import { ItemManager } from '../../utils/booth/item-manager';
+import MaskedText from '../MaskedText/index.vue';
+import ItemIcon from '../ItemIcon/index.vue';
 import type { ProductSalesData } from '../../utils/analysis/chart-data-processor';
-import type { Currency } from '../../types/settings';
+import type { Currency, UserSettings } from '../../types/settings';
 
 interface Props {
   productData: ProductSalesData[];
   targetCurrency?: Currency;
   maxItems?: number;
+  userSettings?: UserSettings;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -49,11 +52,6 @@ const formatConverted = (amount: number) => {
   return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
 };
 
-// 获取商品图标
-const getItemIcon = (itemId: string) => {
-  return itemManager.getItemIcon(itemId);
-};
-
 // 获取商品链接
 const getItemUrl = (itemId: string) => {
   return itemManager.getItemUrl(itemId);
@@ -89,17 +87,20 @@ const getItemUrl = (itemId: string) => {
           {{ index + 1 }}
         </div>
 
-        <!-- 商品信息 -->
-        <div class="product-info">
-          <div class="product-icon">
-            <img :src="getItemIcon(product.itemId)" :alt="product.name" @error="(e) => (e.target as HTMLImageElement).src = '/default-icon.svg'" />
-          </div>
+                 <!-- 商品信息 -->
+         <div class="product-info">
+           <div class="product-icon">
+             <ItemIcon :item-id="product.itemId" size="28px" :privacy-mode="userSettings?.privacyMode || false" />
+           </div>
           <div class="product-details">
-            <div class="product-name">
-              <a :href="getItemUrl(product.itemId)" target="_blank" class="product-link">
-                {{ product.name }}
-              </a>
-            </div>
+                         <div class="product-name">
+               <a v-if="!userSettings?.privacyMode" :href="getItemUrl(product.itemId)" target="_blank" class="product-link">
+                 <MaskedText :value="product.name" :masked="userSettings?.privacyMode || false" :mask-char="'商品'" />
+               </a>
+               <span v-else class="product-link">
+                 <MaskedText :value="product.name" :masked="userSettings?.privacyMode || false" :mask-char="'商品'" />
+               </span>
+             </div>
           </div>
         </div>
 
@@ -108,12 +109,12 @@ const getItemUrl = (itemId: string) => {
           <div class="quantity">
             <span class="quantity-label">{{ sortType === 'quantity' ? '销量' : '收入' }}</span>
             <span class="quantity-value">
-              <template v-if="sortType === 'quantity'">
-                {{ product.totalQuantity }}
-              </template>
-              <template v-else>
-                {{ formatJPY(product.totalRevenue) }}
-              </template>
+                              <template v-if="sortType === 'quantity'">
+                  <MaskedText :value="product.totalQuantity" :masked="userSettings?.privacyMode || false" />
+                </template>
+                <template v-else>
+                  <MaskedText :value="formatJPY(product.totalRevenue)" :masked="userSettings?.privacyMode || false" />
+                </template>
             </span>
           </div>
         </div>
@@ -294,10 +295,10 @@ const getItemUrl = (itemId: string) => {
   justify-content: center;
 }
 
-.product-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.product-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .product-details {

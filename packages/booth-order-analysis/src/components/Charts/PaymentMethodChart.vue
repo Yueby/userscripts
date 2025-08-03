@@ -11,7 +11,7 @@
         <canvas ref="chartCanvas"></canvas>
       </div>
       <div class="legend-container">
-        <div v-for="item in paymentData" :key="item.method" class="legend-item">
+        <div v-for="item in displayData" :key="item.method" class="legend-item">
           <div class="legend-color" :style="{ backgroundColor: getItemColor(item.method) }"></div>
           <div class="legend-text">
             <span class="legend-label">{{ item.method }}</span>
@@ -32,30 +32,64 @@ import { logger } from '../../utils/core/logger';
 
 interface Props {
   paymentData: PaymentMethodData[];
+  privacyMode?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  privacyMode: false
+});
 
 const chartCanvas = ref<HTMLCanvasElement>();
 let chart: Chart | null = null;
 
+// 生成虚假数据
+const generateFakeData = (originalData: PaymentMethodData[]): PaymentMethodData[] => {
+  if (!props.privacyMode) {
+    return originalData;
+  }
+  
+  // 生成虚假的支付方式数据
+  const fakeMethods = ['信用卡', '银行转账', '电子钱包', '现金'];
+  const fakeData: PaymentMethodData[] = fakeMethods.map((method, index) => {
+    const count = Math.floor(Math.random() * 50) + 10; // 10-60之间的随机数
+    return {
+      method,
+      count,
+      percentage: 0 // 稍后计算
+    };
+  });
+  
+  // 计算百分比
+  const totalCount = fakeData.reduce((sum, item) => sum + item.count, 0);
+  fakeData.forEach(item => {
+    item.percentage = Math.round((item.count / totalCount) * 100);
+  });
+  
+  return fakeData.sort((a, b) => b.count - a.count);
+};
+
+// 计算显示数据
+const displayData = computed(() => {
+  return generateFakeData(props.paymentData);
+});
+
 // 计算总订单数
 const totalOrders = computed(() => {
-  return props.paymentData.reduce((sum, item) => sum + item.count, 0);
+  return displayData.value.reduce((sum, item) => sum + item.count, 0);
 });
 
 // 获取项目颜色
 const getItemColor = (method: string): string => {
-  const colors = ChartDataProcessor.getChartColors(props.paymentData.length);
-  const index = props.paymentData.findIndex(item => item.method === method);
+  const colors = ChartDataProcessor.getChartColors(displayData.value.length);
+  const index = displayData.value.findIndex(item => item.method === method);
   return colors[index] || '#6b7280';
 };
 
 // 创建图表配置
 const createChartConfig = (): ChartConfiguration => {
-  const labels = props.paymentData.map(item => item.method);
-  const data = props.paymentData.map(item => item.count);
-  const colors = props.paymentData.map(item => getItemColor(item.method));
+  const labels = displayData.value.map(item => item.method);
+  const data = displayData.value.map(item => item.count);
+  const colors = displayData.value.map(item => getItemColor(item.method));
 
   return {
     type: 'doughnut' as ChartType,
@@ -128,7 +162,7 @@ const destroyChart = () => {
 };
 
 // 监听数据变化
-watch(() => props.paymentData, () => {
+watch([() => props.paymentData, () => props.privacyMode], () => {
   if (chart) {
     updateChart();
   }
@@ -204,15 +238,16 @@ canvas {
 
 .legend-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 4px;
   width: 35%;
   flex-shrink: 0;
-  align-items: flex-start;
-  justify-content: flex-end;
+  align-items: flex-end;
+  justify-content: flex-start;
   padding: 8px;
   box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 .legend-item {
