@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.1
+// @version            0.1.3
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -19,7 +19,7 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const t=document.createElement("style");t.textContent=a,document.head.append(t)})(' .chart-container[data-v-39bc02a8]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-39bc02a8]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-39bc02a8]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-39bc02a8]{display:flex;align-items:center;gap:8px}.data-points[data-v-39bc02a8]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-39bc02a8]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-39bc02a8]{width:100%!important;height:100%!important}.chart-container[data-v-8ddeffda]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-8ddeffda]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-8ddeffda]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-8ddeffda]{display:flex;align-items:center;gap:8px}.total-orders[data-v-8ddeffda]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-8ddeffda]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-8ddeffda]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-8ddeffda]{width:100%!important;height:100%!important}.legend-container[data-v-8ddeffda]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-8ddeffda]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-8ddeffda]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-8ddeffda]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-8ddeffda]{display:flex;flex-direction:row;gap:4px;align-items:center}.legend-label[data-v-8ddeffda]{font-size:10px;font-weight:500;color:#374151}.legend-value[data-v-8ddeffda]{font-size:9px;color:#6b7280}.item-icon-container[data-v-be6756d7]{display:inline-flex;align-items:center;justify-content:center;width:var(--339429ef);height:var(--339429ef);border-radius:4px;overflow:hidden;background:#f3f4f6}.item-icon[data-v-be6756d7]{width:100%;height:100%;object-fit:cover}.privacy-icon[data-v-be6756d7]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.item-ranking[data-v-9643fe87]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-9643fe87]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-9643fe87]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-9643fe87]{display:flex;align-items:center}.sort-buttons[data-v-9643fe87]{display:flex;gap:4px}.sort-btn[data-v-9643fe87]{padding:3px 6px;border:1px solid #d1d5db;border-radius:3px;font-size:10px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s}.sort-btn[data-v-9643fe87]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.sort-btn.active[data-v-9643fe87]{background:#3b82f6;border-color:#3b82f6;color:#fff}.sort-btn.active[data-v-9643fe87]:hover{background:#2563eb;border-color:#2563eb}.ranking-list[data-v-9643fe87]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-9643fe87]::-webkit-scrollbar{width:4px}.ranking-list[data-v-9643fe87]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-9643fe87]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-9643fe87]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-9643fe87]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-9643fe87]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-9643fe87]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-9643fe87]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-9643fe87]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-9643fe87]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-9643fe87],.rank-5[data-v-9643fe87],.rank-6[data-v-9643fe87],.rank-7[data-v-9643fe87],.rank-8[data-v-9643fe87],.rank-9[data-v-9643fe87],.rank-10[data-v-9643fe87]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-9643fe87]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-9643fe87]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-9643fe87]{display:flex;align-items:center;justify-content:center}.product-details[data-v-9643fe87]{flex:1;min-width:0}.product-name[data-v-9643fe87]{margin-bottom:0}.product-link[data-v-9643fe87]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-9643fe87]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-9643fe87]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-9643fe87]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-9643fe87]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-9643fe87]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-9643fe87]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-9643fe87]{font-size:24px;margin-bottom:8px}.empty-text[data-v-9643fe87]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-9643fe87]{padding:12px}.ranking-header h4[data-v-9643fe87]{font-size:13px}.ranking-item[data-v-9643fe87]{padding:5px;gap:6px}.product-icon[data-v-9643fe87]{width:24px;height:24px}.product-link[data-v-9643fe87]{font-size:10px}.quantity-value[data-v-9643fe87]{font-size:11px}.quantity-label[data-v-9643fe87]{font-size:8px}.rank-badge[data-v-9643fe87]{width:20px;height:20px;font-size:10px}}.statistics-panel[data-v-ad1c2295]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-ad1c2295]{margin-bottom:24px}.stats-section h3[data-v-ad1c2295]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-ad1c2295]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-ad1c2295]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-ad1c2295]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-ad1c2295]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-ad1c2295]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-ad1c2295]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-ad1c2295]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-ad1c2295]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-ad1c2295]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-ad1c2295]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-ad1c2295]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-ad1c2295]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.filter-section[data-v-ad1c2295]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-ad1c2295]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-ad1c2295]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-ad1c2295]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-ad1c2295]{display:flex;flex-direction:column;gap:12px}.period-buttons[data-v-ad1c2295]{display:flex;flex-wrap:wrap;gap:6px}.period-btn[data-v-ad1c2295]{padding:6px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:12px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s;white-space:nowrap}.period-btn[data-v-ad1c2295]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.period-btn.active[data-v-ad1c2295]{background:#3b82f6;border-color:#3b82f6;color:#fff}.period-btn.active[data-v-ad1c2295]:hover{background:#2563eb;border-color:#2563eb}.date-picker-overlay[data-v-ad1c2295]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000}.date-picker-modal[data-v-ad1c2295]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;width:400px;max-width:90vw}.date-picker-header[data-v-ad1c2295]{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb}.date-picker-header h5[data-v-ad1c2295]{margin:0;color:#374151;font-size:16px;font-weight:600}.close-btn[data-v-ad1c2295]{background:none;border:none;font-size:20px;color:#6b7280;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:background .2s}.close-btn[data-v-ad1c2295]:hover{background:#f3f4f6}.date-picker-content[data-v-ad1c2295]{padding:20px}.date-input-group[data-v-ad1c2295]{margin-bottom:16px}.date-input-group label[data-v-ad1c2295]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-ad1c2295]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-ad1c2295]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.date-picker-actions[data-v-ad1c2295]{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}.cancel-btn[data-v-ad1c2295]{padding:8px 16px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.cancel-btn[data-v-ad1c2295]:hover{background:#e5e7eb}.apply-btn[data-v-ad1c2295]{padding:8px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.apply-btn[data-v-ad1c2295]:hover:not(:disabled){background:#059669}.apply-btn[data-v-ad1c2295]:disabled{background:#9ca3af;cursor:not-allowed}.charts-section[data-v-ad1c2295]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-ad1c2295]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-ad1c2295]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-ad1c2295]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-ad1c2295]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-ad1c2295]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-ad1c2295]{padding:16px 12px}.stat-value[data-v-ad1c2295]{font-size:24px}.stat-converted[data-v-ad1c2295]{font-size:11px;padding:3px 8px}.period-buttons[data-v-ad1c2295]{gap:6px}.period-btn[data-v-ad1c2295]{padding:6px 12px;font-size:12px}.date-picker-modal[data-v-ad1c2295]{width:90vw;margin:20px}.charts-grid[data-v-ad1c2295]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-ad1c2295]{padding:12px}.item-ranking .ranking-header h4[data-v-ad1c2295]{font-size:13px}.item-ranking .ranking-item[data-v-ad1c2295]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-ad1c2295]{width:100%}.item-ranking .sales-data[data-v-ad1c2295]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.item-entry[data-v-87b28883]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-87b28883]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-87b28883]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-87b28883 .2s ease-out}.tooltip-header[data-v-87b28883]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-87b28883]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-87b28883]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-87b28883]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-87b28883]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-87b28883]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-87b28883]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-87b28883]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-87b28883]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-87b28883]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-87b28883]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-87b28883{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-87b28883]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-87b28883]{width:28px;height:28px}}.order-table-panel[data-v-d9a2354f]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-header[data-v-d9a2354f]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.table-header h3[data-v-d9a2354f]{margin:0;color:#374151;font-size:16px;font-weight:600}.table-info[data-v-d9a2354f]{display:flex;align-items:center;gap:12px}.order-count[data-v-d9a2354f]{font-size:14px;color:#6b7280;background:#f3f4f6;padding:4px 8px;border-radius:4px}.page-info[data-v-d9a2354f]{font-size:12px;color:#9ca3af}.table-container[data-v-d9a2354f]{border:1px solid #e5e7eb;border-radius:6px;overflow:hidden}.table-header-row[data-v-d9a2354f]{display:flex;background:#f8fafc;border-bottom:1px solid #e5e7eb}.table-header-cell[data-v-d9a2354f]{padding:12px;font-weight:600;color:#374151;font-size:14px;border-right:1px solid #e5e7eb}.table-header-cell[data-v-d9a2354f]:last-child{border-right:none}.table-content[data-v-d9a2354f]{max-height:600px;overflow-y:auto}.table-row[data-v-d9a2354f]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px}.table-row[data-v-d9a2354f]:hover{background:#f9fafb}.table-cell[data-v-d9a2354f]{padding:8px 12px;font-size:14px;color:#6b7280;border-right:1px solid #f3f4f6;display:flex;align-items:center;min-height:36px}.table-cell[data-v-d9a2354f]:last-child{border-right:none}.order-number[data-v-d9a2354f]{font-size:13px;color:#1f2937;font-weight:500}.date-cell[data-v-d9a2354f]{align-items:center;flex-direction:column;padding-top:8px;padding-bottom:8px}.date-main[data-v-d9a2354f]{color:#1f2937;font-weight:600;font-size:13px;margin-bottom:2px}.date-converted[data-v-d9a2354f]{color:#6b7280;font-size:11px;font-weight:500}.items[data-v-d9a2354f]{color:#374151;font-size:13px;line-height:1.5;word-break:break-word}.items-cell[data-v-d9a2354f]{align-items:center;justify-content:flex-start;padding-top:8px;padding-bottom:8px}.item-list[data-v-d9a2354f]{display:flex;flex-direction:column;gap:4px;width:100%}.no-items[data-v-d9a2354f]{color:#9ca3af;font-size:12px;font-style:italic}.payment-method[data-v-d9a2354f]{color:#6b7280;font-size:12px;background:#f3f4f6;padding:2px 6px;border-radius:3px}.price-cell[data-v-d9a2354f],.booth-fee-cell[data-v-d9a2354f],.net-amount-cell[data-v-d9a2354f]{align-items:center;flex-direction:column;padding-top:8px;padding-bottom:8px}.price-main[data-v-d9a2354f]{color:#1f2937;font-weight:600;font-size:14px;margin-bottom:2px}.price-converted[data-v-d9a2354f]{color:#6b7280;font-size:12px;font-weight:500}.empty-state[data-v-d9a2354f]{padding:60px 20px;text-align:center;color:#9ca3af}.empty-icon[data-v-d9a2354f]{font-size:48px;margin-bottom:16px}.empty-text[data-v-d9a2354f]{font-size:16px;font-weight:500;margin-bottom:8px;color:#6b7280}.empty-hint[data-v-d9a2354f]{font-size:14px;color:#9ca3af}.pagination[data-v-d9a2354f]{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb}.page-btn[data-v-d9a2354f]{padding:8px 12px;border:1px solid #d1d5db;background:#fff;color:#374151;border-radius:4px;font-size:14px;cursor:pointer;transition:all .2s}.page-btn[data-v-d9a2354f]:hover:not(:disabled){background:#f3f4f6;border-color:#9ca3af}.page-btn.active[data-v-d9a2354f]{background:#3b82f6;border-color:#3b82f6;color:#fff}.page-btn.ellipsis[data-v-d9a2354f]{background:none;border:none;color:#6b7280;cursor:default;padding:8px 4px}.page-btn.ellipsis[data-v-d9a2354f]:hover{background:none;border:none}.page-btn[data-v-d9a2354f]:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed}.page-numbers[data-v-d9a2354f]{display:flex;gap:4px}@media (max-width: 768px){.table-header[data-v-d9a2354f]{flex-direction:column;align-items:flex-start;gap:8px}.table-content[data-v-d9a2354f]{max-height:500px}.table-cell[data-v-d9a2354f]{padding:8px;font-size:13px}.pagination[data-v-d9a2354f]{flex-wrap:wrap}}.settings-overlay[data-v-810d1305]{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:10001}.settings-modal[data-v-810d1305]{background:#fff;border-radius:8px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 4px 6px #0000001a}.settings-header[data-v-810d1305]{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #e5e7eb}.settings-header h2[data-v-810d1305]{margin:0;color:#374151;font-size:18px;font-weight:600}.close-btn[data-v-810d1305]{background:none;border:none;font-size:24px;color:#6b7280;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .2s}.close-btn[data-v-810d1305]:hover{color:#ef4444}.settings-content[data-v-810d1305]{padding:24px}.setting-section[data-v-810d1305]{margin-bottom:24px}.setting-section h3[data-v-810d1305]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-810d1305]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-810d1305]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-810d1305]{font-size:14px;color:#374151;font-weight:500;min-width:60px}.timezone-select[data-v-810d1305],.currency-select[data-v-810d1305]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.current-time[data-v-810d1305],.exchange-rate-info[data-v-810d1305]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-810d1305]{display:flex;gap:12px}.save-btn[data-v-810d1305],.reset-btn[data-v-810d1305]{padding:8px 16px;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.save-btn[data-v-810d1305]{background:#10b981;color:#fff}.save-btn[data-v-810d1305]:hover:not(:disabled){background:#059669}.save-btn[data-v-810d1305]:disabled{background:#9ca3af;cursor:not-allowed}.reset-btn[data-v-810d1305]{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.reset-btn[data-v-810d1305]:hover{background:#e5e7eb}.privacy-toggle[data-v-810d1305]{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.privacy-checkbox[data-v-810d1305]{position:absolute;opacity:0;width:0;height:0}.toggle-slider[data-v-810d1305]{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:background .3s}.toggle-slider[data-v-810d1305]:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.privacy-checkbox:checked+.toggle-slider[data-v-810d1305]{background:#10b981}.privacy-checkbox:checked+.toggle-slider[data-v-810d1305]:before{transform:translate(20px)}.toggle-label[data-v-810d1305]{font-size:14px;color:#374151;font-weight:500}.exchange-rate-status[data-v-8bf4dd69]{display:flex;align-items:center;gap:4px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:200px;border:1px solid #e5e7eb}.status-indicator[data-v-8bf4dd69]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-8bf4dd69]{display:flex;flex-direction:column;gap:0px;flex:1;min-width:0}.status-text[data-v-8bf4dd69]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-8bf4dd69]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-8bf4dd69]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-8bf4dd69]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-btn[data-v-8bf4dd69]{background:none;border:none;padding:2px;border-radius:3px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0}.refresh-btn[data-v-8bf4dd69]:hover:not(:disabled){background:#e5e7eb}.refresh-btn[data-v-8bf4dd69]:disabled{opacity:.5;cursor:not-allowed}.refresh-icon[data-v-8bf4dd69]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-8bf4dd69]{color:#374151}.spinner[data-v-8bf4dd69]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-8bf4dd69 1s linear infinite}@keyframes spin-8bf4dd69{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-8fcbea44]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-8fcbea44]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.header-left[data-v-8fcbea44]{display:flex;align-items:center}.title[data-v-8fcbea44]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-8fcbea44]{display:flex;gap:8px;align-items:center}.settings-btn[data-v-8fcbea44]{background:#6b7280;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px}.settings-btn[data-v-8fcbea44]:hover{background:#4b5563}.settings-icon[data-v-8fcbea44]{width:18px;height:18px}.refresh-btn[data-v-8fcbea44]{background:#10b981;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px;overflow:hidden}.refresh-btn[data-v-8fcbea44]:hover:not(:disabled){background:#059669}.refresh-btn[data-v-8fcbea44]:disabled{background:#9ca3af;cursor:not-allowed}.refresh-icon[data-v-8fcbea44]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-8fcbea44]{animation:spin-8fcbea44 1s linear infinite;transform-origin:center}.close-btn[data-v-8fcbea44]{background:none;border:none;color:#6b7280;font-size:24px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .2s;display:flex;align-items:center;justify-content:center;width:32px;height:32px}.close-btn[data-v-8fcbea44]:hover{color:#ef4444;background:#f3f4f6}@keyframes spin-8fcbea44{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-8fcbea44]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}@media (max-width: 768px){.header[data-v-8fcbea44]{padding:12px 16px}.title[data-v-8fcbea44]{font-size:16px}.header-right[data-v-8fcbea44]{gap:6px}.settings-btn[data-v-8fcbea44],.refresh-btn[data-v-8fcbea44]{width:32px;height:32px;padding:6px;overflow:hidden}.settings-icon[data-v-8fcbea44],.refresh-icon[data-v-8fcbea44]{width:16px;height:16px;flex-shrink:0}.close-btn[data-v-8fcbea44]{width:28px;height:28px;font-size:20px}}@media (max-width: 480px){.header[data-v-8fcbea44]{padding:10px 12px}.title[data-v-8fcbea44]{font-size:14px}.header-right[data-v-8fcbea44]{gap:4px}.settings-btn[data-v-8fcbea44],.refresh-btn[data-v-8fcbea44]{width:28px;height:28px;padding:4px;overflow:hidden}.settings-icon[data-v-8fcbea44],.refresh-icon[data-v-8fcbea44]{width:14px;height:14px;flex-shrink:0}.close-btn[data-v-8fcbea44]{width:24px;height:24px;font-size:18px}} ');
+(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const e=document.createElement("style");e.textContent=a,document.head.append(e)})(' .item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.item-ranking[data-v-0990fe6f]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-0990fe6f]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-0990fe6f]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-0990fe6f]{display:flex;align-items:center}.sort-buttons[data-v-0990fe6f]{display:flex;gap:4px}.sort-btn[data-v-0990fe6f]{padding:3px 6px;border:1px solid #d1d5db;border-radius:3px;font-size:10px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s}.sort-btn[data-v-0990fe6f]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.sort-btn.active[data-v-0990fe6f]{background:#3b82f6;border-color:#3b82f6;color:#fff}.sort-btn.active[data-v-0990fe6f]:hover{background:#2563eb;border-color:#2563eb}.ranking-list[data-v-0990fe6f]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar{width:4px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-0990fe6f]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-0990fe6f]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-0990fe6f]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-0990fe6f]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-0990fe6f]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-0990fe6f]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-0990fe6f],.rank-5[data-v-0990fe6f],.rank-6[data-v-0990fe6f],.rank-7[data-v-0990fe6f],.rank-8[data-v-0990fe6f],.rank-9[data-v-0990fe6f],.rank-10[data-v-0990fe6f]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-0990fe6f]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-0990fe6f]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-0990fe6f]{display:flex;align-items:center;justify-content:center}.product-details[data-v-0990fe6f]{flex:1;min-width:0}.product-name[data-v-0990fe6f]{margin-bottom:0}.product-link[data-v-0990fe6f]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-0990fe6f]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-0990fe6f]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-0990fe6f]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-0990fe6f]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-0990fe6f]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-0990fe6f]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-0990fe6f]{font-size:24px;margin-bottom:8px}.empty-text[data-v-0990fe6f]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-0990fe6f]{padding:12px}.ranking-header h4[data-v-0990fe6f]{font-size:13px}.ranking-item[data-v-0990fe6f]{padding:5px;gap:6px}.product-icon[data-v-0990fe6f]{width:24px;height:24px}.product-link[data-v-0990fe6f]{font-size:10px}.quantity-value[data-v-0990fe6f]{font-size:11px}.quantity-label[data-v-0990fe6f]{font-size:8px}.rank-badge[data-v-0990fe6f]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.chart-container[data-v-0b40678e]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-0b40678e]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-0b40678e]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-0b40678e]{display:flex;align-items:center;gap:8px}.total-orders[data-v-0b40678e]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-0b40678e]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-0b40678e]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-0b40678e]{width:100%!important;height:100%!important}.legend-container[data-v-0b40678e]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-0b40678e]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-0b40678e]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-0b40678e]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-0b40678e]{display:flex;flex-direction:row;gap:4px;align-items:center}.legend-label[data-v-0b40678e]{font-size:10px;font-weight:500;color:#374151}.legend-value[data-v-0b40678e]{font-size:9px;color:#6b7280}.statistics-panel[data-v-28e58dda]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-28e58dda]{margin-bottom:24px}.stats-section h3[data-v-28e58dda]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-28e58dda]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-28e58dda]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-28e58dda]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-28e58dda]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-28e58dda]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-28e58dda]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-28e58dda]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-28e58dda]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.filter-section[data-v-28e58dda]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-28e58dda]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-28e58dda]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-28e58dda]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-28e58dda]{display:flex;flex-direction:column;gap:12px}.period-buttons[data-v-28e58dda]{display:flex;flex-wrap:wrap;gap:6px}.period-btn[data-v-28e58dda]{padding:6px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:12px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s;white-space:nowrap}.period-btn[data-v-28e58dda]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.period-btn.active[data-v-28e58dda]{background:#3b82f6;border-color:#3b82f6;color:#fff}.period-btn.active[data-v-28e58dda]:hover{background:#2563eb;border-color:#2563eb}.date-picker-overlay[data-v-28e58dda]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000}.date-picker-modal[data-v-28e58dda]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;width:400px;max-width:90vw}.date-picker-header[data-v-28e58dda]{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb}.date-picker-header h5[data-v-28e58dda]{margin:0;color:#374151;font-size:16px;font-weight:600}.close-btn[data-v-28e58dda]{background:none;border:none;font-size:20px;color:#6b7280;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:background .2s}.close-btn[data-v-28e58dda]:hover{background:#f3f4f6}.date-picker-content[data-v-28e58dda]{padding:20px}.date-input-group[data-v-28e58dda]{margin-bottom:16px}.date-input-group label[data-v-28e58dda]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-28e58dda]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-28e58dda]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.date-picker-actions[data-v-28e58dda]{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}.cancel-btn[data-v-28e58dda]{padding:8px 16px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.cancel-btn[data-v-28e58dda]:hover{background:#e5e7eb}.apply-btn[data-v-28e58dda]{padding:8px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.apply-btn[data-v-28e58dda]:hover:not(:disabled){background:#059669}.apply-btn[data-v-28e58dda]:disabled{background:#9ca3af;cursor:not-allowed}.charts-section[data-v-28e58dda]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-28e58dda]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-28e58dda]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-28e58dda]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-28e58dda]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-28e58dda]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-28e58dda]{padding:16px 12px}.stat-value[data-v-28e58dda]{font-size:24px}.stat-converted[data-v-28e58dda]{font-size:11px;padding:3px 8px}.period-buttons[data-v-28e58dda]{gap:6px}.period-btn[data-v-28e58dda]{padding:6px 12px;font-size:12px}.date-picker-modal[data-v-28e58dda]{width:90vw;margin:20px}.charts-grid[data-v-28e58dda]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-28e58dda]{padding:12px}.item-ranking .ranking-header h4[data-v-28e58dda]{font-size:13px}.item-ranking .ranking-item[data-v-28e58dda]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-28e58dda]{width:100%}.item-ranking .sales-data[data-v-28e58dda]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.table-header[data-v-1a8b5b31]{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-1a8b5b31]{margin:0;color:var(--table-text-primary, #1f2937);font-size:18px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-1a8b5b31]{display:flex;align-items:center;gap:12px}.item-count[data-v-1a8b5b31]{font-size:14px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:6px 12px;border-radius:6px;font-weight:500}.page-info[data-v-1a8b5b31]{font-size:13px;color:var(--table-text-secondary, #6b7280);font-weight:500}@media (max-width: 768px){.table-header[data-v-1a8b5b31]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-e13dda4b]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-e13dda4b]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-e13dda4b]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-e13dda4b]{padding:8px;font-size:13px}}.table-content[data-v-040b6ec5]{max-height:600px;overflow-y:auto;overflow-x:auto}.table-row[data-v-040b6ec5]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px}.table-row[data-v-040b6ec5]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-040b6ec5]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px}.table-cell[data-v-040b6ec5]:last-child{border-right:none}.table-cell[data-v-040b6ec5]>*{width:100%}@media (max-width: 768px){.table-content[data-v-040b6ec5]{max-height:500px}.table-cell[data-v-040b6ec5]{padding:8px;font-size:13px}}.empty-state[data-v-46fead2e]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-46fead2e]{font-size:48px;margin-bottom:16px}.empty-text[data-v-46fead2e]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-46fead2e]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.pagination[data-v-dc3732c3]{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.page-btn[data-v-dc3732c3]{padding:8px 12px;border:1px solid #d1d5db;background:#fff;color:var(--table-text-primary, #374151);border-radius:4px;font-size:14px;cursor:pointer;transition:all .2s}.page-btn[data-v-dc3732c3]:hover:not(:disabled){background:#f3f4f6;border-color:#9ca3af}.page-btn.active[data-v-dc3732c3]{background:#3b82f6;border-color:#3b82f6;color:#fff}.page-btn.ellipsis[data-v-dc3732c3]{background:none;border:none;color:var(--table-text-secondary, #6b7280);cursor:default;padding:8px 4px}.page-btn.ellipsis[data-v-dc3732c3]:hover{background:none;border:none}.page-btn[data-v-dc3732c3]:disabled{background:#f3f4f6;color:var(--table-text-muted, #9ca3af);cursor:not-allowed}.page-numbers[data-v-dc3732c3]{display:flex;gap:4px}@media (max-width: 768px){.pagination[data-v-dc3732c3]{flex-wrap:wrap}}.data-table[data-v-88dfaae1]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-88dfaae1]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-88dfaae1]{min-width:1200px}.data-table[data-v-88dfaae1]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-88dfaae1]{padding:16px}}.item-entry[data-v-164f6045]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-164f6045]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-164f6045]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-164f6045 .2s ease-out}.tooltip-header[data-v-164f6045]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-164f6045]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-164f6045]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-164f6045]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-164f6045]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-164f6045]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-164f6045]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-164f6045]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-164f6045]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-164f6045]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-164f6045]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-164f6045{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-164f6045]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-164f6045]{width:28px;height:28px}}.order-number[data-v-d29745a8]{font-weight:500;color:#374151}.date-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-d29745a8]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-d29745a8]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-d29745a8]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-d29745a8]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-d29745a8]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-d29745a8]{font-weight:500;color:#374151}.price-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-d29745a8]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-d29745a8]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-d29745a8],.net-amount-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-d29745a8]{align-items:center}.items[data-v-d29745a8]{max-height:80px}.price-cell[data-v-d29745a8],.booth-fee-cell[data-v-d29745a8],.net-amount-cell[data-v-d29745a8]{padding-top:4px}}.modal-overlay[data-v-b6b52a8b]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-b6b52a8b]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-b6b52a8b]{width:400px;max-width:90vw}.modal-medium[data-v-b6b52a8b]{width:600px;max-width:90vw}.modal-large[data-v-b6b52a8b]{width:800px;max-width:95vw}.modal-full[data-v-b6b52a8b]{width:95vw;height:95vh}.modal-header[data-v-b6b52a8b]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-b6b52a8b]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-close[data-v-b6b52a8b]{background:none;border:none;font-size:24px;color:#6b7280;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all .2s}.modal-close[data-v-b6b52a8b]:hover{background:#f3f4f6;color:#374151}.modal-body[data-v-b6b52a8b]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-b6b52a8b]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-b6b52a8b]{animation:fadeIn-b6b52a8b .2s ease-out}.modal-content[data-v-b6b52a8b]{animation:slideIn-b6b52a8b .2s ease-out}@keyframes fadeIn-b6b52a8b{0%{opacity:0}to{opacity:1}}@keyframes slideIn-b6b52a8b{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-b6b52a8b]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-b6b52a8b],.modal-body[data-v-b6b52a8b]{padding:16px}.modal-footer[data-v-b6b52a8b]{padding:12px 16px}}.sales-btn[data-v-7d6ecca6]{padding:6px 12px;background:#3b82f6;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}.sales-btn[data-v-7d6ecca6]:hover:not(:disabled){background:#2563eb}.sales-btn[data-v-7d6ecca6]:disabled{background:#9ca3af;cursor:not-allowed}.item-link[data-v-7d6ecca6]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-7d6ecca6]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-7d6ecca6],.no-link[data-v-7d6ecca6]{color:#9ca3af;font-style:italic}.price-cell[data-v-7d6ecca6]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-7d6ecca6]{font-weight:500;color:#374151}.price-converted[data-v-7d6ecca6]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-7d6ecca6]{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:6px}.item-details h4[data-v-7d6ecca6]{margin:0 0 4px;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-7d6ecca6]{margin:0;color:#6b7280;font-size:14px}.sales-summary[data-v-7d6ecca6]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:16px;background:#f8fafc;border-radius:6px}.summary-item[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:4px}.summary-label[data-v-7d6ecca6]{font-size:12px;color:#6b7280;font-weight:500}.summary-value[data-v-7d6ecca6]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-7d6ecca6]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600}.variant-list[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:12px}.variant-item[data-v-7d6ecca6]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-7d6ecca6]{display:flex;align-items:center}.variant-details[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-7d6ecca6]{font-size:14px;color:#374151;font-weight:500}.variant-stats[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:4px;text-align:right}.variant-quantity[data-v-7d6ecca6],.variant-revenue[data-v-7d6ecca6]{font-size:12px;color:#6b7280}.variant-summary[data-v-7d6ecca6]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-7d6ecca6]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-7d6ecca6]{font-size:13px;color:#0369a1}.variant-source[data-v-7d6ecca6]{font-size:11px;color:#059669;font-style:italic}.no-variants[data-v-7d6ecca6]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-7d6ecca6]{width:95%;margin:20px}.variant-item[data-v-7d6ecca6]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-7d6ecca6]{text-align:left;width:100%}}.settings-content[data-v-64cf404d]{padding:24px}.setting-section[data-v-64cf404d]{margin-bottom:24px}.setting-section h3[data-v-64cf404d]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-64cf404d]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-64cf404d]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-64cf404d]{font-size:14px;color:#374151;font-weight:500;min-width:60px}.timezone-select[data-v-64cf404d],.currency-select[data-v-64cf404d]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.current-time[data-v-64cf404d],.exchange-rate-info[data-v-64cf404d]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-64cf404d]{display:flex;gap:12px}.save-btn[data-v-64cf404d],.reset-btn[data-v-64cf404d]{padding:8px 16px;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.save-btn[data-v-64cf404d]{background:#10b981;color:#fff}.save-btn[data-v-64cf404d]:hover:not(:disabled){background:#059669}.save-btn[data-v-64cf404d]:disabled{background:#9ca3af;cursor:not-allowed}.reset-btn[data-v-64cf404d]{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.reset-btn[data-v-64cf404d]:hover{background:#e5e7eb}.privacy-toggle[data-v-64cf404d]{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.privacy-checkbox[data-v-64cf404d]{position:absolute;opacity:0;width:0;height:0}.toggle-slider[data-v-64cf404d]{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:background .3s}.toggle-slider[data-v-64cf404d]:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.privacy-checkbox:checked+.toggle-slider[data-v-64cf404d]{background:#10b981}.privacy-checkbox:checked+.toggle-slider[data-v-64cf404d]:before{transform:translate(20px)}.toggle-label[data-v-64cf404d]{font-size:14px;color:#374151;font-weight:500}.exchange-rate-status[data-v-66b9449e]{display:flex;align-items:center;gap:4px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:200px;border:1px solid #e5e7eb}.status-indicator[data-v-66b9449e]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-66b9449e]{display:flex;flex-direction:column;gap:0px;flex:1;min-width:0}.status-text[data-v-66b9449e]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-66b9449e]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-66b9449e]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-66b9449e]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-btn[data-v-66b9449e]{background:none;border:none;padding:2px;border-radius:3px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0}.refresh-btn[data-v-66b9449e]:hover:not(:disabled){background:#e5e7eb}.refresh-btn[data-v-66b9449e]:disabled{opacity:.5;cursor:not-allowed}.refresh-icon[data-v-66b9449e]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-66b9449e]{color:#374151}.spinner[data-v-66b9449e]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-66b9449e 1s linear infinite}@keyframes spin-66b9449e{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-91d212d9]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-91d212d9]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.header-left[data-v-91d212d9]{display:flex;align-items:center}.title[data-v-91d212d9]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-91d212d9]{display:flex;gap:8px;align-items:center}.settings-btn[data-v-91d212d9]{background:#6b7280;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px}.settings-btn[data-v-91d212d9]:hover{background:#4b5563}.settings-icon[data-v-91d212d9]{width:18px;height:18px}.refresh-btn[data-v-91d212d9]{background:#10b981;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px;overflow:hidden}.refresh-btn[data-v-91d212d9]:hover:not(:disabled){background:#059669}.refresh-btn[data-v-91d212d9]:disabled{background:#9ca3af;cursor:not-allowed}.refresh-icon[data-v-91d212d9]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-91d212d9]{animation:spin-91d212d9 1s linear infinite;transform-origin:center}.close-btn[data-v-91d212d9]{background:none;border:none;color:#6b7280;font-size:24px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .2s;display:flex;align-items:center;justify-content:center;width:32px;height:32px}.close-btn[data-v-91d212d9]:hover{color:#ef4444;background:#f3f4f6}@keyframes spin-91d212d9{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-91d212d9]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-91d212d9]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-btn[data-v-91d212d9]{padding:12px 24px;border:none;background:none;color:#6b7280;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}.tab-btn[data-v-91d212d9]:hover{color:#374151;background:#f9fafb}.tab-btn.active[data-v-91d212d9]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-91d212d9]{flex:1}@media (max-width: 768px){.header[data-v-91d212d9]{padding:12px 16px}.title[data-v-91d212d9]{font-size:16px}.header-right[data-v-91d212d9]{gap:6px}.settings-btn[data-v-91d212d9],.refresh-btn[data-v-91d212d9]{width:32px;height:32px;padding:6px;overflow:hidden}.settings-icon[data-v-91d212d9],.refresh-icon[data-v-91d212d9]{width:16px;height:16px;flex-shrink:0}.close-btn[data-v-91d212d9]{width:28px;height:28px;font-size:20px}}@media (max-width: 480px){.header[data-v-91d212d9]{padding:10px 12px}.title[data-v-91d212d9]{font-size:14px}.header-right[data-v-91d212d9]{gap:4px}.settings-btn[data-v-91d212d9],.refresh-btn[data-v-91d212d9]{width:28px;height:28px;padding:4px;overflow:hidden}.settings-icon[data-v-91d212d9],.refresh-icon[data-v-91d212d9]{width:14px;height:14px;flex-shrink:0}.close-btn[data-v-91d212d9]{width:24px;height:24px;font-size:18px}} ');
 
 (function (vue) {
   'use strict';
@@ -177,6 +177,244 @@
     }
   }
   const logger = Logger.getInstance();
+  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  class ItemManager {
+    static instance;
+    itemsMap = /* @__PURE__ */ new Map();
+    isInitialized = false;
+    constructor() {
+    }
+    /**
+     * 获取单例实例
+     */
+    static getInstance() {
+      if (!ItemManager.instance) {
+        ItemManager.instance = new ItemManager();
+      }
+      return ItemManager.instance;
+    }
+    /**
+     * 初始化商品数据
+     * 从Booth管理页面获取所有商品信息
+     */
+    async initialize() {
+      if (this.isInitialized) {
+        return;
+      }
+      try {
+        await this.loadItemsFromManagePage();
+        this.isInitialized = true;
+      } catch (error) {
+        this.isInitialized = true;
+      }
+    }
+    /**
+     * 从管理页面加载商品数据
+     */
+    async loadItemsFromManagePage() {
+      try {
+        let page = 1;
+        let hasMorePages = true;
+        while (hasMorePages) {
+          const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
+          const response = await new Promise((resolve2, reject) => {
+            _GM_xmlhttpRequest({
+              method: "GET",
+              url: boothManageUrl,
+              onload: function(response2) {
+                if (response2.status === 200) {
+                  resolve2(response2.responseText);
+                } else {
+                  reject(new Error(`HTTP ${response2.status}`));
+                }
+              },
+              onerror: function(error) {
+                reject(error);
+              }
+            });
+          });
+          const data = JSON.parse(response);
+          if (data && data.items && Array.isArray(data.items)) {
+            data.items.forEach((item, index2) => {
+              try {
+                if (item.id && item.name) {
+                  const itemId = item.id.toString();
+                  const name = item.name.trim();
+                  let iconUrl = "";
+                  if (item.primary_image && item.primary_image.base_resized && item.primary_image.base_resized.url) {
+                    iconUrl = item.primary_image.base_resized.url;
+                  } else if (item.primary_image && item.primary_image.url) {
+                    iconUrl = item.primary_image.url;
+                  }
+                  const variants = [];
+                  if (item.variants && Array.isArray(item.variants)) {
+                    item.variants.forEach((variant) => {
+                      const variantName = variant.name || variant.value || variant.variantName;
+                      if (variantName && !variants.includes(variantName)) {
+                        variants.push(variantName);
+                      }
+                    });
+                  }
+                  const itemData = {
+                    itemId,
+                    state: item.state,
+                    url: item.url,
+                    name,
+                    state_label: item.state_label,
+                    iconUrl,
+                    variants
+                  };
+                  this.itemsMap.set(itemId, itemData);
+                }
+              } catch (error) {
+              }
+            });
+            if (data.metadata && data.metadata.next_page) {
+              page++;
+            } else {
+              hasMorePages = false;
+            }
+          } else {
+            hasMorePages = false;
+          }
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+    /**
+     * 根据商品ID获取商品数据
+     */
+    getItem(id) {
+      return this.itemsMap.get(id) || null;
+    }
+    /**
+     * 根据商品ID获取商品图标
+     */
+    getItemIcon(id) {
+      const item = this.getItem(id);
+      if (!item) {
+        logger.warn(`未找到商品ID: ${id}`);
+      }
+      return item?.iconUrl || this.getDefaultIcon();
+    }
+    /**
+     * 根据商品ID获取指定尺寸的图片URL
+     * @param id 商品ID
+     * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
+     */
+    getItemImageUrl(id, size = "72x72") {
+      const item = this.getItem(id);
+      if (!item) {
+        return this.getDefaultIcon();
+      }
+      return item.iconUrl || this.getDefaultIcon();
+    }
+    /**
+     * 根据商品ID获取商品名称
+     */
+    getItemName(id) {
+      const item = this.getItem(id);
+      return item?.name || "未知商品";
+    }
+    /**
+     * 根据商品ID获取商品状态
+     */
+    getItemState(id) {
+      const item = this.getItem(id);
+      return item?.state || "";
+    }
+    /**
+     * 根据商品ID获取商品URL
+     */
+    getItemUrl(id) {
+      const item = this.getItem(id);
+      return item?.url || "";
+    }
+    /**
+     * 根据商品ID获取商品状态标签
+     */
+    getItemStateLabel(id) {
+      const item = this.getItem(id);
+      return item?.state_label || "";
+    }
+    /**
+     * 根据商品ID获取商品变体列表
+     */
+    getItemVariants(id) {
+      const item = this.getItem(id);
+      return item?.variants || [];
+    }
+    /**
+     * 获取所有商品数据
+     */
+    getAllItems() {
+      return new Map(this.itemsMap);
+    }
+    /**
+     * 获取所有商品ID
+     */
+    getAllItemIds() {
+      return Array.from(this.itemsMap.keys());
+    }
+    /**
+     * 检查商品是否存在
+     */
+    hasItem(id) {
+      return this.itemsMap.has(id);
+    }
+    /**
+     * 获取商品总数
+     */
+    getItemCount() {
+      return this.itemsMap.size;
+    }
+    /**
+     * 获取默认图标URL
+     */
+    getDefaultIcon() {
+      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iOCIgZmlsbD0iI0YzRjRGNiIvPgo8cGF0aCBkPSJNMzYgMjRDMzAuNDc3MiAyNCAyNiAyOC40NzcyIDI2IDM0QzI2IDM5LjUyMjggMzAuNDc3MiA0NCAzNiA0NEM0MS41MjI4IDQ0IDQ2IDM5LjUyMjggNDYgMzRDNDYgMjguNDc3MiA0MS41MjI4IDI0IDM2IDI0Wk0zNiA0MEMzMi42ODYzIDQwIDMwIDM3LjMxMzcgMzAgMzRDMzAgMzAuNjg2MyAzMi42ODYzIDI4IDM2IDI4QzM5LjMxMzcgMjggNDIgMzAuNjg2MyA0MiAzNEM0MiAzNy4zMTM3IDM5LjMxMzcgNDAgMzYgNDBaIiBmaWxsPSIjNkI3MjgwIi8+CjxwYXRoIGQ9Ik0yNCA0OEg0OFY1MkgyNFY0OFoiIGZpbGw9IiM2QjcyODAiLz4KPC9zdmc+";
+    }
+    /**
+     * 清除缓存数据
+     */
+    clearCache() {
+      this.itemsMap.clear();
+      this.isInitialized = false;
+    }
+    /**
+     * 重新加载商品数据
+     */
+    async reload() {
+      this.clearCache();
+      await this.initialize();
+    }
+  }
+  const FEE_CHANGE_DATE = /* @__PURE__ */ new Date("2025-10-28T13:00:00+09:00");
+  const FEE_RATE = 0.056;
+  const FEE_FIXED_AMOUNT_BEFORE = 22;
+  const FEE_FIXED_AMOUNT_AFTER = 45;
+  function calculateBoothFee(price, orderDateStr) {
+    const orderDate = /* @__PURE__ */ new Date(orderDateStr + "+09:00");
+    const isAfterChange = orderDate >= FEE_CHANGE_DATE;
+    const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;
+    const fee = Math.ceil(price * FEE_RATE) + fixedAmount;
+    return fee;
+  }
+  function calculateNetAmount(price, orderDateStr) {
+    const fee = calculateBoothFee(price, orderDateStr);
+    return price - fee;
+  }
+  function formatBoothFee(price, orderDateStr) {
+    const fee = calculateBoothFee(price, orderDateStr);
+    return `¥${fee.toLocaleString()}`;
+  }
+  function formatNetAmount(price, orderDateStr) {
+    const netAmount = calculateNetAmount(price, orderDateStr);
+    return `¥${netAmount.toLocaleString()}`;
+  }
   const formatDistanceLocale = {
     lessThanXSeconds: {
       one: "less than a second",
@@ -262,8 +500,8 @@
   function buildFormatLongFn(args) {
     return (options = {}) => {
       const width = options.width ? String(options.width) : args.defaultWidth;
-      const format3 = args.formats[width] || args.formats[args.defaultWidth];
-      return format3;
+      const format2 = args.formats[width] || args.formats[args.defaultWidth];
+      return format2;
     };
   }
   const dateFormats = {
@@ -1586,14 +1824,14 @@
   function isProtectedWeekYearToken(token) {
     return weekYearTokenRE.test(token);
   }
-  function warnOrThrowProtectedError(token, format3, input) {
-    const _message = message(token, format3, input);
+  function warnOrThrowProtectedError(token, format2, input) {
+    const _message = message(token, format2, input);
     console.warn(_message);
     if (throwTokens.includes(token)) throw new RangeError(_message);
   }
-  function message(token, format3, input) {
+  function message(token, format2, input) {
     const subject = token[0] === "Y" ? "years" : "days of the month";
-    return `Use \`${token.toLowerCase()}\` instead of \`${token}\` (in \`${format3}\`) for formatting ${subject} to the input \`${input}\`; see: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md`;
+    return `Use \`${token.toLowerCase()}\` instead of \`${token}\` (in \`${format2}\`) for formatting ${subject} to the input \`${input}\`; see: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md`;
   }
   function isDate(value) {
     return value instanceof Date || typeof value === "object" && Object.prototype.toString.call(value) === "[object Date]";
@@ -1606,7 +1844,7 @@
   const escapedStringRegExp = /^'([^]*?)'?$/;
   const doubleQuoteRegExp = /''/g;
   const unescapedLatinCharacterRegExp = /[a-zA-Z]/;
-  function format$2(date, formatStr, options) {
+  function format$1(date, formatStr, options) {
     const defaultOptions2 = getDefaultOptions$1();
     const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
     const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
@@ -2460,7 +2698,7 @@
     return true;
   }
   const tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g;
-  function format$1(date, formatStr, options = {}) {
+  function format(date, formatStr, options = {}) {
     formatStr = String(formatStr);
     const matches = formatStr.match(tzFormattingTokensRegExp);
     if (matches) {
@@ -2475,7 +2713,7 @@
         return precededByQuotedSection ? replaced.substring(0, pos - 1) + replaced.substring(pos + 1) : replaced;
       }, formatStr);
     }
-    return format$2(date, formatStr, options);
+    return format$1(date, formatStr, options);
   }
   function toZonedTime(date, timeZone, options) {
     date = toDate(date, options);
@@ -2492,98 +2730,26 @@
       timeZone,
       originalDate: date
     };
-    return format$1(toZonedTime(date, timeZone, { timeZone: options.timeZone }), formatStr, options);
+    return format(toZonedTime(date, timeZone, { timeZone: options.timeZone }), formatStr, options);
   }
-  class TimezoneConverter {
+  class DataAnalyzer {
     /**
-     * 将JST时间转换为目标时区
+     * 计算订单统计信息
      */
-    static convertJSTToTargetTimezone(jstDateTime, targetTimezone) {
-      try {
-        const jstDate = parseISO(jstDateTime + "+09:00");
-        if (!isValid(jstDate)) {
-          logger.error("无效的JST时间格式:", jstDateTime);
-          return jstDateTime;
-        }
-        const result = formatInTimeZone(jstDate, targetTimezone, "yyyy-MM-dd HH:mm:ss");
-        logger.timezone(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
-        return result;
-      } catch (error) {
-        logger.error("时区转换失败:", error);
-        return jstDateTime;
-      }
-    }
-    /**
-     * 获取当前JST日期字符串
-     */
-    static getCurrentJSTDate() {
-      const now = /* @__PURE__ */ new Date();
-      return formatInTimeZone(now, "Asia/Tokyo", "yyyy-MM-dd");
-    }
-    /**
-     * 获取指定偏移天数的JST日期字符串
-     */
-    static getJSTDateWithOffset(offsetDays) {
-      const now = /* @__PURE__ */ new Date();
-      const targetDate = new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1e3);
-      return formatInTimeZone(targetDate, "Asia/Tokyo", "yyyy-MM-dd");
-    }
-    /**
-     * 获取当前JST年月字符串
-     */
-    static getCurrentJSTMonth() {
-      const now = /* @__PURE__ */ new Date();
-      return formatInTimeZone(now, "Asia/Tokyo", "yyyy-MM");
-    }
-    /**
-     * 获取指定偏移月数的JST年月字符串
-     */
-    static getJSTMonthWithOffset(offsetMonths) {
-      const now = /* @__PURE__ */ new Date();
-      const targetDate = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
-      return formatInTimeZone(targetDate, "Asia/Tokyo", "yyyy-MM");
-    }
-    /**
-     * 获取本周JST时间范围
-     */
-    static getThisWeekJSTRange() {
-      const today = /* @__PURE__ */ new Date();
-      const dayOfWeek = today.getDay();
-      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const monday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
-      const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1e3);
-      return {
-        start: formatInTimeZone(monday, "Asia/Tokyo", "yyyy-MM-dd"),
-        end: formatInTimeZone(sunday, "Asia/Tokyo", "yyyy-MM-dd")
+    static calculateStats(orders) {
+      const completedOrders = orders.filter((order) => order.state === "Completed");
+      const totalOrders = completedOrders.length;
+      const totalRevenue = completedOrders.reduce((sum, order) => sum + order.totalPrice, 0);
+      const totalNetRevenue = completedOrders.reduce((sum, order) => {
+        return sum + calculateNetAmount(order.totalPrice, order.createdAt);
+      }, 0);
+      const stats = {
+        totalOrders,
+        totalRevenue,
+        totalNetRevenue
       };
+      return stats;
     }
-    /**
-     * 获取上周JST时间范围
-     */
-    static getLastWeekJSTRange() {
-      const today = /* @__PURE__ */ new Date();
-      const dayOfWeek = today.getDay();
-      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const thisMonday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
-      const lastMonday = new Date(thisMonday.getTime() - 7 * 24 * 60 * 60 * 1e3);
-      const lastSunday = new Date(lastMonday.getTime() + 6 * 24 * 60 * 60 * 1e3);
-      return {
-        start: formatInTimeZone(lastMonday, "Asia/Tokyo", "yyyy-MM-dd"),
-        end: formatInTimeZone(lastSunday, "Asia/Tokyo", "yyyy-MM-dd")
-      };
-    }
-    /**
-     * 解析订单日期字符串
-     */
-    static parseOrderDate(orderDateStr) {
-      try {
-        return orderDateStr.split(" ")[0];
-      } catch {
-        return "";
-      }
-    }
-  }
-  class DataFilter {
     /**
      * 根据时间周期过滤订单数据
      */
@@ -2625,743 +2791,6 @@
       }
       return filteredOrders;
     }
-    /**
-    * 过滤今日订单
-    */
-    static filterByToday(orders) {
-      const jstToday = TimezoneConverter.getCurrentJSTDate();
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        return orderDateStr === jstToday;
-      });
-      return filtered;
-    }
-    /**
-    * 过滤昨日订单
-    */
-    static filterByYesterday(orders) {
-      const jstYesterday = TimezoneConverter.getJSTDateWithOffset(-1);
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        return orderDateStr === jstYesterday;
-      });
-      return filtered;
-    }
-    /**
-    * 过滤本周订单（周一到周日）
-    */
-    static filterByThisWeek(orders) {
-      const weekRange = TimezoneConverter.getThisWeekJSTRange();
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
-      });
-      return filtered;
-    }
-    /**
-    * 过滤上周订单
-    */
-    static filterByLastWeek(orders) {
-      const weekRange = TimezoneConverter.getLastWeekJSTRange();
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
-      });
-      return filtered;
-    }
-    /**
-    * 过滤本月订单
-    */
-    static filterByThisMonth(orders) {
-      const jstThisMonth = TimezoneConverter.getCurrentJSTMonth();
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        const orderMonth = orderDateStr.substring(0, 7);
-        return orderMonth === jstThisMonth;
-      });
-      return filtered;
-    }
-    /**
-    * 过滤上月订单
-    */
-    static filterByLastMonth(orders) {
-      const jstLastMonth = TimezoneConverter.getJSTMonthWithOffset(-1);
-      const filtered = orders.filter((order) => {
-        const orderDateStr = TimezoneConverter.parseOrderDate(order.createdAt);
-        const orderMonth = orderDateStr.substring(0, 7);
-        return orderMonth === jstLastMonth;
-      });
-      return filtered;
-    }
-    /**
-     * 过滤自定义时间范围
-     */
-    static filterByCustomRange(orders, range) {
-      try {
-        const filtered = orders.filter((order) => {
-          try {
-            const orderDateStr = order.createdAt.split(" ")[0];
-            return orderDateStr >= range.startDate && orderDateStr <= range.endDate;
-          } catch {
-            return false;
-          }
-        });
-        return filtered;
-      } catch (error) {
-        logger.error("自定义日期范围解析失败:", error);
-        return [];
-      }
-    }
-    /**
-     * 获取时间周期的显示名称
-     */
-    static getPeriodDisplayName(period) {
-      const periodNames = {
-        all: "全部",
-        today: "今日",
-        yesterday: "昨日",
-        thisWeek: "本周",
-        lastWeek: "上周",
-        thisMonth: "本月",
-        lastMonth: "上月",
-        custom: "自定义"
-      };
-      return periodNames[period];
-    }
-    /**
-     * 获取所有可用的时间周期选项
-     */
-    static getAvailablePeriods() {
-      return [
-        { value: "all", label: "全部" },
-        { value: "today", label: "今日" },
-        { value: "yesterday", label: "昨日" },
-        { value: "thisWeek", label: "本周" },
-        { value: "lastWeek", label: "上周" },
-        { value: "thisMonth", label: "本月" },
-        { value: "lastMonth", label: "上月" },
-        { value: "custom", label: "自定义" }
-      ];
-    }
-    /**
-     * 格式化日期为显示格式
-     */
-    static formatDateRange(period, customRange) {
-      switch (period) {
-        case "all":
-          return "全部";
-        case "today":
-          return TimezoneConverter.getCurrentJSTDate();
-        case "yesterday":
-          return TimezoneConverter.getJSTDateWithOffset(-1);
-        case "thisWeek":
-          const thisWeekRange = TimezoneConverter.getThisWeekJSTRange();
-          return `${thisWeekRange.start.substring(5)} 至 ${thisWeekRange.end.substring(5)}`;
-        case "lastWeek":
-          const lastWeekRange = TimezoneConverter.getLastWeekJSTRange();
-          return `${lastWeekRange.start.substring(5)} 至 ${lastWeekRange.end.substring(5)}`;
-        case "thisMonth":
-          return TimezoneConverter.getCurrentJSTMonth().replace("-", "年") + "月";
-        case "lastMonth":
-          return TimezoneConverter.getJSTMonthWithOffset(-1).replace("-", "年") + "月";
-        case "custom":
-          if (customRange) {
-            return `${customRange.startDate} 至 ${customRange.endDate}`;
-          }
-          return "自定义";
-        default:
-          return "全部";
-      }
-    }
-  }
-  /*!
-   * currency.js - v2.0.4
-   * http://scurker.github.io/currency.js
-   *
-   * Copyright (c) 2021 Jason Wilson
-   * Released under MIT license
-   */
-  var defaults$1 = {
-    symbol: "$",
-    separator: ",",
-    decimal: ".",
-    errorOnInvalid: false,
-    precision: 2,
-    pattern: "!#",
-    negativePattern: "-!#",
-    format,
-    fromCents: false
-  };
-  var round$1 = function round(v) {
-    return Math.round(v);
-  };
-  var pow = function pow2(p) {
-    return Math.pow(10, p);
-  };
-  var rounding = function rounding2(value, increment) {
-    return round$1(value / increment) * increment;
-  };
-  var groupRegex = /(\d)(?=(\d{3})+\b)/g;
-  var vedicRegex = /(\d)(?=(\d\d)+\d\b)/g;
-  function currency(value, opts) {
-    var that = this;
-    if (!(that instanceof currency)) {
-      return new currency(value, opts);
-    }
-    var settings = Object.assign({}, defaults$1, opts), precision = pow(settings.precision), v = parse$1(value, settings);
-    that.intValue = v;
-    that.value = v / precision;
-    settings.increment = settings.increment || 1 / precision;
-    if (settings.useVedic) {
-      settings.groups = vedicRegex;
-    } else {
-      settings.groups = groupRegex;
-    }
-    this.s = settings;
-    this.p = precision;
-  }
-  function parse$1(value, opts) {
-    var useRounding = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : true;
-    var v = 0, decimal = opts.decimal, errorOnInvalid = opts.errorOnInvalid, decimals = opts.precision, fromCents = opts.fromCents, precision = pow(decimals), isNumber2 = typeof value === "number", isCurrency = value instanceof currency;
-    if (isCurrency && fromCents) {
-      return value.intValue;
-    }
-    if (isNumber2 || isCurrency) {
-      v = isCurrency ? value.value : value;
-    } else if (typeof value === "string") {
-      var regex = new RegExp("[^-\\d" + decimal + "]", "g"), decimalString = new RegExp("\\" + decimal, "g");
-      v = value.replace(/\((.*)\)/, "-$1").replace(regex, "").replace(decimalString, ".");
-      v = v || 0;
-    } else {
-      if (errorOnInvalid) {
-        throw Error("Invalid Input");
-      }
-      v = 0;
-    }
-    if (!fromCents) {
-      v *= precision;
-      v = v.toFixed(4);
-    }
-    return useRounding ? round$1(v) : v;
-  }
-  function format(currency2, settings) {
-    var pattern = settings.pattern, negativePattern = settings.negativePattern, symbol = settings.symbol, separator = settings.separator, decimal = settings.decimal, groups = settings.groups, split = ("" + currency2).replace(/^-/, "").split("."), dollars2 = split[0], cents2 = split[1];
-    return (currency2.value >= 0 ? pattern : negativePattern).replace("!", symbol).replace("#", dollars2.replace(groups, "$1" + separator) + (cents2 ? decimal + cents2 : ""));
-  }
-  currency.prototype = {
-    /**
-     * Adds values together.
-     * @param {number} number
-     * @returns {currency}
-     */
-    add: function add(number) {
-      var intValue = this.intValue, _settings = this.s, _precision = this.p;
-      return currency((intValue += parse$1(number, _settings)) / (_settings.fromCents ? 1 : _precision), _settings);
-    },
-    /**
-     * Subtracts value.
-     * @param {number} number
-     * @returns {currency}
-     */
-    subtract: function subtract(number) {
-      var intValue = this.intValue, _settings = this.s, _precision = this.p;
-      return currency((intValue -= parse$1(number, _settings)) / (_settings.fromCents ? 1 : _precision), _settings);
-    },
-    /**
-     * Multiplies values.
-     * @param {number} number
-     * @returns {currency}
-     */
-    multiply: function multiply(number) {
-      var intValue = this.intValue, _settings = this.s;
-      return currency((intValue *= number) / (_settings.fromCents ? 1 : pow(_settings.precision)), _settings);
-    },
-    /**
-     * Divides value.
-     * @param {number} number
-     * @returns {currency}
-     */
-    divide: function divide(number) {
-      var intValue = this.intValue, _settings = this.s;
-      return currency(intValue /= parse$1(number, _settings, false), _settings);
-    },
-    /**
-     * Takes the currency amount and distributes the values evenly. Any extra pennies
-     * left over from the distribution will be stacked onto the first set of entries.
-     * @param {number} count
-     * @returns {array}
-     */
-    distribute: function distribute(count) {
-      var intValue = this.intValue, _precision = this.p, _settings = this.s, distribution = [], split = Math[intValue >= 0 ? "floor" : "ceil"](intValue / count), pennies = Math.abs(intValue - split * count), precision = _settings.fromCents ? 1 : _precision;
-      for (; count !== 0; count--) {
-        var item = currency(split / precision, _settings);
-        pennies-- > 0 && (item = item[intValue >= 0 ? "add" : "subtract"](1 / precision));
-        distribution.push(item);
-      }
-      return distribution;
-    },
-    /**
-     * Returns the dollar value.
-     * @returns {number}
-     */
-    dollars: function dollars() {
-      return ~~this.value;
-    },
-    /**
-     * Returns the cent value.
-     * @returns {number}
-     */
-    cents: function cents() {
-      var intValue = this.intValue, _precision = this.p;
-      return ~~(intValue % _precision);
-    },
-    /**
-     * Formats the value as a string according to the formatting settings.
-     * @param {boolean} useSymbol - format with currency symbol
-     * @returns {string}
-     */
-    format: function format2(options) {
-      var _settings = this.s;
-      if (typeof options === "function") {
-        return options(this, _settings);
-      }
-      return _settings.format(this, Object.assign({}, _settings, options));
-    },
-    /**
-     * Formats the value as a string according to the formatting settings.
-     * @returns {string}
-     */
-    toString: function toString() {
-      var intValue = this.intValue, _precision = this.p, _settings = this.s;
-      return rounding(intValue / _precision, _settings.increment).toFixed(_settings.precision);
-    },
-    /**
-     * Value for JSON serialization.
-     * @returns {float}
-     */
-    toJSON: function toJSON() {
-      return this.value;
-    }
-  };
-  const API_BASE_URL = "https://api.exchangerate-api.com/v4/latest/JPY";
-  const CACHE_DURATION = 5 * 60 * 1e3;
-  class ExchangeRateAPI {
-    static cache = {
-      rates: null,
-      timestamp: 0,
-      updateTime: null
-    };
-    /**
-     * 获取实时汇率
-     * @returns 汇率数据
-     */
-    static async getExchangeRates() {
-      const now = Date.now();
-      if (this.cache.rates && now - this.cache.timestamp < CACHE_DURATION) {
-        return this.cache.rates;
-      }
-      try {
-        const response = await fetch(API_BASE_URL);
-        if (!response.ok) {
-          throw new Error(`API请求失败: ${response.status}`);
-        }
-        const data = await response.json();
-        const rates = {
-          JPY: 1,
-          // 基准货币
-          CNY: data.rates.CNY || 0.048,
-          USD: data.rates.USD || 67e-4,
-          EUR: data.rates.EUR || 62e-4,
-          GBP: data.rates.GBP || 53e-4,
-          KRW: data.rates.KRW || 8.9,
-          HKD: data.rates.HKD || 0.052,
-          TWD: data.rates.TWD || 0.21
-        };
-        this.cache.rates = rates;
-        this.cache.timestamp = now;
-        this.cache.updateTime = (/* @__PURE__ */ new Date()).toLocaleString("zh-CN");
-        return rates;
-      } catch (error) {
-        logger.warn("实时汇率获取失败，使用默认汇率");
-        return {
-          JPY: 1,
-          CNY: 0.048,
-          USD: 67e-4,
-          EUR: 62e-4,
-          GBP: 53e-4,
-          KRW: 8.9,
-          HKD: 0.052,
-          TWD: 0.21
-        };
-      }
-    }
-    /**
-     * 获取特定货币的汇率
-     * @param targetCurrency 目标货币
-     * @returns 汇率值
-     */
-    static async getExchangeRate(targetCurrency) {
-      const rates = await this.getExchangeRates();
-      return rates[targetCurrency] || 1;
-    }
-    /**
-     * 清除缓存，强制重新获取汇率
-     */
-    static clearCache() {
-      this.cache.rates = null;
-      this.cache.timestamp = 0;
-    }
-    /**
-     * 检查缓存状态
-     */
-    static getCacheStatus() {
-      const now = Date.now();
-      const age = now - this.cache.timestamp;
-      const isValid2 = age < CACHE_DURATION;
-      return {
-        hasCache: this.cache.rates !== null,
-        age: Math.floor(age / 1e3),
-        // 秒
-        isValid: isValid2,
-        updateTime: this.cache.updateTime
-      };
-    }
-  }
-  const DEFAULT_EXCHANGE_RATES = {
-    JPY: 1,
-    // 基准货币（日元）
-    CNY: 0.048,
-    // 1 JPY = 0.048 CNY
-    USD: 67e-4,
-    // 1 JPY = 0.0067 USD
-    EUR: 62e-4,
-    // 1 JPY = 0.0062 EUR
-    GBP: 53e-4,
-    // 1 JPY = 0.0053 GBP
-    KRW: 8.9,
-    // 1 JPY = 8.9 KRW
-    HKD: 0.052,
-    // 1 JPY = 0.052 HKD
-    TWD: 0.21
-    // 1 JPY = 0.21 TWD
-  };
-  let currentRates = { ...DEFAULT_EXCHANGE_RATES };
-  const CURRENCY_FORMATS = {
-    JPY: { symbol: "¥", precision: 0 },
-    CNY: { symbol: "¥", precision: 2 },
-    USD: { symbol: "$", precision: 2 },
-    EUR: { symbol: "€", precision: 2 },
-    GBP: { symbol: "£", precision: 2 },
-    KRW: { symbol: "₩", precision: 0 },
-    HKD: { symbol: "HK$", precision: 2 },
-    TWD: { symbol: "NT$", precision: 0 }
-  };
-  class CurrencyConverter {
-    /**
-     * 将日元转换为目标货币
-     * @param jpyAmount 日元金额
-     * @param targetCurrency 目标货币
-     * @returns 转换后的金额
-     */
-    static async convertFromJPY(jpyAmount, targetCurrency) {
-      if (targetCurrency === "JPY") {
-        return jpyAmount;
-      }
-      try {
-        const rates = await ExchangeRateAPI.getExchangeRates();
-        const rate2 = rates[targetCurrency];
-        if (rate2) {
-          currentRates = rates;
-          return currency(jpyAmount).multiply(rate2).value;
-        }
-      } catch (error) {
-        logger.warn("实时汇率获取失败，使用缓存汇率");
-        logger.exchange(`汇率转换错误: ${error}`);
-      }
-      const rate = currentRates[targetCurrency];
-      if (!rate) {
-        logger.warn(`未找到 ${targetCurrency} 的汇率，使用默认值`);
-        return jpyAmount;
-      }
-      return currency(jpyAmount).multiply(rate).value;
-    }
-    /**
-     * 同步版本的货币转换（使用缓存汇率）
-     */
-    static convertFromJPYSync(jpyAmount, targetCurrency) {
-      if (targetCurrency === "JPY") {
-        return jpyAmount;
-      }
-      const rate = currentRates[targetCurrency];
-      if (!rate) {
-        logger.warn(`未找到 ${targetCurrency} 的汇率，使用默认值`);
-        return jpyAmount;
-      }
-      return currency(jpyAmount).multiply(rate).value;
-    }
-    /**
-     * 格式化货币显示
-     * @param amount 金额
-     * @param currency 货币类型
-     * @returns 格式化后的货币字符串
-     */
-    static formatCurrency(amount, currencyType) {
-      const format3 = CURRENCY_FORMATS[currencyType];
-      if (!format3) {
-        return `${amount.toFixed(2)}`;
-      }
-      return currency(amount, {
-        symbol: format3.symbol,
-        precision: format3.precision,
-        separator: ",",
-        decimal: "."
-      }).format();
-    }
-    /**
-     * 格式化货币显示（带货币代码后缀）
-     * @param amount 金额
-     * @param currency 货币类型
-     * @returns 格式化后的货币字符串（包含货币代码）
-     */
-    static formatCurrencyWithCode(amount, currencyType) {
-      const formatted = this.formatCurrency(amount, currencyType);
-      return `${formatted} ${currencyType}`;
-    }
-    /**
-     * 获取货币符号
-     * @param currency 货币类型
-     * @returns 货币符号
-     */
-    static getCurrencySymbol(currency2) {
-      return CURRENCY_FORMATS[currency2]?.symbol || currency2;
-    }
-    /**
-     * 更新汇率（用于从API获取实时汇率）
-     * @param rates 新的汇率数据
-     */
-    static updateExchangeRates(rates) {
-      Object.assign(currentRates, rates);
-    }
-    /**
-     * 获取当前汇率
-     * @param targetCurrency 目标货币
-     * @returns 汇率值
-     */
-    static getExchangeRate(targetCurrency) {
-      return currentRates[targetCurrency] || 1;
-    }
-    /**
-     * 初始化汇率（在应用启动时调用）
-     */
-    static async initializeRates() {
-      try {
-        const rates = await ExchangeRateAPI.getExchangeRates();
-        currentRates = rates;
-      } catch (error) {
-        logger.warn("汇率初始化失败，使用默认汇率");
-        currentRates = { ...DEFAULT_EXCHANGE_RATES };
-      }
-    }
-  }
-  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
-  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
-  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  class ItemManager {
-    static instance;
-    itemsMap = /* @__PURE__ */ new Map();
-    isInitialized = false;
-    constructor() {
-    }
-    /**
-     * 获取单例实例
-     */
-    static getInstance() {
-      if (!ItemManager.instance) {
-        ItemManager.instance = new ItemManager();
-      }
-      return ItemManager.instance;
-    }
-    /**
-     * 初始化商品数据
-     * 从Booth管理页面获取所有商品信息
-     */
-    async initialize() {
-      if (this.isInitialized) {
-        return;
-      }
-      try {
-        await this.loadItemsFromManagePage();
-        this.isInitialized = true;
-      } catch (error) {
-        this.isInitialized = true;
-      }
-    }
-    /**
-     * 从管理页面加载商品数据
-     */
-    async loadItemsFromManagePage() {
-      try {
-        let page = 1;
-        let hasMorePages = true;
-        while (hasMorePages) {
-          const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
-          const response = await new Promise((resolve2, reject) => {
-            _GM_xmlhttpRequest({
-              method: "GET",
-              url: boothManageUrl,
-              onload: function(response2) {
-                if (response2.status === 200) {
-                  resolve2(response2.responseText);
-                } else {
-                  reject(new Error(`HTTP ${response2.status}`));
-                }
-              },
-              onerror: function(error) {
-                reject(error);
-              }
-            });
-          });
-          const data = JSON.parse(response);
-          if (data && data.items && Array.isArray(data.items)) {
-            data.items.forEach((item, index2) => {
-              try {
-                if (item.id && item.name) {
-                  const itemId = item.id.toString();
-                  const name = item.name.trim();
-                  let iconUrl = "";
-                  if (item.primary_image && item.primary_image.base_resized && item.primary_image.base_resized.url) {
-                    iconUrl = item.primary_image.base_resized.url;
-                  } else if (item.primary_image && item.primary_image.url) {
-                    iconUrl = item.primary_image.url;
-                  }
-                  const itemData = {
-                    id: itemId,
-                    state: item.state,
-                    url: item.url,
-                    name,
-                    state_label: item.state_label,
-                    iconUrl
-                  };
-                  this.itemsMap.set(itemId, itemData);
-                }
-              } catch (error) {
-              }
-            });
-            if (data.metadata && data.metadata.next_page) {
-              page++;
-            } else {
-              hasMorePages = false;
-            }
-          } else {
-            hasMorePages = false;
-          }
-        }
-      } catch (error) {
-        throw error;
-      }
-    }
-    /**
-     * 根据商品ID获取商品数据
-     */
-    getItem(id) {
-      return this.itemsMap.get(id) || null;
-    }
-    /**
-     * 根据商品ID获取商品图标
-     */
-    getItemIcon(id) {
-      const item = this.getItem(id);
-      if (!item) {
-        logger.warn(`未找到商品ID: ${id}`);
-      }
-      return item?.iconUrl || this.getDefaultIcon();
-    }
-    /**
-     * 根据商品ID获取指定尺寸的图片URL
-     * @param id 商品ID
-     * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
-     */
-    getItemImageUrl(id, size = "72x72") {
-      const item = this.getItem(id);
-      if (!item) {
-        return this.getDefaultIcon();
-      }
-      return item.iconUrl || this.getDefaultIcon();
-    }
-    /**
-     * 根据商品ID获取商品名称
-     */
-    getItemName(id) {
-      const item = this.getItem(id);
-      return item?.name || "未知商品";
-    }
-    /**
-     * 根据商品ID获取商品状态
-     */
-    getItemState(id) {
-      const item = this.getItem(id);
-      return item?.state || "";
-    }
-    /**
-     * 根据商品ID获取商品URL
-     */
-    getItemUrl(id) {
-      const item = this.getItem(id);
-      return item?.url || "";
-    }
-    /**
-     * 根据商品ID获取商品状态标签
-     */
-    getItemStateLabel(id) {
-      const item = this.getItem(id);
-      return item?.state_label || "";
-    }
-    /**
-     * 获取所有商品数据
-     */
-    getAllItems() {
-      return new Map(this.itemsMap);
-    }
-    /**
-     * 获取所有商品ID
-     */
-    getAllItemIds() {
-      return Array.from(this.itemsMap.keys());
-    }
-    /**
-     * 检查商品是否存在
-     */
-    hasItem(id) {
-      return this.itemsMap.has(id);
-    }
-    /**
-     * 获取商品总数
-     */
-    getItemCount() {
-      return this.itemsMap.size;
-    }
-    /**
-     * 获取默认图标URL
-     */
-    getDefaultIcon() {
-      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iOCIgZmlsbD0iI0YzRjRGNiIvPgo8cGF0aCBkPSJNMzYgMjRDMzAuNDc3MiAyNCAyNiAyOC40NzcyIDI2IDM0QzI2IDM5LjUyMjggMzAuNDc3MiA0NCAzNiA0NEM0MS41MjI4IDQ0IDQ2IDM5LjUyMjggNDYgMzRDNDYgMjguNDc3MiA0MS41MjI4IDI0IDM2IDI0Wk0zNiA0MEMzMi42ODYzIDQwIDMwIDM3LjMxMzcgMzAgMzRDMzAgMzAuNjg2MyAzMi42ODYzIDI4IDM2IDI4QzM5LjMxMzcgMjggNDIgMzAuNjg2MyA0MiAzNEM0MiAzNy4zMTM3IDM5LjMxMzcgNDAgMzYgNDBaIiBmaWxsPSIjNkI3MjgwIi8+CjxwYXRoIGQ9Ik0yNCA0OEg0OFY1MkgyNFY0OFoiIGZpbGw9IiM2QjcyODAiLz4KPC9zdmc+";
-    }
-    /**
-     * 清除缓存数据
-     */
-    clearCache() {
-      this.itemsMap.clear();
-      this.isInitialized = false;
-    }
-    /**
-     * 重新加载商品数据
-     */
-    async reload() {
-      this.clearCache();
-      await this.initialize();
-    }
-  }
-  class ChartDataProcessor {
     /**
      * 生成收入走势图数据
      */
@@ -3444,20 +2873,65 @@
       return result;
     }
     /**
-     * 从订单时间中提取日期
+     * 获取时间周期的显示名称
      */
-    static extractDateFromOrder(createdAt) {
-      if (!createdAt) return null;
-      const parts = createdAt.split(" ");
-      if (parts.length !== 2) return null;
-      return parts[0];
+    static getPeriodDisplayName(period) {
+      const periodNames = {
+        all: "全部",
+        today: "今日",
+        yesterday: "昨日",
+        thisWeek: "本周",
+        lastWeek: "上周",
+        thisMonth: "本月",
+        lastMonth: "上月",
+        custom: "自定义"
+      };
+      return periodNames[period];
     }
     /**
-     * 格式化日期显示
+     * 获取所有可用的时间周期选项
      */
-    static formatDateForDisplay(dateStr) {
-      const [year, month, day] = dateStr.split("-");
-      return `${month}/${day}`;
+    static getAvailablePeriods() {
+      return [
+        { value: "all", label: "全部" },
+        { value: "today", label: "今日" },
+        { value: "yesterday", label: "昨日" },
+        { value: "thisWeek", label: "本周" },
+        { value: "lastWeek", label: "上周" },
+        { value: "thisMonth", label: "本月" },
+        { value: "lastMonth", label: "上月" },
+        { value: "custom", label: "自定义" }
+      ];
+    }
+    /**
+     * 格式化日期为显示格式
+     */
+    static formatDateRange(period, customRange) {
+      switch (period) {
+        case "all":
+          return "全部";
+        case "today":
+          return this.getCurrentJSTDate();
+        case "yesterday":
+          return this.getJSTDateWithOffset(-1);
+        case "thisWeek":
+          const thisWeekRange = this.getThisWeekJSTRange();
+          return `${thisWeekRange.start.substring(5)} 至 ${thisWeekRange.end.substring(5)}`;
+        case "lastWeek":
+          const lastWeekRange = this.getLastWeekJSTRange();
+          return `${lastWeekRange.start.substring(5)} 至 ${lastWeekRange.end.substring(5)}`;
+        case "thisMonth":
+          return this.getCurrentJSTMonth().replace("-", "年") + "月";
+        case "lastMonth":
+          return this.getJSTMonthWithOffset(-1).replace("-", "年") + "月";
+        case "custom":
+          if (customRange) {
+            return `${customRange.startDate} 至 ${customRange.endDate}`;
+          }
+          return "自定义";
+        default:
+          return "全部";
+      }
     }
     /**
      * 获取图表颜色配置
@@ -3491,28 +2965,609 @@
       }
       return result;
     }
+    /**
+     * 格式化日期用于图表显示
+     */
+    static formatDateForDisplay(dateString) {
+      try {
+        const date = new Date(dateString);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+      } catch (error) {
+        logger.error("日期格式化失败:", dateString, error);
+        return dateString;
+      }
+    }
+    // 私有方法：时间过滤
+    static filterByToday(orders) {
+      const jstToday = this.getCurrentJSTDate();
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        return orderDateStr === jstToday;
+      });
+      return filtered;
+    }
+    static filterByYesterday(orders) {
+      const jstYesterday = this.getJSTDateWithOffset(-1);
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        return orderDateStr === jstYesterday;
+      });
+      return filtered;
+    }
+    static filterByThisWeek(orders) {
+      const weekRange = this.getThisWeekJSTRange();
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
+      });
+      return filtered;
+    }
+    static filterByLastWeek(orders) {
+      const weekRange = this.getLastWeekJSTRange();
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
+      });
+      return filtered;
+    }
+    static filterByThisMonth(orders) {
+      const jstThisMonth = this.getCurrentJSTMonth();
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        const orderMonth = orderDateStr.substring(0, 7);
+        return orderMonth === jstThisMonth;
+      });
+      return filtered;
+    }
+    static filterByLastMonth(orders) {
+      const jstLastMonth = this.getJSTMonthWithOffset(-1);
+      const filtered = orders.filter((order) => {
+        const orderDateStr = this.parseOrderDate(order.createdAt);
+        const orderMonth = orderDateStr.substring(0, 7);
+        return orderMonth === jstLastMonth;
+      });
+      return filtered;
+    }
+    static filterByCustomRange(orders, range) {
+      try {
+        const filtered = orders.filter((order) => {
+          try {
+            const orderDateStr = order.createdAt.split(" ")[0];
+            return orderDateStr >= range.startDate && orderDateStr <= range.endDate;
+          } catch {
+            return false;
+          }
+        });
+        return filtered;
+      } catch (error) {
+        logger.error("自定义日期范围解析失败:", error);
+        return [];
+      }
+    }
+    // 私有方法：日期处理
+    static extractDateFromOrder(createdAt) {
+      if (!createdAt) return null;
+      const parts = createdAt.split(" ");
+      if (parts.length !== 2) return null;
+      return parts[0];
+    }
+    // 时区转换相关方法
+    static getCurrentJSTDate() {
+      const now = /* @__PURE__ */ new Date();
+      return formatInTimeZone(now, "Asia/Tokyo", "yyyy-MM-dd");
+    }
+    static getJSTDateWithOffset(offsetDays) {
+      const now = /* @__PURE__ */ new Date();
+      const targetDate = new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1e3);
+      return formatInTimeZone(targetDate, "Asia/Tokyo", "yyyy-MM-dd");
+    }
+    static getCurrentJSTMonth() {
+      const now = /* @__PURE__ */ new Date();
+      return formatInTimeZone(now, "Asia/Tokyo", "yyyy-MM");
+    }
+    static getJSTMonthWithOffset(offsetMonths) {
+      const now = /* @__PURE__ */ new Date();
+      const targetDate = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
+      return formatInTimeZone(targetDate, "Asia/Tokyo", "yyyy-MM");
+    }
+    static getThisWeekJSTRange() {
+      const today = /* @__PURE__ */ new Date();
+      const dayOfWeek = today.getDay();
+      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const monday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
+      const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1e3);
+      return {
+        start: formatInTimeZone(monday, "Asia/Tokyo", "yyyy-MM-dd"),
+        end: formatInTimeZone(sunday, "Asia/Tokyo", "yyyy-MM-dd")
+      };
+    }
+    static getLastWeekJSTRange() {
+      const today = /* @__PURE__ */ new Date();
+      const dayOfWeek = today.getDay();
+      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const thisMonday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
+      const lastMonday = new Date(thisMonday.getTime() - 7 * 24 * 60 * 60 * 1e3);
+      const lastSunday = new Date(lastMonday.getTime() + 6 * 24 * 60 * 60 * 1e3);
+      return {
+        start: formatInTimeZone(lastMonday, "Asia/Tokyo", "yyyy-MM-dd"),
+        end: formatInTimeZone(lastSunday, "Asia/Tokyo", "yyyy-MM-dd")
+      };
+    }
+    static parseOrderDate(orderDateStr) {
+      try {
+        return orderDateStr.split(" ")[0];
+      } catch {
+        return "";
+      }
+    }
   }
+  let exchangeRates = {};
+  let lastUpdateTime = 0;
+  let updateTime = null;
+  class CurrencyManager {
+    /**
+     * 从JPY转换到目标货币
+     */
+    static async convertFromJPY(jpyAmount, targetCurrency) {
+      if (targetCurrency === "JPY") {
+        return jpyAmount;
+      }
+      const rate = await this.getExchangeRate(targetCurrency);
+      if (!rate) {
+        throw new Error(`无法获取 ${targetCurrency} 的汇率`);
+      }
+      return jpyAmount * rate;
+    }
+    /**
+     * 同步转换（使用缓存汇率）
+     */
+    static convertFromJPYSync(jpyAmount, targetCurrency) {
+      if (targetCurrency === "JPY") {
+        return jpyAmount;
+      }
+      const rate = this.getExchangeRateSync(targetCurrency);
+      if (!rate) {
+        throw new Error(`无法获取 ${targetCurrency} 的汇率`);
+      }
+      return jpyAmount * rate;
+    }
+    /**
+     * 格式化货币显示
+     */
+    static formatCurrency(amount, currencyType) {
+      const formatters2 = {
+        JPY: new Intl.NumberFormat("ja-JP", { style: "currency", currency: "JPY" }),
+        CNY: new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY" }),
+        USD: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }),
+        EUR: new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }),
+        GBP: new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }),
+        KRW: new Intl.NumberFormat("ko-KR", { style: "currency", currency: "KRW" }),
+        HKD: new Intl.NumberFormat("zh-HK", { style: "currency", currency: "HKD" }),
+        TWD: new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD" })
+      };
+      return formatters2[currencyType].format(amount);
+    }
+    /**
+     * 格式化货币显示（带货币代码）
+     */
+    static formatCurrencyWithCode(amount, currencyType) {
+      const symbol = this.getCurrencySymbol(currencyType);
+      return `${symbol}${amount.toLocaleString()}`;
+    }
+    /**
+     * 获取货币符号
+     */
+    static getCurrencySymbol(currency) {
+      const symbols = {
+        JPY: "¥",
+        CNY: "¥",
+        USD: "$",
+        EUR: "€",
+        GBP: "£",
+        KRW: "₩",
+        HKD: "HK$",
+        TWD: "NT$"
+      };
+      return symbols[currency];
+    }
+    /**
+     * 格式化JPY显示
+     */
+    static formatJPY(price) {
+      return `¥${price.toLocaleString()}`;
+    }
+    /**
+     * 格式化转换后的货币显示
+     */
+    static formatConverted(price, targetCurrency) {
+      if (targetCurrency === "JPY") {
+        return null;
+      }
+      try {
+        const converted = this.convertFromJPYSync(price, targetCurrency);
+        return this.formatCurrencyWithCode(converted, targetCurrency);
+      } catch {
+        return null;
+      }
+    }
+    /**
+     * 更新汇率缓存
+     */
+    static updateExchangeRates(rates) {
+      exchangeRates = { ...exchangeRates, ...rates };
+      lastUpdateTime = Date.now();
+    }
+    /**
+     * 获取缓存的汇率
+     */
+    static getExchangeRateSync(targetCurrency) {
+      return exchangeRates[targetCurrency] || null;
+    }
+    /**
+     * 获取汇率（异步）
+     */
+    static async getExchangeRate(targetCurrency) {
+      const cacheAge = Date.now() - lastUpdateTime;
+      if (cacheAge < 60 * 60 * 1e3 && exchangeRates[targetCurrency]) {
+        return exchangeRates[targetCurrency];
+      }
+      const rates = await this.fetchExchangeRates();
+      this.updateExchangeRates(rates);
+      return rates[targetCurrency] || 0;
+    }
+    /**
+     * 初始化汇率
+     */
+    static async initializeRates() {
+      try {
+        const rates = await this.fetchExchangeRates();
+        this.updateExchangeRates(rates);
+      } catch (error) {
+        console.error("初始化汇率失败:", error);
+      }
+    }
+    /**
+     * 从API获取汇率
+     */
+    static async fetchExchangeRates() {
+      try {
+        const response = await fetch("https://api.exchangerate-api.com/v4/latest/JPY");
+        const data = await response.json();
+        if (!data.rates) {
+          throw new Error("无效的汇率响应");
+        }
+        const rates = {
+          JPY: 1,
+          // 基准货币
+          CNY: data.rates.CNY || 0,
+          USD: data.rates.USD || 0,
+          EUR: data.rates.EUR || 0,
+          GBP: data.rates.GBP || 0,
+          KRW: data.rates.KRW || 0,
+          HKD: data.rates.HKD || 0,
+          TWD: data.rates.TWD || 0
+        };
+        updateTime = data.date;
+        return rates;
+      } catch (error) {
+        console.error("获取汇率失败:", error);
+        return {
+          JPY: 1,
+          CNY: 0.048,
+          USD: 67e-4,
+          EUR: 62e-4,
+          GBP: 53e-4,
+          KRW: 8.5,
+          HKD: 0.052,
+          TWD: 0.21
+        };
+      }
+    }
+    /**
+     * 获取缓存状态
+     */
+    static getCacheStatus() {
+      const age = Date.now() - lastUpdateTime;
+      const isValid2 = age < 60 * 60 * 1e3;
+      return {
+        hasCache: Object.keys(exchangeRates).length > 0,
+        age,
+        isValid: isValid2,
+        updateTime
+      };
+    }
+    /**
+     * 清除缓存
+     */
+    static clearCache() {
+      exchangeRates = {};
+      lastUpdateTime = 0;
+      updateTime = null;
+    }
+  }
+  const _sfc_main$j = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      value: {},
+      masked: { type: Boolean, default: false },
+      maskChar: { default: "*" },
+      class: { default: "" }
+    },
+    setup(__props) {
+      const props = __props;
+      const textClass = vue.computed(() => props.class);
+      const displayText = vue.computed(() => {
+        if (!props.masked) {
+          return String(props.value);
+        }
+        const valueStr = String(props.value);
+        const length = valueStr.length;
+        if (length <= 2) {
+          return props.maskChar.repeat(2);
+        } else if (length <= 4) {
+          return props.maskChar.repeat(4);
+        } else {
+          return props.maskChar.repeat(6);
+        }
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("span", {
+          class: vue.normalizeClass(textClass.value)
+        }, vue.toDisplayString(displayText.value), 3);
+      };
+    }
+  });
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-38e65878"]]);
+  const _hoisted_1$h = { class: "item-icon-container" };
+  const _hoisted_2$f = ["src", "alt"];
+  const _hoisted_3$e = {
+    key: 1,
+    class: "privacy-icon"
+  };
+  const _hoisted_4$e = ["width", "height"];
+  const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      itemId: {},
+      items: {},
+      size: { default: "32px" },
+      alt: { default: "商品图标" },
+      privacyMode: { type: Boolean, default: false }
+    },
+    setup(__props) {
+      vue.useCssVars((_ctx) => ({
+        "4fe4d4ec": _ctx.size
+      }));
+      const props = __props;
+      const iconUrl = vue.ref("");
+      const iconSize = vue.computed(() => {
+        const size = parseInt(props.size);
+        return size;
+      });
+      const loadIcon = () => {
+        if (!props.itemId && (!props.items || props.items.length === 0)) {
+          iconUrl.value = "";
+          return;
+        }
+        let targetItemId = props.itemId;
+        if (!targetItemId && props.items && props.items.length > 0) {
+          targetItemId = props.items[0].itemId;
+        }
+        if (targetItemId) {
+          const itemManager2 = ItemManager.getInstance();
+          const iconUrlFromManager = itemManager2.getItemIcon(targetItemId);
+          iconUrl.value = iconUrlFromManager;
+        } else {
+          iconUrl.value = "";
+        }
+      };
+      const onImageError = () => {
+        iconUrl.value = "";
+      };
+      vue.watch(() => [props.itemId, props.items], () => {
+        loadIcon();
+      }, { deep: true });
+      vue.onMounted(() => {
+        loadIcon();
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+          !props.privacyMode && iconUrl.value ? (vue.openBlock(), vue.createElementBlock("img", {
+            key: 0,
+            src: iconUrl.value,
+            alt: _ctx.alt,
+            onError: onImageError,
+            class: "item-icon"
+          }, null, 40, _hoisted_2$f)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$e, [
+            (vue.openBlock(), vue.createElementBlock("svg", {
+              width: iconSize.value,
+              height: iconSize.value,
+              viewBox: "0 0 16 16",
+              fill: "none"
+            }, _cache[0] || (_cache[0] = [
+              vue.createElementVNode("rect", {
+                width: "16",
+                height: "16",
+                rx: "2",
+                fill: "#f3f4f6"
+              }, null, -1),
+              vue.createElementVNode("path", {
+                d: "M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+                fill: "#9ca3af"
+              }, null, -1)
+            ]), 8, _hoisted_4$e))
+          ]))
+        ]);
+      };
+    }
+  });
+  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-d70e735f"]]);
+  const _hoisted_1$g = { class: "item-ranking" };
+  const _hoisted_2$e = { class: "ranking-header" };
+  const _hoisted_3$d = { class: "ranking-controls" };
+  const _hoisted_4$d = { class: "sort-buttons" };
+  const _hoisted_5$b = { class: "ranking-list" };
+  const _hoisted_6$8 = { class: "product-info" };
+  const _hoisted_7$8 = { class: "product-icon" };
+  const _hoisted_8$7 = { class: "product-details" };
+  const _hoisted_9$7 = { class: "product-name" };
+  const _hoisted_10$6 = ["href"];
+  const _hoisted_11$5 = {
+    key: 1,
+    class: "product-link"
+  };
+  const _hoisted_12$5 = { class: "sales-data" };
+  const _hoisted_13$5 = { class: "quantity" };
+  const _hoisted_14$5 = { class: "quantity-label" };
+  const _hoisted_15$5 = { class: "quantity-value" };
+  const _hoisted_16$5 = {
+    key: 0,
+    class: "empty-state"
+  };
+  const _sfc_main$h = /* @__PURE__ */ vue.defineComponent({
+    __name: "ItemRanking",
+    props: {
+      productData: {},
+      targetCurrency: {},
+      maxItems: { default: 10 },
+      userSettings: {}
+    },
+    setup(__props) {
+      const props = __props;
+      const sortType = vue.ref("quantity");
+      const itemManager2 = ItemManager.getInstance();
+      const sortedProductData = vue.computed(() => {
+        const sorted = [...props.productData];
+        if (sortType.value === "quantity") {
+          return sorted.sort((a, b) => b.totalQuantity - a.totalQuantity);
+        } else {
+          return sorted.sort((a, b) => b.totalRevenue - a.totalRevenue);
+        }
+      });
+      const limitedProductData = vue.computed(() => {
+        return sortedProductData.value.slice(0, props.maxItems);
+      });
+      const formatJPY = (amount) => {
+        return CurrencyManager.formatCurrencyWithCode(amount, "JPY");
+      };
+      const getItemUrl = (itemId) => {
+        return itemManager2.getItemUrl(itemId);
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
+          vue.createElementVNode("div", _hoisted_2$e, [
+            _cache[2] || (_cache[2] = vue.createElementVNode("h4", null, "商品排行", -1)),
+            vue.createElementVNode("div", _hoisted_3$d, [
+              vue.createElementVNode("div", _hoisted_4$d, [
+                vue.createElementVNode("button", {
+                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "quantity" }]),
+                  onClick: _cache[0] || (_cache[0] = ($event) => sortType.value = "quantity")
+                }, " 销量 ", 2),
+                vue.createElementVNode("button", {
+                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "revenue" }]),
+                  onClick: _cache[1] || (_cache[1] = ($event) => sortType.value = "revenue")
+                }, " 收入 ", 2)
+              ])
+            ])
+          ]),
+          vue.createElementVNode("div", _hoisted_5$b, [
+            (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(limitedProductData.value, (product, index2) => {
+              return vue.openBlock(), vue.createElementBlock("div", {
+                key: product.itemId,
+                class: "ranking-item"
+              }, [
+                vue.createElementVNode("div", {
+                  class: vue.normalizeClass(["rank-badge", `rank-${index2 + 1}`])
+                }, vue.toDisplayString(index2 + 1), 3),
+                vue.createElementVNode("div", _hoisted_6$8, [
+                  vue.createElementVNode("div", _hoisted_7$8, [
+                    vue.createVNode(ItemIcon, {
+                      "item-id": product.itemId,
+                      size: "28px",
+                      "privacy-mode": _ctx.userSettings?.privacyMode || false
+                    }, null, 8, ["item-id", "privacy-mode"])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_8$7, [
+                    vue.createElementVNode("div", _hoisted_9$7, [
+                      !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("a", {
+                        key: 0,
+                        href: getItemUrl(product.itemId),
+                        target: "_blank",
+                        class: "product-link"
+                      }, [
+                        vue.createVNode(MaskedText, {
+                          value: product.name,
+                          masked: _ctx.userSettings?.privacyMode || false,
+                          "mask-char": "商品"
+                        }, null, 8, ["value", "masked"])
+                      ], 8, _hoisted_10$6)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$5, [
+                        vue.createVNode(MaskedText, {
+                          value: product.name,
+                          masked: _ctx.userSettings?.privacyMode || false,
+                          "mask-char": "商品"
+                        }, null, 8, ["value", "masked"])
+                      ]))
+                    ])
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_12$5, [
+                  vue.createElementVNode("div", _hoisted_13$5, [
+                    vue.createElementVNode("span", _hoisted_14$5, vue.toDisplayString(sortType.value === "quantity" ? "销量" : "收入"), 1),
+                    vue.createElementVNode("span", _hoisted_15$5, [
+                      sortType.value === "quantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                        key: 0,
+                        value: product.totalQuantity,
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])) : (vue.openBlock(), vue.createBlock(MaskedText, {
+                        key: 1,
+                        value: formatJPY(product.totalRevenue),
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"]))
+                    ])
+                  ])
+                ])
+              ]);
+            }), 128))
+          ]),
+          limitedProductData.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_16$5, _cache[3] || (_cache[3] = [
+            vue.createElementVNode("div", { class: "empty-icon" }, "📦", -1),
+            vue.createElementVNode("div", { class: "empty-text" }, "暂无商品数据", -1)
+          ]))) : vue.createCommentVNode("", true)
+        ]);
+      };
+    }
+  });
+  const ItemRanking = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-0990fe6f"]]);
   /*!
    * @kurkle/color v0.3.4
    * https://github.com/kurkle/color#readme
    * (c) 2024 Jukka Kurkela
    * Released under the MIT License
    */
-  function round2(v) {
+  function round(v) {
     return v + 0.5 | 0;
   }
   const lim = (v, l, h) => Math.max(Math.min(v, h), l);
   function p2b(v) {
-    return lim(round2(v * 2.55), 0, 255);
+    return lim(round(v * 2.55), 0, 255);
   }
   function n2b(v) {
-    return lim(round2(v * 255), 0, 255);
+    return lim(round(v * 255), 0, 255);
   }
   function b2n(v) {
-    return lim(round2(v / 2.55) / 100, 0, 1);
+    return lim(round(v / 2.55) / 100, 0, 1);
   }
   function n2p(v) {
-    return lim(round2(v * 100), 0, 100);
+    return lim(round(v * 100), 0, 100);
   }
   const map$1 = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, A: 10, B: 11, C: 12, D: 13, E: 14, F: 15, a: 10, b: 11, c: 12, d: 13, e: 14, f: 15 };
   const hex = [..."0123456789ABCDEF"];
@@ -4016,7 +4071,7 @@
     }
     greyscale() {
       const rgb = this._rgb;
-      const val = round2(rgb.r * 0.3 + rgb.g * 0.59 + rgb.b * 0.11);
+      const val = round(rgb.r * 0.3 + rgb.g * 0.59 + rgb.b * 0.11);
       rgb.r = rgb.g = rgb.b = val;
       return this;
     }
@@ -5398,7 +5453,7 @@
   function _addGrace(minmax, grace, beginAtZero) {
     const { min, max } = minmax;
     const change = toDimension(grace, (max - min) / 2);
-    const keepZero = (value, add2) => beginAtZero && value === 0 ? 0 : value + add2;
+    const keepZero = (value, add) => beginAtZero && value === 0 ? 0 : value + add;
     return {
       min: keepZero(min, -Math.abs(change)),
       max: keepZero(max, change)
@@ -17456,7 +17511,7 @@
       return null;
     }
     const adapter = scale._adapter;
-    const { parser, round: round3, isoWeekday } = scale._parseOpts;
+    const { parser, round: round2, isoWeekday } = scale._parseOpts;
     let value = input;
     if (typeof parser === "function") {
       value = parser(value);
@@ -17467,8 +17522,8 @@
     if (value === null) {
       return null;
     }
-    if (round3) {
-      value = round3 === "week" && (isNumber(isoWeekday) || isoWeekday === true) ? adapter.startOf(value, "isoWeek", isoWeekday) : adapter.startOf(value, round3);
+    if (round2) {
+      value = round2 === "week" && (isNumber(isoWeekday) || isoWeekday === true) ? adapter.startOf(value, "isoWeek", isoWeekday) : adapter.startOf(value, round2);
     }
     return +value;
   }
@@ -17723,14 +17778,14 @@
       }
       return adapter.format(value, timeOpts.displayFormats.datetime);
     }
-    format(value, format3) {
+    format(value, format2) {
       const options = this.options;
       const formats = options.time.displayFormats;
       const unit = this._unit;
-      const fmt = format3 || formats[unit];
+      const fmt = format2 || formats[unit];
       return this._adapter.format(value, fmt);
     }
-    _tickFormatFunction(time, index2, ticks, format3) {
+    _tickFormatFunction(time, index2, ticks, format2) {
       const options = this.options;
       const formatter = options.ticks.callback;
       if (formatter) {
@@ -17747,7 +17802,7 @@
       const majorFormat = majorUnit && formats[majorUnit];
       const tick = ticks[index2];
       const major = majorUnit && majorFormat && tick && tick.major;
-      return this._adapter.format(time, format3 || (major ? majorFormat : minorFormat));
+      return this._adapter.format(time, format2 || (major ? majorFormat : minorFormat));
     }
     generateTickLabels(ticks) {
       let i, ilen, tick;
@@ -17784,10 +17839,10 @@
     _getLabelCapacity(exampleTime) {
       const timeOpts = this.options.time;
       const displayFormats = timeOpts.displayFormats;
-      const format3 = displayFormats[timeOpts.unit] || displayFormats.millisecond;
+      const format2 = displayFormats[timeOpts.unit] || displayFormats.millisecond;
       const exampleLabel = this._tickFormatFunction(exampleTime, 0, ticksFromTimestamps(this, [
         exampleTime
-      ], this._majorUnit), format3);
+      ], this._majorUnit), format2);
       const size = this._getLabelSize(exampleLabel);
       const capacity = Math.floor(this.isHorizontal() ? this.width / size.w : this.height / size.h) - 1;
       return capacity > 0 ? capacity : 1;
@@ -17947,12 +18002,12 @@
     scales
   ];
   Chart.register(...registerables);
-  const _hoisted_1$9 = { class: "chart-container" };
-  const _hoisted_2$9 = { class: "chart-header" };
-  const _hoisted_3$9 = { class: "chart-info" };
-  const _hoisted_4$9 = { class: "data-points" };
-  const _hoisted_5$8 = { class: "chart-wrapper" };
-  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_1$f = { class: "chart-container" };
+  const _hoisted_2$d = { class: "chart-header" };
+  const _hoisted_3$c = { class: "chart-info" };
+  const _hoisted_4$c = { class: "data-points" };
+  const _hoisted_5$a = { class: "chart-wrapper" };
+  const _sfc_main$g = /* @__PURE__ */ vue.defineComponent({
     __name: "RevenueTrendChart",
     props: {
       dataPoints: {},
@@ -17974,10 +18029,10 @@
           date.setDate(date.getDate() - (6 - i));
           fakeData.push({
             date: date.toISOString().split("T")[0],
-            revenue: Math.floor(Math.random() * 5e4) + 1e4,
-            // 10000-60000之间的随机收入
-            orders: Math.floor(Math.random() * 20) + 5
-            // 5-25之间的随机订单数
+            revenue: Math.floor(Math.random() * 9e5) + 1e5,
+            // 10万-100万之间的随机收入
+            orders: Math.floor(Math.random() * 4e4) + 1e4
+            // 1万-5万之间的随机订单数
           });
         }
         return fakeData.sort((a, b) => a.date.localeCompare(b.date));
@@ -17986,7 +18041,7 @@
         return generateFakeData(props.dataPoints);
       });
       const createChartConfig = () => {
-        const labels = displayData.value.map((point) => ChartDataProcessor.formatDateForDisplay(point.date));
+        const labels = displayData.value.map((point) => DataAnalyzer.formatDateForDisplay(point.date));
         const revenueData = displayData.value.map((point) => point.revenue);
         const orderData = displayData.value.map((point) => point.orders);
         return {
@@ -18122,7 +18177,9 @@
         if (!chart) return;
         const config = createChartConfig();
         chart.data = config.data;
-        chart.options = config.options;
+        if (config.options) {
+          chart.options = config.options;
+        }
         chart.update();
       };
       const destroyChart = () => {
@@ -18143,14 +18200,14 @@
         destroyChart();
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
-          vue.createElementVNode("div", _hoisted_2$9, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
+          vue.createElementVNode("div", _hoisted_2$d, [
             _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "收入走势", -1)),
-            vue.createElementVNode("div", _hoisted_3$9, [
-              vue.createElementVNode("span", _hoisted_4$9, vue.toDisplayString(displayData.value.length) + " 个数据点", 1)
+            vue.createElementVNode("div", _hoisted_3$c, [
+              vue.createElementVNode("span", _hoisted_4$c, vue.toDisplayString(displayData.value.length) + " 个数据点", 1)
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_5$8, [
+          vue.createElementVNode("div", _hoisted_5$a, [
             vue.createElementVNode("canvas", {
               ref_key: "chartCanvas",
               ref: chartCanvas
@@ -18160,25 +18217,18 @@
       };
     }
   });
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
-    }
-    return target;
-  };
-  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-39bc02a8"]]);
-  const _hoisted_1$8 = { class: "chart-container" };
-  const _hoisted_2$8 = { class: "chart-header" };
-  const _hoisted_3$8 = { class: "chart-info" };
-  const _hoisted_4$8 = { class: "total-orders" };
-  const _hoisted_5$7 = { class: "chart-content" };
+  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-f5146599"]]);
+  const _hoisted_1$e = { class: "chart-container" };
+  const _hoisted_2$c = { class: "chart-header" };
+  const _hoisted_3$b = { class: "chart-info" };
+  const _hoisted_4$b = { class: "total-orders" };
+  const _hoisted_5$9 = { class: "chart-content" };
   const _hoisted_6$7 = { class: "chart-wrapper" };
   const _hoisted_7$7 = { class: "legend-container" };
-  const _hoisted_8$5 = { class: "legend-text" };
-  const _hoisted_9$5 = { class: "legend-label" };
+  const _hoisted_8$6 = { class: "legend-text" };
+  const _hoisted_9$6 = { class: "legend-label" };
   const _hoisted_10$5 = { class: "legend-value" };
-  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$f = /* @__PURE__ */ vue.defineComponent({
     __name: "PaymentMethodChart",
     props: {
       paymentData: {},
@@ -18192,9 +18242,9 @@
         if (!props.privacyMode) {
           return originalData;
         }
-        const fakeMethods = ["信用卡", "银行转账", "电子钱包", "现金"];
+        const fakeMethods = ["魔法水晶支付", "时空传送支付", "意念转账", "彩虹币支付"];
         const fakeData = fakeMethods.map((method, index2) => {
-          const count = Math.floor(Math.random() * 50) + 10;
+          const count = Math.floor(Math.random() * 4e4) + 1e4;
           return {
             method,
             count,
@@ -18215,7 +18265,7 @@
         return displayData.value.reduce((sum, item) => sum + item.count, 0);
       });
       const getItemColor = (method) => {
-        const colors2 = ChartDataProcessor.getChartColors(displayData.value.length);
+        const colors2 = DataAnalyzer.getChartColors(displayData.value.length);
         const index2 = displayData.value.findIndex((item) => item.method === method);
         return colors2[index2] || "#6b7280";
       };
@@ -18274,7 +18324,9 @@
         if (!chart) return;
         const config = createChartConfig();
         chart.data = config.data;
-        chart.options = config.options;
+        if (config.options) {
+          chart.options = config.options;
+        }
         chart.update();
       };
       const destroyChart = () => {
@@ -18295,14 +18347,14 @@
         destroyChart();
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$8, [
-          vue.createElementVNode("div", _hoisted_2$8, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
+          vue.createElementVNode("div", _hoisted_2$c, [
             _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "支付方式分布", -1)),
-            vue.createElementVNode("div", _hoisted_3$8, [
-              vue.createElementVNode("span", _hoisted_4$8, "共 " + vue.toDisplayString(totalOrders.value) + " 单", 1)
+            vue.createElementVNode("div", _hoisted_3$b, [
+              vue.createElementVNode("span", _hoisted_4$b, "共 " + vue.toDisplayString(totalOrders.value) + " 单", 1)
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_5$7, [
+          vue.createElementVNode("div", _hoisted_5$9, [
             vue.createElementVNode("div", _hoisted_6$7, [
               vue.createElementVNode("canvas", {
                 ref_key: "chartCanvas",
@@ -18319,8 +18371,8 @@
                     class: "legend-color",
                     style: vue.normalizeStyle({ backgroundColor: getItemColor(item.method) })
                   }, null, 4),
-                  vue.createElementVNode("div", _hoisted_8$5, [
-                    vue.createElementVNode("span", _hoisted_9$5, vue.toDisplayString(item.method), 1),
+                  vue.createElementVNode("div", _hoisted_8$6, [
+                    vue.createElementVNode("span", _hoisted_9$6, vue.toDisplayString(item.method), 1),
                     vue.createElementVNode("span", _hoisted_10$5, vue.toDisplayString(item.count) + " 单 (" + vue.toDisplayString(item.percentage) + "%)", 1)
                   ])
                 ]);
@@ -18331,283 +18383,30 @@
       };
     }
   });
-  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-8ddeffda"]]);
-  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      value: {},
-      masked: { type: Boolean, default: false },
-      maskChar: { default: "*" },
-      class: { default: "" }
-    },
-    setup(__props) {
-      const props = __props;
-      const textClass = vue.computed(() => props.class);
-      const displayText = vue.computed(() => {
-        if (!props.masked) {
-          return String(props.value);
-        }
-        const valueStr = String(props.value);
-        const length = valueStr.length;
-        if (length <= 2) {
-          return props.maskChar.repeat(2);
-        } else if (length <= 4) {
-          return props.maskChar.repeat(4);
-        } else {
-          return props.maskChar.repeat(6);
-        }
-      });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("span", {
-          class: vue.normalizeClass(textClass.value)
-        }, vue.toDisplayString(displayText.value), 3);
-      };
-    }
-  });
-  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-a3449bee"]]);
-  const _hoisted_1$7 = { class: "item-icon-container" };
-  const _hoisted_2$7 = ["src", "alt"];
-  const _hoisted_3$7 = {
-    key: 1,
-    class: "privacy-icon"
-  };
-  const _hoisted_4$7 = ["width", "height"];
-  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      itemId: {},
-      items: {},
-      size: { default: "32px" },
-      alt: { default: "商品图标" },
-      privacyMode: { type: Boolean, default: false }
-    },
-    setup(__props) {
-      vue.useCssVars((_ctx) => ({
-        "339429ef": _ctx.size
-      }));
-      const props = __props;
-      const iconUrl = vue.ref("");
-      const iconSize = vue.computed(() => {
-        const size = parseInt(props.size);
-        return Math.min(size, 16);
-      });
-      const loadIcon = () => {
-        if (!props.itemId && (!props.items || props.items.length === 0)) {
-          iconUrl.value = "";
-          return;
-        }
-        let targetItemId = props.itemId;
-        if (!targetItemId && props.items && props.items.length > 0) {
-          targetItemId = props.items[0].itemId;
-        }
-        if (targetItemId) {
-          const itemManager2 = ItemManager.getInstance();
-          const iconUrlFromManager = itemManager2.getItemIcon(targetItemId);
-          iconUrl.value = iconUrlFromManager;
-        } else {
-          iconUrl.value = "";
-        }
-      };
-      const onImageError = () => {
-        iconUrl.value = "";
-      };
-      vue.watch(() => [props.itemId, props.items], () => {
-        loadIcon();
-      }, { deep: true });
-      vue.onMounted(() => {
-        loadIcon();
-      });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$7, [
-          !props.privacyMode && iconUrl.value ? (vue.openBlock(), vue.createElementBlock("img", {
-            key: 0,
-            src: iconUrl.value,
-            alt: _ctx.alt,
-            onError: onImageError,
-            class: "item-icon"
-          }, null, 40, _hoisted_2$7)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$7, [
-            (vue.openBlock(), vue.createElementBlock("svg", {
-              width: iconSize.value,
-              height: iconSize.value,
-              viewBox: "0 0 16 16",
-              fill: "none"
-            }, _cache[0] || (_cache[0] = [
-              vue.createElementVNode("rect", {
-                width: "16",
-                height: "16",
-                rx: "2",
-                fill: "#f3f4f6"
-              }, null, -1),
-              vue.createElementVNode("path", {
-                d: "M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                fill: "#9ca3af"
-              }, null, -1)
-            ]), 8, _hoisted_4$7))
-          ]))
-        ]);
-      };
-    }
-  });
-  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-be6756d7"]]);
-  const _hoisted_1$6 = { class: "item-ranking" };
-  const _hoisted_2$6 = { class: "ranking-header" };
-  const _hoisted_3$6 = { class: "ranking-controls" };
-  const _hoisted_4$6 = { class: "sort-buttons" };
-  const _hoisted_5$6 = { class: "ranking-list" };
-  const _hoisted_6$6 = { class: "product-info" };
-  const _hoisted_7$6 = { class: "product-icon" };
-  const _hoisted_8$4 = { class: "product-details" };
-  const _hoisted_9$4 = { class: "product-name" };
-  const _hoisted_10$4 = ["href"];
-  const _hoisted_11$4 = {
-    key: 1,
-    class: "product-link"
-  };
-  const _hoisted_12$4 = { class: "sales-data" };
-  const _hoisted_13$4 = { class: "quantity" };
-  const _hoisted_14$4 = { class: "quantity-label" };
-  const _hoisted_15$4 = { class: "quantity-value" };
-  const _hoisted_16$4 = {
-    key: 0,
-    class: "empty-state"
-  };
-  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
-    __name: "ItemRanking",
-    props: {
-      productData: {},
-      targetCurrency: {},
-      maxItems: { default: 10 },
-      userSettings: {}
-    },
-    setup(__props) {
-      const props = __props;
-      const sortType = vue.ref("quantity");
-      const itemManager2 = ItemManager.getInstance();
-      const sortedProductData = vue.computed(() => {
-        const sorted = [...props.productData];
-        if (sortType.value === "quantity") {
-          return sorted.sort((a, b) => b.totalQuantity - a.totalQuantity);
-        } else {
-          return sorted.sort((a, b) => b.totalRevenue - a.totalRevenue);
-        }
-      });
-      const limitedProductData = vue.computed(() => {
-        return sortedProductData.value.slice(0, props.maxItems);
-      });
-      const formatJPY = (amount) => {
-        return CurrencyConverter.formatCurrencyWithCode(amount, "JPY");
-      };
-      const getItemUrl = (itemId) => {
-        return itemManager2.getItemUrl(itemId);
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$6, [
-          vue.createElementVNode("div", _hoisted_2$6, [
-            _cache[2] || (_cache[2] = vue.createElementVNode("h4", null, "商品排行", -1)),
-            vue.createElementVNode("div", _hoisted_3$6, [
-              vue.createElementVNode("div", _hoisted_4$6, [
-                vue.createElementVNode("button", {
-                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "quantity" }]),
-                  onClick: _cache[0] || (_cache[0] = ($event) => sortType.value = "quantity")
-                }, " 销量 ", 2),
-                vue.createElementVNode("button", {
-                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "revenue" }]),
-                  onClick: _cache[1] || (_cache[1] = ($event) => sortType.value = "revenue")
-                }, " 收入 ", 2)
-              ])
-            ])
-          ]),
-          vue.createElementVNode("div", _hoisted_5$6, [
-            (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(limitedProductData.value, (product, index2) => {
-              return vue.openBlock(), vue.createElementBlock("div", {
-                key: product.itemId,
-                class: "ranking-item"
-              }, [
-                vue.createElementVNode("div", {
-                  class: vue.normalizeClass(["rank-badge", `rank-${index2 + 1}`])
-                }, vue.toDisplayString(index2 + 1), 3),
-                vue.createElementVNode("div", _hoisted_6$6, [
-                  vue.createElementVNode("div", _hoisted_7$6, [
-                    vue.createVNode(ItemIcon, {
-                      "item-id": product.itemId,
-                      size: "28px",
-                      "privacy-mode": _ctx.userSettings?.privacyMode || false
-                    }, null, 8, ["item-id", "privacy-mode"])
-                  ]),
-                  vue.createElementVNode("div", _hoisted_8$4, [
-                    vue.createElementVNode("div", _hoisted_9$4, [
-                      !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("a", {
-                        key: 0,
-                        href: getItemUrl(product.itemId),
-                        target: "_blank",
-                        class: "product-link"
-                      }, [
-                        vue.createVNode(MaskedText, {
-                          value: product.name,
-                          masked: _ctx.userSettings?.privacyMode || false,
-                          "mask-char": "商品"
-                        }, null, 8, ["value", "masked"])
-                      ], 8, _hoisted_10$4)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$4, [
-                        vue.createVNode(MaskedText, {
-                          value: product.name,
-                          masked: _ctx.userSettings?.privacyMode || false,
-                          "mask-char": "商品"
-                        }, null, 8, ["value", "masked"])
-                      ]))
-                    ])
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_12$4, [
-                  vue.createElementVNode("div", _hoisted_13$4, [
-                    vue.createElementVNode("span", _hoisted_14$4, vue.toDisplayString(sortType.value === "quantity" ? "销量" : "收入"), 1),
-                    vue.createElementVNode("span", _hoisted_15$4, [
-                      sortType.value === "quantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
-                        key: 0,
-                        value: product.totalQuantity,
-                        masked: _ctx.userSettings?.privacyMode || false
-                      }, null, 8, ["value", "masked"])) : (vue.openBlock(), vue.createBlock(MaskedText, {
-                        key: 1,
-                        value: formatJPY(product.totalRevenue),
-                        masked: _ctx.userSettings?.privacyMode || false
-                      }, null, 8, ["value", "masked"]))
-                    ])
-                  ])
-                ])
-              ]);
-            }), 128))
-          ]),
-          limitedProductData.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_16$4, _cache[3] || (_cache[3] = [
-            vue.createElementVNode("div", { class: "empty-icon" }, "📦", -1),
-            vue.createElementVNode("div", { class: "empty-text" }, "暂无商品数据", -1)
-          ]))) : vue.createCommentVNode("", true)
-        ]);
-      };
-    }
-  });
-  const ItemRanking = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-9643fe87"]]);
-  const _hoisted_1$5 = { class: "statistics-panel" };
-  const _hoisted_2$5 = { class: "stats-section" };
-  const _hoisted_3$5 = { class: "stats-grid" };
-  const _hoisted_4$5 = { class: "stat-card orders-card" };
-  const _hoisted_5$5 = { class: "stat-content" };
-  const _hoisted_6$5 = { class: "stat-value" };
-  const _hoisted_7$5 = { class: "stat-card revenue-card" };
-  const _hoisted_8$3 = { class: "stat-content" };
-  const _hoisted_9$3 = { class: "stat-value" };
-  const _hoisted_10$3 = {
+  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-0b40678e"]]);
+  const _hoisted_1$d = { class: "statistics-panel" };
+  const _hoisted_2$b = { class: "stats-section" };
+  const _hoisted_3$a = { class: "stats-grid" };
+  const _hoisted_4$a = { class: "stat-card orders-card" };
+  const _hoisted_5$8 = { class: "stat-content" };
+  const _hoisted_6$6 = { class: "stat-value" };
+  const _hoisted_7$6 = { class: "stat-card revenue-card" };
+  const _hoisted_8$5 = { class: "stat-content" };
+  const _hoisted_9$5 = { class: "stat-value" };
+  const _hoisted_10$4 = {
     key: 0,
     class: "stat-converted"
   };
-  const _hoisted_11$3 = { class: "stat-card net-revenue-card" };
-  const _hoisted_12$3 = { class: "stat-content" };
-  const _hoisted_13$3 = { class: "stat-value" };
-  const _hoisted_14$3 = {
+  const _hoisted_11$4 = { class: "stat-card net-revenue-card" };
+  const _hoisted_12$4 = { class: "stat-content" };
+  const _hoisted_13$4 = { class: "stat-value" };
+  const _hoisted_14$4 = {
     key: 0,
     class: "stat-converted"
   };
-  const _hoisted_15$3 = { class: "filter-section" };
-  const _hoisted_16$3 = { class: "filter-header" };
-  const _hoisted_17$2 = { class: "current-period" };
+  const _hoisted_15$4 = { class: "filter-section" };
+  const _hoisted_16$4 = { class: "filter-header" };
+  const _hoisted_17$3 = { class: "current-period" };
   const _hoisted_18$1 = { class: "filter-controls" };
   const _hoisted_19$1 = { class: "period-buttons" };
   const _hoisted_20$1 = ["onClick"];
@@ -18621,7 +18420,7 @@
     class: "charts-section"
   };
   const _hoisted_27$1 = { class: "charts-grid" };
-  const _sfc_main$5 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       statistics: {},
@@ -18640,7 +18439,7 @@
       const showDatePicker = vue.ref(false);
       const customStartDate = vue.ref("");
       const customEndDate = vue.ref("");
-      const availablePeriods = DataFilter.getAvailablePeriods();
+      const availablePeriods = DataAnalyzer.getAvailablePeriods();
       vue.watch(selectedPeriod, (newValue) => {
         emit("update:modelValue", newValue);
         if (newValue === "custom") {
@@ -18673,20 +18472,20 @@
       };
       const getCurrentDisplayName = () => {
         if (selectedPeriod.value === "custom" && props.customRange) {
-          return DataFilter.formatDateRange("custom", props.customRange);
+          return DataAnalyzer.formatDateRange("custom", props.customRange);
         }
-        return DataFilter.getPeriodDisplayName(selectedPeriod.value);
+        return DataAnalyzer.getPeriodDisplayName(selectedPeriod.value);
       };
       const formatJPY = (amount) => {
-        return CurrencyConverter.formatCurrencyWithCode(amount, "JPY");
+        return CurrencyManager.formatCurrencyWithCode(amount, "JPY");
       };
       const formatConverted = (amount) => {
         const targetCurrency = props.targetCurrency || "CNY";
         if (targetCurrency === "JPY") {
           return null;
         }
-        const convertedAmount = CurrencyConverter.convertFromJPYSync(amount, targetCurrency);
-        return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
+        const convertedAmount = CurrencyManager.convertFromJPYSync(amount, targetCurrency);
+        return CurrencyManager.formatCurrencyWithCode(convertedAmount, targetCurrency);
       };
       const revenueTrendData = vue.computed(() => {
         if (selectedPeriod.value === "today" || selectedPeriod.value === "yesterday") {
@@ -18701,22 +18500,22 @@
             return [];
           }
         }
-        return ChartDataProcessor.generateRevenueTrendData(props.orders);
+        return DataAnalyzer.generateRevenueTrendData(props.orders);
       });
       const paymentMethodData = vue.computed(() => {
-        return ChartDataProcessor.generatePaymentMethodData(props.orders);
+        return DataAnalyzer.generatePaymentMethodData(props.orders);
       });
       const productRankingData = vue.computed(() => {
-        return ChartDataProcessor.generateProductSalesRanking(props.orders);
+        return DataAnalyzer.generateProductSalesRanking(props.orders);
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$5, [
-          vue.createElementVNode("div", _hoisted_2$5, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
+          vue.createElementVNode("div", _hoisted_2$b, [
             _cache[6] || (_cache[6] = vue.createElementVNode("h3", null, "统计信息", -1)),
-            vue.createElementVNode("div", _hoisted_3$5, [
-              vue.createElementVNode("div", _hoisted_4$5, [
-                vue.createElementVNode("div", _hoisted_5$5, [
-                  vue.createElementVNode("div", _hoisted_6$5, [
+            vue.createElementVNode("div", _hoisted_3$a, [
+              vue.createElementVNode("div", _hoisted_4$a, [
+                vue.createElementVNode("div", _hoisted_5$8, [
+                  vue.createElementVNode("div", _hoisted_6$6, [
                     vue.createVNode(MaskedText, {
                       value: _ctx.statistics.totalOrders,
                       masked: _ctx.userSettings?.privacyMode || false
@@ -18725,36 +18524,36 @@
                 ]),
                 _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "stat-label" }, "总订单数", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_7$5, [
-                vue.createElementVNode("div", _hoisted_8$3, [
-                  vue.createElementVNode("div", _hoisted_9$3, [
+              vue.createElementVNode("div", _hoisted_7$6, [
+                vue.createElementVNode("div", _hoisted_8$5, [
+                  vue.createElementVNode("div", _hoisted_9$5, [
                     vue.createVNode(MaskedText, {
                       value: formatJPY(_ctx.statistics.totalRevenue),
                       masked: _ctx.userSettings?.privacyMode || false
                     }, null, 8, ["value", "masked"])
                   ]),
-                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10$3, vue.toDisplayString(formatConverted(_ctx.statistics.totalRevenue)), 1)) : vue.createCommentVNode("", true)
+                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10$4, vue.toDisplayString(formatConverted(_ctx.statistics.totalRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
                 _cache[4] || (_cache[4] = vue.createElementVNode("div", { class: "stat-label" }, "总收入", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_11$3, [
-                vue.createElementVNode("div", _hoisted_12$3, [
-                  vue.createElementVNode("div", _hoisted_13$3, [
+              vue.createElementVNode("div", _hoisted_11$4, [
+                vue.createElementVNode("div", _hoisted_12$4, [
+                  vue.createElementVNode("div", _hoisted_13$4, [
                     vue.createVNode(MaskedText, {
                       value: formatJPY(_ctx.statistics.totalNetRevenue),
                       masked: _ctx.userSettings?.privacyMode || false
                     }, null, 8, ["value", "masked"])
                   ]),
-                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalNetRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$3, vue.toDisplayString(formatConverted(_ctx.statistics.totalNetRevenue)), 1)) : vue.createCommentVNode("", true)
+                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalNetRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$4, vue.toDisplayString(formatConverted(_ctx.statistics.totalNetRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
                 _cache[5] || (_cache[5] = vue.createElementVNode("div", { class: "stat-label" }, "到手收入", -1))
               ])
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_15$3, [
-            vue.createElementVNode("div", _hoisted_16$3, [
+          vue.createElementVNode("div", _hoisted_15$4, [
+            vue.createElementVNode("div", _hoisted_16$4, [
               _cache[7] || (_cache[7] = vue.createElementVNode("h4", null, "时间筛选", -1)),
-              vue.createElementVNode("span", _hoisted_17$2, vue.toDisplayString(getCurrentDisplayName()), 1)
+              vue.createElementVNode("span", _hoisted_17$3, vue.toDisplayString(getCurrentDisplayName()), 1)
             ]),
             vue.createElementVNode("div", _hoisted_18$1, [
               vue.createElementVNode("div", _hoisted_19$1, [
@@ -18822,13 +18621,13 @@
           ]),
           revenueTrendData.value.length > 0 || paymentMethodData.value.length > 0 || productRankingData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_26$1, [
             vue.createElementVNode("div", _hoisted_27$1, [
-              revenueTrendData.value.length > 0 ? (vue.openBlock(), vue.createBlock(vue.unref(RevenueTrendChart), {
+              revenueTrendData.value.length > 0 ? (vue.openBlock(), vue.createBlock(RevenueTrendChart, {
                 key: 0,
                 "data-points": revenueTrendData.value,
                 "target-currency": _ctx.targetCurrency,
                 "privacy-mode": _ctx.userSettings?.privacyMode || false
               }, null, 8, ["data-points", "target-currency", "privacy-mode"])) : vue.createCommentVNode("", true),
-              paymentMethodData.value.length > 0 ? (vue.openBlock(), vue.createBlock(vue.unref(PaymentMethodChart), {
+              paymentMethodData.value.length > 0 ? (vue.openBlock(), vue.createBlock(PaymentMethodChart, {
                 key: 1,
                 "payment-data": paymentMethodData.value,
                 "privacy-mode": _ctx.userSettings?.privacyMode || false
@@ -18846,54 +18645,515 @@
       };
     }
   });
-  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-ad1c2295"]]);
-  const FEE_CHANGE_DATE = /* @__PURE__ */ new Date("2025-10-28T13:00:00+09:00");
-  const FEE_RATE = 0.056;
-  const FEE_FIXED_AMOUNT_BEFORE = 22;
-  const FEE_FIXED_AMOUNT_AFTER = 45;
-  function calculateBoothFee(price, orderDateStr) {
-    const orderDate = /* @__PURE__ */ new Date(orderDateStr + "+09:00");
-    const isAfterChange = orderDate >= FEE_CHANGE_DATE;
-    const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;
-    const fee = Math.ceil(price * FEE_RATE) + fixedAmount;
-    return fee;
+  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-28e58dda"]]);
+  const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
+    try {
+      const jstDate = parseISO(jstDateTime + "+09:00");
+      if (!isValid(jstDate)) {
+        logger.error("无效的JST时间格式:", jstDateTime);
+        return jstDateTime;
+      }
+      const result = formatInTimeZone(jstDate, targetTimezone, "yyyy-MM-dd HH:mm:ss");
+      logger.timezone(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
+      return result;
+    } catch (error) {
+      logger.error("时区转换失败:", error);
+      return jstDateTime;
+    }
+  };
+  const formatOriginalDateTime = (dateString) => {
+    if (!dateString) return "";
+    const parts = dateString.split(" ");
+    if (parts.length !== 2) return dateString;
+    const [datePart, timePart] = parts;
+    const [year, month, day] = datePart.split("-");
+    const [hour, minute] = timePart.split(":");
+    return `${month}/${day} ${hour}:${minute}`;
+  };
+  const formatConvertedDateTime = (dateString, userSettings) => {
+    if (!dateString || !userSettings) return "";
+    if (userSettings.timezone === "Asia/Tokyo") return "";
+    try {
+      const convertedTime = convertJSTToTargetTimezone(dateString, userSettings.timezone);
+      const [datePart, timePart] = convertedTime.split(" ");
+      const [year, month, day] = datePart.split("-");
+      const [hour, minute] = timePart.split(":");
+      return `${month}/${day} ${hour}:${minute} (${userSettings.displayName})`;
+    } catch (error) {
+      return "";
+    }
+  };
+  const _hoisted_1$c = { class: "table-header" };
+  const _hoisted_2$a = { class: "table-info" };
+  const _hoisted_3$9 = { class: "item-count" };
+  const _hoisted_4$9 = {
+    key: 0,
+    class: "page-info"
+  };
+  const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableHeader",
+    props: {
+      title: {},
+      info: {},
+      privacyMode: { type: Boolean }
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$c, [
+          vue.createElementVNode("h3", null, vue.toDisplayString(_ctx.title), 1),
+          vue.createElementVNode("div", _hoisted_2$a, [
+            vue.createElementVNode("span", _hoisted_3$9, [
+              vue.createVNode(MaskedText, {
+                value: _ctx.info.totalItems,
+                masked: _ctx.privacyMode
+              }, null, 8, ["value", "masked"]),
+              vue.createTextVNode(" " + vue.toDisplayString(_ctx.info.itemLabel), 1)
+            ]),
+            _ctx.info.totalItems > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$9, [
+              _cache[0] || (_cache[0] = vue.createTextVNode(" 第 ", -1)),
+              vue.createVNode(MaskedText, {
+                value: _ctx.info.currentPage,
+                masked: _ctx.privacyMode
+              }, null, 8, ["value", "masked"]),
+              _cache[1] || (_cache[1] = vue.createTextVNode(" 页，共 ", -1)),
+              vue.createVNode(MaskedText, {
+                value: _ctx.info.totalPages,
+                masked: _ctx.privacyMode
+              }, null, 8, ["value", "masked"]),
+              _cache[2] || (_cache[2] = vue.createTextVNode(" 页 ", -1))
+            ])) : vue.createCommentVNode("", true)
+          ])
+        ]);
+      };
+    }
+  });
+  const TableHeader = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-1a8b5b31"]]);
+  const _hoisted_1$b = { class: "table-header-row" };
+  const _sfc_main$c = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableHeaderRow",
+    props: {
+      columns: {}
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$b, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
+            return vue.openBlock(), vue.createElementBlock("div", {
+              key: column.key,
+              class: "table-header-cell",
+              style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
+            }, vue.toDisplayString(column.label), 5);
+          }), 128))
+        ]);
+      };
+    }
+  });
+  const TableHeaderRow = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-e13dda4b"]]);
+  const _hoisted_1$a = { key: 0 };
+  const _hoisted_2$9 = { key: 1 };
+  const _sfc_main$b = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableCell",
+    props: {
+      item: {},
+      column: {},
+      privacyMode: { type: Boolean }
+    },
+    setup(__props) {
+      const props = __props;
+      const getCellValue = () => {
+        const value = props.item[props.column.key];
+        if (props.privacyMode) {
+          return typeof value === "string" ? "****" : "****";
+        }
+        return value;
+      };
+      return (_ctx, _cache) => {
+        return _ctx.column.render ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$a, [
+          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.column.render), {
+            item: _ctx.item,
+            column: _ctx.column,
+            "privacy-mode": _ctx.privacyMode
+          }, null, 8, ["item", "column", "privacy-mode"]))
+        ])) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_2$9, vue.toDisplayString(getCellValue()), 1));
+      };
+    }
+  });
+  const _hoisted_1$9 = { class: "table-content" };
+  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableBody",
+    props: {
+      data: {},
+      columns: {},
+      privacyMode: { type: Boolean },
+      getItemKey: { type: Function }
+    },
+    setup(__props) {
+      const getCellClass = (columnKey) => {
+        return `cell-${columnKey}`;
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.data, (item, index2) => {
+            return vue.openBlock(), vue.createElementBlock("div", {
+              key: _ctx.getItemKey(item, index2),
+              class: "table-row"
+            }, [
+              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
+                return vue.openBlock(), vue.createElementBlock("div", {
+                  key: column.key,
+                  class: vue.normalizeClass(["table-cell", getCellClass(column.key)]),
+                  style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
+                }, [
+                  vue.renderSlot(_ctx.$slots, "cell", {
+                    item,
+                    column,
+                    index: index2
+                  }, () => [
+                    vue.createVNode(_sfc_main$b, {
+                      item,
+                      column,
+                      "privacy-mode": _ctx.privacyMode
+                    }, null, 8, ["item", "column", "privacy-mode"])
+                  ], true)
+                ], 6);
+              }), 128))
+            ]);
+          }), 128))
+        ]);
+      };
+    }
+  });
+  const TableBody = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-040b6ec5"]]);
+  const _hoisted_1$8 = { class: "empty-state" };
+  const _hoisted_2$8 = { class: "empty-icon" };
+  const _hoisted_3$8 = { class: "empty-text" };
+  const _hoisted_4$8 = { class: "empty-hint" };
+  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableEmptyState",
+    props: {
+      config: {}
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$8, [
+          vue.createElementVNode("div", _hoisted_2$8, vue.toDisplayString(_ctx.config.icon), 1),
+          vue.createElementVNode("div", _hoisted_3$8, vue.toDisplayString(_ctx.config.text), 1),
+          vue.createElementVNode("div", _hoisted_4$8, vue.toDisplayString(_ctx.config.hint), 1)
+        ]);
+      };
+    }
+  });
+  const TableEmptyState = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-46fead2e"]]);
+  const _hoisted_1$7 = { class: "pagination" };
+  const _hoisted_2$7 = ["disabled"];
+  const _hoisted_3$7 = { class: "page-numbers" };
+  const _hoisted_4$7 = ["onClick"];
+  const _hoisted_5$7 = ["disabled"];
+  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
+    __name: "TablePagination",
+    props: {
+      currentPage: {},
+      totalPages: {},
+      goToPage: {},
+      goToPrevPage: {},
+      goToNextPage: {},
+      privacyMode: { type: Boolean, default: false }
+    },
+    setup(__props) {
+      const props = __props;
+      const getVisiblePages = () => {
+        const pages = [];
+        const total = props.totalPages;
+        const current = props.currentPage;
+        if (total <= 7) {
+          for (let i = 1; i <= total; i++) {
+            pages.push(i);
+          }
+        } else {
+          const start = Math.max(1, current - 2);
+          const end = Math.min(total, current + 2);
+          if (start > 1) {
+            pages.push(1);
+            if (start > 2) {
+              pages.push(-1);
+            }
+          }
+          for (let i = start; i <= end; i++) {
+            pages.push(i);
+          }
+          if (end < total) {
+            if (end < total - 1) {
+              pages.push(-1);
+            }
+            pages.push(total);
+          }
+        }
+        return pages;
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$7, [
+          vue.createElementVNode("button", {
+            onClick: _cache[0] || (_cache[0] = //@ts-ignore
+            (...args) => _ctx.goToPrevPage && _ctx.goToPrevPage(...args)),
+            disabled: _ctx.currentPage === 1,
+            class: "page-btn"
+          }, " 上一页 ", 8, _hoisted_2$7),
+          vue.createElementVNode("div", _hoisted_3$7, [
+            (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getVisiblePages(), (page) => {
+              return vue.openBlock(), vue.createElementBlock("button", {
+                key: page,
+                class: vue.normalizeClass(["page-btn", { active: _ctx.currentPage === page, ellipsis: page === -1 }]),
+                onClick: ($event) => page === -1 ? null : _ctx.goToPage(page)
+              }, vue.toDisplayString(page === -1 ? "..." : _ctx.privacyMode ? "***" : page), 11, _hoisted_4$7);
+            }), 128))
+          ]),
+          vue.createElementVNode("button", {
+            onClick: _cache[1] || (_cache[1] = //@ts-ignore
+            (...args) => _ctx.goToNextPage && _ctx.goToNextPage(...args)),
+            disabled: _ctx.currentPage === _ctx.totalPages,
+            class: "page-btn"
+          }, " 下一页 ", 8, _hoisted_5$7)
+        ]);
+      };
+    }
+  });
+  const TablePagination = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-dc3732c3"]]);
+  function useTableData(data, pageSize) {
+    const currentPage = vue.ref(1);
+    const totalItems = vue.computed(() => data.value.length);
+    const totalPages = vue.computed(() => Math.ceil(totalItems.value / pageSize.value));
+    const paginatedData = vue.computed(() => {
+      const start = (currentPage.value - 1) * pageSize.value;
+      const end = start + pageSize.value;
+      return data.value.slice(start, end);
+    });
+    vue.watch(data, () => {
+      currentPage.value = 1;
+    }, { deep: true });
+    const goToPage = (page) => {
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+      }
+    };
+    const goToPrevPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--;
+      }
+    };
+    const goToNextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+      }
+    };
+    return {
+      currentPage,
+      totalPages,
+      paginatedData,
+      goToPage,
+      goToPrevPage,
+      goToNextPage
+    };
   }
-  function calculateNetAmount(price, orderDateStr) {
-    const fee = calculateBoothFee(price, orderDateStr);
-    return price - fee;
+  function useTablePrivacy(privacyMode) {
+    const maskValue = (value) => {
+      if (privacyMode.value) {
+        return typeof value === "string" ? "****" : "****";
+      }
+      return value;
+    };
+    const maskText = (text) => {
+      if (privacyMode.value) {
+        return "****";
+      }
+      return text;
+    };
+    const maskNumber = (number) => {
+      if (privacyMode.value) {
+        return "****";
+      }
+      return number;
+    };
+    return {
+      maskValue,
+      maskText,
+      maskNumber
+    };
   }
-  function formatBoothFee(price, orderDateStr) {
-    const fee = calculateBoothFee(price, orderDateStr);
-    return `¥${fee.toLocaleString()}`;
+  function useTableConfig(data, display, config, currentPage, totalPages, goToPage, goToPrevPage, goToNextPage) {
+    const tableClasses = vue.computed(() => {
+      const classes = ["data-table"];
+      if (config.value?.scrollable) {
+        classes.push("table-scrollable");
+      }
+      return classes;
+    });
+    const tableInfo = vue.computed(() => ({
+      totalItems: data.value.length,
+      currentPage: currentPage.value,
+      totalPages: totalPages.value,
+      itemLabel: display.value?.itemLabel || "条记录"
+    }));
+    const emptyConfig = vue.computed(() => ({
+      icon: display.value?.emptyIcon || "📋",
+      text: display.value?.emptyText || "暂无数据",
+      hint: display.value?.emptyHint || "请先加载数据或调整筛选条件"
+    }));
+    const paginationInfo = vue.computed(() => ({
+      currentPage: currentPage.value,
+      totalPages: totalPages.value,
+      goToPage,
+      goToPrevPage,
+      goToNextPage
+    }));
+    return {
+      tableClasses,
+      tableInfo,
+      emptyConfig,
+      paginationInfo
+    };
   }
-  function formatNetAmount(price, orderDateStr) {
-    const netAmount = calculateNetAmount(price, orderDateStr);
-    return `¥${netAmount.toLocaleString()}`;
-  }
-  const _hoisted_1$4 = { class: "item-name" };
-  const _hoisted_2$4 = { class: "tooltip-header" };
-  const _hoisted_3$4 = ["src", "alt"];
-  const _hoisted_4$4 = {
+  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      data: {},
+      columns: {},
+      config: { default: () => ({
+        pageSize: 50,
+        privacyMode: false,
+        scrollable: false,
+        showPagination: true,
+        getItemKey: (item, index2) => item.id || item.orderNumber || item.itemId || index2
+      }) },
+      display: { default: () => ({
+        title: "数据表格",
+        itemLabel: "条记录",
+        emptyIcon: "📋",
+        emptyText: "暂无数据",
+        emptyHint: "请先加载数据或调整筛选条件"
+      }) }
+    },
+    setup(__props) {
+      const props = __props;
+      const {
+        currentPage,
+        totalPages,
+        paginatedData,
+        goToPage,
+        goToPrevPage,
+        goToNextPage
+      } = useTableData(
+        vue.computed(() => props.data),
+        vue.computed(() => props.config?.pageSize || 50)
+      );
+      useTablePrivacy(vue.computed(() => props.config?.privacyMode || false));
+      const { tableClasses, tableInfo, emptyConfig, paginationInfo } = useTableConfig(
+        vue.computed(() => props.data),
+        vue.computed(() => props.display),
+        vue.computed(() => props.config),
+        currentPage,
+        totalPages,
+        goToPage,
+        goToPrevPage,
+        goToNextPage
+      );
+      const privacyMode = vue.computed(() => props.config?.privacyMode || false);
+      const scrollable = vue.computed(() => props.config?.scrollable || false);
+      const showPagination = vue.computed(() => props.config?.showPagination !== false);
+      const getItemKey = vue.computed(() => props.config?.getItemKey || ((item, index2) => item.id || item.orderNumber || item.itemId || index2));
+      vue.watch(() => props.data, () => {
+        currentPage.value = 1;
+      }, { deep: true });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", {
+          class: vue.normalizeClass(["data-table", vue.unref(tableClasses)])
+        }, [
+          vue.renderSlot(_ctx.$slots, "header", {
+            title: _ctx.display?.title,
+            info: vue.unref(tableInfo)
+          }, () => [
+            vue.createVNode(TableHeader, {
+              title: _ctx.display?.title,
+              info: vue.unref(tableInfo),
+              "privacy-mode": privacyMode.value
+            }, null, 8, ["title", "info", "privacy-mode"])
+          ], true),
+          vue.createElementVNode("div", {
+            class: vue.normalizeClass(["table-container", { "table-scrollable": scrollable.value }])
+          }, [
+            vue.renderSlot(_ctx.$slots, "table-header", { columns: _ctx.columns }, () => [
+              vue.createVNode(TableHeaderRow, { columns: _ctx.columns }, null, 8, ["columns"])
+            ], true),
+            vue.renderSlot(_ctx.$slots, "table-body", {
+              data: vue.unref(paginatedData),
+              columns: _ctx.columns
+            }, () => [
+              vue.unref(paginatedData).length > 0 ? (vue.openBlock(), vue.createBlock(TableBody, {
+                key: 0,
+                data: vue.unref(paginatedData),
+                columns: _ctx.columns,
+                "privacy-mode": privacyMode.value,
+                "get-item-key": getItemKey.value
+              }, {
+                cell: vue.withCtx(({ item, column, index: index2 }) => [
+                  vue.renderSlot(_ctx.$slots, "cell", {
+                    item,
+                    column,
+                    index: index2
+                  }, () => [
+                    vue.createVNode(_sfc_main$b, {
+                      item,
+                      column,
+                      "privacy-mode": privacyMode.value
+                    }, null, 8, ["item", "column", "privacy-mode"])
+                  ], true)
+                ]),
+                _: 3
+              }, 8, ["data", "columns", "privacy-mode", "get-item-key"])) : (vue.openBlock(), vue.createBlock(TableEmptyState, {
+                key: 1,
+                config: vue.unref(emptyConfig)
+              }, null, 8, ["config"]))
+            ], true)
+          ], 2),
+          vue.renderSlot(_ctx.$slots, "pagination", { pagination: vue.unref(paginationInfo) }, () => [
+            showPagination.value ? (vue.openBlock(), vue.createBlock(TablePagination, {
+              key: 0,
+              "current-page": vue.unref(currentPage),
+              "total-pages": vue.unref(totalPages),
+              "go-to-page": vue.unref(goToPage),
+              "go-to-prev-page": vue.unref(goToPrevPage),
+              "go-to-next-page": vue.unref(goToNextPage),
+              "privacy-mode": privacyMode.value
+            }, null, 8, ["current-page", "total-pages", "go-to-page", "go-to-prev-page", "go-to-next-page", "privacy-mode"])) : vue.createCommentVNode("", true)
+          ], true)
+        ], 2);
+      };
+    }
+  });
+  const DataTable = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-88dfaae1"]]);
+  const _hoisted_1$6 = { class: "item-name" };
+  const _hoisted_2$6 = { class: "tooltip-header" };
+  const _hoisted_3$6 = ["src", "alt"];
+  const _hoisted_4$6 = {
     key: 1,
     class: "tooltip-icon-placeholder"
   };
-  const _hoisted_5$4 = { class: "tooltip-title" };
-  const _hoisted_6$4 = { class: "tooltip-content" };
-  const _hoisted_7$4 = { class: "tooltip-row" };
-  const _hoisted_8$2 = { class: "tooltip-value" };
-  const _hoisted_9$2 = { class: "tooltip-row" };
-  const _hoisted_10$2 = { class: "tooltip-value" };
-  const _hoisted_11$2 = { class: "tooltip-row" };
-  const _hoisted_12$2 = { class: "tooltip-value" };
-  const _hoisted_13$2 = { class: "tooltip-row" };
-  const _hoisted_14$2 = { class: "tooltip-value sales-highlight" };
-  const _hoisted_15$2 = { class: "tooltip-row" };
-  const _hoisted_16$2 = ["href"];
-  const _hoisted_17$1 = {
+  const _hoisted_5$6 = { class: "tooltip-title" };
+  const _hoisted_6$5 = { class: "tooltip-content" };
+  const _hoisted_7$5 = { class: "tooltip-row" };
+  const _hoisted_8$4 = { class: "tooltip-value" };
+  const _hoisted_9$4 = { class: "tooltip-row" };
+  const _hoisted_10$3 = { class: "tooltip-value" };
+  const _hoisted_11$3 = { class: "tooltip-row" };
+  const _hoisted_12$3 = { class: "tooltip-value" };
+  const _hoisted_13$3 = { class: "tooltip-row" };
+  const _hoisted_14$3 = { class: "tooltip-value sales-highlight" };
+  const _hoisted_15$3 = { class: "tooltip-row" };
+  const _hoisted_16$3 = ["href"];
+  const _hoisted_17$2 = {
     key: 1,
     class: "tooltip-value"
   };
-  const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
     __name: "ItemEntry",
     props: {
       item: {},
@@ -18950,7 +19210,7 @@
             size: _ctx.size,
             "privacy-mode": props.privacyMode
           }, null, 8, ["itemId", "size", "privacy-mode"]),
-          vue.createElementVNode("span", _hoisted_1$4, [
+          vue.createElementVNode("span", _hoisted_1$6, [
             vue.createVNode(MaskedText, {
               value: _ctx.item.name,
               masked: props.privacyMode,
@@ -18970,13 +19230,13 @@
               top: tooltipPosition.value.y + "px"
             })
           }, [
-            vue.createElementVNode("div", _hoisted_2$4, [
+            vue.createElementVNode("div", _hoisted_2$6, [
               !props.privacyMode && itemDetails.value.iconUrl ? (vue.openBlock(), vue.createElementBlock("img", {
                 key: 0,
                 src: itemDetails.value.iconUrl,
                 alt: itemDetails.value.name,
                 class: "tooltip-icon"
-              }, null, 8, _hoisted_3$4)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$4, _cache[1] || (_cache[1] = [
+              }, null, 8, _hoisted_3$6)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$6, _cache[1] || (_cache[1] = [
                 vue.createElementVNode("svg", {
                   width: "32",
                   height: "32",
@@ -18995,7 +19255,7 @@
                   })
                 ], -1)
               ]))) : vue.createCommentVNode("", true),
-              vue.createElementVNode("div", _hoisted_5$4, [
+              vue.createElementVNode("div", _hoisted_5$6, [
                 vue.createVNode(MaskedText, {
                   value: itemDetails.value.name,
                   masked: props.privacyMode,
@@ -19003,51 +19263,51 @@
                 }, null, 8, ["value", "masked"])
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_6$4, [
-              vue.createElementVNode("div", _hoisted_7$4, [
+            vue.createElementVNode("div", _hoisted_6$5, [
+              vue.createElementVNode("div", _hoisted_7$5, [
                 _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "tooltip-label" }, "商品ID:", -1)),
-                vue.createElementVNode("span", _hoisted_8$2, [
+                vue.createElementVNode("span", _hoisted_8$4, [
                   vue.createVNode(MaskedText, {
                     value: _ctx.item.itemId,
                     masked: props.privacyMode
                   }, null, 8, ["value", "masked"])
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_9$2, [
+              vue.createElementVNode("div", _hoisted_9$4, [
                 _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "tooltip-label" }, "状态:", -1)),
-                vue.createElementVNode("span", _hoisted_10$2, [
+                vue.createElementVNode("span", _hoisted_10$3, [
                   vue.createVNode(MaskedText, {
                     value: itemDetails.value.stateLabel,
                     masked: props.privacyMode
                   }, null, 8, ["value", "masked"])
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_11$2, [
+              vue.createElementVNode("div", _hoisted_11$3, [
                 _cache[4] || (_cache[4] = vue.createElementVNode("span", { class: "tooltip-label" }, "订单数量:", -1)),
-                vue.createElementVNode("span", _hoisted_12$2, [
+                vue.createElementVNode("span", _hoisted_12$3, [
                   vue.createVNode(MaskedText, {
                     value: _ctx.item.quantity,
                     masked: props.privacyMode
                   }, null, 8, ["value", "masked"])
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_13$2, [
+              vue.createElementVNode("div", _hoisted_13$3, [
                 _cache[5] || (_cache[5] = vue.createElementVNode("span", { class: "tooltip-label" }, "总销量:", -1)),
-                vue.createElementVNode("span", _hoisted_14$2, [
+                vue.createElementVNode("span", _hoisted_14$3, [
                   vue.createVNode(MaskedText, {
                     value: itemDetails.value.totalSales,
                     masked: props.privacyMode
                   }, null, 8, ["value", "masked"])
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_15$2, [
+              vue.createElementVNode("div", _hoisted_15$3, [
                 _cache[6] || (_cache[6] = vue.createElementVNode("span", { class: "tooltip-label" }, "链接:", -1)),
                 !props.privacyMode && itemDetails.value.url ? (vue.openBlock(), vue.createElementBlock("a", {
                   key: 0,
                   href: itemDetails.value.url,
                   target: "_blank",
                   class: "tooltip-link"
-                }, " 查看商品 ", 8, _hoisted_16$2)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_17$1, "****")) : vue.createCommentVNode("", true)
+                }, " 查看商品 ", 8, _hoisted_16$3)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_17$2, "****")) : vue.createCommentVNode("", true)
               ])
             ])
           ], 4)) : vue.createCommentVNode("", true)
@@ -19055,91 +19315,64 @@
       };
     }
   });
-  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-87b28883"]]);
-  const _hoisted_1$3 = { class: "order-table-panel" };
-  const _hoisted_2$3 = { class: "table-header" };
-  const _hoisted_3$3 = { class: "table-info" };
-  const _hoisted_4$3 = { class: "order-count" };
-  const _hoisted_5$3 = {
-    key: 0,
-    class: "page-info"
-  };
-  const _hoisted_6$3 = { class: "table-container" };
-  const _hoisted_7$3 = { class: "table-header-row" };
-  const _hoisted_8$1 = {
-    key: 0,
-    class: "table-content"
-  };
-  const _hoisted_9$1 = {
+  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-164f6045"]]);
+  const _hoisted_1$5 = {
     key: 0,
     class: "order-number"
   };
-  const _hoisted_10$1 = {
+  const _hoisted_2$5 = {
     key: 1,
     class: "date-cell"
   };
-  const _hoisted_11$1 = { class: "date-main" };
-  const _hoisted_12$1 = {
+  const _hoisted_3$5 = { class: "date-main" };
+  const _hoisted_4$5 = {
     key: 0,
     class: "date-converted"
   };
-  const _hoisted_13$1 = {
+  const _hoisted_5$5 = {
     key: 2,
     class: "items"
   };
-  const _hoisted_14$1 = {
+  const _hoisted_6$4 = {
     key: 0,
     class: "item-list"
   };
-  const _hoisted_15$1 = {
+  const _hoisted_7$4 = {
     key: 1,
     class: "no-items"
   };
-  const _hoisted_16$1 = {
+  const _hoisted_8$3 = {
     key: 3,
     class: "payment-method"
   };
-  const _hoisted_17 = {
+  const _hoisted_9$3 = {
     key: 4,
     class: "price-cell"
   };
-  const _hoisted_18 = { class: "price-main" };
-  const _hoisted_19 = {
+  const _hoisted_10$2 = { class: "price-main" };
+  const _hoisted_11$2 = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_20 = {
+  const _hoisted_12$2 = {
     key: 5,
     class: "booth-fee-cell"
   };
-  const _hoisted_21 = { class: "price-main" };
-  const _hoisted_22 = {
+  const _hoisted_13$2 = { class: "price-main" };
+  const _hoisted_14$2 = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_23 = {
+  const _hoisted_15$2 = {
     key: 6,
     class: "net-amount-cell"
   };
-  const _hoisted_24 = { class: "price-main" };
-  const _hoisted_25 = {
+  const _hoisted_16$2 = { class: "price-main" };
+  const _hoisted_17$1 = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_26 = {
-    key: 1,
-    class: "empty-state"
-  };
-  const _hoisted_27 = {
-    key: 0,
-    class: "pagination"
-  };
-  const _hoisted_28 = ["disabled"];
-  const _hoisted_29 = { class: "page-numbers" };
-  const _hoisted_30 = ["onClick"];
-  const _hoisted_31 = ["disabled"];
-  const pageSize = 50;
-  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$5 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       orders: {},
@@ -19148,641 +19381,494 @@
     },
     setup(__props) {
       const props = __props;
-      const currentPage = vue.ref(1);
-      const paginatedOrders = vue.computed(() => {
-        const start = (currentPage.value - 1) * pageSize;
-        const end = start + pageSize;
-        return props.orders.slice(start, end);
-      });
-      const totalPages = vue.computed(() => Math.ceil(props.orders.length / pageSize));
-      const columns = [
+      const orderColumns = [
         { key: "orderNumber", label: "订单编号", width: "120px" },
-        { key: "createdAt", label: "订单时间", width: "140px" },
+        { key: "createdAt", label: "订单时间", width: "192px" },
         { key: "items", label: "商品", width: "300px" },
         { key: "paymentMethod", label: "支付方式", width: "120px" },
-        { key: "totalPrice", label: "金额", width: "100px" },
-        { key: "boothFee", label: "手续费", width: "100px" },
-        { key: "netAmount", label: "到手金额", width: "100px" }
+        { key: "totalPrice", label: "金额", width: "120px" },
+        { key: "boothFee", label: "手续费", width: "120px" },
+        { key: "netAmount", label: "净收入", width: "120px" }
       ];
-      const formatOriginalDateTime = (dateString) => {
-        if (!dateString) return "";
-        const parts = dateString.split(" ");
-        if (parts.length !== 2) return dateString;
-        const [datePart, timePart] = parts;
-        const [year, month, day] = datePart.split("-");
-        const [hour, minute] = timePart.split(":");
-        return `${month}/${day} ${hour}:${minute}`;
-      };
-      const formatConvertedDateTime = (dateString) => {
-        if (!dateString) return "";
-        if (!props.userSettings) return "";
-        try {
-          const convertedTime = TimezoneConverter.convertJSTToTargetTimezone(dateString, props.userSettings.timezone);
-          const [datePart, timePart] = convertedTime.split(" ");
-          const [year, month, day] = datePart.split("-");
-          const [hour, minute] = timePart.split(":");
-          return `${month}/${day} ${hour}:${minute} (${props.userSettings.displayName})`;
-        } catch (error) {
-          return "";
-        }
-      };
-      const formatJPY = (price) => {
-        return CurrencyConverter.formatCurrencyWithCode(price, "JPY");
-      };
-      const formatConverted = (price) => {
-        const targetCurrency = props.targetCurrency || "CNY";
-        if (targetCurrency === "JPY") {
-          return null;
-        }
-        const convertedAmount = CurrencyConverter.convertFromJPYSync(price, targetCurrency);
-        return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
-      };
       const formatNetAmountForOrder = (order) => {
-        calculateNetAmount(order.totalPrice, order.createdAt);
         return formatNetAmount(order.totalPrice, order.createdAt);
       };
       const formatBoothFeeForOrder = (order) => {
         return formatBoothFee(order.totalPrice, order.createdAt);
       };
-      const formatBoothFeeConverted = (order) => {
-        const boothFee = calculateBoothFee(order.totalPrice, order.createdAt);
-        const targetCurrency = props.targetCurrency || "CNY";
-        if (targetCurrency === "JPY") {
-          return null;
-        }
-        const convertedAmount = CurrencyConverter.convertFromJPYSync(boothFee, targetCurrency);
-        return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
-      };
-      const formatNetAmountConverted = (order) => {
-        const netAmount = calculateNetAmount(order.totalPrice, order.createdAt);
-        const targetCurrency = props.targetCurrency || "CNY";
-        if (targetCurrency === "JPY") {
-          return null;
-        }
-        const convertedAmount = CurrencyConverter.convertFromJPYSync(netAmount, targetCurrency);
-        return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
-      };
-      const goToPage = (page) => {
-        if (page >= 1 && page <= totalPages.value) {
-          currentPage.value = page;
-        }
-      };
-      const goToPrevPage = () => {
-        if (currentPage.value > 1) {
-          currentPage.value--;
-        }
-      };
-      const goToNextPage = () => {
-        if (currentPage.value < totalPages.value) {
-          currentPage.value++;
-        }
-      };
-      const getCellClass = (columnKey) => {
-        switch (columnKey) {
-          case "createdAt":
-            return "date-cell";
-          case "items":
-            return "items-cell";
-          case "totalPrice":
-            return "price-cell";
-          case "boothFee":
-            return "booth-fee-cell";
-          case "netAmount":
-            return "net-amount-cell";
-          default:
-            return "";
-        }
-      };
-      const getVisiblePages = () => {
-        const pages = [];
-        const total = totalPages.value;
-        const current = currentPage.value;
-        if (total <= 7) {
-          for (let i = 1; i <= total; i++) {
-            pages.push(i);
-          }
-        } else {
-          const start = Math.max(1, current - 2);
-          const end = Math.min(total, current + 2);
-          if (start > 1) {
-            pages.push(1);
-            if (start > 2) {
-              pages.push(-1);
-            }
-          }
-          for (let i = start; i <= end; i++) {
-            pages.push(i);
-          }
-          if (end < total) {
-            if (end < total - 1) {
-              pages.push(-1);
-            }
-            pages.push(total);
-          }
-        }
-        return pages;
+      const tableConfig = vue.computed(() => ({
+        pageSize: 50,
+        privacyMode: props.userSettings?.privacyMode || false,
+        scrollable: false,
+        showPagination: true,
+        getItemKey: (item) => item.orderNumber
+      }));
+      const displayConfig = {
+        title: "订单列表",
+        itemLabel: "条订单",
+        emptyIcon: "📋",
+        emptyText: "暂无订单数据",
+        emptyHint: "请先加载数据或调整筛选条件"
       };
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$3, [
-          vue.createElementVNode("div", _hoisted_2$3, [
-            _cache[0] || (_cache[0] = vue.createElementVNode("h3", null, "订单列表", -1)),
-            vue.createElementVNode("div", _hoisted_3$3, [
-              vue.createElementVNode("span", _hoisted_4$3, vue.toDisplayString(_ctx.orders.length) + " 条订单", 1),
-              _ctx.orders.length > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_5$3, " 第 " + vue.toDisplayString(currentPage.value) + " 页，共 " + vue.toDisplayString(totalPages.value) + " 页 ", 1)) : vue.createCommentVNode("", true)
-            ])
+        return vue.openBlock(), vue.createBlock(DataTable, {
+          data: _ctx.orders,
+          columns: orderColumns,
+          config: tableConfig.value,
+          display: displayConfig
+        }, {
+          cell: vue.withCtx(({ item, column }) => [
+            column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$5, [
+              vue.createVNode(MaskedText, {
+                value: item.orderNumber,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])
+            ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, [
+              vue.createElementVNode("div", _hoisted_3$5, [
+                vue.createVNode(MaskedText, {
+                  value: vue.unref(formatOriginalDateTime)(item.createdAt),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && _ctx.userSettings && vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$5, vue.toDisplayString(vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$5, [
+              item.items && item.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$4, [
+                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(item.items, (itemEntry) => {
+                  return vue.openBlock(), vue.createBlock(ItemEntry, {
+                    key: itemEntry.id,
+                    item: itemEntry,
+                    "all-orders": _ctx.orders,
+                    size: "20px",
+                    "privacy-mode": props.userSettings?.privacyMode || false
+                  }, null, 8, ["item", "all-orders", "privacy-mode"]);
+                }), 128))
+              ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$4, " 无商品信息 "))
+            ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$3, [
+              vue.createVNode(MaskedText, {
+                value: item.paymentMethod,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])
+            ])) : column.key === "totalPrice" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$3, [
+              vue.createElementVNode("div", _hoisted_10$2, [
+                vue.createVNode(MaskedText, {
+                  value: vue.unref(CurrencyManager).formatJPY(item.totalPrice || 0),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_11$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "boothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_12$2, [
+              vue.createElementVNode("div", _hoisted_13$2, [
+                vue.createVNode(MaskedText, {
+                  value: formatBoothFeeForOrder(item),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "netAmount" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$2, [
+              vue.createElementVNode("div", _hoisted_16$2, [
+                vue.createVNode(MaskedText, {
+                  value: formatNetAmountForOrder(item),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_17$1, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : vue.createCommentVNode("", true)
           ]),
-          vue.createElementVNode("div", _hoisted_6$3, [
-            vue.createElementVNode("div", _hoisted_7$3, [
-              (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(columns, (column) => {
-                return vue.createElementVNode("div", {
-                  key: column.key,
-                  class: "table-header-cell",
-                  style: vue.normalizeStyle({ width: column.width })
-                }, vue.toDisplayString(column.label), 5);
-              }), 64))
-            ]),
-            _ctx.orders.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_8$1, [
-              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(paginatedOrders.value, (order) => {
-                return vue.openBlock(), vue.createElementBlock("div", {
-                  key: order.orderNumber,
-                  class: "table-row"
-                }, [
-                  (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(columns, (column) => {
-                    return vue.createElementVNode("div", {
-                      key: column.key,
-                      class: vue.normalizeClass(["table-cell", getCellClass(column.key)]),
-                      style: vue.normalizeStyle({ width: column.width })
-                    }, [
-                      column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_9$1, [
-                        vue.createVNode(MaskedText, {
-                          value: order.orderNumber,
-                          masked: _ctx.userSettings?.privacyMode || false
-                        }, null, 8, ["value", "masked"])
-                      ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10$1, [
-                        vue.createElementVNode("div", _hoisted_11$1, [
-                          vue.createVNode(MaskedText, {
-                            value: formatOriginalDateTime(order.createdAt),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ]),
-                        !_ctx.userSettings?.privacyMode && formatConvertedDateTime(order.createdAt) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_12$1, vue.toDisplayString(formatConvertedDateTime(order.createdAt)), 1)) : vue.createCommentVNode("", true)
-                      ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_13$1, [
-                        order.items && order.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$1, [
-                          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(order.items, (item) => {
-                            return vue.openBlock(), vue.createBlock(ItemEntry, {
-                              key: item.itemId,
-                              item,
-                              allOrders: _ctx.orders,
-                              size: "20px",
-                              "privacy-mode": _ctx.userSettings?.privacyMode || false
-                            }, null, 8, ["item", "allOrders", "privacy-mode"]);
-                          }), 128))
-                        ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$1, "无商品信息"))
-                      ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16$1, [
-                        vue.createVNode(MaskedText, {
-                          value: order.paymentMethod,
-                          masked: _ctx.userSettings?.privacyMode || false
-                        }, null, 8, ["value", "masked"])
-                      ])) : column.key === "totalPrice" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_17, [
-                        vue.createElementVNode("div", _hoisted_18, [
-                          vue.createVNode(MaskedText, {
-                            value: formatJPY(order.totalPrice),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ]),
-                        !_ctx.userSettings?.privacyMode && formatConverted(order.totalPrice) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_19, vue.toDisplayString(formatConverted(order.totalPrice)), 1)) : vue.createCommentVNode("", true)
-                      ])) : column.key === "boothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_20, [
-                        vue.createElementVNode("div", _hoisted_21, [
-                          vue.createVNode(MaskedText, {
-                            value: formatBoothFeeForOrder(order),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ]),
-                        !_ctx.userSettings?.privacyMode && formatBoothFeeConverted(order) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_22, vue.toDisplayString(formatBoothFeeConverted(order)), 1)) : vue.createCommentVNode("", true)
-                      ])) : column.key === "netAmount" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_23, [
-                        vue.createElementVNode("div", _hoisted_24, [
-                          vue.createVNode(MaskedText, {
-                            value: formatNetAmountForOrder(order),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ]),
-                        !_ctx.userSettings?.privacyMode && formatNetAmountConverted(order) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_25, vue.toDisplayString(formatNetAmountConverted(order)), 1)) : vue.createCommentVNode("", true)
-                      ])) : vue.createCommentVNode("", true)
-                    ], 6);
-                  }), 64))
-                ]);
-              }), 128))
-            ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_26, _cache[1] || (_cache[1] = [
-              vue.createElementVNode("div", { class: "empty-icon" }, "📋", -1),
-              vue.createElementVNode("div", { class: "empty-text" }, "暂无订单数据", -1),
-              vue.createElementVNode("div", { class: "empty-hint" }, "请先加载数据或调整筛选条件", -1)
-            ])))
-          ]),
-          _ctx.orders.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_27, [
-            vue.createElementVNode("button", {
-              onClick: goToPrevPage,
-              disabled: currentPage.value === 1,
-              class: "page-btn"
-            }, " 上一页 ", 8, _hoisted_28),
-            vue.createElementVNode("div", _hoisted_29, [
-              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getVisiblePages(), (page) => {
-                return vue.openBlock(), vue.createElementBlock("button", {
-                  key: page,
-                  class: vue.normalizeClass(["page-btn", { active: currentPage.value === page, ellipsis: page === -1 }]),
-                  onClick: ($event) => page === -1 ? null : goToPage(page)
-                }, vue.toDisplayString(page === -1 ? "..." : page), 11, _hoisted_30);
-              }), 128))
-            ]),
-            vue.createElementVNode("button", {
-              onClick: goToNextPage,
-              disabled: currentPage.value === totalPages.value,
-              class: "page-btn"
-            }, " 下一页 ", 8, _hoisted_31)
-          ])) : vue.createCommentVNode("", true)
-        ]);
+          _: 1
+        }, 8, ["data", "config"]);
       };
     }
   });
-  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-d9a2354f"]]);
-  const DEFAULT_SETTINGS = {
-    timezone: "Asia/Shanghai",
-    displayName: "中国标准时间",
-    targetCurrency: "CNY",
-    privacyMode: false
-  };
-  const TIMEZONE_OPTIONS = [
-    { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
-    { value: "Asia/Tokyo", label: "日本标准时间 (UTC+9)" },
-    { value: "America/New_York", label: "美国东部时间 (UTC-5)" },
-    { value: "America/Los_Angeles", label: "美国太平洋时间 (UTC-8)" },
-    { value: "Europe/London", label: "英国时间 (UTC+0)" },
-    { value: "Europe/Paris", label: "欧洲中部时间 (UTC+1)" },
-    { value: "Asia/Seoul", label: "韩国标准时间 (UTC+9)" },
-    { value: "Asia/Singapore", label: "新加坡时间 (UTC+8)" },
-    { value: "Australia/Sydney", label: "澳大利亚东部时间 (UTC+10)" },
-    { value: "UTC", label: "协调世界时 (UTC+0)" }
-  ];
-  const CURRENCY_OPTIONS = [
-    { value: "JPY", label: "日元 (JPY)", symbol: "¥" },
-    { value: "CNY", label: "人民币 (CNY)", symbol: "¥" },
-    { value: "USD", label: "美元 (USD)", symbol: "$" },
-    { value: "EUR", label: "欧元 (EUR)", symbol: "€" },
-    { value: "GBP", label: "英镑 (GBP)", symbol: "£" },
-    { value: "KRW", label: "韩元 (KRW)", symbol: "₩" },
-    { value: "HKD", label: "港币 (HKD)", symbol: "HK$" },
-    { value: "TWD", label: "台币 (TWD)", symbol: "NT$" }
-  ];
-  class SettingsManager {
-    static SETTINGS_KEY = "booth_order_analysis_settings";
+  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-d29745a8"]]);
+  class OrderManager {
+    static instance;
+    itemManager;
+    variantCache = /* @__PURE__ */ new Map();
+    lastProcessedOrders = [];
+    cachedItemsWithStats = null;
+    cachedSalesStats = null;
+    constructor() {
+      this.itemManager = ItemManager.getInstance();
+    }
     /**
-     * 获取用户设置
+     * 获取单例实例
      */
-    static getSettings() {
-      try {
-        const savedSettings = _GM_getValue(this.SETTINGS_KEY, null);
-        if (savedSettings && typeof savedSettings === "object") {
-          return { ...DEFAULT_SETTINGS, ...savedSettings };
+    static getInstance() {
+      if (!OrderManager.instance) {
+        OrderManager.instance = new OrderManager();
+      }
+      return OrderManager.instance;
+    }
+    /**
+     * 获取商品的销售统计
+     */
+    getItemSalesStats(itemId, orders) {
+      let totalQuantity = 0;
+      let totalRevenue = 0;
+      let totalBoothFee = 0;
+      let orderCount = 0;
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (item.itemId === itemId) {
+            const quantity = item.quantity || 0;
+            totalQuantity += quantity;
+            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+            if (totalItemsInOrder > 0) {
+              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+              totalRevenue += itemValue;
+              totalBoothFee += itemBoothFee;
+            }
+            orderCount += 1;
+          }
+        });
+      });
+      const totalNetRevenue = totalRevenue - totalBoothFee;
+      return {
+        totalQuantity,
+        totalRevenue,
+        totalBoothFee,
+        totalNetRevenue,
+        orderCount
+      };
+    }
+    /**
+     * 获取所有商品的销售统计（带缓存优化）
+     */
+    getAllItemSalesStats(orders) {
+      if (this.lastProcessedOrders.length === orders.length && this.cachedSalesStats) {
+        return this.cachedSalesStats;
+      }
+      const stats = /* @__PURE__ */ new Map();
+      const allItems = this.itemManager.getAllItems();
+      allItems.forEach((item, itemId) => {
+        stats.set(itemId, {
+          totalQuantity: 0,
+          totalRevenue: 0,
+          totalBoothFee: 0,
+          totalNetRevenue: 0,
+          orderCount: 0
+        });
+      });
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          const itemId = item.itemId;
+          const currentStats = stats.get(itemId);
+          if (currentStats) {
+            const quantity = item.quantity || 0;
+            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+            if (totalItemsInOrder > 0) {
+              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+              currentStats.totalQuantity += quantity;
+              currentStats.totalRevenue += itemValue;
+              currentStats.totalBoothFee += itemBoothFee;
+              currentStats.orderCount += 1;
+            }
+          }
+        });
+      });
+      stats.forEach((stat) => {
+        stat.totalNetRevenue = stat.totalRevenue - stat.totalBoothFee;
+      });
+      this.lastProcessedOrders = [...orders];
+      this.cachedSalesStats = stats;
+      return stats;
+    }
+    /**
+     * 获取商品的变体销售统计（优化版本，使用缓存）
+     */
+    getItemVariantStats(itemId, orders) {
+      if (this.shouldReprocessOrders(orders)) {
+        this.preprocessAllItemVariants(orders);
+        this.lastProcessedOrders = [...orders];
+      }
+      const cachedVariants = this.variantCache.get(itemId);
+      if (cachedVariants) {
+        logger.debug(`从缓存获取商品 ${itemId} 的变体数据，共 ${cachedVariants.length} 个变体`);
+        return cachedVariants;
+      }
+      const currentItem = this.itemManager.getItem(itemId);
+      if (!currentItem) {
+        logger.warn(`未找到商品: ${itemId}`);
+        return [];
+      }
+      logger.debug(`实时分析商品 ${itemId} (${currentItem.name}) 的变体数据`);
+      const variantStats = this.analyzeVariantsFromOrders(itemId, currentItem.name, orders);
+      logger.debug(`找到 ${variantStats.length} 个变体`);
+      return variantStats;
+    }
+    /**
+     * 检查是否需要重新处理订单数据
+     */
+    shouldReprocessOrders(orders) {
+      if (this.lastProcessedOrders.length !== orders.length) {
+        return true;
+      }
+      if (this.variantCache.size === 0) {
+        return true;
+      }
+      if (orders.length === 0) {
+        return false;
+      }
+      const currentItemIds = new Set(this.itemManager.getAllItemIds());
+      const cachedItemIds = new Set(this.variantCache.keys());
+      for (const itemId of currentItemIds) {
+        if (!cachedItemIds.has(itemId)) {
+          return true;
         }
-      } catch (error) {
-        logger.error("读取设置失败:", error);
       }
-      return { ...DEFAULT_SETTINGS };
+      return false;
     }
     /**
-     * 保存用户设置
+     * 从订单数据中分析变体
+     * 主要逻辑：找到所有包含主商品名称但不等于主商品名称的订单项
      */
-    static saveSettings(settings) {
-      try {
-        _GM_setValue(this.SETTINGS_KEY, settings);
-        logger.settings("设置已保存");
-      } catch (error) {
-        logger.error("保存设置失败:", error);
+    analyzeVariantsFromOrders(itemId, mainItemName, orders) {
+      const variantStats = [];
+      const variantNames = /* @__PURE__ */ new Set();
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
+            const variantName = this.extractVariantName(item.name, mainItemName);
+            if (variantName && variantName !== mainItemName) {
+              variantNames.add(variantName);
+              logger.debug(`发现变体: ${variantName} (来自订单项: ${item.name})`);
+            }
+          }
+        });
+      });
+      variantNames.forEach((variantName) => {
+        const stats = this.calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders);
+        if (stats.totalQuantity > 0) {
+          variantStats.push(stats);
+          logger.debug(`变体 ${variantName} 统计: 销量=${stats.totalQuantity}, 收入=${stats.totalRevenue}`);
+        }
+      });
+      return variantStats;
+    }
+    /**
+     * 判断订单项是否是主商品的变体
+     */
+    isVariantOfMainItem(item, mainItemId, mainItemName) {
+      if (item.itemId === mainItemId) {
+        return true;
       }
+      if (item.name.includes(mainItemName) && item.name !== mainItemName) {
+        return true;
+      }
+      return false;
     }
     /**
-     * 更新部分设置
+     * 从订单项名称中提取变体名称
      */
-    static updateSettings(partialSettings) {
-      const currentSettings = this.getSettings();
-      const newSettings = { ...currentSettings, ...partialSettings };
-      this.saveSettings(newSettings);
+    extractVariantName(itemName, mainItemName) {
+      if (itemName.includes(mainItemName)) {
+        const parts = itemName.split(mainItemName);
+        if (parts.length > 1) {
+          const variantPart = parts[1].trim();
+          if (variantPart && !variantPart.match(/^[-\s]+$/)) {
+            let cleanVariantName = variantPart.replace(/^[-\s]+/, "").replace(/[-\s]+$/, "").replace(/^[\(（]/, "").replace(/[\)）]$/, "");
+            if (cleanVariantName && cleanVariantName !== mainItemName) {
+              return cleanVariantName;
+            }
+          }
+        }
+      }
+      return itemName.replace(/^[\(（]/, "").replace(/[\)）]$/, "");
     }
     /**
-     * 重置为默认设置
+     * 从订单数据中计算变体的销售统计
      */
-    static resetSettings() {
-      this.saveSettings(DEFAULT_SETTINGS);
-      logger.settings("设置已重置为默认值");
+    calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders) {
+      let totalQuantity = 0;
+      let totalRevenue = 0;
+      let totalBoothFee = 0;
+      let orderCount = 0;
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
+            const extractedVariantName = this.extractVariantName(item.name, mainItemName);
+            if (extractedVariantName === variantName || item.name.includes(variantName)) {
+              const quantity = item.quantity || 0;
+              totalQuantity += quantity;
+              const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+              if (totalItemsInOrder > 0) {
+                const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+                const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+                totalRevenue += itemValue;
+                totalBoothFee += itemBoothFee;
+              }
+              orderCount += 1;
+            }
+          }
+        });
+      });
+      const totalNetRevenue = totalRevenue - totalBoothFee;
+      return {
+        itemId,
+        variantName,
+        totalQuantity,
+        totalRevenue,
+        totalBoothFee,
+        totalNetRevenue,
+        orderCount
+      };
+    }
+    /**
+     * 获取商品的完整信息（包括销售统计和变体信息）
+     */
+    getItemWithStats(itemId, orders) {
+      const item = this.itemManager.getItem(itemId);
+      if (!item) return null;
+      const salesStats = this.getItemSalesStats(itemId, orders);
+      const variantStats = this.getItemVariantStats(itemId, orders);
+      return {
+        item,
+        salesStats,
+        variantStats
+      };
+    }
+    /**
+     * 预处理所有商品的变体数据
+     * 在订单分析阶段就完成变体数据的填充，提高后续使用效率
+     */
+    preprocessAllItemVariants(orders) {
+      this.variantCache.clear();
+      const allVariantsMap = /* @__PURE__ */ new Map();
+      const allItems = this.itemManager.getAllItems();
+      logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
+      let processedCount = 0;
+      let totalVariants = 0;
+      allItems.forEach((item, itemId) => {
+        const variantStats = this.analyzeVariantsFromOrders(itemId, item.name, orders);
+        if (variantStats.length > 0) {
+          allVariantsMap.set(itemId, variantStats);
+          this.variantCache.set(itemId, variantStats);
+          processedCount++;
+          totalVariants += variantStats.length;
+          logger.debug(`商品 ${itemId} (${item.name}) 预处理完成，找到 ${variantStats.length} 个变体`);
+        }
+      });
+      logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
+      return allVariantsMap;
+    }
+    /**
+     * 获取所有商品的销售统计（优化版本）
+     */
+    getAllItemsWithStats(orders) {
+      orders.length;
+      if (this.lastProcessedOrders.length === orders.length && this.cachedItemsWithStats) {
+        return this.cachedItemsWithStats;
+      }
+      if (!orders || orders.length === 0) {
+        return [];
+      }
+      const allSalesStats = this.getAllItemSalesStats(orders);
+      const result = [];
+      const allItems = this.itemManager.getAllItems();
+      allItems.forEach((item, itemId) => {
+        const salesStats = allSalesStats.get(itemId) || {
+          totalQuantity: 0,
+          totalRevenue: 0,
+          totalBoothFee: 0,
+          totalNetRevenue: 0,
+          orderCount: 0
+        };
+        const variantStats = this.variantCache.get(itemId) || [];
+        result.push({
+          itemId,
+          item,
+          salesStats,
+          variantStats
+        });
+      });
+      result.sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
+      this.lastProcessedOrders = [...orders];
+      this.cachedItemsWithStats = result;
+      return result;
+    }
+    /**
+     * 分析订单中的商品变体关系
+     */
+    analyzeOrderVariants(orders) {
+      const relationships = /* @__PURE__ */ new Map();
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (item.variants && item.variants.length > 0) {
+            const itemId = item.itemId;
+            const variantNames = item.variants.map((v) => v.variantName);
+            if (!relationships.has(itemId)) {
+              relationships.set(itemId, []);
+            }
+            const existingVariants = relationships.get(itemId);
+            variantNames.forEach((variantName) => {
+              if (!existingVariants.includes(variantName)) {
+                existingVariants.push(variantName);
+              }
+            });
+          }
+        });
+      });
+      return relationships;
+    }
+    /**
+     * 获取订单统计摘要
+     */
+    getOrderSummary(orders) {
+      const uniqueItems = /* @__PURE__ */ new Set();
+      let totalItems = 0;
+      let totalRevenue = 0;
+      let totalNetRevenue = 0;
+      orders.forEach((order) => {
+        totalRevenue += order.totalPrice;
+        totalNetRevenue += order.totalPrice * 0.9;
+        order.items?.forEach((item) => {
+          uniqueItems.add(item.itemId);
+          totalItems += item.quantity || 0;
+        });
+      });
+      return {
+        totalOrders: orders.length,
+        totalItems,
+        totalRevenue,
+        totalNetRevenue,
+        uniqueItems: uniqueItems.size
+      };
+    }
+    /**
+     * 获取变体统计摘要
+     */
+    getVariantSummary(itemId, orders) {
+      const variants = this.getItemVariantStats(itemId, orders);
+      const summary = {
+        totalVariants: variants.length,
+        totalVariantQuantity: 0,
+        totalVariantRevenue: 0,
+        totalVariantNetRevenue: 0
+      };
+      variants.forEach((variant) => {
+        summary.totalVariantQuantity += variant.totalQuantity;
+        summary.totalVariantRevenue += variant.totalRevenue;
+        summary.totalVariantNetRevenue += variant.totalNetRevenue;
+      });
+      return summary;
+    }
+    /**
+     * 分析所有商品的变体关系
+     */
+    analyzeAllVariantRelationships(orders) {
+      const relationships = /* @__PURE__ */ new Map();
+      const allItemIds = this.itemManager.getAllItemIds();
+      allItemIds.forEach((itemId) => {
+        const variantStats = this.getItemVariantStats(itemId, orders);
+        if (variantStats.length > 0) {
+          relationships.set(itemId, variantStats);
+        }
+      });
+      return relationships;
     }
   }
-  const _hoisted_1$2 = { class: "settings-content" };
-  const _hoisted_2$2 = { class: "setting-section" };
-  const _hoisted_3$2 = { class: "setting-item" };
-  const _hoisted_4$2 = ["value"];
-  const _hoisted_5$2 = { class: "current-time" };
-  const _hoisted_6$2 = { class: "setting-section" };
-  const _hoisted_7$2 = { class: "setting-item" };
-  const _hoisted_8 = ["value"];
-  const _hoisted_9 = { class: "exchange-rate-info" };
-  const _hoisted_10 = { class: "update-time" };
-  const _hoisted_11 = { class: "setting-section" };
-  const _hoisted_12 = { class: "setting-item" };
-  const _hoisted_13 = { class: "privacy-toggle" };
-  const _hoisted_14 = { class: "setting-section" };
-  const _hoisted_15 = { class: "setting-actions" };
-  const _hoisted_16 = ["disabled"];
-  const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      visible: { type: Boolean }
-    },
-    emits: ["close", "settings-changed"],
-    setup(__props, { emit: __emit }) {
-      const emit = __emit;
-      const settings = vue.ref({
-        timezone: "Asia/Shanghai",
-        displayName: "中国标准时间",
-        targetCurrency: "CNY",
-        privacyMode: false
-      });
-      const isSaving = vue.ref(false);
-      const loadSettings = () => {
-        settings.value = SettingsManager.getSettings();
-      };
-      const saveSettings = async () => {
-        isSaving.value = true;
-        try {
-          SettingsManager.saveSettings(settings.value);
-          emit("settings-changed", settings.value);
-          setTimeout(() => {
-            isSaving.value = false;
-          }, 1e3);
-        } catch (error) {
-          console.error("保存设置失败:", error);
-          isSaving.value = false;
-        }
-      };
-      const resetSettings = () => {
-        SettingsManager.resetSettings();
-        loadSettings();
-        emit("settings-changed", settings.value);
-      };
-      const onTimezoneChange = (event) => {
-        const select = event.target;
-        const selectedOption = TIMEZONE_OPTIONS.find((option) => option.value === select.value);
-        if (selectedOption) {
-          settings.value.timezone = selectedOption.value;
-          settings.value.displayName = selectedOption.label.split(" ")[0];
-        }
-      };
-      const getExchangeRateDisplay = vue.computed(() => {
-        const selectedCurrency = settings.value.targetCurrency;
-        if (selectedCurrency === "JPY") {
-          return "¥1.0000";
-        }
-        const rate = CurrencyConverter.getExchangeRate(selectedCurrency);
-        const symbol = CURRENCY_OPTIONS.find((option) => option.value === selectedCurrency)?.symbol || "";
-        return `${symbol}${rate.toFixed(4)}`;
-      });
-      const getExchangeRateUpdateTime = vue.computed(() => {
-        const cacheStatus = ExchangeRateAPI.getCacheStatus();
-        if (cacheStatus.updateTime) {
-          return `更新时间: ${cacheStatus.updateTime}`;
-        }
-        return "实时更新";
-      });
-      const closeSettings = () => {
-        emit("close");
-      };
-      vue.onMounted(() => {
-        loadSettings();
-      });
-      return (_ctx, _cache) => {
-        return _ctx.visible ? (vue.openBlock(), vue.createElementBlock("div", {
-          key: 0,
-          class: "settings-overlay",
-          onClick: closeSettings
-        }, [
-          vue.createElementVNode("div", {
-            class: "settings-modal",
-            onClick: _cache[3] || (_cache[3] = vue.withModifiers(() => {
-            }, ["stop"]))
-          }, [
-            vue.createElementVNode("div", { class: "settings-header" }, [
-              _cache[4] || (_cache[4] = vue.createElementVNode("h2", null, "设置", -1)),
-              vue.createElementVNode("button", {
-                class: "close-btn",
-                onClick: closeSettings
-              }, "×")
-            ]),
-            vue.createElementVNode("div", _hoisted_1$2, [
-              vue.createElementVNode("div", _hoisted_2$2, [
-                _cache[6] || (_cache[6] = vue.createElementVNode("h3", null, "时区设置", -1)),
-                _cache[7] || (_cache[7] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_3$2, [
-                  _cache[5] || (_cache[5] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
-                  vue.withDirectives(vue.createElementVNode("select", {
-                    id: "timezone-select",
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
-                    onChange: onTimezoneChange,
-                    class: "timezone-select"
-                  }, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(TIMEZONE_OPTIONS), (option) => {
-                      return vue.openBlock(), vue.createElementBlock("option", {
-                        key: option.value,
-                        value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_4$2);
-                    }), 128))
-                  ], 544), [
-                    [vue.vModelSelect, settings.value.timezone]
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_5$2, [
-                  vue.createElementVNode("span", null, "当前时间：" + vue.toDisplayString((/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { timeZone: settings.value.timezone })), 1)
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_6$2, [
-                _cache[9] || (_cache[9] = vue.createElementVNode("h3", null, "货币设置", -1)),
-                _cache[10] || (_cache[10] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_7$2, [
-                  _cache[8] || (_cache[8] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
-                  vue.withDirectives(vue.createElementVNode("select", {
-                    id: "currency-select",
-                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
-                    class: "currency-select"
-                  }, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(CURRENCY_OPTIONS), (option) => {
-                      return vue.openBlock(), vue.createElementBlock("option", {
-                        key: option.value,
-                        value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_8);
-                    }), 128))
-                  ], 512), [
-                    [vue.vModelSelect, settings.value.targetCurrency]
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_9, [
-                  vue.createElementVNode("span", null, "当前汇率：1 JPY = " + vue.toDisplayString(getExchangeRateDisplay.value), 1),
-                  vue.createElementVNode("span", _hoisted_10, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_11, [
-                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "隐私设置", -1)),
-                _cache[14] || (_cache[14] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
-                vue.createElementVNode("div", _hoisted_12, [
-                  vue.createElementVNode("label", _hoisted_13, [
-                    vue.withDirectives(vue.createElementVNode("input", {
-                      type: "checkbox",
-                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => settings.value.privacyMode = $event),
-                      class: "privacy-checkbox"
-                    }, null, 512), [
-                      [vue.vModelCheckbox, settings.value.privacyMode]
-                    ]),
-                    _cache[11] || (_cache[11] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[12] || (_cache[12] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
-                  ])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_14, [
-                _cache[15] || (_cache[15] = vue.createElementVNode("h3", null, "数据管理", -1)),
-                vue.createElementVNode("div", _hoisted_15, [
-                  vue.createElementVNode("button", {
-                    onClick: saveSettings,
-                    disabled: isSaving.value,
-                    class: "save-btn"
-                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_16),
-                  vue.createElementVNode("button", {
-                    onClick: resetSettings,
-                    class: "reset-btn"
-                  }, "重置为默认")
-                ])
-              ])
-            ])
-          ])
-        ])) : vue.createCommentVNode("", true);
-      };
-    }
-  });
-  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-810d1305"]]);
-  const _hoisted_1$1 = { class: "exchange-rate-status" };
-  const _hoisted_2$1 = { class: "status-info" };
-  const _hoisted_3$1 = { class: "rate-info" };
-  const _hoisted_4$1 = {
-    key: 0,
-    class: "update-time"
-  };
-  const _hoisted_5$1 = ["disabled"];
-  const _hoisted_6$1 = {
-    key: 0,
-    class: "refresh-icon",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    "stroke-width": "2"
-  };
-  const _hoisted_7$1 = {
-    key: 1,
-    class: "spinner"
-  };
-  const _sfc_main$1 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      targetCurrency: {}
-    },
-    setup(__props) {
-      const props = __props;
-      const cacheStatus = vue.ref({
-        hasCache: false,
-        age: 0,
-        isValid: false,
-        updateTime: null
-      });
-      const isRefreshing = vue.ref(false);
-      const isInitializing = vue.ref(true);
-      let statusInterval = null;
-      const currentRate = vue.computed(() => {
-        const currency2 = props.targetCurrency || "CNY";
-        if (currency2 === "JPY") {
-          return "¥1.0000";
-        }
-        const rate = CurrencyConverter.getExchangeRate(currency2);
-        const symbol = getCurrencySymbol(currency2);
-        const jpyAmount = (1 / rate).toFixed(2);
-        return `${symbol}1 = ¥${jpyAmount}`;
-      });
-      const getCurrencySymbol = (currency2) => {
-        const symbols = {
-          JPY: "¥",
-          CNY: "¥",
-          USD: "$",
-          EUR: "€",
-          GBP: "£",
-          KRW: "₩",
-          HKD: "HK$",
-          TWD: "NT$"
-        };
-        return symbols[currency2] || currency2;
-      };
-      const updateCacheStatus = () => {
-        cacheStatus.value = ExchangeRateAPI.getCacheStatus();
-      };
-      const refreshRates = async () => {
-        if (isRefreshing.value) return;
-        isRefreshing.value = true;
-        try {
-          await CurrencyConverter.initializeRates();
-          updateCacheStatus();
-          logger.success("汇率手动刷新成功");
-        } catch (error) {
-          logger.exchange("汇率刷新失败:", error);
-        } finally {
-          isRefreshing.value = false;
-        }
-      };
-      const getStatusColor = () => {
-        if (isInitializing.value) return "#6b7280";
-        if (!cacheStatus.value.hasCache) return "#ef4444";
-        if (!cacheStatus.value.isValid) return "#f59e0b";
-        return "#10b981";
-      };
-      vue.onMounted(() => {
-        setTimeout(() => {
-          updateCacheStatus();
-          isInitializing.value = false;
-        }, 1e3);
-        statusInterval = window.setInterval(updateCacheStatus, 3e4);
-      });
-      vue.onUnmounted(() => {
-        if (statusInterval) {
-          clearInterval(statusInterval);
-        }
-      });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$1, [
-          vue.createElementVNode("div", {
-            class: "status-indicator",
-            style: vue.normalizeStyle({ backgroundColor: getStatusColor() })
-          }, null, 4),
-          vue.createElementVNode("div", _hoisted_2$1, [
-            vue.createElementVNode("span", _hoisted_3$1, vue.toDisplayString(currentRate.value), 1),
-            cacheStatus.value.updateTime ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$1, vue.toDisplayString(cacheStatus.value.updateTime), 1)) : vue.createCommentVNode("", true)
-          ]),
-          vue.createElementVNode("button", {
-            onClick: refreshRates,
-            disabled: isRefreshing.value,
-            class: "refresh-btn",
-            title: "刷新汇率"
-          }, [
-            !isRefreshing.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_6$1, _cache[0] || (_cache[0] = [
-              vue.createElementVNode("path", { d: "M1 4v6h6M23 20v-6h-6" }, null, -1),
-              vue.createElementVNode("path", { d: "M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" }, null, -1)
-            ]))) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$1))
-          ], 8, _hoisted_5$1)
-        ]);
-      };
-    }
-  });
-  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8bf4dd69"]]);
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
   }
@@ -20313,34 +20399,6 @@
     // 通用模式（尝试匹配数字和文本）
     /(\d+) \/ (\d+) \/ (.+)/
   ];
-  function findHeaderField(headers, field) {
-    const possibleHeaders = HEADER_MAPPING[field];
-    for (const header of headers) {
-      if (possibleHeaders.includes(header)) {
-        return header;
-      }
-    }
-    return null;
-  }
-  function parseItemsMultiLanguage(itemString) {
-    const items = [];
-    if (!itemString) return items;
-    const itemLines = itemString.split("\n").filter((line) => line.trim());
-    for (const line of itemLines) {
-      for (const pattern of ITEM_PATTERNS) {
-        const match2 = line.match(pattern);
-        if (match2) {
-          items.push({
-            itemId: match2[1],
-            quantity: parseInt(match2[2], 10),
-            name: match2[3].trim()
-          });
-          break;
-        }
-      }
-    }
-    return items;
-  }
   const ORDER_STATUS_MAPPING = {
     // 日语状态映射
     "発送完了": "Completed",
@@ -20354,13 +20412,75 @@
     "Cancelled": "Cancelled",
     "Pending": "Pending"
   };
-  function normalizeOrderState(rawState) {
-    const state = rawState.trim();
-    const normalizedState = ORDER_STATUS_MAPPING[state];
-    if (normalizedState) {
-      return normalizedState;
+  class DataMappings {
+    /**
+     * 根据表头数组查找对应的字段名
+     */
+    static findHeaderField(headers, field) {
+      const possibleHeaders = HEADER_MAPPING[field];
+      for (const header of headers) {
+        if (possibleHeaders.includes(header)) {
+          return header;
+        }
+      }
+      return null;
     }
-    return "Pending";
+    /**
+     * 解析多语言商品信息
+     */
+    static parseItemsMultiLanguage(itemString) {
+      const items = [];
+      if (!itemString) return items;
+      const itemLines = itemString.split("\n").filter((line) => line.trim());
+      for (const line of itemLines) {
+        for (const pattern of ITEM_PATTERNS) {
+          const match2 = line.match(pattern);
+          if (match2) {
+            items.push({
+              itemId: match2[1],
+              quantity: parseInt(match2[2], 10),
+              name: match2[3].trim()
+            });
+            break;
+          }
+        }
+      }
+      return items;
+    }
+    /**
+     * 标准化订单状态
+     */
+    static normalizeOrderState(rawState) {
+      const normalizedState = rawState.trim();
+      if (ORDER_STATUS_MAPPING[normalizedState]) {
+        return ORDER_STATUS_MAPPING[normalizedState];
+      }
+      return "Pending";
+    }
+    /**
+     * 获取支持的订单状态列表
+     */
+    static getSupportedOrderStates() {
+      return Object.keys(ORDER_STATUS_MAPPING);
+    }
+    /**
+     * 检查订单状态是否有效
+     */
+    static isValidOrderState(state) {
+      return Object.keys(ORDER_STATUS_MAPPING).includes(state);
+    }
+    /**
+     * 获取表头映射配置
+     */
+    static getHeaderMapping() {
+      return HEADER_MAPPING;
+    }
+    /**
+     * 获取订单状态映射配置
+     */
+    static getOrderStatusMapping() {
+      return ORDER_STATUS_MAPPING;
+    }
   }
   class CSVParser {
     static parse(csvText) {
@@ -20412,27 +20532,27 @@
     }
     static parseOrderRow(headers, row) {
       try {
-        const orderNumber = findHeaderField(headers, "orderNumber");
-        const identificationCode = findHeaderField(headers, "identificationCode");
-        const paymentMethod = findHeaderField(headers, "paymentMethod");
-        const state = findHeaderField(headers, "state");
-        const createdAt = findHeaderField(headers, "createdAt");
-        const paidAt = findHeaderField(headers, "paidAt");
-        const completedAt = findHeaderField(headers, "completedAt");
-        const totalPrice = findHeaderField(headers, "totalPrice");
-        const postalCode = findHeaderField(headers, "postalCode");
-        const prefecture = findHeaderField(headers, "prefecture");
-        const city = findHeaderField(headers, "city");
-        const building = findHeaderField(headers, "building");
-        const customerName = findHeaderField(headers, "customerName");
-        const phoneNumber = findHeaderField(headers, "phoneNumber");
-        const itemsField = findHeaderField(headers, "items");
-        const items = itemsField ? parseItemsMultiLanguage(row[itemsField] || "") : [];
+        const orderNumber = DataMappings.findHeaderField(headers, "orderNumber");
+        const identificationCode = DataMappings.findHeaderField(headers, "identificationCode");
+        const paymentMethod = DataMappings.findHeaderField(headers, "paymentMethod");
+        const state = DataMappings.findHeaderField(headers, "state");
+        const createdAt = DataMappings.findHeaderField(headers, "createdAt");
+        const paidAt = DataMappings.findHeaderField(headers, "paidAt");
+        const completedAt = DataMappings.findHeaderField(headers, "completedAt");
+        const totalPrice = DataMappings.findHeaderField(headers, "totalPrice");
+        const postalCode = DataMappings.findHeaderField(headers, "postalCode");
+        const prefecture = DataMappings.findHeaderField(headers, "prefecture");
+        const city = DataMappings.findHeaderField(headers, "city");
+        const building = DataMappings.findHeaderField(headers, "building");
+        const customerName = DataMappings.findHeaderField(headers, "customerName");
+        const phoneNumber = DataMappings.findHeaderField(headers, "phoneNumber");
+        const itemsField = DataMappings.findHeaderField(headers, "items");
+        const items = itemsField ? DataMappings.parseItemsMultiLanguage(row[itemsField] || "") : [];
         const priceValue = totalPrice ? row[totalPrice] || "0" : "0";
         const cleanPrice = priceValue.replace(/[^\d.-]/g, "");
         const parsedPrice = parseFloat(cleanPrice) || 0;
         const rawState = state ? row[state] || "" : "";
-        const normalizedState = normalizeOrderState(rawState);
+        const normalizedState = DataMappings.normalizeOrderState(rawState);
         return {
           orderNumber: orderNumber ? row[orderNumber] || "" : "",
           identificationCode: identificationCode ? row[identificationCode] || "" : "",
@@ -20536,6 +20656,7 @@
         if (parseResult.success && parseResult.data) {
           this.orders = parseResult.data;
           this.lastLoadTime = /* @__PURE__ */ new Date();
+          this.preprocessAllItemVariants();
           this.isLoading = false;
           return { success: true, data: this.orders };
         } else {
@@ -20588,23 +20709,829 @@
         lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
       };
     }
-  }
-  class OrderAnalyzer {
-    static calculateStats(orders) {
-      const completedOrders = orders.filter((order) => order.state === "Completed");
-      const totalOrders = completedOrders.length;
-      const totalRevenue = completedOrders.reduce((sum, order) => sum + order.totalPrice, 0);
-      const totalNetRevenue = completedOrders.reduce((sum, order) => {
-        return sum + calculateNetAmount(order.totalPrice, order.createdAt);
-      }, 0);
-      const stats = {
-        totalOrders,
-        totalRevenue,
-        totalNetRevenue
-      };
-      return stats;
+    /**
+     * 预处理所有商品的变体数据
+     * 在数据加载完成后统一处理，避免后续使用时重复计算
+     */
+    preprocessAllItemVariants() {
+      if (this.orders.length === 0) {
+        logger.warn("没有订单数据，跳过变体数据预处理");
+        return;
+      }
+      try {
+        const orderManager = OrderManager.getInstance();
+        orderManager.preprocessAllItemVariants(this.orders);
+      } catch (error) {
+        logger.error("变体数据预处理失败:", error);
+      }
     }
   }
+  const getNestedValue = (obj, path) => {
+    return path.split(".").reduce((current, key) => {
+      return current && current[key] !== void 0 ? current[key] : void 0;
+    }, obj);
+  };
+  const _hoisted_1$4 = { class: "modal-header" };
+  const _hoisted_2$4 = { class: "modal-title" };
+  const _hoisted_3$4 = ["title"];
+  const _hoisted_4$4 = { class: "modal-body" };
+  const _hoisted_5$4 = {
+    key: 0,
+    class: "modal-footer"
+  };
+  const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      visible: { type: Boolean },
+      title: { default: "" },
+      closeButtonTitle: { default: "关闭" },
+      closeOnOverlayClick: { type: Boolean, default: true },
+      size: { default: "medium" }
+    },
+    emits: ["close", "update:visible"],
+    setup(__props, { emit: __emit }) {
+      const props = __props;
+      const emit = __emit;
+      const handleClose = () => {
+        emit("close");
+        emit("update:visible", false);
+      };
+      const handleOverlayClick = () => {
+        if (props.closeOnOverlayClick) {
+          handleClose();
+        }
+      };
+      const modalSizeClass = vue.computed(() => {
+        return `modal-${props.size}`;
+      });
+      return (_ctx, _cache) => {
+        return _ctx.visible ? (vue.openBlock(), vue.createElementBlock("div", {
+          key: 0,
+          class: "modal-overlay",
+          onClick: handleOverlayClick
+        }, [
+          vue.createElementVNode("div", {
+            class: vue.normalizeClass(["modal-content", modalSizeClass.value]),
+            onClick: _cache[0] || (_cache[0] = vue.withModifiers(() => {
+            }, ["stop"]))
+          }, [
+            vue.createElementVNode("div", _hoisted_1$4, [
+              vue.createElementVNode("h3", _hoisted_2$4, vue.toDisplayString(_ctx.title), 1),
+              vue.createElementVNode("button", {
+                onClick: handleClose,
+                class: "modal-close",
+                title: _ctx.closeButtonTitle
+              }, " × ", 8, _hoisted_3$4)
+            ]),
+            vue.createElementVNode("div", _hoisted_4$4, [
+              vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
+            ]),
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$4, [
+              vue.renderSlot(_ctx.$slots, "footer", {}, void 0, true)
+            ])) : vue.createCommentVNode("", true)
+          ], 2)
+        ])) : vue.createCommentVNode("", true);
+      };
+    }
+  });
+  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-b6b52a8b"]]);
+  const _hoisted_1$3 = {
+    key: 5,
+    class: "price-cell"
+  };
+  const _hoisted_2$3 = { class: "price-main" };
+  const _hoisted_3$3 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_4$3 = {
+    key: 6,
+    class: "price-cell"
+  };
+  const _hoisted_5$3 = { class: "price-main" };
+  const _hoisted_6$3 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_7$3 = {
+    key: 7,
+    class: "price-cell"
+  };
+  const _hoisted_8$2 = { class: "price-main" };
+  const _hoisted_9$2 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_10$1 = ["href"];
+  const _hoisted_11$1 = {
+    key: 1,
+    class: "item-link-masked"
+  };
+  const _hoisted_12$1 = {
+    key: 2,
+    class: "no-link"
+  };
+  const _hoisted_13$1 = ["disabled", "onClick"];
+  const _hoisted_14$1 = {
+    key: 0,
+    class: "sales-details"
+  };
+  const _hoisted_15$1 = { class: "item-info" };
+  const _hoisted_16$1 = { class: "item-icon" };
+  const _hoisted_17 = { class: "item-details" };
+  const _hoisted_18 = { class: "item-id" };
+  const _hoisted_19 = { class: "sales-summary" };
+  const _hoisted_20 = { class: "summary-item" };
+  const _hoisted_21 = { class: "summary-value" };
+  const _hoisted_22 = { class: "summary-item" };
+  const _hoisted_23 = { class: "summary-value" };
+  const _hoisted_24 = { class: "summary-item" };
+  const _hoisted_25 = { class: "summary-value" };
+  const _hoisted_26 = { class: "variant-sales" };
+  const _hoisted_27 = {
+    key: 0,
+    class: "variant-summary"
+  };
+  const _hoisted_28 = { class: "summary-stats" };
+  const _hoisted_29 = { class: "summary-stat" };
+  const _hoisted_30 = { class: "summary-stat" };
+  const _hoisted_31 = { class: "summary-stat" };
+  const _hoisted_32 = { class: "variant-list" };
+  const _hoisted_33 = { class: "variant-info" };
+  const _hoisted_34 = { class: "variant-details" };
+  const _hoisted_35 = { class: "variant-name" };
+  const _hoisted_36 = {
+    key: 0,
+    class: "variant-source"
+  };
+  const _hoisted_37 = { class: "variant-stats" };
+  const _hoisted_38 = { class: "variant-quantity" };
+  const _hoisted_39 = { class: "variant-revenue" };
+  const _hoisted_40 = {
+    key: 1,
+    class: "no-variants"
+  };
+  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      userSettings: {},
+      selectedPeriod: {},
+      customRange: {},
+      targetCurrency: {}
+    },
+    setup(__props) {
+      const props = __props;
+      const showSalesModal = vue.ref(false);
+      const selectedItem = vue.ref(null);
+      const dataLoader2 = DataLoader.getInstance();
+      const orders = vue.computed(() => dataLoader2.getOrders());
+      const filteredOrders = vue.computed(() => {
+        if (orders.value.length === 0) return [];
+        const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
+          period: props.selectedPeriod || "all",
+          customRange: props.customRange
+        });
+        return result;
+      });
+      const items = vue.computed(() => {
+        const orderManager = OrderManager.getInstance();
+        return orderManager.getAllItemsWithStats(filteredOrders.value);
+      });
+      const itemColumns = [
+        { key: "itemId", label: "商品ID", width: "80px" },
+        { key: "icon", label: "图标", width: "60px" },
+        { key: "name", label: "商品名称", width: "300px" },
+        { key: "state", label: "状态", width: "100px" },
+        { key: "totalQuantity", label: "销量", width: "80px" },
+        { key: "totalRevenue", label: "总收入", width: "100px" },
+        { key: "totalBoothFee", label: "手续费", width: "80px" },
+        { key: "totalNetRevenue", label: "净收入", width: "100px" },
+        { key: "link", label: "链接", width: "120px" },
+        { key: "action", label: "操作", width: "100px" }
+      ];
+      const tableConfig = vue.computed(() => ({
+        pageSize: 50,
+        privacyMode: props.userSettings?.privacyMode || false,
+        scrollable: true,
+        showPagination: true,
+        getItemKey: (item) => item.itemId
+      }));
+      const displayConfig = {
+        title: "商品列表",
+        itemLabel: "个商品",
+        emptyIcon: "📦",
+        emptyText: "暂无商品数据",
+        emptyHint: "请先加载数据"
+      };
+      const getItemVariants = (itemId) => {
+        const currentItem = items.value.find((item) => item.itemId === itemId);
+        return currentItem?.variantStats || [];
+      };
+      const getVariantTotalQuantity = (itemId) => {
+        const variants = getItemVariants(itemId);
+        return variants.reduce((sum, variant) => sum + variant.totalQuantity, 0);
+      };
+      const getVariantTotalRevenue = (itemId) => {
+        const variants = getItemVariants(itemId);
+        return variants.reduce((sum, variant) => sum + variant.totalRevenue, 0);
+      };
+      const showSalesDetails = (item) => {
+        selectedItem.value = item;
+        showSalesModal.value = true;
+      };
+      const closeSalesModal = () => {
+        showSalesModal.value = false;
+        selectedItem.value = null;
+      };
+      const formatJPY = (price) => {
+        return CurrencyManager.formatCurrencyWithCode(price, "JPY");
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
+          vue.createVNode(DataTable, {
+            data: items.value,
+            columns: itemColumns,
+            config: tableConfig.value,
+            display: displayConfig
+          }, {
+            cell: vue.withCtx(({ item, column }) => [
+              column.key === "itemId" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 0,
+                value: item.itemId,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "icon" ? (vue.openBlock(), vue.createBlock(ItemIcon, {
+                key: 1,
+                "item-id": item.itemId,
+                size: "40px",
+                "privacy-mode": props.userSettings?.privacyMode || false
+              }, null, 8, ["item-id", "privacy-mode"])) : column.key === "name" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 2,
+                value: item.item.name,
+                masked: props.userSettings?.privacyMode || false,
+                "mask-char": "商品"
+              }, null, 8, ["value", "masked"])) : column.key === "state" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 3,
+                value: item.item.state_label,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "totalQuantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 4,
+                value: vue.unref(getNestedValue)(item, "salesStats.totalQuantity") || 0,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "totalRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$3, [
+                vue.createElementVNode("div", _hoisted_2$3, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalRevenue") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalRevenue"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "totalBoothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$3, [
+                vue.createElementVNode("div", _hoisted_5$3, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "totalNetRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$3, [
+                vue.createElementVNode("div", _hoisted_8$2, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "link" ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 8 }, [
+                !(props.userSettings?.privacyMode || false) && item.item.url ? (vue.openBlock(), vue.createElementBlock("a", {
+                  key: 0,
+                  href: item.item.url,
+                  target: "_blank",
+                  class: "item-link"
+                }, " 查看商品 ", 8, _hoisted_10$1)) : props.userSettings?.privacyMode || false ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$1, " **** ")) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_12$1, " 无链接 "))
+              ], 64)) : column.key === "action" ? (vue.openBlock(), vue.createElementBlock("button", {
+                key: 9,
+                class: "sales-btn",
+                disabled: props.userSettings?.privacyMode || false,
+                onClick: ($event) => showSalesDetails(item)
+              }, " 查看销量 ", 8, _hoisted_13$1)) : vue.createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["data", "config"]),
+          vue.createVNode(Modal, {
+            visible: showSalesModal.value,
+            title: "销量详情",
+            size: "large",
+            onClose: closeSalesModal
+          }, {
+            default: vue.withCtx(() => [
+              selectedItem.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$1, [
+                vue.createElementVNode("div", _hoisted_15$1, [
+                  vue.createElementVNode("div", _hoisted_16$1, [
+                    vue.createVNode(ItemIcon, {
+                      "item-id": selectedItem.value.itemId,
+                      size: "60px",
+                      "privacy-mode": _ctx.userSettings?.privacyMode || false
+                    }, null, 8, ["item-id", "privacy-mode"])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_17, [
+                    vue.createElementVNode("h4", null, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "商品" : selectedItem.value.item.name), 1),
+                    vue.createElementVNode("p", _hoisted_18, "商品ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_19, [
+                  vue.createElementVNode("div", _hoisted_20, [
+                    _cache[0] || (_cache[0] = vue.createElementVNode("span", { class: "summary-label" }, "总销量:", -1)),
+                    vue.createElementVNode("span", _hoisted_21, [
+                      vue.createVNode(MaskedText, {
+                        value: selectedItem.value.salesStats.totalQuantity,
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_22, [
+                    _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "summary-label" }, "总收入:", -1)),
+                    vue.createElementVNode("span", _hoisted_23, [
+                      vue.createVNode(MaskedText, {
+                        value: formatJPY(selectedItem.value.salesStats.totalRevenue),
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_24, [
+                    _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "summary-label" }, "净收入:", -1)),
+                    vue.createElementVNode("span", _hoisted_25, [
+                      vue.createVNode(MaskedText, {
+                        value: formatJPY(selectedItem.value.salesStats.totalNetRevenue),
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_26, [
+                  _cache[9] || (_cache[9] = vue.createElementVNode("h5", null, "变体销量详情", -1)),
+                  getItemVariants(selectedItem.value.itemId).length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_27, [
+                    vue.createElementVNode("div", _hoisted_28, [
+                      vue.createElementVNode("span", _hoisted_29, [
+                        _cache[3] || (_cache[3] = vue.createTextVNode(" 变体数量: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: getItemVariants(selectedItem.value.itemId).length,
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ]),
+                      vue.createElementVNode("span", _hoisted_30, [
+                        _cache[4] || (_cache[4] = vue.createTextVNode(" 变体总销量: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: getVariantTotalQuantity(selectedItem.value.itemId),
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ]),
+                      vue.createElementVNode("span", _hoisted_31, [
+                        _cache[5] || (_cache[5] = vue.createTextVNode(" 变体总收入: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: formatJPY(getVariantTotalRevenue(selectedItem.value.itemId)),
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ])
+                    ])
+                  ])) : vue.createCommentVNode("", true),
+                  vue.createElementVNode("div", _hoisted_32, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getItemVariants(selectedItem.value.itemId), (variant) => {
+                      return vue.openBlock(), vue.createElementBlock("div", {
+                        key: variant.variantName,
+                        class: "variant-item"
+                      }, [
+                        vue.createElementVNode("div", _hoisted_33, [
+                          vue.createElementVNode("div", _hoisted_34, [
+                            vue.createElementVNode("span", _hoisted_35, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "变体商品" : variant.variantName), 1),
+                            !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_36, " 来自订单数据 ")) : vue.createCommentVNode("", true)
+                          ])
+                        ]),
+                        vue.createElementVNode("div", _hoisted_37, [
+                          vue.createElementVNode("span", _hoisted_38, [
+                            _cache[6] || (_cache[6] = vue.createTextVNode(" 销量: ", -1)),
+                            vue.createVNode(MaskedText, {
+                              value: variant.totalQuantity,
+                              masked: _ctx.userSettings?.privacyMode || false
+                            }, null, 8, ["value", "masked"])
+                          ]),
+                          vue.createElementVNode("span", _hoisted_39, [
+                            _cache[7] || (_cache[7] = vue.createTextVNode(" 收入: ", -1)),
+                            vue.createVNode(MaskedText, {
+                              value: formatJPY(variant.totalRevenue),
+                              masked: _ctx.userSettings?.privacyMode || false
+                            }, null, 8, ["value", "masked"])
+                          ])
+                        ])
+                      ]);
+                    }), 128))
+                  ]),
+                  getItemVariants(selectedItem.value.itemId).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_40, _cache[8] || (_cache[8] = [
+                    vue.createElementVNode("p", null, "暂无变体商品", -1)
+                  ]))) : vue.createCommentVNode("", true)
+                ])
+              ])) : vue.createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["visible"])
+        ], 64);
+      };
+    }
+  });
+  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-7d6ecca6"]]);
+  const DEFAULT_SETTINGS = {
+    timezone: "Asia/Shanghai",
+    displayName: "中国标准时间",
+    targetCurrency: "CNY",
+    privacyMode: false
+  };
+  const TIMEZONE_OPTIONS = [
+    { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
+    { value: "Asia/Tokyo", label: "日本标准时间 (UTC+9)" },
+    { value: "America/New_York", label: "美国东部时间 (UTC-5)" },
+    { value: "America/Los_Angeles", label: "美国太平洋时间 (UTC-8)" },
+    { value: "Europe/London", label: "英国时间 (UTC+0)" },
+    { value: "Europe/Paris", label: "欧洲中部时间 (UTC+1)" },
+    { value: "Asia/Seoul", label: "韩国标准时间 (UTC+9)" },
+    { value: "Asia/Singapore", label: "新加坡时间 (UTC+8)" },
+    { value: "Australia/Sydney", label: "澳大利亚东部时间 (UTC+10)" },
+    { value: "UTC", label: "协调世界时 (UTC+0)" }
+  ];
+  const CURRENCY_OPTIONS = [
+    { value: "CNY", label: "人民币 (CNY)", symbol: "¥" },
+    { value: "JPY", label: "日元 (JPY)", symbol: "¥" },
+    { value: "USD", label: "美元 (USD)", symbol: "$" },
+    { value: "EUR", label: "欧元 (EUR)", symbol: "€" },
+    { value: "GBP", label: "英镑 (GBP)", symbol: "£" },
+    { value: "KRW", label: "韩元 (KRW)", symbol: "₩" },
+    { value: "HKD", label: "港币 (HKD)", symbol: "HK$" },
+    { value: "TWD", label: "台币 (TWD)", symbol: "NT$" }
+  ];
+  class SettingsManager {
+    static SETTINGS_KEY = "booth_order_analysis_settings";
+    /**
+     * 获取用户设置
+     */
+    static getSettings() {
+      try {
+        const savedSettings = _GM_getValue(this.SETTINGS_KEY, null);
+        if (savedSettings && typeof savedSettings === "object") {
+          return { ...DEFAULT_SETTINGS, ...savedSettings };
+        }
+      } catch (error) {
+        logger.error("读取设置失败:", error);
+      }
+      return { ...DEFAULT_SETTINGS };
+    }
+    /**
+     * 保存用户设置
+     */
+    static saveSettings(settings) {
+      try {
+        _GM_setValue(this.SETTINGS_KEY, settings);
+        logger.settings("设置已保存");
+      } catch (error) {
+        logger.error("保存设置失败:", error);
+      }
+    }
+    /**
+     * 更新部分设置
+     */
+    static updateSettings(partialSettings) {
+      const currentSettings = this.getSettings();
+      const newSettings = { ...currentSettings, ...partialSettings };
+      this.saveSettings(newSettings);
+    }
+    /**
+     * 重置为默认设置
+     */
+    static resetSettings() {
+      this.saveSettings(DEFAULT_SETTINGS);
+      logger.settings("设置已重置为默认值");
+    }
+  }
+  const _hoisted_1$2 = { class: "settings-content" };
+  const _hoisted_2$2 = { class: "setting-section" };
+  const _hoisted_3$2 = { class: "setting-item" };
+  const _hoisted_4$2 = ["value"];
+  const _hoisted_5$2 = { class: "current-time" };
+  const _hoisted_6$2 = { class: "setting-section" };
+  const _hoisted_7$2 = { class: "setting-item" };
+  const _hoisted_8$1 = ["value"];
+  const _hoisted_9$1 = { class: "exchange-rate-info" };
+  const _hoisted_10 = { class: "update-time" };
+  const _hoisted_11 = { class: "setting-section" };
+  const _hoisted_12 = { class: "setting-item" };
+  const _hoisted_13 = { class: "privacy-toggle" };
+  const _hoisted_14 = { class: "setting-section" };
+  const _hoisted_15 = { class: "setting-actions" };
+  const _hoisted_16 = ["disabled"];
+  const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      visible: { type: Boolean }
+    },
+    emits: ["close", "settings-changed"],
+    setup(__props, { emit: __emit }) {
+      const emit = __emit;
+      const settings = vue.ref({
+        timezone: "Asia/Shanghai",
+        displayName: "中国标准时间",
+        targetCurrency: "CNY",
+        privacyMode: false
+      });
+      const isSaving = vue.ref(false);
+      const loadSettings = () => {
+        settings.value = SettingsManager.getSettings();
+      };
+      const saveSettings = async () => {
+        isSaving.value = true;
+        try {
+          SettingsManager.saveSettings(settings.value);
+          emit("settings-changed", settings.value);
+          setTimeout(() => {
+            isSaving.value = false;
+          }, 1e3);
+        } catch (error) {
+          console.error("保存设置失败:", error);
+          isSaving.value = false;
+        }
+      };
+      const resetSettings = () => {
+        SettingsManager.resetSettings();
+        loadSettings();
+        emit("settings-changed", settings.value);
+      };
+      const onTimezoneChange = (event) => {
+        const select = event.target;
+        const selectedOption = TIMEZONE_OPTIONS.find((option) => option.value === select.value);
+        if (selectedOption) {
+          settings.value.timezone = selectedOption.value;
+          settings.value.displayName = selectedOption.label.split(" ")[0];
+        }
+        emit("settings-changed", settings.value);
+      };
+      const getExchangeRateDisplay = vue.computed(() => {
+        const selectedCurrency = settings.value.targetCurrency;
+        if (selectedCurrency === "JPY") {
+          return "¥1.0000";
+        }
+        const rate = CurrencyManager.getExchangeRateSync(selectedCurrency);
+        const symbol = CURRENCY_OPTIONS.find((option) => option.value === selectedCurrency)?.symbol || "";
+        return `${symbol}${rate?.toFixed(4) || "0.0000"}`;
+      });
+      const getExchangeRateUpdateTime = vue.computed(() => {
+        const cacheStatus = CurrencyManager.getCacheStatus();
+        if (cacheStatus.updateTime) {
+          return `更新时间: ${cacheStatus.updateTime}`;
+        }
+        return "实时更新";
+      });
+      const handlePrivacyModeChange = () => {
+        emit("settings-changed", settings.value);
+      };
+      const handleCurrencyChange = () => {
+        emit("settings-changed", settings.value);
+      };
+      const closeSettings = () => {
+        emit("close");
+      };
+      vue.onMounted(() => {
+        loadSettings();
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createBlock(Modal, {
+          visible: _ctx.visible,
+          title: "设置",
+          size: "medium",
+          onClose: closeSettings
+        }, {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("div", _hoisted_1$2, [
+              vue.createElementVNode("div", _hoisted_2$2, [
+                _cache[4] || (_cache[4] = vue.createElementVNode("h3", null, "时区设置", -1)),
+                _cache[5] || (_cache[5] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_3$2, [
+                  _cache[3] || (_cache[3] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
+                  vue.withDirectives(vue.createElementVNode("select", {
+                    id: "timezone-select",
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
+                    onChange: onTimezoneChange,
+                    class: "timezone-select"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(TIMEZONE_OPTIONS), (option) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: option.value,
+                        value: option.value
+                      }, vue.toDisplayString(option.label), 9, _hoisted_4$2);
+                    }), 128))
+                  ], 544), [
+                    [vue.vModelSelect, settings.value.timezone]
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_5$2, [
+                  vue.createElementVNode("span", null, "当前时间：" + vue.toDisplayString((/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { timeZone: settings.value.timezone })), 1)
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_6$2, [
+                _cache[7] || (_cache[7] = vue.createElementVNode("h3", null, "货币设置", -1)),
+                _cache[8] || (_cache[8] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_7$2, [
+                  _cache[6] || (_cache[6] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
+                  vue.withDirectives(vue.createElementVNode("select", {
+                    id: "currency-select",
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
+                    onChange: handleCurrencyChange,
+                    class: "currency-select"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(CURRENCY_OPTIONS), (option) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: option.value,
+                        value: option.value
+                      }, vue.toDisplayString(option.label), 9, _hoisted_8$1);
+                    }), 128))
+                  ], 544), [
+                    [vue.vModelSelect, settings.value.targetCurrency]
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_9$1, [
+                  vue.createElementVNode("span", null, "当前汇率：1 JPY = " + vue.toDisplayString(getExchangeRateDisplay.value), 1),
+                  vue.createElementVNode("span", _hoisted_10, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_11, [
+                _cache[11] || (_cache[11] = vue.createElementVNode("h3", null, "隐私设置", -1)),
+                _cache[12] || (_cache[12] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
+                vue.createElementVNode("div", _hoisted_12, [
+                  vue.createElementVNode("label", _hoisted_13, [
+                    vue.withDirectives(vue.createElementVNode("input", {
+                      type: "checkbox",
+                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => settings.value.privacyMode = $event),
+                      onChange: handlePrivacyModeChange,
+                      class: "privacy-checkbox"
+                    }, null, 544), [
+                      [vue.vModelCheckbox, settings.value.privacyMode]
+                    ]),
+                    _cache[9] || (_cache[9] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
+                  ])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_14, [
+                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                vue.createElementVNode("div", _hoisted_15, [
+                  vue.createElementVNode("button", {
+                    onClick: saveSettings,
+                    disabled: isSaving.value,
+                    class: "save-btn"
+                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_16),
+                  vue.createElementVNode("button", {
+                    onClick: resetSettings,
+                    class: "reset-btn"
+                  }, "重置为默认")
+                ])
+              ])
+            ])
+          ]),
+          _: 1
+        }, 8, ["visible"]);
+      };
+    }
+  });
+  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-64cf404d"]]);
+  const _hoisted_1$1 = { class: "exchange-rate-status" };
+  const _hoisted_2$1 = { class: "status-info" };
+  const _hoisted_3$1 = { class: "rate-info" };
+  const _hoisted_4$1 = {
+    key: 0,
+    class: "update-time"
+  };
+  const _hoisted_5$1 = ["disabled"];
+  const _hoisted_6$1 = {
+    key: 0,
+    class: "refresh-icon",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "2"
+  };
+  const _hoisted_7$1 = {
+    key: 1,
+    class: "spinner"
+  };
+  const _sfc_main$1 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      targetCurrency: {}
+    },
+    setup(__props) {
+      const props = __props;
+      const cacheStatus = vue.ref({
+        hasCache: false,
+        age: 0,
+        isValid: false,
+        updateTime: null
+      });
+      const isRefreshing = vue.ref(false);
+      const isInitializing = vue.ref(true);
+      let statusInterval = null;
+      const currentRate = vue.computed(() => {
+        const currency = props.targetCurrency || "CNY";
+        if (currency === "JPY") {
+          return "¥1.0000";
+        }
+        const rate = CurrencyManager.getExchangeRateSync(currency);
+        const symbol = getCurrencySymbol(currency);
+        const jpyAmount = rate ? (1 / rate).toFixed(2) : "0.00";
+        return `${symbol}1 = ¥${jpyAmount}`;
+      });
+      const getCurrencySymbol = (currency) => {
+        const symbols = {
+          JPY: "¥",
+          CNY: "¥",
+          USD: "$",
+          EUR: "€",
+          GBP: "£",
+          KRW: "₩",
+          HKD: "HK$",
+          TWD: "NT$"
+        };
+        return symbols[currency] || currency;
+      };
+      const updateCacheStatus = () => {
+        cacheStatus.value = CurrencyManager.getCacheStatus();
+      };
+      const refreshRates = async () => {
+        if (isRefreshing.value) return;
+        isRefreshing.value = true;
+        try {
+          await CurrencyManager.initializeRates();
+          updateCacheStatus();
+          logger.success("汇率手动刷新成功");
+        } catch (error) {
+          logger.exchange("汇率刷新失败:", error);
+        } finally {
+          isRefreshing.value = false;
+        }
+      };
+      const getStatusColor = () => {
+        if (isInitializing.value) return "#6b7280";
+        if (!cacheStatus.value.hasCache) return "#ef4444";
+        if (!cacheStatus.value.isValid) return "#f59e0b";
+        return "#10b981";
+      };
+      vue.onMounted(() => {
+        setTimeout(() => {
+          updateCacheStatus();
+          isInitializing.value = false;
+        }, 1e3);
+        statusInterval = window.setInterval(updateCacheStatus, 3e4);
+      });
+      vue.onUnmounted(() => {
+        if (statusInterval) {
+          clearInterval(statusInterval);
+        }
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$1, [
+          vue.createElementVNode("div", {
+            class: "status-indicator",
+            style: vue.normalizeStyle({ backgroundColor: getStatusColor() })
+          }, null, 4),
+          vue.createElementVNode("div", _hoisted_2$1, [
+            vue.createElementVNode("span", _hoisted_3$1, vue.toDisplayString(currentRate.value), 1),
+            cacheStatus.value.updateTime ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$1, vue.toDisplayString(cacheStatus.value.updateTime), 1)) : vue.createCommentVNode("", true)
+          ]),
+          vue.createElementVNode("button", {
+            onClick: refreshRates,
+            disabled: isRefreshing.value,
+            class: "refresh-btn",
+            title: "刷新汇率"
+          }, [
+            !isRefreshing.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_6$1, _cache[0] || (_cache[0] = [
+              vue.createElementVNode("path", { d: "M1 4v6h6M23 20v-6h-6" }, null, -1),
+              vue.createElementVNode("path", { d: "M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" }, null, -1)
+            ]))) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$1))
+          ], 8, _hoisted_5$1)
+        ]);
+      };
+    }
+  });
+  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-66b9449e"]]);
   const _hoisted_1 = { class: "analysis-content" };
   const _hoisted_2 = { class: "header" };
   const _hoisted_3 = { class: "header-right" };
@@ -20626,6 +21553,8 @@
     "stroke-width": "2"
   };
   const _hoisted_7 = { class: "content" };
+  const _hoisted_8 = { class: "tab-navigation" };
+  const _hoisted_9 = { class: "tab-content" };
   const _sfc_main = /* @__PURE__ */ vue.defineComponent({
     __name: "App",
     setup(__props) {
@@ -20640,12 +21569,13 @@
       });
       const selectedPeriod = vue.ref("all");
       const customRange = vue.ref();
+      const activeTab = vue.ref("orders");
       const orders = vue.computed(() => {
         return dataLoader2.getOrders();
       });
       const filteredOrders = vue.computed(() => {
         if (orders.value.length === 0) return [];
-        const result = DataFilter.filterOrdersByPeriod(orders.value, {
+        const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
           period: selectedPeriod.value,
           customRange: customRange.value
         });
@@ -20659,7 +21589,7 @@
             totalNetRevenue: 0
           };
         }
-        return OrderAnalyzer.calculateStats(filteredOrders.value);
+        return DataAnalyzer.calculateStats(filteredOrders.value);
       });
       const refreshData = async () => {
         if (isLoading.value) return;
@@ -20686,6 +21616,9 @@
       const handleCustomRangeChange = (range) => {
         customRange.value = range;
       };
+      const switchTab = (tab) => {
+        activeTab.value = tab;
+      };
       const closePanel = () => {
         const panel = document.getElementById("booth-analysis-panel");
         if (panel) {
@@ -20702,7 +21635,7 @@
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("div", _hoisted_1, [
           vue.createElementVNode("div", _hoisted_2, [
-            _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "header-left" }, [
+            _cache[5] || (_cache[5] = vue.createElementVNode("div", { class: "header-left" }, [
               vue.createElementVNode("h1", { class: "title" }, "Booth 订单分析")
             ], -1)),
             vue.createElementVNode("div", _hoisted_3, [
@@ -20713,7 +21646,7 @@
                 onClick: openSettings,
                 class: "settings-btn",
                 title: "设置"
-              }, _cache[0] || (_cache[0] = [
+              }, _cache[2] || (_cache[2] = [
                 vue.createElementVNode("svg", {
                   class: "settings-icon",
                   viewBox: "0 0 24 24",
@@ -20731,12 +21664,12 @@
                 class: "refresh-btn",
                 title: "刷新数据"
               }, [
-                !isLoading.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_5, _cache[1] || (_cache[1] = [
+                !isLoading.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_5, _cache[3] || (_cache[3] = [
                   vue.createElementVNode("path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" }, null, -1),
                   vue.createElementVNode("path", { d: "M21 3v5h-5" }, null, -1),
                   vue.createElementVNode("path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" }, null, -1),
                   vue.createElementVNode("path", { d: "M3 21v-5h5" }, null, -1)
-                ]))) : (vue.openBlock(), vue.createElementBlock("svg", _hoisted_6, _cache[2] || (_cache[2] = [
+                ]))) : (vue.openBlock(), vue.createElementBlock("svg", _hoisted_6, _cache[4] || (_cache[4] = [
                   vue.createElementVNode("path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" }, null, -1),
                   vue.createElementVNode("path", { d: "M21 3v5h-5" }, null, -1),
                   vue.createElementVNode("path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" }, null, -1),
@@ -20761,11 +21694,31 @@
               "onUpdate:modelValue": handlePeriodChange,
               "onUpdate:customRange": handleCustomRangeChange
             }, null, 8, ["statistics", "orders", "model-value", "custom-range", "target-currency", "user-settings"]),
-            vue.createVNode(vue.unref(OrderTable), {
-              orders: filteredOrders.value,
-              "target-currency": userSettings.value.targetCurrency,
-              "user-settings": userSettings.value
-            }, null, 8, ["orders", "target-currency", "user-settings"]),
+            vue.createElementVNode("div", _hoisted_8, [
+              vue.createElementVNode("button", {
+                class: vue.normalizeClass(["tab-btn", { active: activeTab.value === "orders" }]),
+                onClick: _cache[0] || (_cache[0] = ($event) => switchTab("orders"))
+              }, " 订单列表 ", 2),
+              vue.createElementVNode("button", {
+                class: vue.normalizeClass(["tab-btn", { active: activeTab.value === "items" }]),
+                onClick: _cache[1] || (_cache[1] = ($event) => switchTab("items"))
+              }, " 商品列表 ", 2)
+            ]),
+            vue.createElementVNode("div", _hoisted_9, [
+              activeTab.value === "orders" ? (vue.openBlock(), vue.createBlock(vue.unref(OrderTable), {
+                key: 0,
+                orders: filteredOrders.value,
+                "target-currency": userSettings.value.targetCurrency,
+                "user-settings": userSettings.value
+              }, null, 8, ["orders", "target-currency", "user-settings"])) : vue.createCommentVNode("", true),
+              activeTab.value === "items" ? (vue.openBlock(), vue.createBlock(vue.unref(ItemTable), {
+                key: 1,
+                "user-settings": userSettings.value,
+                "selected-period": selectedPeriod.value,
+                "custom-range": customRange.value,
+                "target-currency": userSettings.value.targetCurrency
+              }, null, 8, ["user-settings", "selected-period", "custom-range", "target-currency"])) : vue.createCommentVNode("", true)
+            ]),
             vue.createVNode(vue.unref(Settings), {
               visible: showSettings.value,
               onClose: closeSettings,
@@ -20776,13 +21729,13 @@
       };
     }
   });
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-8fcbea44"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-91d212d9"]]);
   function isBoothOrdersPage() {
     return window.location.href.includes("manage.booth.pm/orders");
   }
   const dataLoader = DataLoader.getInstance();
   const itemManager = ItemManager.getInstance();
-  const currencyConverter = CurrencyConverter;
+  const currencyConverter = CurrencyManager;
   function insertButton() {
     const targetSelector = "body > div.page-wrap.box-border.relative.z-\\[2\\].flex-grow.basis-auto.bg-\\[\\#f1f5f8\\].shadow-\\[1px_0_0_0_rgba\\(0\\,0\\,0\\,0\\.05\\)\\].transition-all.duration-\\[180ms\\].ease-in.min-w-\\[970px\\].mobile\\:min-w-\\[auto\\] > main > div.manage-page-body > div > div.lo-grid.manage-nav-block.items-center";
     const targetElement = document.querySelector(targetSelector);

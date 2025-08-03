@@ -1,7 +1,6 @@
 import Papa from 'papaparse';
 import type { Order, OrderItem, CSVParseResult } from '../../types/order';
-import { findHeaderField, parseItemsMultiLanguage } from '../mappings/header-mapping';
-import { normalizeOrderState } from '../mappings/order-status-mapping';
+import { DataMappings } from '../mappings/data-mappings';
 import { logger } from './logger';
 
 // 使用papaparse的CSV解析器
@@ -63,35 +62,33 @@ export class CSVParser {
     private static parseOrderRow(headers: string[], row: Record<string, string>): Order | null {
         try {
             // 使用多语言表头映射查找字段
-            const orderNumber = findHeaderField(headers, 'orderNumber');
-            const identificationCode = findHeaderField(headers, 'identificationCode');
-            const paymentMethod = findHeaderField(headers, 'paymentMethod');
-            const state = findHeaderField(headers, 'state');
-            const createdAt = findHeaderField(headers, 'createdAt');
-            const paidAt = findHeaderField(headers, 'paidAt');
-            const completedAt = findHeaderField(headers, 'completedAt');
-            const totalPrice = findHeaderField(headers, 'totalPrice');
-            const postalCode = findHeaderField(headers, 'postalCode');
-            const prefecture = findHeaderField(headers, 'prefecture');
-            const city = findHeaderField(headers, 'city');
-            const building = findHeaderField(headers, 'building');
-            const customerName = findHeaderField(headers, 'customerName');
-            const phoneNumber = findHeaderField(headers, 'phoneNumber');
-            const itemsField = findHeaderField(headers, 'items');
+            const orderNumber = DataMappings.findHeaderField(headers, 'orderNumber');
+            const identificationCode = DataMappings.findHeaderField(headers, 'identificationCode');
+            const paymentMethod = DataMappings.findHeaderField(headers, 'paymentMethod');
+            const state = DataMappings.findHeaderField(headers, 'state');
+            const createdAt = DataMappings.findHeaderField(headers, 'createdAt');
+            const paidAt = DataMappings.findHeaderField(headers, 'paidAt');
+            const completedAt = DataMappings.findHeaderField(headers, 'completedAt');
+            const totalPrice = DataMappings.findHeaderField(headers, 'totalPrice');
+            const postalCode = DataMappings.findHeaderField(headers, 'postalCode');
+            const prefecture = DataMappings.findHeaderField(headers, 'prefecture');
+            const city = DataMappings.findHeaderField(headers, 'city');
+            const building = DataMappings.findHeaderField(headers, 'building');
+            const customerName = DataMappings.findHeaderField(headers, 'customerName');
+            const phoneNumber = DataMappings.findHeaderField(headers, 'phoneNumber');
+            const itemsField = DataMappings.findHeaderField(headers, 'items');
 
             // 解析商品信息
-            const items = itemsField ? parseItemsMultiLanguage(row[itemsField] || '') : [];
-
+            const items = itemsField ? DataMappings.parseItemsMultiLanguage(row[itemsField] || '') : [];
+            
             // 解析价格，处理可能的货币符号和逗号
             const priceValue = totalPrice ? row[totalPrice] || '0' : '0';
             const cleanPrice = priceValue.replace(/[^\d.-]/g, ''); // 移除货币符号和逗号
             const parsedPrice = parseFloat(cleanPrice) || 0;
 
-            // 解析价格
-
             // 解析订单状态
             const rawState = state ? row[state] || '' : '';
-            const normalizedState = normalizeOrderState(rawState);
+            const normalizedState = DataMappings.normalizeOrderState(rawState);
 
             return {
                 orderNumber: orderNumber ? row[orderNumber] || '' : '',

@@ -1,4 +1,6 @@
-// 表头字段映射
+import type { OrderStatus } from '../../types/order';
+
+// 表头映射接口
 export interface HeaderMapping {
   orderNumber: string[];
   identificationCode: string[];
@@ -18,7 +20,7 @@ export interface HeaderMapping {
 }
 
 // 多语言表头映射（基于真实CSV文件）
-export const HEADER_MAPPING: HeaderMapping = {
+const HEADER_MAPPING: HeaderMapping = {
   // 英文: Order Number
   // 日文: 注文番号
   // 简体中文: Order Number (保持英文)
@@ -126,7 +128,7 @@ export const HEADER_MAPPING: HeaderMapping = {
 };
 
 // 商品信息解析模式（多语言）
-export const ITEM_PATTERNS = [
+const ITEM_PATTERNS = [
   // 英文模式
   /Item ID : (\d+) \/ Quantity : (\d+) \/ (.+)/,
   // 日文模式
@@ -135,40 +137,106 @@ export const ITEM_PATTERNS = [
   /(\d+) \/ (\d+) \/ (.+)/
 ];
 
-// 查找表头字段
-export function findHeaderField(headers: string[], field: keyof HeaderMapping): string | null {
-  const possibleHeaders = HEADER_MAPPING[field];
-  
-  for (const header of headers) {
-    if (possibleHeaders.includes(header)) {
-      return header;
-    }
-  }
-  
-  return null;
-}
+// 订单状态映射
+const ORDER_STATUS_MAPPING: Record<string, OrderStatus> = {
+  // 日语状态映射
+  '発送完了': 'Completed', // 发货完成
+  'キャンセル': 'Cancelled', // 已取消
+  '支払待ち': 'Pending', // 待支付
+  // 英文状态（保持原样）
+  'Completed': 'Completed',
+  'Cancelled': 'Cancelled',
+  'Pending': 'Pending'
+};
 
-// 解析商品信息（支持多语言）
-export function parseItemsMultiLanguage(itemString: string): Array<{ itemId: string; quantity: number; name: string }> {
-  const items: Array<{ itemId: string; quantity: number; name: string }> = [];
-  
-  if (!itemString) return items;
+/**
+ * 数据映射工具类
+ * 整合表头映射和订单状态映射功能
+ */
+export class DataMappings {
+  /**
+   * 根据表头数组查找对应的字段名
+   */
+  static findHeaderField(headers: string[], field: keyof HeaderMapping): string | null {
+    const possibleHeaders = HEADER_MAPPING[field];
 
-  const itemLines = itemString.split('\n').filter(line => line.trim());
-  
-  for (const line of itemLines) {
-    for (const pattern of ITEM_PATTERNS) {
-      const match = line.match(pattern);
-      if (match) {
-        items.push({
-          itemId: match[1],
-          quantity: parseInt(match[2], 10),
-          name: match[3].trim()
-        });
-        break; // 找到匹配就跳出
+    for (const header of headers) {
+      if (possibleHeaders.includes(header)) {
+        return header;
       }
     }
+
+    return null;
   }
 
-  return items;
-} 
+  /**
+   * 解析多语言商品信息
+   */
+  static parseItemsMultiLanguage(itemString: string): Array<{ itemId: string; quantity: number; name: string; }> {
+    const items: Array<{ itemId: string; quantity: number; name: string; }> = [];
+
+    if (!itemString) return items;
+
+    const itemLines = itemString.split('\n').filter(line => line.trim());
+
+    for (const line of itemLines) {
+      for (const pattern of ITEM_PATTERNS) {
+        const match = line.match(pattern);
+        if (match) {
+          items.push({
+            itemId: match[1],
+            quantity: parseInt(match[2], 10),
+            name: match[3].trim()
+          });
+          break; // 找到匹配就跳出
+        }
+      }
+    }
+
+    return items;
+  }
+
+  /**
+   * 标准化订单状态
+   */
+  static normalizeOrderState(rawState: string): OrderStatus {
+    const normalizedState = rawState.trim();
+
+    // 检查映射表
+    if (ORDER_STATUS_MAPPING[normalizedState]) {
+      return ORDER_STATUS_MAPPING[normalizedState];
+    }
+
+    // 默认返回Pending
+    return 'Pending';
+  }
+
+  /**
+   * 获取支持的订单状态列表
+   */
+  static getSupportedOrderStates(): string[] {
+    return Object.keys(ORDER_STATUS_MAPPING);
+  }
+
+  /**
+   * 检查订单状态是否有效
+   */
+  static isValidOrderState(state: string): boolean {
+    return Object.keys(ORDER_STATUS_MAPPING).includes(state);
+  }
+
+  /**
+   * 获取表头映射配置
+   */
+  static getHeaderMapping(): HeaderMapping {
+    return HEADER_MAPPING;
+  }
+
+  /**
+   * 获取订单状态映射配置
+   */
+  static getOrderStatusMapping(): Record<string, OrderStatus> {
+    return ORDER_STATUS_MAPPING;
+  }
+}
+

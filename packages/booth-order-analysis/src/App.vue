@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { Statistics, OrderTable, Settings, ExchangeRateStatus } from './components';
+import { Statistics, OrderTable, ItemTable, Settings, ExchangeRateStatus } from './components';
 import { DataLoader } from './utils/core/data-loader';
-import { OrderAnalyzer } from './utils/analysis/order-analyzer';
-import { DataFilter as DataFilterUtil, type TimePeriod, type CustomDateRange } from './utils/analysis/data-filter';
+import { DataAnalyzer, type TimePeriod, type CustomDateRange } from './utils/analysis/data-analyzer';
 import { SettingsManager } from './utils/settings/settings-manager';
 import { logger } from './utils/core/logger';
 import type { UserSettings as SettingsType } from './types/settings';
@@ -24,6 +23,9 @@ const userSettings = ref<SettingsType>({
 const selectedPeriod = ref<TimePeriod>('all');
 const customRange = ref<CustomDateRange | undefined>();
 
+// 标签页状态
+const activeTab = ref<'orders' | 'items'>('orders');
+
 // 获取订单数据（统一使用原始数据）
 const orders = computed(() => {
   return dataLoader.getOrders();
@@ -33,7 +35,7 @@ const orders = computed(() => {
 const filteredOrders = computed(() => {
   if (orders.value.length === 0) return [];
 
-  const result = DataFilterUtil.filterOrdersByPeriod(orders.value, {
+  const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
     period: selectedPeriod.value,
     customRange: customRange.value
   });
@@ -51,7 +53,7 @@ const statistics = computed(() => {
     };
   }
 
-  return OrderAnalyzer.calculateStats(filteredOrders.value);
+  return DataAnalyzer.calculateStats(filteredOrders.value);
 });
 
 // 刷新数据
@@ -93,6 +95,11 @@ const handlePeriodChange = (period: TimePeriod) => {
 // 处理自定义日期范围变化
 const handleCustomRangeChange = (range: CustomDateRange) => {
   customRange.value = range;
+};
+
+// 切换标签页
+const switchTab = (tab: 'orders' | 'items') => {
+  activeTab.value = tab;
 };
 
 // 关闭面板
@@ -154,7 +161,39 @@ onMounted(() => {
         :target-currency="userSettings.targetCurrency" :user-settings="userSettings" @update:model-value="handlePeriodChange"
         @update:custom-range="handleCustomRangeChange" />
 
-      <OrderTable :orders="filteredOrders" :target-currency="userSettings.targetCurrency" :user-settings="userSettings" />
+      <!-- 标签页导航 -->
+      <div class="tab-navigation">
+        <button 
+          :class="['tab-btn', { active: activeTab === 'orders' }]" 
+          @click="switchTab('orders')"
+        >
+          订单列表
+        </button>
+        <button 
+          :class="['tab-btn', { active: activeTab === 'items' }]" 
+          @click="switchTab('items')"
+        >
+          商品列表
+        </button>
+      </div>
+
+      <!-- 标签页内容 -->
+      <div class="tab-content">
+        <OrderTable 
+          v-if="activeTab === 'orders'"
+          :orders="filteredOrders" 
+          :target-currency="userSettings.targetCurrency" 
+          :user-settings="userSettings" 
+        />
+        
+        <ItemTable 
+          v-if="activeTab === 'items'"
+          :user-settings="userSettings"
+          :selected-period="selectedPeriod"
+          :custom-range="customRange"
+          :target-currency="userSettings.targetCurrency"
+        />
+      </div>
 
       <Settings :visible="showSettings" @close="closeSettings" @settings-changed="handleSettingsChanged" />
     </div>
@@ -295,6 +334,42 @@ onMounted(() => {
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* 标签页导航 */
+.tab-navigation {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+  color: #374151;
+  background: #f9fafb;
+}
+
+.tab-btn.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* 标签页内容 */
+.tab-content {
+  flex: 1;
 }
 
 /* 响应式设计 */

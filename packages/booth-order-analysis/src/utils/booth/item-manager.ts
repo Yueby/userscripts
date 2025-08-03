@@ -1,25 +1,15 @@
 import { GM_xmlhttpRequest } from '$';
 import { logger } from '../core/logger';
-
-/**
- * 商品数据结构
- */
-export interface ItemData {
-    id: string;
-    state: string;
-    url: string;
-    name: string;
-    state_label: string;
-    iconUrl: string;
-}
+import type { BoothItem } from '../../types/order';
 
 /**
  * 商品管理器
- * 负责管理商品数据结构和图标获取
+ * 负责管理Booth商品数据结构和图标获取
+ * 符合Booth的设计：一个商品ID对应多个变体
  */
 export class ItemManager {
     private static instance: ItemManager;
-    private itemsMap: Map<string, ItemData> = new Map();
+    private itemsMap: Map<string, BoothItem> = new Map();
     private isInitialized: boolean = false;
 
     private constructor() { }
@@ -97,14 +87,26 @@ export class ItemManager {
                                     iconUrl = item.primary_image.url;
                                 }
 
+                                // 解析变体信息（简化版，只保留变体名）
+                                const variants: string[] = [];
+                                if (item.variants && Array.isArray(item.variants)) {
+                                    item.variants.forEach((variant: any) => {
+                                        const variantName = variant.name || variant.value || variant.variantName;
+                                        if (variantName && !variants.includes(variantName)) {
+                                            variants.push(variantName);
+                                        }
+                                    });
+                                }
+
                                 // 创建商品数据
-                                const itemData: ItemData = {
-                                    id: itemId,
+                                const itemData: BoothItem = {
+                                    itemId,
                                     state: item.state,
                                     url: item.url,
                                     name,
                                     state_label: item.state_label,
-                                    iconUrl
+                                    iconUrl,
+                                    variants
                                 };
 
                                 this.itemsMap.set(itemId, itemData);
@@ -132,7 +134,7 @@ export class ItemManager {
     /**
      * 根据商品ID获取商品数据
      */
-    getItem(id: string): ItemData | null {
+    getItem(id: string): BoothItem | null {
         return this.itemsMap.get(id) || null;
     }
 
@@ -160,7 +162,7 @@ export class ItemManager {
 
         // 这里需要重新获取原始数据来访问不同尺寸的图片
         // 为了简化，我们暂时返回默认的iconUrl
-        // 如果需要不同尺寸，可以考虑在ItemData中存储更多图片URL
+        // 如果需要不同尺寸，可以考虑在BoothItem中存储更多图片URL
         return item.iconUrl || this.getDefaultIcon();
     }
 
@@ -197,9 +199,17 @@ export class ItemManager {
     }
 
     /**
+     * 根据商品ID获取商品变体列表
+     */
+    getItemVariants(id: string): string[] {
+        const item = this.getItem(id);
+        return item?.variants || [];
+    }
+
+    /**
      * 获取所有商品数据
      */
-    getAllItems(): Map<string, ItemData> {
+    getAllItems(): Map<string, BoothItem> {
         return new Map(this.itemsMap);
     }
 

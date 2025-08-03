@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import './style.css';
 import App from './App.vue';
 import { DataLoader } from './utils/core/data-loader';
-import { CurrencyConverter } from './utils/currency/currency-converter';
+import { CurrencyManager } from './utils/currency/currency-manager';
 import { ItemManager } from './utils/booth/item-manager';
 import { logger } from './utils/core/logger';
 
@@ -18,7 +18,7 @@ const dataLoader = DataLoader.getInstance();
 const itemManager = ItemManager.getInstance();
 
 // 汇率转换器实例
-const currencyConverter = CurrencyConverter;
+const currencyConverter = CurrencyManager;
 
 // 插入按钮
 function insertButton(): void {

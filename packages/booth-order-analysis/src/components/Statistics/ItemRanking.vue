@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { CurrencyConverter } from '../../utils/currency/currency-converter';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
 import { ItemManager } from '../../utils/booth/item-manager';
-import MaskedText from '../MaskedText/index.vue';
-import ItemIcon from '../ItemIcon/index.vue';
-import type { ProductSalesData } from '../../utils/analysis/chart-data-processor';
+import MaskedText from '../common/MaskedText/index.vue';
+import ItemIcon from '../common/ItemIcon/index.vue';
+import type { ProductSalesData } from '../../utils/analysis/data-analyzer';
 import type { Currency, UserSettings } from '../../types/settings';
 
 interface Props {
@@ -39,7 +39,7 @@ const limitedProductData = computed(() => {
 
 // 格式化日元显示
 const formatJPY = (amount: number) => {
-  return CurrencyConverter.formatCurrencyWithCode(amount, 'JPY');
+  return CurrencyManager.formatCurrencyWithCode(amount, 'JPY');
 };
 
 // 格式化转换后的货币显示
@@ -48,8 +48,8 @@ const formatConverted = (amount: number) => {
   if (targetCurrency === 'JPY') {
     return null;
   }
-  const convertedAmount = CurrencyConverter.convertFromJPYSync(amount, targetCurrency);
-  return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
+  const convertedAmount = CurrencyManager.convertFromJPYSync(amount, targetCurrency);
+  return CurrencyManager.formatCurrencyWithCode(convertedAmount, targetCurrency);
 };
 
 // 获取商品链接

@@ -4,6 +4,20 @@ export type OrderStatus = 'Completed' | 'Cancelled' | 'Pending';
 // 支付方式
 export type PaymentMethod = '信用卡' | 'PayPal' | 'Rakuten Pay' | '银行、便利店支付' | 'pixivcoban' | 'ピクシブかんたん決済';
 
+// 商品变体数据结构（简化版）
+export interface ItemVariant {
+  variantName: string;         // 变体名称（如：M, L, 红色等）
+}
+
+// 订单商品
+export interface OrderItem {
+  itemId: string;               // 商品ID（Booth的商品ID）
+  quantity: number;             // 数量
+  name: string;                 // 商品名称
+  variants?: ItemVariant[];     // 商品变体信息
+  price?: number;               // 单个商品价格（如果订单数据中有）
+}
+
 // 订单数据结构
 export interface Order {
   orderNumber: string;           // 订单号
@@ -23,11 +37,26 @@ export interface Order {
   items: OrderItem[];           // 商品信息
 }
 
-// 订单商品
-export interface OrderItem {
+// 商品数据结构（简化版）
+export interface BoothItem {
   itemId: string;               // 商品ID
-  quantity: number;             // 数量
   name: string;                 // 商品名称
+  state: string;                // 商品状态
+  state_label: string;          // 状态标签
+  url: string;                  // 商品URL
+  iconUrl: string;              // 商品图标URL
+  variants: string[];           // 商品变体列表（只保留变体名）
+}
+
+// 变体销售统计（简化版）
+export interface VariantSalesStats {
+  itemId: string;               // 商品ID
+  variantName: string;          // 变体名称
+  totalQuantity: number;        // 总销量
+  totalRevenue: number;         // 总收入
+  totalBoothFee: number;        // 总手续费
+  totalNetRevenue: number;      // 总净收入
+  orderCount: number;           // 订单数量
 }
 
 // 统计信息

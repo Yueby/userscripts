@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import ItemIcon from '../ItemIcon/index.vue';
-import MaskedText from '../MaskedText/index.vue';
+import ItemIcon from '../common/ItemIcon/index.vue';
+import MaskedText from '../common/MaskedText/index.vue';
 import { ItemManager } from '../../utils/booth/item-manager';
 import type { Order } from '../../types/order';
 

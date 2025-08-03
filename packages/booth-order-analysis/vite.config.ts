@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import monkey, { cdn } from 'vite-plugin-monkey';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import monkey, { cdn } from 'vite-plugin-monkey';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,7 +26,7 @@ export default defineConfig({
           'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
         },
         author: 'Yueby',
-        version: '0.1.1',
+        version: '0.1.3',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

@@ -2,6 +2,7 @@ import { CSVParser } from './csv-parser';
 import type { Order } from '../../types/order';
 import { GM_xmlhttpRequest } from '$';
 import { logger } from './logger';
+import { OrderManager } from '../booth/order-manager';
 
 // 数据加载器
 export class DataLoader {
@@ -45,34 +46,37 @@ export class DataLoader {
             return { success: false, error: '正在加载中，请稍候...' };
         }
 
-            this.isLoading = true;
+        this.isLoading = true;
 
-    try {
-      // 使用 GM_xmlhttpRequest 下载CSV文件
-      const csvData = await this.downloadCSV();
+        try {
+            // 使用 GM_xmlhttpRequest 下载CSV文件
+            const csvData = await this.downloadCSV();
 
-      if (!csvData.success) {
-        this.isLoading = false;
-        return { success: false, error: csvData.error };
-      }
+            if (!csvData.success) {
+                this.isLoading = false;
+                return { success: false, error: csvData.error };
+            }
 
-      // 解析CSV数据
-      const parseResult = CSVParser.parse(csvData.data || '');
+            // 解析CSV数据
+            const parseResult = CSVParser.parse(csvData.data || '');
 
-      if (parseResult.success && parseResult.data) {
-        this.orders = parseResult.data;
-        this.lastLoadTime = new Date();
-        this.isLoading = false;
+            if (parseResult.success && parseResult.data) {
+                this.orders = parseResult.data;
+                this.lastLoadTime = new Date();
 
-        return { success: true, data: this.orders };
-      } else {
-        this.isLoading = false;
-        return { success: false, error: parseResult.error || '解析CSV数据失败' };
-      }
-    } catch (error) {
-      this.isLoading = false;
-      return { success: false, error: `加载失败: ${error}` };
-    }
+                // 数据加载完成后，统一处理所有商品的变体数据
+                this.preprocessAllItemVariants();
+
+                this.isLoading = false;
+                return { success: true, data: this.orders };
+            } else {
+                this.isLoading = false;
+                return { success: false, error: parseResult.error || '解析CSV数据失败' };
+            }
+        } catch (error) {
+            this.isLoading = false;
+            return { success: false, error: `加载失败: ${error}` };
+        }
     }
 
     // 下载CSV文件
@@ -85,22 +89,22 @@ export class DataLoader {
                     'Accept': 'text/csv,application/csv,text/plain',
                     'Content-Type': 'text/csv; charset=utf-8'
                 },
-                            onload: (response: any) => {
-                if (response.status === 200) {
-                    resolve({ success: true, data: response.responseText });
-                } else {
-                    resolve({
-                        success: false,
-                        error: `下载失败: HTTP ${response.status} - ${response.statusText}`
-                    });
+                onload: (response: any) => {
+                    if (response.status === 200) {
+                        resolve({ success: true, data: response.responseText });
+                    } else {
+                        resolve({
+                            success: false,
+                            error: `下载失败: HTTP ${response.status} - ${response.statusText}`
+                        });
+                    }
+                },
+                onerror: (error: any) => {
+                    resolve({ success: false, error: '网络请求失败' });
+                },
+                ontimeout: () => {
+                    resolve({ success: false, error: '下载超时' });
                 }
-            },
-            onerror: (error: any) => {
-                resolve({ success: false, error: '网络请求失败' });
-            },
-            ontimeout: () => {
-                resolve({ success: false, error: '下载超时' });
-            }
             });
         });
     }
@@ -117,5 +121,24 @@ export class DataLoader {
             totalOrders: this.orders.length,
             lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
         };
+    }
+
+    /**
+     * 预处理所有商品的变体数据
+     * 在数据加载完成后统一处理，避免后续使用时重复计算
+     */
+    private preprocessAllItemVariants(): void {
+        if (this.orders.length === 0) {
+            logger.warn('没有订单数据，跳过变体数据预处理');
+            return;
+        }
+
+        try {
+            const orderManager = OrderManager.getInstance();
+            orderManager.preprocessAllItemVariants(this.orders);
+        } catch (error) {
+            logger.error('变体数据预处理失败:', error);
+            // 不抛出错误，避免影响数据加载流程
+        }
     }
 } 

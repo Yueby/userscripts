@@ -26,9 +26,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
-import type { PaymentMethodData } from '../../utils/analysis/chart-data-processor';
-import { ChartDataProcessor } from '../../utils/analysis/chart-data-processor';
-import { logger } from '../../utils/core/logger';
+import type { PaymentMethodData } from '../../utils/analysis/data-analyzer';
+import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 
 interface Props {
   paymentData: PaymentMethodData[];
@@ -48,10 +47,11 @@ const generateFakeData = (originalData: PaymentMethodData[]): PaymentMethodData[
     return originalData;
   }
   
-  // 生成虚假的支付方式数据
-  const fakeMethods = ['信用卡', '银行转账', '电子钱包', '现金'];
+  // 生成虚假的支付方式数据，确保总订单数至少1万
+  const fakeMethods = ['魔法水晶支付', '时空传送支付', '意念转账', '彩虹币支付'];
   const fakeData: PaymentMethodData[] = fakeMethods.map((method, index) => {
-    const count = Math.floor(Math.random() * 50) + 10; // 10-60之间的随机数
+    // 生成10000-50000之间的随机数，确保总订单数至少1万
+    const count = Math.floor(Math.random() * 40000) + 10000;
     return {
       method,
       count,
@@ -80,7 +80,7 @@ const totalOrders = computed(() => {
 
 // 获取项目颜色
 const getItemColor = (method: string): string => {
-  const colors = ChartDataProcessor.getChartColors(displayData.value.length);
+  const colors = DataAnalyzer.getChartColors(displayData.value.length);
   const index = displayData.value.findIndex(item => item.method === method);
   return colors[index] || '#6b7280';
 };
@@ -148,7 +148,9 @@ const updateChart = () => {
 
   const config = createChartConfig();
   chart.data = config.data;
-  chart.options = config.options;
+  if (config.options) {
+    chart.options = config.options;
+  }
   chart.update();
 
 };

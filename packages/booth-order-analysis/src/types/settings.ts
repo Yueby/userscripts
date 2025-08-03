@@ -33,8 +33,8 @@ export const TIMEZONE_OPTIONS = [
 
 // 货币选项
 export const CURRENCY_OPTIONS = [
-  { value: 'JPY', label: '日元 (JPY)', symbol: '¥' },
   { value: 'CNY', label: '人民币 (CNY)', symbol: '¥' },
+  { value: 'JPY', label: '日元 (JPY)', symbol: '¥' },
   { value: 'USD', label: '美元 (USD)', symbol: '$' },
   { value: 'EUR', label: '欧元 (EUR)', symbol: '€' },
   { value: 'GBP', label: '英镑 (GBP)', symbol: '£' },

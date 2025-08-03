@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { DataFilter, type TimePeriod, type CustomDateRange } from '../../utils/analysis/data-filter';
-import { CurrencyConverter } from '../../utils/currency/currency-converter';
-import { ChartDataProcessor } from '../../utils/analysis/chart-data-processor';
+import { DataAnalyzer, type TimePeriod, type CustomDateRange } from '../../utils/analysis/data-analyzer';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
 import type { OrderStats } from '../../types/order';
 import type { Order } from '../../types/order';
 import type { Currency, UserSettings } from '../../types/settings';
-import { logger } from '../../utils/core/logger';
-import { RevenueTrendChart, PaymentMethodChart } from '../Charts';
-import MaskedText from '../MaskedText/index.vue';
+
+import MaskedText from '../common/MaskedText/index.vue';
 import ItemRanking from './ItemRanking.vue';
+import RevenueTrendChart from './RevenueTrendChart.vue';
+import PaymentMethodChart from './PaymentMethodChart.vue';
+
 
 interface Props {
   statistics: OrderStats;
@@ -35,7 +36,7 @@ const customStartDate = ref('');
 const customEndDate = ref('');
 
 // 获取可用的时间周期选项
-const availablePeriods = DataFilter.getAvailablePeriods();
+const availablePeriods = DataAnalyzer.getAvailablePeriods();
 
 // 监听选择变化
 watch(selectedPeriod, (newValue) => {
@@ -79,14 +80,14 @@ const applyCustomRange = () => {
 // 获取当前选择的显示名称
 const getCurrentDisplayName = () => {
   if (selectedPeriod.value === 'custom' && props.customRange) {
-    return DataFilter.formatDateRange('custom', props.customRange);
+    return DataAnalyzer.formatDateRange('custom', props.customRange);
   }
-  return DataFilter.getPeriodDisplayName(selectedPeriod.value);
+  return DataAnalyzer.getPeriodDisplayName(selectedPeriod.value);
 };
 
 // 格式化日元显示（主要显示）
 const formatJPY = (amount: number) => {
-  return CurrencyConverter.formatCurrencyWithCode(amount, 'JPY');
+  return CurrencyManager.formatCurrencyWithCode(amount, 'JPY');
 };
 
 // 格式化转换后的货币显示（辅助显示）
@@ -95,8 +96,8 @@ const formatConverted = (amount: number) => {
   if (targetCurrency === 'JPY') {
     return null; // 如果目标货币就是日元，不显示转换金额
   }
-  const convertedAmount = CurrencyConverter.convertFromJPYSync(amount, targetCurrency);
-  return CurrencyConverter.formatCurrencyWithCode(convertedAmount, targetCurrency);
+  const convertedAmount = CurrencyManager.convertFromJPYSync(amount, targetCurrency);
+  return CurrencyManager.formatCurrencyWithCode(convertedAmount, targetCurrency);
 };
 
 // 计算图表数据
@@ -118,16 +119,16 @@ const revenueTrendData = computed(() => {
     }
   }
 
-  return ChartDataProcessor.generateRevenueTrendData(props.orders);
+  return DataAnalyzer.generateRevenueTrendData(props.orders);
 });
 
 const paymentMethodData = computed(() => {
-  return ChartDataProcessor.generatePaymentMethodData(props.orders);
+  return DataAnalyzer.generatePaymentMethodData(props.orders);
 });
 
 // 计算商品销量排行榜数据
 const productRankingData = computed(() => {
-  return ChartDataProcessor.generateProductSalesRanking(props.orders);
+  return DataAnalyzer.generateProductSalesRanking(props.orders);
 });
 </script>
 
@@ -139,17 +140,17 @@ const productRankingData = computed(() => {
       <div class="stats-grid">
         <div class="stat-card orders-card">
           <div class="stat-content">
-                      <div class="stat-value">
-            <MaskedText :value="statistics.totalOrders" :masked="userSettings?.privacyMode || false" />
-          </div>
+            <div class="stat-value">
+              <MaskedText :value="statistics.totalOrders" :masked="userSettings?.privacyMode || false" />
+            </div>
           </div>
           <div class="stat-label">总订单数</div>
         </div>
         <div class="stat-card revenue-card">
           <div class="stat-content">
-                      <div class="stat-value">
-            <MaskedText :value="formatJPY(statistics.totalRevenue)" :masked="userSettings?.privacyMode || false" />
-          </div>
+            <div class="stat-value">
+              <MaskedText :value="formatJPY(statistics.totalRevenue)" :masked="userSettings?.privacyMode || false" />
+            </div>
             <div v-if="!userSettings?.privacyMode && formatConverted(statistics.totalRevenue)" class="stat-converted">{{
               formatConverted(statistics.totalRevenue) }}</div>
           </div>
@@ -157,11 +158,12 @@ const productRankingData = computed(() => {
         </div>
         <div class="stat-card net-revenue-card">
           <div class="stat-content">
-                      <div class="stat-value">
-            <MaskedText :value="formatJPY(statistics.totalNetRevenue)" :masked="userSettings?.privacyMode || false" />
-          </div>
-            <div v-if="!userSettings?.privacyMode && formatConverted(statistics.totalNetRevenue)" class="stat-converted">{{
-              formatConverted(statistics.totalNetRevenue) }}</div>
+            <div class="stat-value">
+              <MaskedText :value="formatJPY(statistics.totalNetRevenue)" :masked="userSettings?.privacyMode || false" />
+            </div>
+            <div v-if="!userSettings?.privacyMode && formatConverted(statistics.totalNetRevenue)"
+              class="stat-converted">{{
+                formatConverted(statistics.totalNetRevenue) }}</div>
           </div>
           <div class="stat-label">到手收入</div>
         </div>
@@ -212,12 +214,15 @@ const productRankingData = computed(() => {
     </div>
 
     <!-- 图表和排行榜部分 -->
-    <div v-if="revenueTrendData.length > 0 || paymentMethodData.length > 0 || productRankingData.length > 0" class="charts-section">
+    <div v-if="revenueTrendData.length > 0 || paymentMethodData.length > 0 || productRankingData.length > 0"
+      class="charts-section">
       <div class="charts-grid">
         <RevenueTrendChart v-if="revenueTrendData.length > 0" :data-points="revenueTrendData"
           :target-currency="targetCurrency" :privacy-mode="userSettings?.privacyMode || false" />
-        <PaymentMethodChart v-if="paymentMethodData.length > 0" :payment-data="paymentMethodData" :privacy-mode="userSettings?.privacyMode || false" />
-                  <ItemRanking v-if="productRankingData.length > 0" :product-data="productRankingData" :target-currency="targetCurrency" :max-items="10" :user-settings="userSettings" />
+        <PaymentMethodChart v-if="paymentMethodData.length > 0" :payment-data="paymentMethodData"
+          :privacy-mode="userSettings?.privacyMode || false" />
+        <ItemRanking v-if="productRankingData.length > 0" :product-data="productRankingData"
+          :target-currency="targetCurrency" :max-items="10" :user-settings="userSettings" />
       </div>
     </div>
   </div>
@@ -557,7 +562,7 @@ const productRankingData = computed(() => {
   align-items: start;
 }
 
-.charts-grid > * {
+.charts-grid>* {
   height: 300px;
   min-height: 300px;
   max-height: 300px;

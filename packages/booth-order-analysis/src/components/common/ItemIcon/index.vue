@@ -1,24 +1,20 @@
 <template>
   <div class="item-icon-container">
-    <img 
-      v-if="!props.privacyMode && iconUrl" 
-      :src="iconUrl" 
-      :alt="alt" 
-      @error="onImageError"
-      class="item-icon"
-    />
+    <img v-if="!props.privacyMode && iconUrl" :src="iconUrl" :alt="alt" @error="onImageError" class="item-icon" />
     <div v-else class="privacy-icon">
       <svg :width="iconSize" :height="iconSize" viewBox="0 0 16 16" fill="none">
-        <rect width="16" height="16" rx="2" fill="#f3f4f6"/>
-        <path d="M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#9ca3af"/>
+        <rect width="16" height="16" rx="2" fill="#f3f4f6" />
+        <path
+          d="M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+          fill="#9ca3af" />
       </svg>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue';
-import { ItemManager } from '../../utils/booth/item-manager';
+import { computed, onMounted, ref, watch } from 'vue';
+import { ItemManager } from '../../../utils/booth/item-manager';
 
 interface Props {
   itemId?: string;
@@ -39,7 +35,7 @@ const iconUrl = ref<string>('');
 // 计算图标尺寸
 const iconSize = computed(() => {
   const size = parseInt(props.size);
-  return Math.min(size, 16);
+  return size;
 });
 
 // 获取图标URL
@@ -50,7 +46,7 @@ const loadIcon = () => {
   }
 
   let targetItemId = props.itemId;
-  
+
   if (!targetItemId && props.items && props.items.length > 0) {
     // 从商品数组中获取第一个商品的ID
     targetItemId = props.items[0].itemId;
@@ -92,12 +88,19 @@ onMounted(() => {
   border-radius: 4px;
   overflow: hidden;
   background: #f3f4f6;
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-width: v-bind(size);
+  min-height: v-bind(size);
+  max-width: v-bind(size);
+  max-height: v-bind(size);
 }
 
 .item-icon {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 4px;
 }
 
 .privacy-icon {
@@ -109,4 +112,4 @@ onMounted(() => {
   background: #f3f4f6;
   color: #9ca3af;
 }
-</style> 
+</style>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { ExchangeRateAPI } from '../../utils/currency/exchange-rate-api';
-import { CurrencyConverter } from '../../utils/currency/currency-converter';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
 import { logger } from '../../utils/core/logger';
 import type { Currency } from '../../types/settings';
 
@@ -29,10 +28,10 @@ const currentRate = computed(() => {
     return '¥1.0000';
   }
 
-  const rate = CurrencyConverter.getExchangeRate(currency);
+  const rate = CurrencyManager.getExchangeRateSync(currency);
   const symbol = getCurrencySymbol(currency);
   // 显示为 1目标货币 = 多少JPY
-  const jpyAmount = (1 / rate).toFixed(2);
+  const jpyAmount = rate ? (1 / rate).toFixed(2) : '0.00';
   return `${symbol}1 = ¥${jpyAmount}`;
 });
 
@@ -53,7 +52,7 @@ const getCurrencySymbol = (currency: Currency): string => {
 
 // 更新缓存状态
 const updateCacheStatus = () => {
-  cacheStatus.value = ExchangeRateAPI.getCacheStatus();
+  cacheStatus.value = CurrencyManager.getCacheStatus();
 };
 
 // 刷新汇率
@@ -62,7 +61,7 @@ const refreshRates = async () => {
 
   isRefreshing.value = true;
   try {
-    await CurrencyConverter.initializeRates();
+    await CurrencyManager.initializeRates();
     updateCacheStatus();
     logger.success('汇率手动刷新成功');
   } catch (error) {

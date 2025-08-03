@@ -15,9 +15,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
-import type { ChartDataPoint } from '../../utils/analysis/chart-data-processor';
-import { ChartDataProcessor } from '../../utils/analysis/chart-data-processor';
-import { logger } from '../../utils/core/logger';
+import type { ChartDataPoint } from '../../utils/analysis/data-analyzer';
+import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 
 interface Props {
     dataPoints: ChartDataPoint[];
@@ -38,7 +37,7 @@ const generateFakeData = (originalData: ChartDataPoint[]): ChartDataPoint[] => {
     return originalData;
   }
   
-  // 生成虚假的收入走势数据
+  // 生成虚假的收入走势数据，确保收入至少十万，订单数至少1万
   const fakeData: ChartDataPoint[] = [];
   const baseDate = new Date();
   
@@ -48,8 +47,8 @@ const generateFakeData = (originalData: ChartDataPoint[]): ChartDataPoint[] => {
     
     fakeData.push({
       date: date.toISOString().split('T')[0],
-      revenue: Math.floor(Math.random() * 50000) + 10000, // 10000-60000之间的随机收入
-      orders: Math.floor(Math.random() * 20) + 5 // 5-25之间的随机订单数
+      revenue: Math.floor(Math.random() * 900000) + 100000, // 10万-100万之间的随机收入
+      orders: Math.floor(Math.random() * 40000) + 10000 // 1万-5万之间的随机订单数
     });
   }
   
@@ -63,7 +62,7 @@ const displayData = computed(() => {
 
 // 创建图表配置
 const createChartConfig = (): ChartConfiguration => {
-    const labels = displayData.value.map(point => ChartDataProcessor.formatDateForDisplay(point.date));
+    const labels = displayData.value.map(point => DataAnalyzer.formatDateForDisplay(point.date));
     const revenueData = displayData.value.map(point => point.revenue);
     const orderData = displayData.value.map(point => point.orders);
 
@@ -207,7 +206,9 @@ const updateChart = () => {
 
     const config = createChartConfig();
     chart.data = config.data;
-    chart.options = config.options;
+    if (config.options) {
+      chart.options = config.options;
+    }
     chart.update();
 };
 
