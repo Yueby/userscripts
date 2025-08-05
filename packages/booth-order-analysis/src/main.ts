@@ -1,10 +1,10 @@
 import { createApp } from 'vue';
-import './style.css';
 import App from './App.vue';
-import { DataLoader } from './utils/core/data-loader';
-import { CurrencyManager } from './utils/currency/currency-manager';
+import './style.css';
 import { ItemManager } from './utils/booth/item-manager';
+import { DataLoader } from './utils/core/data-loader';
 import { logger } from './utils/core/logger';
+import { CurrencyManager } from './utils/currency/currency-manager';
 
 // 检查是否在 Booth 订单页面
 function isBoothOrdersPage(): boolean {
@@ -35,15 +35,8 @@ function insertButton(): void {
       </div>
       <span class="button-text">订单分析</span>
     `;
+    button.className = 'booth-btn booth-btn-primary booth-btn-md';
     button.style.cssText = `
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
       margin-left: 12px;
       position: relative;
       min-width: 100px;
@@ -51,7 +44,6 @@ function insertButton(): void {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
     `;
 
     // 添加CSS样式
@@ -60,15 +52,6 @@ function insertButton(): void {
       #booth-analysis-button {
         position: relative;
         overflow: hidden;
-      }
-      
-      #booth-analysis-button:hover {
-        background: #2563eb;
-        transform: translateY(-1px);
-      }
-      
-      #booth-analysis-button:active {
-        transform: translateY(0);
       }
       
       #booth-analysis-button .button-text {
@@ -90,8 +73,8 @@ function insertButton(): void {
       #booth-analysis-button .spinner {
         width: 16px;
         height: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top: 2px solid white;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-top: 2px solid #3b82f6;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -99,11 +82,6 @@ function insertButton(): void {
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
-      }
-      
-      #booth-analysis-button:disabled {
-        background: #6b7280;
-        cursor: not-allowed;
       }
     `;
     document.head.appendChild(style);

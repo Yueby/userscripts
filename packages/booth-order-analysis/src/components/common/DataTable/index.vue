@@ -6,7 +6,11 @@
         :title="display?.title" 
         :info="tableInfo"
         :privacy-mode="privacyMode"
-      />
+      >
+        <template #controls>
+          <slot name="header-controls" />
+        </template>
+      </TableHeader>
     </slot>
 
     <!-- 表格容器 -->
@@ -52,16 +56,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import TableHeader from './components/TableHeader.vue';
-import TableHeaderRow from './components/TableHeaderRow.vue';
+import { computed, watch } from 'vue';
 import TableBody from './components/TableBody.vue';
 import TableCell from './components/TableCell.vue';
 import TableEmptyState from './components/TableEmptyState.vue';
+import TableHeader from './components/TableHeader.vue';
+import TableHeaderRow from './components/TableHeaderRow.vue';
 import TablePagination from './components/TablePagination.vue';
+import { useTableConfig } from './composables/useTableConfig';
 import { useTableData } from './composables/useTableData';
 import { useTablePrivacy } from './composables/useTablePrivacy';
-import { useTableConfig } from './composables/useTableConfig';
 
 // 类型定义
 export interface TableColumn {
@@ -164,6 +168,8 @@ const handlePageChange = (page: number) => {
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+
 
 .table-container {
   border: 1px solid var(--table-border-color, #e5e7eb);

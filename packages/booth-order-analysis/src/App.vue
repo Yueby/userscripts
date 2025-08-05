@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { Statistics, OrderTable, ItemTable, Settings, ExchangeRateStatus } from './components';
-import { DataLoader } from './utils/core/data-loader';
-import { DataAnalyzer, type TimePeriod, type CustomDateRange } from './utils/analysis/data-analyzer';
-import { SettingsManager } from './utils/settings/settings-manager';
-import { logger } from './utils/core/logger';
+import { computed, onMounted, ref } from 'vue';
+import { ExchangeRateStatus, ItemTable, OrderTable, Settings, Statistics } from './components';
 import type { UserSettings as SettingsType } from './types/settings';
+import { DataAnalyzer, type CustomDateRange, type TimePeriod } from './utils/analysis/data-analyzer';
+import { DataLoader } from './utils/core/data-loader';
+import { logger } from './utils/core/logger';
+import { SettingsManager } from './utils/settings/settings-manager';
 
 const dataLoader = DataLoader.getInstance();
 const isLoading = ref(false);
@@ -129,13 +129,13 @@ onMounted(() => {
       </div>
       <div class="header-right">
         <ExchangeRateStatus :target-currency="userSettings.targetCurrency" />
-        <button @click="openSettings" class="settings-btn" title="设置">
+        <button @click="openSettings" class="booth-btn booth-btn-secondary booth-btn-icon booth-btn-sm" title="设置">
           <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
           </svg>
         </button>
-        <button @click="refreshData" :disabled="isLoading" class="refresh-btn" title="刷新数据">
+        <button @click="refreshData" :disabled="isLoading" class="booth-btn booth-btn-success booth-btn-icon booth-btn-sm" title="刷新数据">
           <svg v-if="!isLoading" class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
             <path d="M21 3v5h-5"/>
@@ -149,7 +149,7 @@ onMounted(() => {
             <path d="M3 21v-5h5"/>
           </svg>
         </button>
-        <button @click="closePanel" class="close-btn" title="关闭">
+        <button @click="closePanel" class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" title="关闭">
           ×
         </button>
       </div>
@@ -164,13 +164,13 @@ onMounted(() => {
       <!-- 标签页导航 -->
       <div class="tab-navigation">
         <button 
-          :class="['tab-btn', { active: activeTab === 'orders' }]" 
+          :class="['booth-btn', 'booth-btn-ghost', 'booth-btn-md', { 'booth-btn-primary': activeTab === 'orders' }]" 
           @click="switchTab('orders')"
         >
           订单列表
         </button>
         <button 
-          :class="['tab-btn', { active: activeTab === 'items' }]" 
+          :class="['booth-btn', 'booth-btn-ghost', 'booth-btn-md', { 'booth-btn-primary': activeTab === 'items' }]" 
           @click="switchTab('items')"
         >
           商品列表
@@ -237,53 +237,9 @@ onMounted(() => {
   align-items: center;
 }
 
-.settings-btn {
-  background: #6b7280;
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-}
-
-.settings-btn:hover {
-  background: #4b5563;
-}
-
 .settings-icon {
   width: 18px;
   height: 18px;
-}
-
-.refresh-btn {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  overflow: hidden;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: #059669;
-}
-
-.refresh-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
 }
 
 .refresh-icon {
@@ -295,27 +251,6 @@ onMounted(() => {
 .refresh-icon.loading {
   animation: spin 1s linear infinite;
   transform-origin: center;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: #6b7280;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.close-btn:hover {
-  color: #ef4444;
-  background: #f3f4f6;
 }
 
 @keyframes spin {
@@ -344,24 +279,21 @@ onMounted(() => {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.tab-btn {
-  padding: 12px 24px;
-  border: none;
+/* 标签页按钮特殊样式 */
+.tab-navigation .booth-btn {
+  border-radius: 6px 6px 0 0;
+  border-bottom: 2px solid transparent;
   background: none;
   color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-bottom: 2px solid transparent;
 }
 
-.tab-btn:hover {
+.tab-navigation .booth-btn:hover {
   color: #374151;
   background: #f9fafb;
+  border-bottom-color: #d1d5db;
 }
 
-.tab-btn.active {
+.tab-navigation .booth-btn.booth-btn-primary {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
   background: #eff6ff;
@@ -386,25 +318,11 @@ onMounted(() => {
     gap: 6px;
   }
 
-  .settings-btn,
-  .refresh-btn {
-    width: 32px;
-    height: 32px;
-    padding: 6px;
-    overflow: hidden;
-  }
-
   .settings-icon,
   .refresh-icon {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-  }
-
-  .close-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 20px;
   }
 }
 
@@ -421,25 +339,11 @@ onMounted(() => {
     gap: 4px;
   }
 
-  .settings-btn,
-  .refresh-btn {
-    width: 28px;
-    height: 28px;
-    padding: 4px;
-    overflow: hidden;
-  }
-
   .settings-icon,
   .refresh-icon {
     width: 14px;
     height: 14px;
     flex-shrink: 0;
-  }
-
-  .close-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 18px;
   }
 }
 </style>

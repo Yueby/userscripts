@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.3
+// @version            0.1.4
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -19,7 +19,7 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const e=document.createElement("style");e.textContent=a,document.head.append(e)})(' .item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.item-ranking[data-v-0990fe6f]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-0990fe6f]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-0990fe6f]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-0990fe6f]{display:flex;align-items:center}.sort-buttons[data-v-0990fe6f]{display:flex;gap:4px}.sort-btn[data-v-0990fe6f]{padding:3px 6px;border:1px solid #d1d5db;border-radius:3px;font-size:10px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s}.sort-btn[data-v-0990fe6f]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.sort-btn.active[data-v-0990fe6f]{background:#3b82f6;border-color:#3b82f6;color:#fff}.sort-btn.active[data-v-0990fe6f]:hover{background:#2563eb;border-color:#2563eb}.ranking-list[data-v-0990fe6f]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar{width:4px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-0990fe6f]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-0990fe6f]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-0990fe6f]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-0990fe6f]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-0990fe6f]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-0990fe6f]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-0990fe6f]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-0990fe6f],.rank-5[data-v-0990fe6f],.rank-6[data-v-0990fe6f],.rank-7[data-v-0990fe6f],.rank-8[data-v-0990fe6f],.rank-9[data-v-0990fe6f],.rank-10[data-v-0990fe6f]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-0990fe6f]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-0990fe6f]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-0990fe6f]{display:flex;align-items:center;justify-content:center}.product-details[data-v-0990fe6f]{flex:1;min-width:0}.product-name[data-v-0990fe6f]{margin-bottom:0}.product-link[data-v-0990fe6f]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-0990fe6f]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-0990fe6f]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-0990fe6f]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-0990fe6f]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-0990fe6f]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-0990fe6f]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-0990fe6f]{font-size:24px;margin-bottom:8px}.empty-text[data-v-0990fe6f]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-0990fe6f]{padding:12px}.ranking-header h4[data-v-0990fe6f]{font-size:13px}.ranking-item[data-v-0990fe6f]{padding:5px;gap:6px}.product-icon[data-v-0990fe6f]{width:24px;height:24px}.product-link[data-v-0990fe6f]{font-size:10px}.quantity-value[data-v-0990fe6f]{font-size:11px}.quantity-label[data-v-0990fe6f]{font-size:8px}.rank-badge[data-v-0990fe6f]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.chart-container[data-v-0b40678e]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-0b40678e]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-0b40678e]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-0b40678e]{display:flex;align-items:center;gap:8px}.total-orders[data-v-0b40678e]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-0b40678e]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-0b40678e]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-0b40678e]{width:100%!important;height:100%!important}.legend-container[data-v-0b40678e]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-0b40678e]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-0b40678e]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-0b40678e]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-0b40678e]{display:flex;flex-direction:row;gap:4px;align-items:center}.legend-label[data-v-0b40678e]{font-size:10px;font-weight:500;color:#374151}.legend-value[data-v-0b40678e]{font-size:9px;color:#6b7280}.statistics-panel[data-v-28e58dda]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-28e58dda]{margin-bottom:24px}.stats-section h3[data-v-28e58dda]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-28e58dda]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-28e58dda]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-28e58dda]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-28e58dda]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-28e58dda]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-28e58dda]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-28e58dda]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-28e58dda]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-28e58dda]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.filter-section[data-v-28e58dda]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-28e58dda]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-28e58dda]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-28e58dda]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-28e58dda]{display:flex;flex-direction:column;gap:12px}.period-buttons[data-v-28e58dda]{display:flex;flex-wrap:wrap;gap:6px}.period-btn[data-v-28e58dda]{padding:6px 12px;border:1px solid #d1d5db;border-radius:4px;font-size:12px;font-weight:500;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s;white-space:nowrap}.period-btn[data-v-28e58dda]:hover{border-color:#9ca3af;color:#374151;background:#f9fafb}.period-btn.active[data-v-28e58dda]{background:#3b82f6;border-color:#3b82f6;color:#fff}.period-btn.active[data-v-28e58dda]:hover{background:#2563eb;border-color:#2563eb}.date-picker-overlay[data-v-28e58dda]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000}.date-picker-modal[data-v-28e58dda]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;width:400px;max-width:90vw}.date-picker-header[data-v-28e58dda]{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb}.date-picker-header h5[data-v-28e58dda]{margin:0;color:#374151;font-size:16px;font-weight:600}.close-btn[data-v-28e58dda]{background:none;border:none;font-size:20px;color:#6b7280;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:background .2s}.close-btn[data-v-28e58dda]:hover{background:#f3f4f6}.date-picker-content[data-v-28e58dda]{padding:20px}.date-input-group[data-v-28e58dda]{margin-bottom:16px}.date-input-group label[data-v-28e58dda]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-28e58dda]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-28e58dda]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.date-picker-actions[data-v-28e58dda]{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}.cancel-btn[data-v-28e58dda]{padding:8px 16px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.cancel-btn[data-v-28e58dda]:hover{background:#e5e7eb}.apply-btn[data-v-28e58dda]{padding:8px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.apply-btn[data-v-28e58dda]:hover:not(:disabled){background:#059669}.apply-btn[data-v-28e58dda]:disabled{background:#9ca3af;cursor:not-allowed}.charts-section[data-v-28e58dda]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-28e58dda]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-28e58dda]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-28e58dda]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-28e58dda]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-28e58dda]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-28e58dda]{padding:16px 12px}.stat-value[data-v-28e58dda]{font-size:24px}.stat-converted[data-v-28e58dda]{font-size:11px;padding:3px 8px}.period-buttons[data-v-28e58dda]{gap:6px}.period-btn[data-v-28e58dda]{padding:6px 12px;font-size:12px}.date-picker-modal[data-v-28e58dda]{width:90vw;margin:20px}.charts-grid[data-v-28e58dda]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-28e58dda]{padding:12px}.item-ranking .ranking-header h4[data-v-28e58dda]{font-size:13px}.item-ranking .ranking-item[data-v-28e58dda]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-28e58dda]{width:100%}.item-ranking .sales-data[data-v-28e58dda]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.table-header[data-v-1a8b5b31]{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-1a8b5b31]{margin:0;color:var(--table-text-primary, #1f2937);font-size:18px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-1a8b5b31]{display:flex;align-items:center;gap:12px}.item-count[data-v-1a8b5b31]{font-size:14px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:6px 12px;border-radius:6px;font-weight:500}.page-info[data-v-1a8b5b31]{font-size:13px;color:var(--table-text-secondary, #6b7280);font-weight:500}@media (max-width: 768px){.table-header[data-v-1a8b5b31]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-e13dda4b]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-e13dda4b]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-e13dda4b]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-e13dda4b]{padding:8px;font-size:13px}}.table-content[data-v-040b6ec5]{max-height:600px;overflow-y:auto;overflow-x:auto}.table-row[data-v-040b6ec5]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px}.table-row[data-v-040b6ec5]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-040b6ec5]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px}.table-cell[data-v-040b6ec5]:last-child{border-right:none}.table-cell[data-v-040b6ec5]>*{width:100%}@media (max-width: 768px){.table-content[data-v-040b6ec5]{max-height:500px}.table-cell[data-v-040b6ec5]{padding:8px;font-size:13px}}.empty-state[data-v-46fead2e]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-46fead2e]{font-size:48px;margin-bottom:16px}.empty-text[data-v-46fead2e]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-46fead2e]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.pagination[data-v-dc3732c3]{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.page-btn[data-v-dc3732c3]{padding:8px 12px;border:1px solid #d1d5db;background:#fff;color:var(--table-text-primary, #374151);border-radius:4px;font-size:14px;cursor:pointer;transition:all .2s}.page-btn[data-v-dc3732c3]:hover:not(:disabled){background:#f3f4f6;border-color:#9ca3af}.page-btn.active[data-v-dc3732c3]{background:#3b82f6;border-color:#3b82f6;color:#fff}.page-btn.ellipsis[data-v-dc3732c3]{background:none;border:none;color:var(--table-text-secondary, #6b7280);cursor:default;padding:8px 4px}.page-btn.ellipsis[data-v-dc3732c3]:hover{background:none;border:none}.page-btn[data-v-dc3732c3]:disabled{background:#f3f4f6;color:var(--table-text-muted, #9ca3af);cursor:not-allowed}.page-numbers[data-v-dc3732c3]{display:flex;gap:4px}@media (max-width: 768px){.pagination[data-v-dc3732c3]{flex-wrap:wrap}}.data-table[data-v-88dfaae1]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-88dfaae1]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-88dfaae1]{min-width:1200px}.data-table[data-v-88dfaae1]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-88dfaae1]{padding:16px}}.item-entry[data-v-164f6045]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-164f6045]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-164f6045]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-164f6045 .2s ease-out}.tooltip-header[data-v-164f6045]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-164f6045]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-164f6045]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-164f6045]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-164f6045]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-164f6045]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-164f6045]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-164f6045]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-164f6045]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-164f6045]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-164f6045]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-164f6045{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-164f6045]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-164f6045]{width:28px;height:28px}}.order-number[data-v-d29745a8]{font-weight:500;color:#374151}.date-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-d29745a8]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-d29745a8]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-d29745a8]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-d29745a8]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-d29745a8]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-d29745a8]{font-weight:500;color:#374151}.price-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-d29745a8]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-d29745a8]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-d29745a8],.net-amount-cell[data-v-d29745a8]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-d29745a8]{align-items:center}.items[data-v-d29745a8]{max-height:80px}.price-cell[data-v-d29745a8],.booth-fee-cell[data-v-d29745a8],.net-amount-cell[data-v-d29745a8]{padding-top:4px}}.modal-overlay[data-v-b6b52a8b]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-b6b52a8b]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-b6b52a8b]{width:400px;max-width:90vw}.modal-medium[data-v-b6b52a8b]{width:600px;max-width:90vw}.modal-large[data-v-b6b52a8b]{width:800px;max-width:95vw}.modal-full[data-v-b6b52a8b]{width:95vw;height:95vh}.modal-header[data-v-b6b52a8b]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-b6b52a8b]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-close[data-v-b6b52a8b]{background:none;border:none;font-size:24px;color:#6b7280;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all .2s}.modal-close[data-v-b6b52a8b]:hover{background:#f3f4f6;color:#374151}.modal-body[data-v-b6b52a8b]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-b6b52a8b]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-b6b52a8b]{animation:fadeIn-b6b52a8b .2s ease-out}.modal-content[data-v-b6b52a8b]{animation:slideIn-b6b52a8b .2s ease-out}@keyframes fadeIn-b6b52a8b{0%{opacity:0}to{opacity:1}}@keyframes slideIn-b6b52a8b{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-b6b52a8b]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-b6b52a8b],.modal-body[data-v-b6b52a8b]{padding:16px}.modal-footer[data-v-b6b52a8b]{padding:12px 16px}}.sales-btn[data-v-7d6ecca6]{padding:6px 12px;background:#3b82f6;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}.sales-btn[data-v-7d6ecca6]:hover:not(:disabled){background:#2563eb}.sales-btn[data-v-7d6ecca6]:disabled{background:#9ca3af;cursor:not-allowed}.item-link[data-v-7d6ecca6]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-7d6ecca6]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-7d6ecca6],.no-link[data-v-7d6ecca6]{color:#9ca3af;font-style:italic}.price-cell[data-v-7d6ecca6]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-7d6ecca6]{font-weight:500;color:#374151}.price-converted[data-v-7d6ecca6]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-7d6ecca6]{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:6px}.item-details h4[data-v-7d6ecca6]{margin:0 0 4px;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-7d6ecca6]{margin:0;color:#6b7280;font-size:14px}.sales-summary[data-v-7d6ecca6]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:16px;background:#f8fafc;border-radius:6px}.summary-item[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:4px}.summary-label[data-v-7d6ecca6]{font-size:12px;color:#6b7280;font-weight:500}.summary-value[data-v-7d6ecca6]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-7d6ecca6]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600}.variant-list[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:12px}.variant-item[data-v-7d6ecca6]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-7d6ecca6]{display:flex;align-items:center}.variant-details[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-7d6ecca6]{font-size:14px;color:#374151;font-weight:500}.variant-stats[data-v-7d6ecca6]{display:flex;flex-direction:column;gap:4px;text-align:right}.variant-quantity[data-v-7d6ecca6],.variant-revenue[data-v-7d6ecca6]{font-size:12px;color:#6b7280}.variant-summary[data-v-7d6ecca6]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-7d6ecca6]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-7d6ecca6]{font-size:13px;color:#0369a1}.variant-source[data-v-7d6ecca6]{font-size:11px;color:#059669;font-style:italic}.no-variants[data-v-7d6ecca6]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-7d6ecca6]{width:95%;margin:20px}.variant-item[data-v-7d6ecca6]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-7d6ecca6]{text-align:left;width:100%}}.settings-content[data-v-64cf404d]{padding:24px}.setting-section[data-v-64cf404d]{margin-bottom:24px}.setting-section h3[data-v-64cf404d]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-64cf404d]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-64cf404d]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-64cf404d]{font-size:14px;color:#374151;font-weight:500;min-width:60px}.timezone-select[data-v-64cf404d],.currency-select[data-v-64cf404d]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.current-time[data-v-64cf404d],.exchange-rate-info[data-v-64cf404d]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-64cf404d]{display:flex;gap:12px}.save-btn[data-v-64cf404d],.reset-btn[data-v-64cf404d]{padding:8px 16px;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}.save-btn[data-v-64cf404d]{background:#10b981;color:#fff}.save-btn[data-v-64cf404d]:hover:not(:disabled){background:#059669}.save-btn[data-v-64cf404d]:disabled{background:#9ca3af;cursor:not-allowed}.reset-btn[data-v-64cf404d]{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.reset-btn[data-v-64cf404d]:hover{background:#e5e7eb}.privacy-toggle[data-v-64cf404d]{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.privacy-checkbox[data-v-64cf404d]{position:absolute;opacity:0;width:0;height:0}.toggle-slider[data-v-64cf404d]{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:background .3s}.toggle-slider[data-v-64cf404d]:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.privacy-checkbox:checked+.toggle-slider[data-v-64cf404d]{background:#10b981}.privacy-checkbox:checked+.toggle-slider[data-v-64cf404d]:before{transform:translate(20px)}.toggle-label[data-v-64cf404d]{font-size:14px;color:#374151;font-weight:500}.exchange-rate-status[data-v-66b9449e]{display:flex;align-items:center;gap:4px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:200px;border:1px solid #e5e7eb}.status-indicator[data-v-66b9449e]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-66b9449e]{display:flex;flex-direction:column;gap:0px;flex:1;min-width:0}.status-text[data-v-66b9449e]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-66b9449e]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-66b9449e]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-66b9449e]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-btn[data-v-66b9449e]{background:none;border:none;padding:2px;border-radius:3px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0}.refresh-btn[data-v-66b9449e]:hover:not(:disabled){background:#e5e7eb}.refresh-btn[data-v-66b9449e]:disabled{opacity:.5;cursor:not-allowed}.refresh-icon[data-v-66b9449e]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-66b9449e]{color:#374151}.spinner[data-v-66b9449e]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-66b9449e 1s linear infinite}@keyframes spin-66b9449e{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-91d212d9]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-91d212d9]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.header-left[data-v-91d212d9]{display:flex;align-items:center}.title[data-v-91d212d9]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-91d212d9]{display:flex;gap:8px;align-items:center}.settings-btn[data-v-91d212d9]{background:#6b7280;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px}.settings-btn[data-v-91d212d9]:hover{background:#4b5563}.settings-icon[data-v-91d212d9]{width:18px;height:18px}.refresh-btn[data-v-91d212d9]{background:#10b981;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;width:36px;height:36px;overflow:hidden}.refresh-btn[data-v-91d212d9]:hover:not(:disabled){background:#059669}.refresh-btn[data-v-91d212d9]:disabled{background:#9ca3af;cursor:not-allowed}.refresh-icon[data-v-91d212d9]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-91d212d9]{animation:spin-91d212d9 1s linear infinite;transform-origin:center}.close-btn[data-v-91d212d9]{background:none;border:none;color:#6b7280;font-size:24px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .2s;display:flex;align-items:center;justify-content:center;width:32px;height:32px}.close-btn[data-v-91d212d9]:hover{color:#ef4444;background:#f3f4f6}@keyframes spin-91d212d9{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-91d212d9]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-91d212d9]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-btn[data-v-91d212d9]{padding:12px 24px;border:none;background:none;color:#6b7280;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}.tab-btn[data-v-91d212d9]:hover{color:#374151;background:#f9fafb}.tab-btn.active[data-v-91d212d9]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-91d212d9]{flex:1}@media (max-width: 768px){.header[data-v-91d212d9]{padding:12px 16px}.title[data-v-91d212d9]{font-size:16px}.header-right[data-v-91d212d9]{gap:6px}.settings-btn[data-v-91d212d9],.refresh-btn[data-v-91d212d9]{width:32px;height:32px;padding:6px;overflow:hidden}.settings-icon[data-v-91d212d9],.refresh-icon[data-v-91d212d9]{width:16px;height:16px;flex-shrink:0}.close-btn[data-v-91d212d9]{width:28px;height:28px;font-size:20px}}@media (max-width: 480px){.header[data-v-91d212d9]{padding:10px 12px}.title[data-v-91d212d9]{font-size:14px}.header-right[data-v-91d212d9]{gap:4px}.settings-btn[data-v-91d212d9],.refresh-btn[data-v-91d212d9]{width:28px;height:28px;padding:4px;overflow:hidden}.settings-icon[data-v-91d212d9],.refresh-icon[data-v-91d212d9]{width:14px;height:14px;flex-shrink:0}.close-btn[data-v-91d212d9]{width:24px;height:24px;font-size:18px}} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .table-content[data-v-329525ad]{max-height:600px;overflow-y:auto;overflow-x:auto}.table-row[data-v-329525ad]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px}.table-row[data-v-329525ad]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-329525ad]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px}.table-cell[data-v-329525ad]:last-child{border-right:none}.table-cell[data-v-329525ad]>*{width:auto}@media (max-width: 768px){.table-content[data-v-329525ad]{max-height:500px}.table-cell[data-v-329525ad]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-c9bb81ee]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-c9bb81ee]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-c9bb81ee]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-c9bb81ee]{padding:8px;font-size:13px}}.pagination[data-v-5d0c40cc]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-5d0c40cc]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-5d0c40cc]{position:absolute;bottom:0;right:0;display:flex;justify-content:flex-end}.page-info[data-v-5d0c40cc]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-5d0c40cc],.page-total[data-v-5d0c40cc]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-5d0c40cc]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-5d0c40cc]{flex-wrap:wrap}}.data-table[data-v-95d88070]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-95d88070]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-95d88070]{min-width:1200px}.data-table[data-v-95d88070]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-95d88070]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-7f00327b]{display:inline-flex}.selector-controls[data-v-7f00327b]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d}@media (max-width: 768px){.selector-controls[data-v-7f00327b]{gap:1px;padding:1px}}.item-link[data-v-b3ed04b4]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-b3ed04b4]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-b3ed04b4],.no-link[data-v-b3ed04b4]{color:#9ca3af;font-style:italic}.price-cell[data-v-b3ed04b4]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-b3ed04b4]{font-weight:500;color:#374151}.price-converted[data-v-b3ed04b4]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-b3ed04b4]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-b3ed04b4]{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:6px}.item-details h4[data-v-b3ed04b4]{margin:0 0 4px;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-b3ed04b4]{margin:0;color:#6b7280;font-size:14px}.sales-summary[data-v-b3ed04b4]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:16px;background:#f8fafc;border-radius:6px}.summary-item[data-v-b3ed04b4]{display:flex;flex-direction:column;gap:4px}.summary-label[data-v-b3ed04b4]{font-size:12px;color:#6b7280;font-weight:500}.summary-value[data-v-b3ed04b4]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-b3ed04b4]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600}.variant-list[data-v-b3ed04b4]{display:flex;flex-direction:column;gap:12px}.variant-item[data-v-b3ed04b4]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-b3ed04b4]{display:flex;align-items:center}.variant-details[data-v-b3ed04b4]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-b3ed04b4]{font-size:14px;color:#374151;font-weight:500}.variant-stats[data-v-b3ed04b4]{display:flex;flex-direction:column;gap:4px;text-align:right}.variant-quantity[data-v-b3ed04b4],.variant-revenue[data-v-b3ed04b4]{font-size:12px;color:#6b7280}.variant-summary[data-v-b3ed04b4]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-b3ed04b4]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-b3ed04b4]{font-size:13px;color:#0369a1}.variant-source[data-v-b3ed04b4]{font-size:11px;color:#059669;font-style:italic}.no-variants[data-v-b3ed04b4]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-b3ed04b4]{width:95%;margin:20px}.variant-item[data-v-b3ed04b4]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-b3ed04b4]{text-align:left;width:100%}}.item-entry[data-v-164f6045]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-164f6045]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-164f6045]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-164f6045 .2s ease-out}.tooltip-header[data-v-164f6045]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-164f6045]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-164f6045]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-164f6045]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-164f6045]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-164f6045]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-164f6045]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-164f6045]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-164f6045]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-164f6045]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-164f6045]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-164f6045{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-164f6045]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-164f6045]{width:28px;height:28px}}.order-number[data-v-dd008aa1]{font-weight:500;color:#374151}.date-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-dd008aa1]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-dd008aa1]{font-weight:500;color:#374151}.price-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-dd008aa1]{align-items:center}.items[data-v-dd008aa1]{max-height:80px}.price-cell[data-v-dd008aa1],.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{padding-top:4px}}.settings-content[data-v-1a4ef441]{padding:24px}.setting-section[data-v-1a4ef441]{margin-bottom:24px}.setting-section h3[data-v-1a4ef441]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-1a4ef441]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-1a4ef441]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-1a4ef441]{font-size:14px;color:#374151;font-weight:500;min-width:60px}.timezone-select[data-v-1a4ef441],.currency-select[data-v-1a4ef441]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.current-time[data-v-1a4ef441],.exchange-rate-info[data-v-1a4ef441]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-1a4ef441]{display:flex;gap:12px}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-c148746f]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-c148746f]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-c148746f]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-c148746f]{display:flex;align-items:center;gap:8px}.total-orders[data-v-c148746f]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-c148746f]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-c148746f]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-c148746f]{width:100%!important;height:100%!important}.legend-container[data-v-c148746f]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-c148746f]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-c148746f]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-c148746f]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-c148746f]{display:flex;flex-direction:row;gap:4px;align-items:center}.legend-label[data-v-c148746f]{font-size:10px;font-weight:500;color:#374151}.legend-value[data-v-c148746f]{font-size:9px;color:#6b7280}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-fef2f70b]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-fef2f70b]{margin-bottom:24px}.stats-section h3[data-v-fef2f70b]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-fef2f70b]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-fef2f70b]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-fef2f70b]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-fef2f70b]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-fef2f70b]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-fef2f70b]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-fef2f70b]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-fef2f70b]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.filter-section[data-v-fef2f70b]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-fef2f70b]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-fef2f70b]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-fef2f70b]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-fef2f70b]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-fef2f70b]{font-size:11px}.date-picker-content[data-v-fef2f70b]{padding:0}.date-input-group[data-v-fef2f70b]{margin-bottom:16px}.date-input-group label[data-v-fef2f70b]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-fef2f70b]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-fef2f70b]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.charts-section[data-v-fef2f70b]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-fef2f70b]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-fef2f70b]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-fef2f70b]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-fef2f70b]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-fef2f70b]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-fef2f70b]{padding:16px 12px}.stat-value[data-v-fef2f70b]{font-size:24px}.stat-converted[data-v-fef2f70b]{font-size:11px;padding:3px 8px}.period-selector[data-v-fef2f70b]{font-size:10px}.charts-grid[data-v-fef2f70b]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-fef2f70b]{padding:12px}.item-ranking .ranking-header h4[data-v-fef2f70b]{font-size:13px}.item-ranking .ranking-item[data-v-fef2f70b]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-fef2f70b]{width:100%}.item-ranking .sales-data[data-v-fef2f70b]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-16151a4c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:200px;border:1px solid #e5e7eb}.status-indicator[data-v-16151a4c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-16151a4c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-16151a4c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-16151a4c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-16151a4c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-16151a4c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-16151a4c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-16151a4c]{color:#374151}.spinner[data-v-16151a4c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-16151a4c 1s linear infinite}@keyframes spin-16151a4c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-8d0e684c]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-8d0e684c]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.header-left[data-v-8d0e684c]{display:flex;align-items:center}.title[data-v-8d0e684c]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-8d0e684c]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-8d0e684c]{width:18px;height:18px}.refresh-icon[data-v-8d0e684c]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-8d0e684c]{animation:spin-8d0e684c 1s linear infinite;transform-origin:center}@keyframes spin-8d0e684c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-8d0e684c]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-8d0e684c]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-8d0e684c]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-8d0e684c]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-8d0e684c]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-8d0e684c]{flex:1}@media (max-width: 768px){.header[data-v-8d0e684c]{padding:12px 16px}.title[data-v-8d0e684c]{font-size:16px}.header-right[data-v-8d0e684c]{gap:6px}.settings-icon[data-v-8d0e684c],.refresh-icon[data-v-8d0e684c]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-8d0e684c]{padding:10px 12px}.title[data-v-8d0e684c]{font-size:14px}.header-right[data-v-8d0e684c]{gap:4px}.settings-icon[data-v-8d0e684c],.refresh-icon[data-v-8d0e684c]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
 
 (function (vue) {
   'use strict';
@@ -3103,6 +3103,1256 @@
       }
     }
   }
+  class OrderManager {
+    static instance;
+    itemManager;
+    variantCache = /* @__PURE__ */ new Map();
+    lastProcessedOrders = [];
+    cachedItemsWithStats = null;
+    cachedSalesStats = null;
+    constructor() {
+      this.itemManager = ItemManager.getInstance();
+    }
+    /**
+     * 获取单例实例
+     */
+    static getInstance() {
+      if (!OrderManager.instance) {
+        OrderManager.instance = new OrderManager();
+      }
+      return OrderManager.instance;
+    }
+    /**
+     * 获取商品的销售统计
+     */
+    getItemSalesStats(itemId, orders) {
+      let totalQuantity = 0;
+      let totalRevenue = 0;
+      let totalBoothFee = 0;
+      let orderCount = 0;
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (item.itemId === itemId) {
+            const quantity = item.quantity || 0;
+            totalQuantity += quantity;
+            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+            if (totalItemsInOrder > 0) {
+              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+              totalRevenue += itemValue;
+              totalBoothFee += itemBoothFee;
+            }
+            orderCount += 1;
+          }
+        });
+      });
+      const totalNetRevenue = totalRevenue - totalBoothFee;
+      return {
+        totalQuantity,
+        totalRevenue,
+        totalBoothFee,
+        totalNetRevenue,
+        orderCount
+      };
+    }
+    /**
+     * 获取所有商品的销售统计（带缓存优化）
+     */
+    getAllItemSalesStats(orders) {
+      if (this.lastProcessedOrders.length === orders.length && this.cachedSalesStats) {
+        return this.cachedSalesStats;
+      }
+      const stats = /* @__PURE__ */ new Map();
+      const allItems = this.itemManager.getAllItems();
+      allItems.forEach((item, itemId) => {
+        stats.set(itemId, {
+          totalQuantity: 0,
+          totalRevenue: 0,
+          totalBoothFee: 0,
+          totalNetRevenue: 0,
+          orderCount: 0
+        });
+      });
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          const itemId = item.itemId;
+          const currentStats = stats.get(itemId);
+          if (currentStats) {
+            const quantity = item.quantity || 0;
+            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+            if (totalItemsInOrder > 0) {
+              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+              currentStats.totalQuantity += quantity;
+              currentStats.totalRevenue += itemValue;
+              currentStats.totalBoothFee += itemBoothFee;
+              currentStats.orderCount += 1;
+            }
+          }
+        });
+      });
+      stats.forEach((stat) => {
+        stat.totalNetRevenue = stat.totalRevenue - stat.totalBoothFee;
+      });
+      this.lastProcessedOrders = [...orders];
+      this.cachedSalesStats = stats;
+      return stats;
+    }
+    /**
+     * 获取商品的变体销售统计（优化版本，使用缓存）
+     */
+    getItemVariantStats(itemId, orders) {
+      if (this.shouldReprocessOrders(orders)) {
+        this.preprocessAllItemVariants(orders);
+        this.lastProcessedOrders = [...orders];
+      }
+      const cachedVariants = this.variantCache.get(itemId);
+      if (cachedVariants) {
+        logger.debug(`从缓存获取商品 ${itemId} 的变体数据，共 ${cachedVariants.length} 个变体`);
+        return cachedVariants;
+      }
+      const currentItem = this.itemManager.getItem(itemId);
+      if (!currentItem) {
+        logger.warn(`未找到商品: ${itemId}`);
+        return [];
+      }
+      logger.debug(`实时分析商品 ${itemId} (${currentItem.name}) 的变体数据`);
+      const variantStats = this.analyzeVariantsFromOrders(itemId, currentItem.name, orders);
+      logger.debug(`找到 ${variantStats.length} 个变体`);
+      return variantStats;
+    }
+    /**
+     * 检查是否需要重新处理订单数据
+     */
+    shouldReprocessOrders(orders) {
+      if (this.lastProcessedOrders.length !== orders.length) {
+        return true;
+      }
+      if (this.variantCache.size === 0) {
+        return true;
+      }
+      if (orders.length === 0) {
+        return false;
+      }
+      const currentItemIds = new Set(this.itemManager.getAllItemIds());
+      const cachedItemIds = new Set(this.variantCache.keys());
+      for (const itemId of currentItemIds) {
+        if (!cachedItemIds.has(itemId)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    /**
+     * 从订单数据中分析变体
+     * 主要逻辑：找到所有包含主商品名称但不等于主商品名称的订单项
+     */
+    analyzeVariantsFromOrders(itemId, mainItemName, orders) {
+      const variantStats = [];
+      const variantNames = /* @__PURE__ */ new Set();
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
+            const variantName = this.extractVariantName(item.name, mainItemName);
+            if (variantName && variantName !== mainItemName) {
+              variantNames.add(variantName);
+              logger.debug(`发现变体: ${variantName} (来自订单项: ${item.name})`);
+            }
+          }
+        });
+      });
+      variantNames.forEach((variantName) => {
+        const stats = this.calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders);
+        if (stats.totalQuantity > 0) {
+          variantStats.push(stats);
+          logger.debug(`变体 ${variantName} 统计: 销量=${stats.totalQuantity}, 收入=${stats.totalRevenue}`);
+        }
+      });
+      return variantStats;
+    }
+    /**
+     * 判断订单项是否是主商品的变体
+     */
+    isVariantOfMainItem(item, mainItemId, mainItemName) {
+      if (item.itemId === mainItemId) {
+        return true;
+      }
+      if (item.name.includes(mainItemName) && item.name !== mainItemName) {
+        return true;
+      }
+      return false;
+    }
+    /**
+     * 从订单项名称中提取变体名称
+     */
+    extractVariantName(itemName, mainItemName) {
+      if (itemName.includes(mainItemName)) {
+        const parts = itemName.split(mainItemName);
+        if (parts.length > 1) {
+          const variantPart = parts[1].trim();
+          if (variantPart && !variantPart.match(/^[-\s]+$/)) {
+            let cleanVariantName = variantPart.replace(/^[-\s]+/, "").replace(/[-\s]+$/, "").replace(/^[\(（]/, "").replace(/[\)）]$/, "");
+            if (cleanVariantName && cleanVariantName !== mainItemName) {
+              return cleanVariantName;
+            }
+          }
+        }
+      }
+      return itemName.replace(/^[\(（]/, "").replace(/[\)）]$/, "");
+    }
+    /**
+     * 从订单数据中计算变体的销售统计
+     */
+    calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders) {
+      let totalQuantity = 0;
+      let totalRevenue = 0;
+      let totalBoothFee = 0;
+      let orderCount = 0;
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
+            const extractedVariantName = this.extractVariantName(item.name, mainItemName);
+            if (extractedVariantName === variantName || item.name.includes(variantName)) {
+              const quantity = item.quantity || 0;
+              totalQuantity += quantity;
+              const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
+              if (totalItemsInOrder > 0) {
+                const itemValue = quantity / totalItemsInOrder * order.totalPrice;
+                const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
+                totalRevenue += itemValue;
+                totalBoothFee += itemBoothFee;
+              }
+              orderCount += 1;
+            }
+          }
+        });
+      });
+      const totalNetRevenue = totalRevenue - totalBoothFee;
+      return {
+        itemId,
+        variantName,
+        totalQuantity,
+        totalRevenue,
+        totalBoothFee,
+        totalNetRevenue,
+        orderCount
+      };
+    }
+    /**
+     * 获取商品的完整信息（包括销售统计和变体信息）
+     */
+    getItemWithStats(itemId, orders) {
+      const item = this.itemManager.getItem(itemId);
+      if (!item) return null;
+      const salesStats = this.getItemSalesStats(itemId, orders);
+      const variantStats = this.getItemVariantStats(itemId, orders);
+      return {
+        item,
+        salesStats,
+        variantStats
+      };
+    }
+    /**
+     * 预处理所有商品的变体数据
+     * 在订单分析阶段就完成变体数据的填充，提高后续使用效率
+     */
+    preprocessAllItemVariants(orders) {
+      this.variantCache.clear();
+      const allVariantsMap = /* @__PURE__ */ new Map();
+      const allItems = this.itemManager.getAllItems();
+      logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
+      let processedCount = 0;
+      let totalVariants = 0;
+      allItems.forEach((item, itemId) => {
+        const variantStats = this.analyzeVariantsFromOrders(itemId, item.name, orders);
+        if (variantStats.length > 0) {
+          allVariantsMap.set(itemId, variantStats);
+          this.variantCache.set(itemId, variantStats);
+          processedCount++;
+          totalVariants += variantStats.length;
+          logger.debug(`商品 ${itemId} (${item.name}) 预处理完成，找到 ${variantStats.length} 个变体`);
+        }
+      });
+      logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
+      return allVariantsMap;
+    }
+    /**
+     * 获取所有商品的销售统计（优化版本）
+     */
+    getAllItemsWithStats(orders) {
+      orders.length;
+      if (this.lastProcessedOrders.length === orders.length && this.cachedItemsWithStats) {
+        return this.cachedItemsWithStats;
+      }
+      if (!orders || orders.length === 0) {
+        return [];
+      }
+      const allSalesStats = this.getAllItemSalesStats(orders);
+      const result = [];
+      const allItems = this.itemManager.getAllItems();
+      allItems.forEach((item, itemId) => {
+        const salesStats = allSalesStats.get(itemId) || {
+          totalQuantity: 0,
+          totalRevenue: 0,
+          totalBoothFee: 0,
+          totalNetRevenue: 0,
+          orderCount: 0
+        };
+        const variantStats = this.variantCache.get(itemId) || [];
+        result.push({
+          itemId,
+          item,
+          salesStats,
+          variantStats
+        });
+      });
+      this.lastProcessedOrders = [...orders];
+      this.cachedItemsWithStats = result;
+      return result;
+    }
+    /**
+     * 分析订单中的商品变体关系
+     */
+    analyzeOrderVariants(orders) {
+      const relationships = /* @__PURE__ */ new Map();
+      orders.forEach((order) => {
+        order.items?.forEach((item) => {
+          if (item.variants && item.variants.length > 0) {
+            const itemId = item.itemId;
+            const variantNames = item.variants.map((v) => v.variantName);
+            if (!relationships.has(itemId)) {
+              relationships.set(itemId, []);
+            }
+            const existingVariants = relationships.get(itemId);
+            variantNames.forEach((variantName) => {
+              if (!existingVariants.includes(variantName)) {
+                existingVariants.push(variantName);
+              }
+            });
+          }
+        });
+      });
+      return relationships;
+    }
+    /**
+     * 获取订单统计摘要
+     */
+    getOrderSummary(orders) {
+      const uniqueItems = /* @__PURE__ */ new Set();
+      let totalItems = 0;
+      let totalRevenue = 0;
+      let totalNetRevenue = 0;
+      orders.forEach((order) => {
+        totalRevenue += order.totalPrice;
+        totalNetRevenue += order.totalPrice * 0.9;
+        order.items?.forEach((item) => {
+          uniqueItems.add(item.itemId);
+          totalItems += item.quantity || 0;
+        });
+      });
+      return {
+        totalOrders: orders.length,
+        totalItems,
+        totalRevenue,
+        totalNetRevenue,
+        uniqueItems: uniqueItems.size
+      };
+    }
+    /**
+     * 获取变体统计摘要
+     */
+    getVariantSummary(itemId, orders) {
+      const variants = this.getItemVariantStats(itemId, orders);
+      const summary = {
+        totalVariants: variants.length,
+        totalVariantQuantity: 0,
+        totalVariantRevenue: 0,
+        totalVariantNetRevenue: 0
+      };
+      variants.forEach((variant) => {
+        summary.totalVariantQuantity += variant.totalQuantity;
+        summary.totalVariantRevenue += variant.totalRevenue;
+        summary.totalVariantNetRevenue += variant.totalNetRevenue;
+      });
+      return summary;
+    }
+    /**
+     * 分析所有商品的变体关系
+     */
+    analyzeAllVariantRelationships(orders) {
+      const relationships = /* @__PURE__ */ new Map();
+      const allItemIds = this.itemManager.getAllItemIds();
+      allItemIds.forEach((itemId) => {
+        const variantStats = this.getItemVariantStats(itemId, orders);
+        if (variantStats.length > 0) {
+          relationships.set(itemId, variantStats);
+        }
+      });
+      return relationships;
+    }
+  }
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+  }
+  var papaparse_min$1 = { exports: {} };
+  /* @license
+  Papa Parse
+  v5.5.3
+  https://github.com/mholt/PapaParse
+  License: MIT
+  */
+  var papaparse_min = papaparse_min$1.exports;
+  var hasRequiredPapaparse_min;
+  function requirePapaparse_min() {
+    if (hasRequiredPapaparse_min) return papaparse_min$1.exports;
+    hasRequiredPapaparse_min = 1;
+    (function(module, exports) {
+      ((e, t) => {
+        module.exports = t();
+      })(papaparse_min, function r() {
+        var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
+        var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || false, o = {}, h = 0, v = {};
+        function u(e) {
+          this._handle = null, this._finished = false, this._completed = false, this._halted = false, this._input = null, this._baseIndex = 0, this._partialLine = "", this._rowCount = 0, this._start = 0, this._nextChunk = null, this.isFirstChunk = true, this._completeResults = { data: [], errors: [], meta: {} }, (function(e2) {
+            var t = b(e2);
+            t.chunkSize = parseInt(t.chunkSize), e2.step || e2.chunk || (t.chunkSize = null);
+            this._handle = new i(t), (this._handle.streamer = this)._config = t;
+          }).call(this, e), this.parseChunk = function(t, e2) {
+            var i2 = parseInt(this._config.skipFirstNLines) || 0;
+            if (this.isFirstChunk && 0 < i2) {
+              let e3 = this._config.newline;
+              e3 || (r2 = this._config.quoteChar || '"', e3 = this._handle.guessLineEndings(t, r2)), t = [...t.split(e3).slice(i2)].join(e3);
+            }
+            this.isFirstChunk && U(this._config.beforeFirstChunk) && void 0 !== (r2 = this._config.beforeFirstChunk(t)) && (t = r2), this.isFirstChunk = false, this._halted = false;
+            var i2 = this._partialLine + t, r2 = (this._partialLine = "", this._handle.parse(i2, this._baseIndex, !this._finished));
+            if (!this._handle.paused() && !this._handle.aborted()) {
+              t = r2.meta.cursor, i2 = (this._finished || (this._partialLine = i2.substring(t - this._baseIndex), this._baseIndex = t), r2 && r2.data && (this._rowCount += r2.data.length), this._finished || this._config.preview && this._rowCount >= this._config.preview);
+              if (a) n.postMessage({ results: r2, workerId: v.WORKER_ID, finished: i2 });
+              else if (U(this._config.chunk) && !e2) {
+                if (this._config.chunk(r2, this._handle), this._handle.paused() || this._handle.aborted()) return void (this._halted = true);
+                this._completeResults = r2 = void 0;
+              }
+              return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r2.data), this._completeResults.errors = this._completeResults.errors.concat(r2.errors), this._completeResults.meta = r2.meta), this._completed || !i2 || !U(this._config.complete) || r2 && r2.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = true), i2 || r2 && r2.meta.paused || this._nextChunk(), r2;
+            }
+            this._halted = true;
+          }, this._sendError = function(e2) {
+            U(this._config.error) ? this._config.error(e2) : a && this._config.error && n.postMessage({ workerId: v.WORKER_ID, error: e2, finished: false });
+          };
+        }
+        function f(e) {
+          var r2;
+          (e = e || {}).chunkSize || (e.chunkSize = v.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
+            this._readChunk(), this._chunkLoaded();
+          } : function() {
+            this._readChunk();
+          }, this.stream = function(e2) {
+            this._input = e2, this._nextChunk();
+          }, this._readChunk = function() {
+            if (this._finished) this._chunkLoaded();
+            else {
+              if (r2 = new XMLHttpRequest(), this._config.withCredentials && (r2.withCredentials = this._config.withCredentials), s || (r2.onload = y(this._chunkLoaded, this), r2.onerror = y(this._chunkError, this)), r2.open(this._config.downloadRequestBody ? "POST" : "GET", this._input, !s), this._config.downloadRequestHeaders) {
+                var e2, t = this._config.downloadRequestHeaders;
+                for (e2 in t) r2.setRequestHeader(e2, t[e2]);
+              }
+              var i2;
+              this._config.chunkSize && (i2 = this._start + this._config.chunkSize - 1, r2.setRequestHeader("Range", "bytes=" + this._start + "-" + i2));
+              try {
+                r2.send(this._config.downloadRequestBody);
+              } catch (e3) {
+                this._chunkError(e3.message);
+              }
+              s && 0 === r2.status && this._chunkError();
+            }
+          }, this._chunkLoaded = function() {
+            4 === r2.readyState && (r2.status < 200 || 400 <= r2.status ? this._chunkError() : (this._start += this._config.chunkSize || r2.responseText.length, this._finished = !this._config.chunkSize || this._start >= ((e2) => null !== (e2 = e2.getResponseHeader("Content-Range")) ? parseInt(e2.substring(e2.lastIndexOf("/") + 1)) : -1)(r2), this.parseChunk(r2.responseText)));
+          }, this._chunkError = function(e2) {
+            e2 = r2.statusText || e2;
+            this._sendError(new Error(e2));
+          };
+        }
+        function l(e) {
+          (e = e || {}).chunkSize || (e.chunkSize = v.LocalChunkSize), u.call(this, e);
+          var i2, r2, n2 = "undefined" != typeof FileReader;
+          this.stream = function(e2) {
+            this._input = e2, r2 = e2.slice || e2.webkitSlice || e2.mozSlice, n2 ? ((i2 = new FileReader()).onload = y(this._chunkLoaded, this), i2.onerror = y(this._chunkError, this)) : i2 = new FileReaderSync(), this._nextChunk();
+          }, this._nextChunk = function() {
+            this._finished || this._config.preview && !(this._rowCount < this._config.preview) || this._readChunk();
+          }, this._readChunk = function() {
+            var e2 = this._input, t = (this._config.chunkSize && (t = Math.min(this._start + this._config.chunkSize, this._input.size), e2 = r2.call(e2, this._start, t)), i2.readAsText(e2, this._config.encoding));
+            n2 || this._chunkLoaded({ target: { result: t } });
+          }, this._chunkLoaded = function(e2) {
+            this._start += this._config.chunkSize, this._finished = !this._config.chunkSize || this._start >= this._input.size, this.parseChunk(e2.target.result);
+          }, this._chunkError = function() {
+            this._sendError(i2.error);
+          };
+        }
+        function c(e) {
+          var i2;
+          u.call(this, e = e || {}), this.stream = function(e2) {
+            return i2 = e2, this._nextChunk();
+          }, this._nextChunk = function() {
+            var e2, t;
+            if (!this._finished) return e2 = this._config.chunkSize, i2 = e2 ? (t = i2.substring(0, e2), i2.substring(e2)) : (t = i2, ""), this._finished = !i2, this.parseChunk(t);
+          };
+        }
+        function p(e) {
+          u.call(this, e = e || {});
+          var t = [], i2 = true, r2 = false;
+          this.pause = function() {
+            u.prototype.pause.apply(this, arguments), this._input.pause();
+          }, this.resume = function() {
+            u.prototype.resume.apply(this, arguments), this._input.resume();
+          }, this.stream = function(e2) {
+            this._input = e2, this._input.on("data", this._streamData), this._input.on("end", this._streamEnd), this._input.on("error", this._streamError);
+          }, this._checkIsFinished = function() {
+            r2 && 1 === t.length && (this._finished = true);
+          }, this._nextChunk = function() {
+            this._checkIsFinished(), t.length ? this.parseChunk(t.shift()) : i2 = true;
+          }, this._streamData = y(function(e2) {
+            try {
+              t.push("string" == typeof e2 ? e2 : e2.toString(this._config.encoding)), i2 && (i2 = false, this._checkIsFinished(), this.parseChunk(t.shift()));
+            } catch (e3) {
+              this._streamError(e3);
+            }
+          }, this), this._streamError = y(function(e2) {
+            this._streamCleanUp(), this._sendError(e2);
+          }, this), this._streamEnd = y(function() {
+            this._streamCleanUp(), r2 = true, this._streamData("");
+          }, this), this._streamCleanUp = y(function() {
+            this._input.removeListener("data", this._streamData), this._input.removeListener("end", this._streamEnd), this._input.removeListener("error", this._streamError);
+          }, this);
+        }
+        function i(m2) {
+          var n2, s2, a2, t, o2 = Math.pow(2, 53), h3 = -o2, u2 = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d2 = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i2 = this, r2 = 0, f2 = 0, l2 = false, e = false, c2 = [], p2 = { data: [], errors: [], meta: {} };
+          function y2(e2) {
+            return "greedy" === m2.skipEmptyLines ? "" === e2.join("").trim() : 1 === e2.length && 0 === e2[0].length;
+          }
+          function g2() {
+            if (p2 && a2 && (k("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
+              return !y2(e3);
+            })), _2()) {
+              let t2 = function(e3, t3) {
+                U(m2.transformHeader) && (e3 = m2.transformHeader(e3, t3)), c2.push(e3);
+              };
+              if (p2) if (Array.isArray(p2.data[0])) {
+                for (var e2 = 0; _2() && e2 < p2.data.length; e2++) p2.data[e2].forEach(t2);
+                p2.data.splice(0, 1);
+              } else p2.data.forEach(t2);
+            }
+            function i3(e3, t2) {
+              for (var i4 = m2.header ? {} : [], r4 = 0; r4 < e3.length; r4++) {
+                var n3 = r4, s3 = e3[r4], s3 = ((e4, t3) => ((e5) => (m2.dynamicTypingFunction && void 0 === m2.dynamicTyping[e5] && (m2.dynamicTyping[e5] = m2.dynamicTypingFunction(e5)), true === (m2.dynamicTyping[e5] || m2.dynamicTyping)))(e4) ? "true" === t3 || "TRUE" === t3 || "false" !== t3 && "FALSE" !== t3 && (((e5) => {
+                  if (u2.test(e5)) {
+                    e5 = parseFloat(e5);
+                    if (h3 < e5 && e5 < o2) return 1;
+                  }
+                })(t3) ? parseFloat(t3) : d2.test(t3) ? new Date(t3) : "" === t3 ? null : t3) : t3)(n3 = m2.header ? r4 >= c2.length ? "__parsed_extra" : c2[r4] : n3, s3 = m2.transform ? m2.transform(s3, n3) : s3);
+                "__parsed_extra" === n3 ? (i4[n3] = i4[n3] || [], i4[n3].push(s3)) : i4[n3] = s3;
+              }
+              return m2.header && (r4 > c2.length ? k("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f2 + t2) : r4 < c2.length && k("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f2 + t2)), i4;
+            }
+            var r3;
+            p2 && (m2.header || m2.dynamicTyping || m2.transform) && (r3 = 1, !p2.data.length || Array.isArray(p2.data[0]) ? (p2.data = p2.data.map(i3), r3 = p2.data.length) : p2.data = i3(p2.data, 0), m2.header && p2.meta && (p2.meta.fields = c2), f2 += r3);
+          }
+          function _2() {
+            return m2.header && 0 === c2.length;
+          }
+          function k(e2, t2, i3, r3) {
+            e2 = { type: e2, code: t2, message: i3 };
+            void 0 !== r3 && (e2.row = r3), p2.errors.push(e2);
+          }
+          U(m2.step) && (t = m2.step, m2.step = function(e2) {
+            p2 = e2, _2() ? g2() : (g2(), 0 !== p2.data.length && (r2 += e2.data.length, m2.preview && r2 > m2.preview ? s2.abort() : (p2.data = p2.data[0], t(p2, i2))));
+          }), this.parse = function(e2, t2, i3) {
+            var r3 = m2.quoteChar || '"', r3 = (m2.newline || (m2.newline = this.guessLineEndings(e2, r3)), a2 = false, m2.delimiter ? U(m2.delimiter) && (m2.delimiter = m2.delimiter(e2), p2.meta.delimiter = m2.delimiter) : ((r3 = ((e3, t3, i4, r4, n3) => {
+              var s3, a3, o3, h4;
+              n3 = n3 || [",", "	", "|", ";", v.RECORD_SEP, v.UNIT_SEP];
+              for (var u3 = 0; u3 < n3.length; u3++) {
+                for (var d3, f3 = n3[u3], l3 = 0, c3 = 0, p3 = 0, g3 = (o3 = void 0, new E({ comments: r4, delimiter: f3, newline: t3, preview: 10 }).parse(e3)), _3 = 0; _3 < g3.data.length; _3++) i4 && y2(g3.data[_3]) ? p3++ : (d3 = g3.data[_3].length, c3 += d3, void 0 === o3 ? o3 = d3 : 0 < d3 && (l3 += Math.abs(d3 - o3), o3 = d3));
+                0 < g3.data.length && (c3 /= g3.data.length - p3), (void 0 === a3 || l3 <= a3) && (void 0 === h4 || h4 < c3) && 1.99 < c3 && (a3 = l3, s3 = f3, h4 = c3);
+              }
+              return { successful: !!(m2.delimiter = s3), bestDelimiter: s3 };
+            })(e2, m2.newline, m2.skipEmptyLines, m2.comments, m2.delimitersToGuess)).successful ? m2.delimiter = r3.bestDelimiter : (a2 = true, m2.delimiter = v.DefaultDelimiter), p2.meta.delimiter = m2.delimiter), b(m2));
+            return m2.preview && m2.header && r3.preview++, n2 = e2, s2 = new E(r3), p2 = s2.parse(n2, t2, i3), g2(), l2 ? { meta: { paused: true } } : p2 || { meta: { paused: false } };
+          }, this.paused = function() {
+            return l2;
+          }, this.pause = function() {
+            l2 = true, s2.abort(), n2 = U(m2.chunk) ? "" : n2.substring(s2.getCharIndex());
+          }, this.resume = function() {
+            i2.streamer._halted ? (l2 = false, i2.streamer.parseChunk(n2, true)) : setTimeout(i2.resume, 3);
+          }, this.aborted = function() {
+            return e;
+          }, this.abort = function() {
+            e = true, s2.abort(), p2.meta.aborted = true, U(m2.complete) && m2.complete(p2), n2 = "";
+          }, this.guessLineEndings = function(e2, t2) {
+            e2 = e2.substring(0, 1048576);
+            var t2 = new RegExp(P(t2) + "([^]*?)" + P(t2), "gm"), i3 = (e2 = e2.replace(t2, "")).split("\r"), t2 = e2.split("\n"), e2 = 1 < t2.length && t2[0].length < i3[0].length;
+            if (1 === i3.length || e2) return "\n";
+            for (var r3 = 0, n3 = 0; n3 < i3.length; n3++) "\n" === i3[n3][0] && r3++;
+            return r3 >= i3.length / 2 ? "\r\n" : "\r";
+          };
+        }
+        function P(e) {
+          return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        function E(C) {
+          var S = (C = C || {}).delimiter, O = C.newline, x = C.comments, I = C.step, A = C.preview, T = C.fastMode, D = null, L = false, F = null == C.quoteChar ? '"' : C.quoteChar, j = F;
+          if (void 0 !== C.escapeChar && (j = C.escapeChar), ("string" != typeof S || -1 < v.BAD_DELIMITERS.indexOf(S)) && (S = ","), x === S) throw new Error("Comment character same as delimiter");
+          true === x ? x = "#" : ("string" != typeof x || -1 < v.BAD_DELIMITERS.indexOf(x)) && (x = false), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
+          var z = 0, M = false;
+          this.parse = function(i2, t, r2) {
+            if ("string" != typeof i2) throw new Error("Input must be a string");
+            var n2 = i2.length, e = S.length, s2 = O.length, a2 = x.length, o2 = U(I), h3 = [], u2 = [], d2 = [], f2 = z = 0;
+            if (!i2) return w();
+            if (T || false !== T && -1 === i2.indexOf(F)) {
+              for (var l2 = i2.split(O), c2 = 0; c2 < l2.length; c2++) {
+                if (d2 = l2[c2], z += d2.length, c2 !== l2.length - 1) z += O.length;
+                else if (r2) return w();
+                if (!x || d2.substring(0, a2) !== x) {
+                  if (o2) {
+                    if (h3 = [], k(d2.split(S)), R(), M) return w();
+                  } else k(d2.split(S));
+                  if (A && A <= c2) return h3 = h3.slice(0, A), w(true);
+                }
+              }
+              return w();
+            }
+            for (var p2 = i2.indexOf(S, z), g2 = i2.indexOf(O, z), _2 = new RegExp(P(j) + P(F), "g"), m2 = i2.indexOf(F, z); ; ) if (i2[z] === F) for (m2 = z, z++; ; ) {
+              if (-1 === (m2 = i2.indexOf(F, m2 + 1))) return r2 || u2.push({ type: "Quotes", code: "MissingQuotes", message: "Quoted field unterminated", row: h3.length, index: z }), E2();
+              if (m2 === n2 - 1) return E2(i2.substring(z, m2).replace(_2, F));
+              if (F === j && i2[m2 + 1] === j) m2++;
+              else if (F === j || 0 === m2 || i2[m2 - 1] !== j) {
+                -1 !== p2 && p2 < m2 + 1 && (p2 = i2.indexOf(S, m2 + 1));
+                var y2 = v2(-1 === (g2 = -1 !== g2 && g2 < m2 + 1 ? i2.indexOf(O, m2 + 1) : g2) ? p2 : Math.min(p2, g2));
+                if (i2.substr(m2 + 1 + y2, e) === S) {
+                  d2.push(i2.substring(z, m2).replace(_2, F)), i2[z = m2 + 1 + y2 + e] !== F && (m2 = i2.indexOf(F, z)), p2 = i2.indexOf(S, z), g2 = i2.indexOf(O, z);
+                  break;
+                }
+                y2 = v2(g2);
+                if (i2.substring(m2 + 1 + y2, m2 + 1 + y2 + s2) === O) {
+                  if (d2.push(i2.substring(z, m2).replace(_2, F)), b2(m2 + 1 + y2 + s2), p2 = i2.indexOf(S, z), m2 = i2.indexOf(F, z), o2 && (R(), M)) return w();
+                  if (A && h3.length >= A) return w(true);
+                  break;
+                }
+                u2.push({ type: "Quotes", code: "InvalidQuotes", message: "Trailing quote on quoted field is malformed", row: h3.length, index: z }), m2++;
+              }
+            }
+            else if (x && 0 === d2.length && i2.substring(z, z + a2) === x) {
+              if (-1 === g2) return w();
+              z = g2 + s2, g2 = i2.indexOf(O, z), p2 = i2.indexOf(S, z);
+            } else if (-1 !== p2 && (p2 < g2 || -1 === g2)) d2.push(i2.substring(z, p2)), z = p2 + e, p2 = i2.indexOf(S, z);
+            else {
+              if (-1 === g2) break;
+              if (d2.push(i2.substring(z, g2)), b2(g2 + s2), o2 && (R(), M)) return w();
+              if (A && h3.length >= A) return w(true);
+            }
+            return E2();
+            function k(e2) {
+              h3.push(e2), f2 = z;
+            }
+            function v2(e2) {
+              var t2 = 0;
+              return t2 = -1 !== e2 && (e2 = i2.substring(m2 + 1, e2)) && "" === e2.trim() ? e2.length : t2;
+            }
+            function E2(e2) {
+              return r2 || (void 0 === e2 && (e2 = i2.substring(z)), d2.push(e2), z = n2, k(d2), o2 && R()), w();
+            }
+            function b2(e2) {
+              z = e2, k(d2), d2 = [], g2 = i2.indexOf(O, z);
+            }
+            function w(e2) {
+              if (C.header && !t && h3.length && !L) {
+                var s3 = h3[0], a3 = /* @__PURE__ */ Object.create(null), o3 = new Set(s3);
+                let n3 = false;
+                for (let r3 = 0; r3 < s3.length; r3++) {
+                  let i3 = s3[r3];
+                  if (a3[i3 = U(C.transformHeader) ? C.transformHeader(i3, r3) : i3]) {
+                    let e3, t2 = a3[i3];
+                    for (; e3 = i3 + "_" + t2, t2++, o3.has(e3); ) ;
+                    o3.add(e3), s3[r3] = e3, a3[i3]++, n3 = true, (D = null === D ? {} : D)[e3] = i3;
+                  } else a3[i3] = 1, s3[r3] = i3;
+                  o3.add(i3);
+                }
+                n3 && console.warn("Duplicate headers found and renamed."), L = true;
+              }
+              return { data: h3, errors: u2, meta: { delimiter: S, linebreak: O, aborted: M, truncated: !!e2, cursor: f2 + (t || 0), renamedHeaders: D } };
+            }
+            function R() {
+              I(w()), h3 = [], u2 = [];
+            }
+          }, this.abort = function() {
+            M = true;
+          }, this.getCharIndex = function() {
+            return z;
+          };
+        }
+        function g(e) {
+          var t = e.data, i2 = o[t.workerId], r2 = false;
+          if (t.error) i2.userError(t.error, t.file);
+          else if (t.results && t.results.data) {
+            var n2 = { abort: function() {
+              r2 = true, _(t.workerId, { data: [], errors: [], meta: { aborted: true } });
+            }, pause: m, resume: m };
+            if (U(i2.userStep)) {
+              for (var s2 = 0; s2 < t.results.data.length && (i2.userStep({ data: t.results.data[s2], errors: t.results.errors, meta: t.results.meta }, n2), !r2); s2++) ;
+              delete t.results;
+            } else U(i2.userChunk) && (i2.userChunk(t.results, n2, t.file), delete t.results);
+          }
+          t.finished && !r2 && _(t.workerId, t.results);
+        }
+        function _(e, t) {
+          var i2 = o[e];
+          U(i2.userComplete) && i2.userComplete(t), i2.terminate(), delete o[e];
+        }
+        function m() {
+          throw new Error("Not implemented.");
+        }
+        function b(e) {
+          if ("object" != typeof e || null === e) return e;
+          var t, i2 = Array.isArray(e) ? [] : {};
+          for (t in e) i2[t] = b(e[t]);
+          return i2;
+        }
+        function y(e, t) {
+          return function() {
+            e.apply(t, arguments);
+          };
+        }
+        function U(e) {
+          return "function" == typeof e;
+        }
+        return v.parse = function(e, t) {
+          var i2 = (t = t || {}).dynamicTyping || false;
+          U(i2) && (t.dynamicTypingFunction = i2, i2 = {});
+          if (t.dynamicTyping = i2, t.transform = !!U(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i2 = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = ((e2) => 65279 !== e2.charCodeAt(0) ? e2 : e2.slice(1))(e), i2 = new (t.download ? f : c)(t)) : true === e.readable && U(e.read) && U(e.on) ? i2 = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i2 = new l(t)), i2.stream(e);
+          (i2 = (() => {
+            var e2;
+            return !!v.WORKERS_SUPPORTED && (e2 = (() => {
+              var e3 = n.URL || n.webkitURL || null, t2 = r.toString();
+              return v.BLOB_URL || (v.BLOB_URL = e3.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ", "(", t2, ")();"], { type: "text/javascript" })));
+            })(), (e2 = new n.Worker(e2)).onmessage = g, e2.id = h++, o[e2.id] = e2);
+          })()).userStep = t.step, i2.userChunk = t.chunk, i2.userComplete = t.complete, i2.userError = t.error, t.step = U(t.step), t.chunk = U(t.chunk), t.complete = U(t.complete), t.error = U(t.error), delete t.worker, i2.postMessage({ input: e, config: t, workerId: i2.id });
+        }, v.unparse = function(e, t) {
+          var n2 = false, _2 = true, m2 = ",", y2 = "\r\n", s2 = '"', a2 = s2 + s2, i2 = false, r2 = null, o2 = false, h3 = ((() => {
+            if ("object" == typeof t) {
+              if ("string" != typeof t.delimiter || v.BAD_DELIMITERS.filter(function(e2) {
+                return -1 !== t.delimiter.indexOf(e2);
+              }).length || (m2 = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (n2 = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i2 = t.skipEmptyLines), "string" == typeof t.newline && (y2 = t.newline), "string" == typeof t.quoteChar && (s2 = t.quoteChar), "boolean" == typeof t.header && (_2 = t.header), Array.isArray(t.columns)) {
+                if (0 === t.columns.length) throw new Error("Option columns is empty");
+                r2 = t.columns;
+              }
+              void 0 !== t.escapeChar && (a2 = t.escapeChar + s2), t.escapeFormulae instanceof RegExp ? o2 = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (o2 = /^[=+\-@\t\r].*$/);
+            }
+          })(), new RegExp(P(s2), "g"));
+          "string" == typeof e && (e = JSON.parse(e));
+          if (Array.isArray(e)) {
+            if (!e.length || Array.isArray(e[0])) return u2(null, e, i2);
+            if ("object" == typeof e[0]) return u2(r2 || Object.keys(e[0]), e, i2);
+          } else if ("object" == typeof e) return "string" == typeof e.data && (e.data = JSON.parse(e.data)), Array.isArray(e.data) && (e.fields || (e.fields = e.meta && e.meta.fields || r2), e.fields || (e.fields = Array.isArray(e.data[0]) ? e.fields : "object" == typeof e.data[0] ? Object.keys(e.data[0]) : []), Array.isArray(e.data[0]) || "object" == typeof e.data[0] || (e.data = [e.data])), u2(e.fields || [], e.data || [], i2);
+          throw new Error("Unable to serialize unrecognized input");
+          function u2(e2, t2, i3) {
+            var r3 = "", n3 = ("string" == typeof e2 && (e2 = JSON.parse(e2)), "string" == typeof t2 && (t2 = JSON.parse(t2)), Array.isArray(e2) && 0 < e2.length), s3 = !Array.isArray(t2[0]);
+            if (n3 && _2) {
+              for (var a3 = 0; a3 < e2.length; a3++) 0 < a3 && (r3 += m2), r3 += k(e2[a3], a3);
+              0 < t2.length && (r3 += y2);
+            }
+            for (var o3 = 0; o3 < t2.length; o3++) {
+              var h4 = (n3 ? e2 : t2[o3]).length, u3 = false, d2 = n3 ? 0 === Object.keys(t2[o3]).length : 0 === t2[o3].length;
+              if (i3 && !n3 && (u3 = "greedy" === i3 ? "" === t2[o3].join("").trim() : 1 === t2[o3].length && 0 === t2[o3][0].length), "greedy" === i3 && n3) {
+                for (var f2 = [], l2 = 0; l2 < h4; l2++) {
+                  var c2 = s3 ? e2[l2] : l2;
+                  f2.push(t2[o3][c2]);
+                }
+                u3 = "" === f2.join("").trim();
+              }
+              if (!u3) {
+                for (var p2 = 0; p2 < h4; p2++) {
+                  0 < p2 && !d2 && (r3 += m2);
+                  var g2 = n3 && s3 ? e2[p2] : p2;
+                  r3 += k(t2[o3][g2], p2);
+                }
+                o3 < t2.length - 1 && (!i3 || 0 < h4 && !d2) && (r3 += y2);
+              }
+            }
+            return r3;
+          }
+          function k(e2, t2) {
+            var i3, r3;
+            return null == e2 ? "" : e2.constructor === Date ? JSON.stringify(e2).slice(1, 25) : (r3 = false, o2 && "string" == typeof e2 && o2.test(e2) && (e2 = "'" + e2, r3 = true), i3 = e2.toString().replace(h3, a2), (r3 = r3 || true === n2 || "function" == typeof n2 && n2(e2, t2) || Array.isArray(n2) && n2[t2] || ((e3, t3) => {
+              for (var i4 = 0; i4 < t3.length; i4++) if (-1 < e3.indexOf(t3[i4])) return true;
+              return false;
+            })(i3, v.BAD_DELIMITERS) || -1 < i3.indexOf(m2) || " " === i3.charAt(0) || " " === i3.charAt(i3.length - 1)) ? s2 + i3 + s2 : i3);
+          }
+        }, v.RECORD_SEP = String.fromCharCode(30), v.UNIT_SEP = String.fromCharCode(31), v.BYTE_ORDER_MARK = "\uFEFF", v.BAD_DELIMITERS = ["\r", "\n", '"', v.BYTE_ORDER_MARK], v.WORKERS_SUPPORTED = !s && !!n.Worker, v.NODE_STREAM_INPUT = 1, v.LocalChunkSize = 10485760, v.RemoteChunkSize = 5242880, v.DefaultDelimiter = ",", v.Parser = E, v.ParserHandle = i, v.NetworkStreamer = f, v.FileStreamer = l, v.StringStreamer = c, v.ReadableStreamStreamer = p, n.jQuery && ((d = n.jQuery).fn.parse = function(o2) {
+          var i2 = o2.config || {}, h3 = [];
+          return this.each(function(e2) {
+            if (!("INPUT" === d(this).prop("tagName").toUpperCase() && "file" === d(this).attr("type").toLowerCase() && n.FileReader) || !this.files || 0 === this.files.length) return true;
+            for (var t = 0; t < this.files.length; t++) h3.push({ file: this.files[t], inputElem: this, instanceConfig: d.extend({}, i2) });
+          }), e(), this;
+          function e() {
+            if (0 === h3.length) U(o2.complete) && o2.complete();
+            else {
+              var e2, t, i3, r2, n2 = h3[0];
+              if (U(o2.before)) {
+                var s2 = o2.before(n2.file, n2.inputElem);
+                if ("object" == typeof s2) {
+                  if ("abort" === s2.action) return e2 = "AbortError", t = n2.file, i3 = n2.inputElem, r2 = s2.reason, void (U(o2.error) && o2.error({ name: e2 }, t, i3, r2));
+                  if ("skip" === s2.action) return void u2();
+                  "object" == typeof s2.config && (n2.instanceConfig = d.extend(n2.instanceConfig, s2.config));
+                } else if ("skip" === s2) return void u2();
+              }
+              var a2 = n2.instanceConfig.complete;
+              n2.instanceConfig.complete = function(e3) {
+                U(a2) && a2(e3, n2.file, n2.inputElem), u2();
+              }, v.parse(n2.file, n2.instanceConfig);
+            }
+          }
+          function u2() {
+            h3.splice(0, 1), e();
+          }
+        }), a && (n.onmessage = function(e) {
+          e = e.data;
+          void 0 === v.WORKER_ID && e && (v.WORKER_ID = e.workerId);
+          "string" == typeof e.input ? n.postMessage({ workerId: v.WORKER_ID, results: v.parse(e.input, e.config), finished: true }) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = v.parse(e.input, e.config)) && n.postMessage({ workerId: v.WORKER_ID, results: e, finished: true });
+        }), (f.prototype = Object.create(u.prototype)).constructor = f, (l.prototype = Object.create(u.prototype)).constructor = l, (c.prototype = Object.create(c.prototype)).constructor = c, (p.prototype = Object.create(u.prototype)).constructor = p, v;
+      });
+    })(papaparse_min$1);
+    return papaparse_min$1.exports;
+  }
+  var papaparse_minExports = requirePapaparse_min();
+  const Papa = /* @__PURE__ */ getDefaultExportFromCjs(papaparse_minExports);
+  const HEADER_MAPPING = {
+    // 英文: Order Number
+    // 日文: 注文番号
+    // 简体中文: Order Number (保持英文)
+    // 繁体中文: Order Number (保持英文)
+    // 韩文: Order Number (保持英文)
+    orderNumber: ["Order Number", "注文番号"],
+    // 英文: Identification Code
+    // 日文: ユーザー識別コード
+    // 简体中文: Identification Code (保持英文)
+    // 繁体中文: Identification Code (保持英文)
+    // 韩文: Identification Code (保持英文)
+    identificationCode: ["Identification Code", "ユーザー識別コード"],
+    // 英文: Payment type
+    // 日文: お支払方法
+    // 简体中文: 支付方式
+    // 繁体中文: 支付方式
+    // 韩文: 신용카드 (但这里应该是支付方式)
+    paymentMethod: ["Payment type", "お支払方法", "支付方式", "신용카드"],
+    // 英文: State
+    // 日文: 注文状況
+    // 简体中文: State (保持英文)
+    // 繁体中文: State (保持英文)
+    // 韩文: State (保持英文)
+    state: ["State", "注文状況"],
+    // 英文: Created At
+    // 日文: 注文日時
+    // 简体中文: Created At (保持英文)
+    // 繁体中文: Created At (保持英文)
+    // 韩文: Created At (保持英文)
+    createdAt: ["Created At", "注文日時"],
+    // 英文: Paid At
+    // 日文: 支払い日時
+    // 简体中文: Paid At (保持英文)
+    // 繁体中文: Paid At (保持英文)
+    // 韩文: Paid At (保持英文)
+    paidAt: ["Paid At", "支払い日時"],
+    // 英文: Completed At
+    // 日文: 発送日時
+    // 简体中文: Completed At (保持英文)
+    // 繁体中文: Completed At (保持英文)
+    // 韩文: Completed At (保持英文)
+    completedAt: ["Completed At", "発送日時"],
+    // 英文: Total Price
+    // 日文: 合計金額
+    // 简体中文: Total Price (保持英文)
+    // 繁体中文: Total Price (保持英文)
+    // 韩文: Total Price (保持英文)
+    totalPrice: ["Total Price", "合計金額"],
+    // 英文: ZIP code
+    // 日文: 郵便番号
+    // 简体中文: 邮编
+    // 繁体中文: 郵編
+    // 韩文: 우편번호
+    postalCode: ["ZIP code", "郵便番号", "邮编", "郵編", "우편번호"],
+    // 英文: State / Province / Region / Prefecture
+    // 日文: 都道府県
+    // 简体中文: 都道府县
+    // 繁体中文: 都道府縣
+    // 韩文: 도도부현(광역 주소)
+    prefecture: ["State / Province / Region / Prefecture", "都道府県", "都道府县", "都道府縣", "도도부현(광역 주소)"],
+    // 英文: Address Line 1
+    // 日文: 市区町村・丁目・番地
+    // 简体中文: 市区町村、丁目、番地
+    // 繁体中文: 市區釘村、丁目、番地
+    // 韩文: 시구정촌·초메·번지(상세 주소)
+    city: ["Address Line 1", "市区町村・丁目・番地", "市区町村、丁目、番地", "市區釘村、丁目、番地", "시구정촌·초메·번지(상세 주소)"],
+    // 英文: Address Line 2
+    // 日文: マンション・建物名・部屋番号
+    // 简体中文: 公寓、建筑物名、房间号
+    // 繁体中文: 公寓、建築物名、房間號
+    // 韩文: 아파트 건물명 호수
+    building: ["Address Line 2", "マンション・建物名・部屋番号", "公寓、建筑物名、房间号", "公寓、建築物名、房間號", "아파트 건물명 호수"],
+    // 英文: Name
+    // 日文: 氏名
+    // 简体中文: 姓名
+    // 繁体中文: 姓名
+    // 韩文: 이름
+    customerName: ["Name", "氏名", "姓名", "이름"],
+    // 英文: Phone number
+    // 日文: 電話番号
+    // 简体中文: 电话号码
+    // 繁体中文: 電話號碼
+    // 韩文: 전화번호
+    phoneNumber: ["Phone number", "電話番号", "电话号码", "電話號碼", "전화번호"],
+    // 英文: Item ID / Quantity / Name
+    // 日文: 商品ID / 数量 / 商品名
+    // 简体中文: Item ID / Quantity / Name (保持英文)
+    // 繁体中文: Item ID / Quantity / Name (保持英文)
+    // 韩文: Item ID / Quantity / Name (保持英文)
+    items: ["Item ID / Quantity / Name", "商品ID / 数量 / 商品名"]
+  };
+  const ITEM_PATTERNS = [
+    // 英文模式
+    /Item ID : (\d+) \/ Quantity : (\d+) \/ (.+)/,
+    // 日文模式
+    /商品ID : (\d+) \/ 数量 : (\d+) \/ (.+)/,
+    // 通用模式（尝试匹配数字和文本）
+    /(\d+) \/ (\d+) \/ (.+)/
+  ];
+  const ORDER_STATUS_MAPPING = {
+    // 日语状态映射
+    "発送完了": "Completed",
+    // 发货完成
+    "キャンセル": "Cancelled",
+    // 已取消
+    "支払待ち": "Pending",
+    // 待支付
+    // 英文状态（保持原样）
+    "Completed": "Completed",
+    "Cancelled": "Cancelled",
+    "Pending": "Pending"
+  };
+  class DataMappings {
+    /**
+     * 根据表头数组查找对应的字段名
+     */
+    static findHeaderField(headers, field) {
+      const possibleHeaders = HEADER_MAPPING[field];
+      for (const header of headers) {
+        if (possibleHeaders.includes(header)) {
+          return header;
+        }
+      }
+      return null;
+    }
+    /**
+     * 解析多语言商品信息
+     */
+    static parseItemsMultiLanguage(itemString) {
+      const items = [];
+      if (!itemString) return items;
+      const itemLines = itemString.split("\n").filter((line) => line.trim());
+      for (const line of itemLines) {
+        for (const pattern of ITEM_PATTERNS) {
+          const match2 = line.match(pattern);
+          if (match2) {
+            items.push({
+              itemId: match2[1],
+              quantity: parseInt(match2[2], 10),
+              name: match2[3].trim()
+            });
+            break;
+          }
+        }
+      }
+      return items;
+    }
+    /**
+     * 标准化订单状态
+     */
+    static normalizeOrderState(rawState) {
+      const normalizedState = rawState.trim();
+      if (ORDER_STATUS_MAPPING[normalizedState]) {
+        return ORDER_STATUS_MAPPING[normalizedState];
+      }
+      return "Pending";
+    }
+    /**
+     * 获取支持的订单状态列表
+     */
+    static getSupportedOrderStates() {
+      return Object.keys(ORDER_STATUS_MAPPING);
+    }
+    /**
+     * 检查订单状态是否有效
+     */
+    static isValidOrderState(state) {
+      return Object.keys(ORDER_STATUS_MAPPING).includes(state);
+    }
+    /**
+     * 获取表头映射配置
+     */
+    static getHeaderMapping() {
+      return HEADER_MAPPING;
+    }
+    /**
+     * 获取订单状态映射配置
+     */
+    static getOrderStatusMapping() {
+      return ORDER_STATUS_MAPPING;
+    }
+  }
+  class CSVParser {
+    static parse(csvText) {
+      try {
+        const result = Papa.parse(csvText, {
+          header: true,
+          // 第一行作为表头
+          skipEmptyLines: true,
+          // 跳过空行
+          transformHeader: (header) => header.trim(),
+          // 清理表头空格
+          transform: (value) => value.trim()
+          // 清理数据空格
+        });
+        if (result.errors.length > 0) {
+          logger.error("CSV解析错误:", result.errors);
+          return {
+            success: false,
+            error: `CSV解析错误: ${result.errors.map((e) => e.message).join(", ")}`
+          };
+        }
+        if (!result.data || result.data.length === 0) {
+          return { success: false, error: "CSV文件为空或格式错误" };
+        }
+        const headers = result.meta.fields || [];
+        if (headers.length === 0) {
+          return { success: false, error: "CSV文件缺少表头" };
+        }
+        const orders = [];
+        let successCount = 0;
+        let errorCount = 0;
+        for (const row of result.data) {
+          const order = this.parseOrderRow(headers, row);
+          if (order) {
+            orders.push(order);
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        }
+        if (orders.length === 0) {
+          return { success: false, error: "没有成功解析任何订单数据" };
+        }
+        return { success: true, data: orders };
+      } catch (error) {
+        logger.error("CSV解析失败:", error);
+        return { success: false, error: `解析CSV失败: ${error}` };
+      }
+    }
+    static parseOrderRow(headers, row) {
+      try {
+        const orderNumber = DataMappings.findHeaderField(headers, "orderNumber");
+        const identificationCode = DataMappings.findHeaderField(headers, "identificationCode");
+        const paymentMethod = DataMappings.findHeaderField(headers, "paymentMethod");
+        const state = DataMappings.findHeaderField(headers, "state");
+        const createdAt = DataMappings.findHeaderField(headers, "createdAt");
+        const paidAt = DataMappings.findHeaderField(headers, "paidAt");
+        const completedAt = DataMappings.findHeaderField(headers, "completedAt");
+        const totalPrice = DataMappings.findHeaderField(headers, "totalPrice");
+        const postalCode = DataMappings.findHeaderField(headers, "postalCode");
+        const prefecture = DataMappings.findHeaderField(headers, "prefecture");
+        const city = DataMappings.findHeaderField(headers, "city");
+        const building = DataMappings.findHeaderField(headers, "building");
+        const customerName = DataMappings.findHeaderField(headers, "customerName");
+        const phoneNumber = DataMappings.findHeaderField(headers, "phoneNumber");
+        const itemsField = DataMappings.findHeaderField(headers, "items");
+        const items = itemsField ? DataMappings.parseItemsMultiLanguage(row[itemsField] || "") : [];
+        const priceValue = totalPrice ? row[totalPrice] || "0" : "0";
+        const cleanPrice = priceValue.replace(/[^\d.-]/g, "");
+        const parsedPrice = parseFloat(cleanPrice) || 0;
+        const rawState = state ? row[state] || "" : "";
+        const normalizedState = DataMappings.normalizeOrderState(rawState);
+        return {
+          orderNumber: orderNumber ? row[orderNumber] || "" : "",
+          identificationCode: identificationCode ? row[identificationCode] || "" : "",
+          paymentMethod: paymentMethod ? row[paymentMethod] : "",
+          state: normalizedState,
+          createdAt: createdAt ? row[createdAt] || "" : "",
+          paidAt: paidAt ? row[paidAt] || "" : "",
+          completedAt: completedAt ? row[completedAt] || "" : "",
+          totalPrice: parsedPrice,
+          postalCode: postalCode ? row[postalCode] || "" : "",
+          prefecture: prefecture ? row[prefecture] || "" : "",
+          city: city ? row[city] || "" : "",
+          building: building ? row[building] || "" : "",
+          customerName: customerName ? row[customerName] || "" : "",
+          phoneNumber: phoneNumber ? row[phoneNumber] || "" : "",
+          items
+        };
+      } catch (error) {
+        logger.error("解析订单行失败:", error);
+        return null;
+      }
+    }
+    /**
+     * 流式解析CSV（用于大数据量）
+     */
+    static parseStream(csvText, onChunk, onComplete, onError) {
+      try {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: (header) => header.trim(),
+          transform: (value) => value.trim(),
+          chunk: (results) => {
+            const orders = [];
+            for (const row of results.data) {
+              const order = this.parseOrderRow(results.meta.fields || [], row);
+              if (order) {
+                orders.push(order);
+              }
+            }
+            if (orders.length > 0) {
+              onChunk(orders);
+            }
+          },
+          complete: () => {
+            onComplete();
+          },
+          error: (error) => {
+            logger.error("流式解析错误:", error);
+            onError(error.message);
+          }
+        });
+      } catch (error) {
+        logger.error("流式解析失败:", error);
+        onError(`流式解析失败: ${error}`);
+      }
+    }
+  }
+  class DataLoader {
+    static instance;
+    orders = [];
+    isLoading = false;
+    lastLoadTime = null;
+    constructor() {
+    }
+    static getInstance() {
+      if (!DataLoader.instance) {
+        DataLoader.instance = new DataLoader();
+      }
+      return DataLoader.instance;
+    }
+    // 获取订单数据
+    getOrders() {
+      return this.orders;
+    }
+    // 检查是否有数据
+    hasData() {
+      return this.orders.length > 0;
+    }
+    // 检查是否正在加载
+    isCurrentlyLoading() {
+      return this.isLoading;
+    }
+    // 获取最后加载时间
+    getLastLoadTime() {
+      return this.lastLoadTime;
+    }
+    // 通过下载流加载CSV数据
+    async loadOrdersFromCSV() {
+      if (this.isLoading) {
+        return { success: false, error: "正在加载中，请稍候..." };
+      }
+      this.isLoading = true;
+      try {
+        const csvData = await this.downloadCSV();
+        if (!csvData.success) {
+          this.isLoading = false;
+          return { success: false, error: csvData.error };
+        }
+        const parseResult = CSVParser.parse(csvData.data || "");
+        if (parseResult.success && parseResult.data) {
+          this.orders = parseResult.data;
+          this.lastLoadTime = /* @__PURE__ */ new Date();
+          this.preprocessAllItemVariants();
+          this.isLoading = false;
+          return { success: true, data: this.orders };
+        } else {
+          this.isLoading = false;
+          return { success: false, error: parseResult.error || "解析CSV数据失败" };
+        }
+      } catch (error) {
+        this.isLoading = false;
+        return { success: false, error: `加载失败: ${error}` };
+      }
+    }
+    // 下载CSV文件
+    downloadCSV() {
+      return new Promise((resolve2) => {
+        _GM_xmlhttpRequest({
+          method: "GET",
+          url: "https://manage.booth.pm/orders/csv",
+          headers: {
+            "Accept": "text/csv,application/csv,text/plain",
+            "Content-Type": "text/csv; charset=utf-8"
+          },
+          onload: (response) => {
+            if (response.status === 200) {
+              resolve2({ success: true, data: response.responseText });
+            } else {
+              resolve2({
+                success: false,
+                error: `下载失败: HTTP ${response.status} - ${response.statusText}`
+              });
+            }
+          },
+          onerror: (error) => {
+            resolve2({ success: false, error: "网络请求失败" });
+          },
+          ontimeout: () => {
+            resolve2({ success: false, error: "下载超时" });
+          }
+        });
+      });
+    }
+    // 清除数据
+    clearData() {
+      this.orders = [];
+      this.lastLoadTime = null;
+    }
+    // 获取数据统计
+    getDataStats() {
+      return {
+        totalOrders: this.orders.length,
+        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
+      };
+    }
+    /**
+     * 预处理所有商品的变体数据
+     * 在数据加载完成后统一处理，避免后续使用时重复计算
+     */
+    preprocessAllItemVariants() {
+      if (this.orders.length === 0) {
+        logger.warn("没有订单数据，跳过变体数据预处理");
+        return;
+      }
+      try {
+        const orderManager = OrderManager.getInstance();
+        orderManager.preprocessAllItemVariants(this.orders);
+      } catch (error) {
+        logger.error("变体数据预处理失败:", error);
+      }
+    }
+  }
+  const getNestedValue = (obj, path) => {
+    return path.split(".").reduce((current, key) => {
+      return current && current[key] !== void 0 ? current[key] : void 0;
+    }, obj);
+  };
   let exchangeRates = {};
   let lastUpdateTime = 0;
   let updateTime = null;
@@ -3287,7 +4537,109 @@
       updateTime = null;
     }
   }
+  const _hoisted_1$i = { key: 0 };
+  const _hoisted_2$g = { key: 1 };
+  const _sfc_main$k = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableCell",
+    props: {
+      item: {},
+      column: {},
+      privacyMode: { type: Boolean }
+    },
+    setup(__props) {
+      const props = __props;
+      const getCellValue = () => {
+        const value = props.item[props.column.key];
+        if (props.privacyMode) {
+          return typeof value === "string" ? "****" : "****";
+        }
+        return value;
+      };
+      return (_ctx, _cache) => {
+        return _ctx.column.render ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$i, [
+          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.column.render), {
+            item: _ctx.item,
+            column: _ctx.column,
+            "privacy-mode": _ctx.privacyMode
+          }, null, 8, ["item", "column", "privacy-mode"]))
+        ])) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_2$g, vue.toDisplayString(getCellValue()), 1));
+      };
+    }
+  });
+  const _hoisted_1$h = { class: "table-content" };
   const _sfc_main$j = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableBody",
+    props: {
+      data: {},
+      columns: {},
+      privacyMode: { type: Boolean },
+      getItemKey: { type: Function }
+    },
+    setup(__props) {
+      const getCellClass = (columnKey) => {
+        return `cell-${columnKey}`;
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.data, (item, index2) => {
+            return vue.openBlock(), vue.createElementBlock("div", {
+              key: _ctx.getItemKey(item, index2),
+              class: "table-row"
+            }, [
+              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
+                return vue.openBlock(), vue.createElementBlock("div", {
+                  key: column.key,
+                  class: vue.normalizeClass(["table-cell", getCellClass(column.key)]),
+                  style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
+                }, [
+                  vue.renderSlot(_ctx.$slots, "cell", {
+                    item,
+                    column,
+                    index: index2
+                  }, () => [
+                    vue.createVNode(_sfc_main$k, {
+                      item,
+                      column,
+                      "privacy-mode": _ctx.privacyMode
+                    }, null, 8, ["item", "column", "privacy-mode"])
+                  ], true)
+                ], 6);
+              }), 128))
+            ]);
+          }), 128))
+        ]);
+      };
+    }
+  });
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const TableBody = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-329525ad"]]);
+  const _hoisted_1$g = { class: "empty-state" };
+  const _hoisted_2$f = { class: "empty-icon" };
+  const _hoisted_3$f = { class: "empty-text" };
+  const _hoisted_4$d = { class: "empty-hint" };
+  const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableEmptyState",
+    props: {
+      config: {}
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
+          vue.createElementVNode("div", _hoisted_2$f, vue.toDisplayString(_ctx.config.icon), 1),
+          vue.createElementVNode("div", _hoisted_3$f, vue.toDisplayString(_ctx.config.text), 1),
+          vue.createElementVNode("div", _hoisted_4$d, vue.toDisplayString(_ctx.config.hint), 1)
+        ]);
+      };
+    }
+  });
+  const TableEmptyState = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-09fe5d20"]]);
+  const _sfc_main$h = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       value: {},
@@ -3319,22 +4671,379 @@
       };
     }
   });
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
+  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-38e65878"]]);
+  const _hoisted_1$f = { class: "table-header" };
+  const _hoisted_2$e = { class: "table-info" };
+  const _hoisted_3$e = { class: "item-count" };
+  const _sfc_main$g = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableHeader",
+    props: {
+      title: {},
+      info: {},
+      privacyMode: { type: Boolean }
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
+          vue.createElementVNode("h3", null, vue.toDisplayString(_ctx.title), 1),
+          vue.createElementVNode("div", _hoisted_2$e, [
+            vue.createElementVNode("span", _hoisted_3$e, [
+              vue.createVNode(MaskedText, {
+                value: _ctx.info.totalItems,
+                masked: _ctx.privacyMode
+              }, null, 8, ["value", "masked"]),
+              vue.createTextVNode(" " + vue.toDisplayString(_ctx.info.itemLabel), 1)
+            ]),
+            vue.renderSlot(_ctx.$slots, "controls", {}, void 0, true)
+          ])
+        ]);
+      };
     }
-    return target;
+  });
+  const TableHeader = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-2985fc97"]]);
+  const _hoisted_1$e = { class: "table-header-row" };
+  const _sfc_main$f = /* @__PURE__ */ vue.defineComponent({
+    __name: "TableHeaderRow",
+    props: {
+      columns: {}
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
+            return vue.openBlock(), vue.createElementBlock("div", {
+              key: column.key,
+              class: "table-header-cell",
+              style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
+            }, vue.toDisplayString(column.label), 5);
+          }), 128))
+        ]);
+      };
+    }
+  });
+  const TableHeaderRow = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-c9bb81ee"]]);
+  const _hoisted_1$d = { class: "pagination" };
+  const _hoisted_2$d = { class: "pagination-controls" };
+  const _hoisted_3$d = ["disabled"];
+  const _hoisted_4$c = { class: "page-numbers" };
+  const _hoisted_5$b = ["onClick"];
+  const _hoisted_6$9 = ["disabled"];
+  const _hoisted_7$9 = { class: "pagination-info" };
+  const _hoisted_8$8 = {
+    key: 0,
+    class: "page-info"
   };
-  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-38e65878"]]);
-  const _hoisted_1$h = { class: "item-icon-container" };
-  const _hoisted_2$f = ["src", "alt"];
-  const _hoisted_3$e = {
+  const _hoisted_9$8 = { class: "page-current" };
+  const _hoisted_10$7 = { class: "page-total" };
+  const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
+    __name: "TablePagination",
+    props: {
+      currentPage: {},
+      totalPages: {},
+      goToPage: {},
+      goToPrevPage: {},
+      goToNextPage: {},
+      privacyMode: { type: Boolean, default: false }
+    },
+    setup(__props) {
+      const props = __props;
+      const getVisiblePages = () => {
+        const pages = [];
+        const total = props.totalPages;
+        const current = props.currentPage;
+        if (total <= 7) {
+          for (let i = 1; i <= total; i++) {
+            pages.push(i);
+          }
+        } else {
+          const start = Math.max(1, current - 2);
+          const end = Math.min(total, current + 2);
+          if (start > 1) {
+            pages.push(1);
+            if (start > 2) {
+              pages.push(-1);
+            }
+          }
+          for (let i = start; i <= end; i++) {
+            pages.push(i);
+          }
+          if (end < total) {
+            if (end < total - 1) {
+              pages.push(-1);
+            }
+            pages.push(total);
+          }
+        }
+        return pages;
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
+          vue.createElementVNode("div", _hoisted_2$d, [
+            vue.createElementVNode("button", {
+              onClick: _cache[0] || (_cache[0] = //@ts-ignore
+              (...args) => _ctx.goToPrevPage && _ctx.goToPrevPage(...args)),
+              disabled: _ctx.currentPage === 1,
+              class: "booth-btn booth-btn-secondary booth-btn-sm"
+            }, " 上一页 ", 8, _hoisted_3$d),
+            vue.createElementVNode("div", _hoisted_4$c, [
+              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getVisiblePages(), (page) => {
+                return vue.openBlock(), vue.createElementBlock("button", {
+                  key: page,
+                  class: vue.normalizeClass(["booth-btn", "booth-btn-sm", {
+                    "booth-btn-primary": _ctx.currentPage === page,
+                    "booth-btn-ghost": page === -1,
+                    "booth-btn-secondary": page !== -1 && _ctx.currentPage !== page
+                  }]),
+                  onClick: ($event) => page === -1 ? null : _ctx.goToPage(page)
+                }, vue.toDisplayString(page === -1 ? "..." : _ctx.privacyMode ? "***" : page), 11, _hoisted_5$b);
+              }), 128))
+            ]),
+            vue.createElementVNode("button", {
+              onClick: _cache[1] || (_cache[1] = //@ts-ignore
+              (...args) => _ctx.goToNextPage && _ctx.goToNextPage(...args)),
+              disabled: _ctx.currentPage === _ctx.totalPages,
+              class: "booth-btn booth-btn-secondary booth-btn-sm"
+            }, " 下一页 ", 8, _hoisted_6$9)
+          ]),
+          vue.createElementVNode("div", _hoisted_7$9, [
+            _ctx.totalPages > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$8, [
+              _cache[2] || (_cache[2] = vue.createTextVNode(" 第 ", -1)),
+              vue.createElementVNode("span", _hoisted_9$8, vue.toDisplayString(_ctx.privacyMode ? "***" : _ctx.currentPage), 1),
+              _cache[3] || (_cache[3] = vue.createTextVNode(" 页，共 ", -1)),
+              vue.createElementVNode("span", _hoisted_10$7, vue.toDisplayString(_ctx.privacyMode ? "***" : _ctx.totalPages), 1),
+              _cache[4] || (_cache[4] = vue.createTextVNode(" 页 ", -1))
+            ])) : vue.createCommentVNode("", true)
+          ])
+        ]);
+      };
+    }
+  });
+  const TablePagination = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-5d0c40cc"]]);
+  function useTableConfig(data, display, config, currentPage, totalPages, goToPage, goToPrevPage, goToNextPage) {
+    const tableClasses = vue.computed(() => {
+      const classes = ["data-table"];
+      if (config.value?.scrollable) {
+        classes.push("table-scrollable");
+      }
+      return classes;
+    });
+    const tableInfo = vue.computed(() => ({
+      totalItems: data.value.length,
+      currentPage: currentPage.value,
+      totalPages: totalPages.value,
+      itemLabel: display.value?.itemLabel || "条记录"
+    }));
+    const emptyConfig = vue.computed(() => ({
+      icon: display.value?.emptyIcon || "📋",
+      text: display.value?.emptyText || "暂无数据",
+      hint: display.value?.emptyHint || "请先加载数据或调整筛选条件"
+    }));
+    const paginationInfo = vue.computed(() => ({
+      currentPage: currentPage.value,
+      totalPages: totalPages.value,
+      goToPage,
+      goToPrevPage,
+      goToNextPage
+    }));
+    return {
+      tableClasses,
+      tableInfo,
+      emptyConfig,
+      paginationInfo
+    };
+  }
+  function useTableData(data, pageSize) {
+    const currentPage = vue.ref(1);
+    const totalItems = vue.computed(() => data.value.length);
+    const totalPages = vue.computed(() => Math.ceil(totalItems.value / pageSize.value));
+    const paginatedData = vue.computed(() => {
+      const start = (currentPage.value - 1) * pageSize.value;
+      const end = start + pageSize.value;
+      return data.value.slice(start, end);
+    });
+    vue.watch(data, () => {
+      currentPage.value = 1;
+    }, { deep: true });
+    const goToPage = (page) => {
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+      }
+    };
+    const goToPrevPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--;
+      }
+    };
+    const goToNextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+      }
+    };
+    return {
+      currentPage,
+      totalPages,
+      paginatedData,
+      goToPage,
+      goToPrevPage,
+      goToNextPage
+    };
+  }
+  function useTablePrivacy(privacyMode) {
+    const maskValue = (value) => {
+      if (privacyMode.value) {
+        return typeof value === "string" ? "****" : "****";
+      }
+      return value;
+    };
+    const maskText = (text) => {
+      if (privacyMode.value) {
+        return "****";
+      }
+      return text;
+    };
+    const maskNumber = (number) => {
+      if (privacyMode.value) {
+        return "****";
+      }
+      return number;
+    };
+    return {
+      maskValue,
+      maskText,
+      maskNumber
+    };
+  }
+  const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      data: {},
+      columns: {},
+      config: { default: () => ({
+        pageSize: 50,
+        privacyMode: false,
+        scrollable: false,
+        showPagination: true,
+        getItemKey: (item, index2) => item.id || item.orderNumber || item.itemId || index2
+      }) },
+      display: { default: () => ({
+        title: "数据表格",
+        itemLabel: "条记录",
+        emptyIcon: "📋",
+        emptyText: "暂无数据",
+        emptyHint: "请先加载数据或调整筛选条件"
+      }) }
+    },
+    setup(__props) {
+      const props = __props;
+      const {
+        currentPage,
+        totalPages,
+        paginatedData,
+        goToPage,
+        goToPrevPage,
+        goToNextPage
+      } = useTableData(
+        vue.computed(() => props.data),
+        vue.computed(() => props.config?.pageSize || 50)
+      );
+      useTablePrivacy(vue.computed(() => props.config?.privacyMode || false));
+      const { tableClasses, tableInfo, emptyConfig, paginationInfo } = useTableConfig(
+        vue.computed(() => props.data),
+        vue.computed(() => props.display),
+        vue.computed(() => props.config),
+        currentPage,
+        totalPages,
+        goToPage,
+        goToPrevPage,
+        goToNextPage
+      );
+      const privacyMode = vue.computed(() => props.config?.privacyMode || false);
+      const scrollable = vue.computed(() => props.config?.scrollable || false);
+      const showPagination = vue.computed(() => props.config?.showPagination !== false);
+      const getItemKey = vue.computed(() => props.config?.getItemKey || ((item, index2) => item.id || item.orderNumber || item.itemId || index2));
+      vue.watch(() => props.data, () => {
+        currentPage.value = 1;
+      }, { deep: true });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", {
+          class: vue.normalizeClass(["data-table", vue.unref(tableClasses)])
+        }, [
+          vue.renderSlot(_ctx.$slots, "header", {
+            title: _ctx.display?.title,
+            info: vue.unref(tableInfo)
+          }, () => [
+            vue.createVNode(TableHeader, {
+              title: _ctx.display?.title,
+              info: vue.unref(tableInfo),
+              "privacy-mode": privacyMode.value
+            }, {
+              controls: vue.withCtx(() => [
+                vue.renderSlot(_ctx.$slots, "header-controls", {}, void 0, true)
+              ]),
+              _: 3
+            }, 8, ["title", "info", "privacy-mode"])
+          ], true),
+          vue.createElementVNode("div", {
+            class: vue.normalizeClass(["table-container", { "table-scrollable": scrollable.value }])
+          }, [
+            vue.renderSlot(_ctx.$slots, "table-header", { columns: _ctx.columns }, () => [
+              vue.createVNode(TableHeaderRow, { columns: _ctx.columns }, null, 8, ["columns"])
+            ], true),
+            vue.renderSlot(_ctx.$slots, "table-body", {
+              data: vue.unref(paginatedData),
+              columns: _ctx.columns
+            }, () => [
+              vue.unref(paginatedData).length > 0 ? (vue.openBlock(), vue.createBlock(TableBody, {
+                key: 0,
+                data: vue.unref(paginatedData),
+                columns: _ctx.columns,
+                "privacy-mode": privacyMode.value,
+                "get-item-key": getItemKey.value
+              }, {
+                cell: vue.withCtx(({ item, column, index: index2 }) => [
+                  vue.renderSlot(_ctx.$slots, "cell", {
+                    item,
+                    column,
+                    index: index2
+                  }, () => [
+                    vue.createVNode(_sfc_main$k, {
+                      item,
+                      column,
+                      "privacy-mode": privacyMode.value
+                    }, null, 8, ["item", "column", "privacy-mode"])
+                  ], true)
+                ]),
+                _: 3
+              }, 8, ["data", "columns", "privacy-mode", "get-item-key"])) : (vue.openBlock(), vue.createBlock(TableEmptyState, {
+                key: 1,
+                config: vue.unref(emptyConfig)
+              }, null, 8, ["config"]))
+            ], true)
+          ], 2),
+          vue.renderSlot(_ctx.$slots, "pagination", { pagination: vue.unref(paginationInfo) }, () => [
+            showPagination.value ? (vue.openBlock(), vue.createBlock(TablePagination, {
+              key: 0,
+              "current-page": vue.unref(currentPage),
+              "total-pages": vue.unref(totalPages),
+              "go-to-page": vue.unref(goToPage),
+              "go-to-prev-page": vue.unref(goToPrevPage),
+              "go-to-next-page": vue.unref(goToNextPage),
+              "privacy-mode": privacyMode.value
+            }, null, 8, ["current-page", "total-pages", "go-to-page", "go-to-prev-page", "go-to-next-page", "privacy-mode"])) : vue.createCommentVNode("", true)
+          ], true)
+        ], 2);
+      };
+    }
+  });
+  const DataTable = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-95d88070"]]);
+  const _hoisted_1$c = { class: "item-icon-container" };
+  const _hoisted_2$c = ["src", "alt"];
+  const _hoisted_3$c = {
     key: 1,
     class: "privacy-icon"
   };
-  const _hoisted_4$e = ["width", "height"];
-  const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_4$b = ["width", "height"];
+  const _sfc_main$c = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       itemId: {},
@@ -3380,14 +5089,14 @@
         loadIcon();
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$c, [
           !props.privacyMode && iconUrl.value ? (vue.openBlock(), vue.createElementBlock("img", {
             key: 0,
             src: iconUrl.value,
             alt: _ctx.alt,
             onError: onImageError,
             class: "item-icon"
-          }, null, 40, _hoisted_2$f)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$e, [
+          }, null, 40, _hoisted_2$c)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$c, [
             (vue.openBlock(), vue.createElementBlock("svg", {
               width: iconSize.value,
               height: iconSize.value,
@@ -3404,36 +5113,1200 @@
                 d: "M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
                 fill: "#9ca3af"
               }, null, -1)
-            ]), 8, _hoisted_4$e))
+            ]), 8, _hoisted_4$b))
           ]))
         ]);
       };
     }
   });
-  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-d70e735f"]]);
-  const _hoisted_1$g = { class: "item-ranking" };
-  const _hoisted_2$e = { class: "ranking-header" };
-  const _hoisted_3$d = { class: "ranking-controls" };
-  const _hoisted_4$d = { class: "sort-buttons" };
-  const _hoisted_5$b = { class: "ranking-list" };
-  const _hoisted_6$8 = { class: "product-info" };
-  const _hoisted_7$8 = { class: "product-icon" };
-  const _hoisted_8$7 = { class: "product-details" };
-  const _hoisted_9$7 = { class: "product-name" };
+  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-d70e735f"]]);
+  const _hoisted_1$b = { class: "modal-header" };
+  const _hoisted_2$b = { class: "modal-title" };
+  const _hoisted_3$b = ["title"];
+  const _hoisted_4$a = { class: "modal-body" };
+  const _hoisted_5$a = {
+    key: 0,
+    class: "modal-footer"
+  };
+  const _sfc_main$b = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      visible: { type: Boolean },
+      title: { default: "" },
+      closeButtonTitle: { default: "关闭" },
+      closeOnOverlayClick: { type: Boolean, default: true },
+      size: { default: "medium" }
+    },
+    emits: ["close", "update:visible"],
+    setup(__props, { emit: __emit }) {
+      const props = __props;
+      const emit = __emit;
+      const handleClose = () => {
+        emit("close");
+        emit("update:visible", false);
+      };
+      const handleOverlayClick = () => {
+        if (props.closeOnOverlayClick) {
+          handleClose();
+        }
+      };
+      const modalSizeClass = vue.computed(() => {
+        return `modal-${props.size}`;
+      });
+      return (_ctx, _cache) => {
+        return _ctx.visible ? (vue.openBlock(), vue.createElementBlock("div", {
+          key: 0,
+          class: "modal-overlay",
+          onClick: handleOverlayClick
+        }, [
+          vue.createElementVNode("div", {
+            class: vue.normalizeClass(["modal-content", modalSizeClass.value]),
+            onClick: _cache[0] || (_cache[0] = vue.withModifiers(() => {
+            }, ["stop"]))
+          }, [
+            vue.createElementVNode("div", _hoisted_1$b, [
+              vue.createElementVNode("h3", _hoisted_2$b, vue.toDisplayString(_ctx.title), 1),
+              vue.createElementVNode("button", {
+                onClick: handleClose,
+                class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                title: _ctx.closeButtonTitle
+              }, " × ", 8, _hoisted_3$b)
+            ]),
+            vue.createElementVNode("div", _hoisted_4$a, [
+              vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
+            ]),
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$a, [
+              vue.renderSlot(_ctx.$slots, "footer", {}, void 0, true)
+            ])) : vue.createCommentVNode("", true)
+          ], 2)
+        ])) : vue.createCommentVNode("", true);
+      };
+    }
+  });
+  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-fe927469"]]);
+  const _hoisted_1$a = { class: "selector-container" };
+  const _hoisted_2$a = { class: "selector-controls" };
+  const _hoisted_3$a = ["disabled", "onClick"];
+  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      options: {},
+      modelValue: {},
+      multiple: { type: Boolean, default: false },
+      allowDeselect: { type: Boolean, default: false },
+      class: { default: "" }
+    },
+    emits: ["update:modelValue", "change"],
+    setup(__props, { emit: __emit }) {
+      const props = __props;
+      const emit = __emit;
+      const isSelected = (value) => {
+        if (props.multiple) {
+          return Array.isArray(props.modelValue) && props.modelValue.includes(value);
+        } else {
+          return props.modelValue === value;
+        }
+      };
+      const handleOptionClick = (value) => {
+        let newValue;
+        if (props.multiple) {
+          const currentValues = Array.isArray(props.modelValue) ? props.modelValue : [];
+          if (currentValues.includes(value)) {
+            if (props.allowDeselect) {
+              newValue = currentValues.filter((v) => v !== value);
+            } else {
+              return;
+            }
+          } else {
+            newValue = [...currentValues, value];
+          }
+        } else {
+          if (props.modelValue === value) {
+            if (props.allowDeselect) {
+              newValue = "";
+            } else {
+              return;
+            }
+          } else {
+            newValue = value;
+          }
+        }
+        emit("update:modelValue", newValue);
+        emit("change", newValue);
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$a, [
+          vue.createElementVNode("div", _hoisted_2$a, [
+            (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.options, (option, index2) => {
+              return vue.openBlock(), vue.createElementBlock("button", {
+                key: option.value,
+                class: vue.normalizeClass(["booth-btn", "booth-btn-sm", {
+                  "booth-btn-primary": isSelected(option.value),
+                  "booth-btn-ghost": !isSelected(option.value),
+                  "disabled": option.disabled
+                }]),
+                disabled: option.disabled,
+                onClick: ($event) => handleOptionClick(option.value)
+              }, vue.toDisplayString(option.label), 11, _hoisted_3$a);
+            }), 128))
+          ])
+        ]);
+      };
+    }
+  });
+  const Selector = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-7f00327b"]]);
+  const _hoisted_1$9 = {
+    key: 5,
+    class: "price-cell"
+  };
+  const _hoisted_2$9 = { class: "price-main" };
+  const _hoisted_3$9 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_4$9 = {
+    key: 6,
+    class: "price-cell"
+  };
+  const _hoisted_5$9 = { class: "price-main" };
+  const _hoisted_6$8 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_7$8 = {
+    key: 7,
+    class: "price-cell"
+  };
+  const _hoisted_8$7 = { class: "price-main" };
+  const _hoisted_9$7 = {
+    key: 0,
+    class: "price-converted"
+  };
   const _hoisted_10$6 = ["href"];
   const _hoisted_11$5 = {
     key: 1,
+    class: "item-link-masked"
+  };
+  const _hoisted_12$5 = {
+    key: 2,
+    class: "no-link"
+  };
+  const _hoisted_13$5 = ["disabled", "onClick"];
+  const _hoisted_14$5 = {
+    key: 0,
+    class: "sales-details"
+  };
+  const _hoisted_15$5 = { class: "item-info" };
+  const _hoisted_16$4 = { class: "item-icon" };
+  const _hoisted_17$3 = { class: "item-details" };
+  const _hoisted_18$1 = { class: "item-id" };
+  const _hoisted_19$1 = { class: "sales-summary" };
+  const _hoisted_20$1 = { class: "summary-item" };
+  const _hoisted_21$1 = { class: "summary-value" };
+  const _hoisted_22$1 = { class: "summary-item" };
+  const _hoisted_23$1 = { class: "summary-value" };
+  const _hoisted_24$1 = { class: "summary-item" };
+  const _hoisted_25 = { class: "summary-value" };
+  const _hoisted_26 = { class: "variant-sales" };
+  const _hoisted_27 = {
+    key: 0,
+    class: "variant-summary"
+  };
+  const _hoisted_28 = { class: "summary-stats" };
+  const _hoisted_29 = { class: "summary-stat" };
+  const _hoisted_30 = { class: "summary-stat" };
+  const _hoisted_31 = { class: "summary-stat" };
+  const _hoisted_32 = { class: "variant-list" };
+  const _hoisted_33 = { class: "variant-info" };
+  const _hoisted_34 = { class: "variant-details" };
+  const _hoisted_35 = { class: "variant-name" };
+  const _hoisted_36 = {
+    key: 0,
+    class: "variant-source"
+  };
+  const _hoisted_37 = { class: "variant-stats" };
+  const _hoisted_38 = { class: "variant-quantity" };
+  const _hoisted_39 = { class: "variant-revenue" };
+  const _hoisted_40 = {
+    key: 1,
+    class: "no-variants"
+  };
+  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      userSettings: {},
+      selectedPeriod: {},
+      customRange: {},
+      targetCurrency: {}
+    },
+    setup(__props) {
+      const props = __props;
+      const showSalesModal = vue.ref(false);
+      const selectedItem = vue.ref(null);
+      const sortMode = vue.ref("original");
+      const dataLoader2 = DataLoader.getInstance();
+      const orders = vue.computed(() => dataLoader2.getOrders());
+      const filteredOrders = vue.computed(() => {
+        if (orders.value.length === 0) return [];
+        const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
+          period: props.selectedPeriod || "all",
+          customRange: props.customRange
+        });
+        return result;
+      });
+      const items = vue.computed(() => {
+        const orderManager = OrderManager.getInstance();
+        return orderManager.getAllItemsWithStats(filteredOrders.value);
+      });
+      const sortedItems = vue.computed(() => {
+        if (sortMode.value === "original") {
+          return items.value;
+        } else if (sortMode.value === "sales") {
+          return [...items.value].sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
+        }
+        return items.value;
+      });
+      const sortOptions = [
+        { value: "original", label: "原始顺序" },
+        { value: "sales", label: "按销量" }
+      ];
+      const handleSortChange = (value) => {
+        if (typeof value === "string" || typeof value === "number") {
+          sortMode.value = value;
+        }
+      };
+      const itemColumns = [
+        { key: "itemId", label: "商品ID", width: "80px" },
+        { key: "icon", label: "图标", width: "60px" },
+        { key: "name", label: "商品名称", width: "300px" },
+        { key: "state", label: "状态", width: "100px" },
+        { key: "totalQuantity", label: "销量", width: "80px" },
+        { key: "totalRevenue", label: "总收入", width: "100px" },
+        { key: "totalBoothFee", label: "手续费", width: "80px" },
+        { key: "totalNetRevenue", label: "净收入", width: "100px" },
+        { key: "link", label: "链接", width: "120px" },
+        { key: "action", label: "操作", width: "100px" }
+      ];
+      const tableConfig = vue.computed(() => ({
+        pageSize: 50,
+        privacyMode: props.userSettings?.privacyMode || false,
+        scrollable: true,
+        showPagination: true,
+        getItemKey: (item) => item.itemId
+      }));
+      const displayConfig = {
+        title: "商品列表",
+        itemLabel: "个商品",
+        emptyIcon: "📦",
+        emptyText: "暂无商品数据",
+        emptyHint: "请先加载数据"
+      };
+      const getItemVariants = (itemId) => {
+        const currentItem = items.value.find((item) => item.itemId === itemId);
+        return currentItem?.variantStats || [];
+      };
+      const getVariantTotalQuantity = (itemId) => {
+        const variants = getItemVariants(itemId);
+        return variants.reduce((sum, variant) => sum + variant.totalQuantity, 0);
+      };
+      const getVariantTotalRevenue = (itemId) => {
+        const variants = getItemVariants(itemId);
+        return variants.reduce((sum, variant) => sum + variant.totalRevenue, 0);
+      };
+      const showSalesDetails = (item) => {
+        selectedItem.value = item;
+        showSalesModal.value = true;
+      };
+      const closeSalesModal = () => {
+        showSalesModal.value = false;
+        selectedItem.value = null;
+      };
+      const formatJPY = (price) => {
+        return CurrencyManager.formatCurrencyWithCode(price, "JPY");
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
+          vue.createVNode(DataTable, {
+            data: sortedItems.value,
+            columns: itemColumns,
+            config: tableConfig.value,
+            display: displayConfig
+          }, {
+            "header-controls": vue.withCtx(() => [
+              vue.createVNode(Selector, {
+                modelValue: sortMode.value,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => sortMode.value = $event),
+                options: sortOptions,
+                onChange: handleSortChange
+              }, null, 8, ["modelValue"])
+            ]),
+            cell: vue.withCtx(({ item, column }) => [
+              column.key === "itemId" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 0,
+                value: item.itemId,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "icon" ? (vue.openBlock(), vue.createBlock(ItemIcon, {
+                key: 1,
+                "item-id": item.itemId,
+                size: "40px",
+                "privacy-mode": props.userSettings?.privacyMode || false
+              }, null, 8, ["item-id", "privacy-mode"])) : column.key === "name" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 2,
+                value: item.item.name,
+                masked: props.userSettings?.privacyMode || false,
+                "mask-char": "商品"
+              }, null, 8, ["value", "masked"])) : column.key === "state" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 3,
+                value: item.item.state_label,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "totalQuantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
+                key: 4,
+                value: vue.unref(getNestedValue)(item, "salesStats.totalQuantity") || 0,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])) : column.key === "totalRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
+                vue.createElementVNode("div", _hoisted_2$9, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalRevenue") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$9, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalRevenue"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "totalBoothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$9, [
+                vue.createElementVNode("div", _hoisted_5$9, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$8, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "totalNetRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$8, [
+                vue.createElementVNode("div", _hoisted_8$7, [
+                  vue.createVNode(MaskedText, {
+                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") || 0),
+                    masked: props.userSettings?.privacyMode || false
+                  }, null, 8, ["value", "masked"])
+                ]),
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$7, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                  vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"),
+                  _ctx.targetCurrency
+                )), 1)) : vue.createCommentVNode("", true)
+              ])) : column.key === "link" ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 8 }, [
+                !(props.userSettings?.privacyMode || false) && item.item.url ? (vue.openBlock(), vue.createElementBlock("a", {
+                  key: 0,
+                  href: item.item.url,
+                  target: "_blank",
+                  class: "item-link"
+                }, " 查看商品 ", 8, _hoisted_10$6)) : props.userSettings?.privacyMode || false ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$5, " **** ")) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_12$5, " 无链接 "))
+              ], 64)) : column.key === "action" ? (vue.openBlock(), vue.createElementBlock("button", {
+                key: 9,
+                class: "booth-btn booth-btn-primary booth-btn-sm",
+                disabled: props.userSettings?.privacyMode || false,
+                onClick: ($event) => showSalesDetails(item)
+              }, " 查看销量 ", 8, _hoisted_13$5)) : vue.createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["data", "config"]),
+          vue.createVNode(Modal, {
+            visible: showSalesModal.value,
+            title: "销量详情",
+            size: "large",
+            onClose: closeSalesModal
+          }, {
+            default: vue.withCtx(() => [
+              selectedItem.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$5, [
+                vue.createElementVNode("div", _hoisted_15$5, [
+                  vue.createElementVNode("div", _hoisted_16$4, [
+                    vue.createVNode(ItemIcon, {
+                      "item-id": selectedItem.value.itemId,
+                      size: "60px",
+                      "privacy-mode": _ctx.userSettings?.privacyMode || false
+                    }, null, 8, ["item-id", "privacy-mode"])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_17$3, [
+                    vue.createElementVNode("h4", null, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "商品" : selectedItem.value.item.name), 1),
+                    vue.createElementVNode("p", _hoisted_18$1, "商品ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_19$1, [
+                  vue.createElementVNode("div", _hoisted_20$1, [
+                    _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "summary-label" }, "总销量:", -1)),
+                    vue.createElementVNode("span", _hoisted_21$1, [
+                      vue.createVNode(MaskedText, {
+                        value: selectedItem.value.salesStats.totalQuantity,
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_22$1, [
+                    _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "summary-label" }, "总收入:", -1)),
+                    vue.createElementVNode("span", _hoisted_23$1, [
+                      vue.createVNode(MaskedText, {
+                        value: formatJPY(selectedItem.value.salesStats.totalRevenue),
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_24$1, [
+                    _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "summary-label" }, "净收入:", -1)),
+                    vue.createElementVNode("span", _hoisted_25, [
+                      vue.createVNode(MaskedText, {
+                        value: formatJPY(selectedItem.value.salesStats.totalNetRevenue),
+                        masked: _ctx.userSettings?.privacyMode || false
+                      }, null, 8, ["value", "masked"])
+                    ])
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_26, [
+                  _cache[10] || (_cache[10] = vue.createElementVNode("h5", null, "变体销量详情", -1)),
+                  getItemVariants(selectedItem.value.itemId).length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_27, [
+                    vue.createElementVNode("div", _hoisted_28, [
+                      vue.createElementVNode("span", _hoisted_29, [
+                        _cache[4] || (_cache[4] = vue.createTextVNode(" 变体数量: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: getItemVariants(selectedItem.value.itemId).length,
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ]),
+                      vue.createElementVNode("span", _hoisted_30, [
+                        _cache[5] || (_cache[5] = vue.createTextVNode(" 变体总销量: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: getVariantTotalQuantity(selectedItem.value.itemId),
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ]),
+                      vue.createElementVNode("span", _hoisted_31, [
+                        _cache[6] || (_cache[6] = vue.createTextVNode(" 变体总收入: ", -1)),
+                        vue.createElementVNode("strong", null, [
+                          vue.createVNode(MaskedText, {
+                            value: formatJPY(getVariantTotalRevenue(selectedItem.value.itemId)),
+                            masked: _ctx.userSettings?.privacyMode || false
+                          }, null, 8, ["value", "masked"])
+                        ])
+                      ])
+                    ])
+                  ])) : vue.createCommentVNode("", true),
+                  vue.createElementVNode("div", _hoisted_32, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getItemVariants(selectedItem.value.itemId), (variant) => {
+                      return vue.openBlock(), vue.createElementBlock("div", {
+                        key: variant.variantName,
+                        class: "variant-item"
+                      }, [
+                        vue.createElementVNode("div", _hoisted_33, [
+                          vue.createElementVNode("div", _hoisted_34, [
+                            vue.createElementVNode("span", _hoisted_35, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "变体商品" : variant.variantName), 1),
+                            !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_36, " 来自订单数据 ")) : vue.createCommentVNode("", true)
+                          ])
+                        ]),
+                        vue.createElementVNode("div", _hoisted_37, [
+                          vue.createElementVNode("span", _hoisted_38, [
+                            _cache[7] || (_cache[7] = vue.createTextVNode(" 销量: ", -1)),
+                            vue.createVNode(MaskedText, {
+                              value: variant.totalQuantity,
+                              masked: _ctx.userSettings?.privacyMode || false
+                            }, null, 8, ["value", "masked"])
+                          ]),
+                          vue.createElementVNode("span", _hoisted_39, [
+                            _cache[8] || (_cache[8] = vue.createTextVNode(" 收入: ", -1)),
+                            vue.createVNode(MaskedText, {
+                              value: formatJPY(variant.totalRevenue),
+                              masked: _ctx.userSettings?.privacyMode || false
+                            }, null, 8, ["value", "masked"])
+                          ])
+                        ])
+                      ]);
+                    }), 128))
+                  ]),
+                  getItemVariants(selectedItem.value.itemId).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_40, _cache[9] || (_cache[9] = [
+                    vue.createElementVNode("p", null, "暂无变体商品", -1)
+                  ]))) : vue.createCommentVNode("", true)
+                ])
+              ])) : vue.createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["visible"])
+        ], 64);
+      };
+    }
+  });
+  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-b3ed04b4"]]);
+  const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
+    try {
+      const jstDate = parseISO(jstDateTime + "+09:00");
+      if (!isValid(jstDate)) {
+        logger.error("无效的JST时间格式:", jstDateTime);
+        return jstDateTime;
+      }
+      const result = formatInTimeZone(jstDate, targetTimezone, "yyyy-MM-dd HH:mm:ss");
+      logger.timezone(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
+      return result;
+    } catch (error) {
+      logger.error("时区转换失败:", error);
+      return jstDateTime;
+    }
+  };
+  const formatOriginalDateTime = (dateString) => {
+    if (!dateString) return "";
+    const parts = dateString.split(" ");
+    if (parts.length !== 2) return dateString;
+    const [datePart, timePart] = parts;
+    const [year, month, day] = datePart.split("-");
+    const [hour, minute] = timePart.split(":");
+    return `${month}/${day} ${hour}:${minute}`;
+  };
+  const formatConvertedDateTime = (dateString, userSettings) => {
+    if (!dateString || !userSettings) return "";
+    if (userSettings.timezone === "Asia/Tokyo") return "";
+    try {
+      const convertedTime = convertJSTToTargetTimezone(dateString, userSettings.timezone);
+      const [datePart, timePart] = convertedTime.split(" ");
+      const [year, month, day] = datePart.split("-");
+      const [hour, minute] = timePart.split(":");
+      return `${month}/${day} ${hour}:${minute} (${userSettings.displayName})`;
+    } catch (error) {
+      return "";
+    }
+  };
+  const _hoisted_1$8 = { class: "item-name" };
+  const _hoisted_2$8 = { class: "tooltip-header" };
+  const _hoisted_3$8 = ["src", "alt"];
+  const _hoisted_4$8 = {
+    key: 1,
+    class: "tooltip-icon-placeholder"
+  };
+  const _hoisted_5$8 = { class: "tooltip-title" };
+  const _hoisted_6$7 = { class: "tooltip-content" };
+  const _hoisted_7$7 = { class: "tooltip-row" };
+  const _hoisted_8$6 = { class: "tooltip-value" };
+  const _hoisted_9$6 = { class: "tooltip-row" };
+  const _hoisted_10$5 = { class: "tooltip-value" };
+  const _hoisted_11$4 = { class: "tooltip-row" };
+  const _hoisted_12$4 = { class: "tooltip-value" };
+  const _hoisted_13$4 = { class: "tooltip-row" };
+  const _hoisted_14$4 = { class: "tooltip-value sales-highlight" };
+  const _hoisted_15$4 = { class: "tooltip-row" };
+  const _hoisted_16$3 = ["href"];
+  const _hoisted_17$2 = {
+    key: 1,
+    class: "tooltip-value"
+  };
+  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
+    __name: "ItemEntry",
+    props: {
+      item: {},
+      size: { default: "20px" },
+      allOrders: {},
+      privacyMode: { type: Boolean, default: false }
+    },
+    setup(__props) {
+      const props = __props;
+      const showTooltip = vue.ref(false);
+      const tooltipPosition = vue.ref({ x: 0, y: 0 });
+      const itemDetails = vue.computed(() => {
+        const itemManager2 = ItemManager.getInstance();
+        const itemData = itemManager2.getItem(props.item.itemId);
+        let totalSales = 0;
+        if (props.allOrders) {
+          props.allOrders.forEach((order) => {
+            if (order.items && Array.isArray(order.items)) {
+              order.items.forEach((item) => {
+                if (item.itemId === props.item.itemId) {
+                  totalSales += item.quantity;
+                }
+              });
+            }
+          });
+        }
+        return {
+          name: itemData?.name || props.item.name,
+          state: itemData?.state || "",
+          stateLabel: itemData?.state_label || "",
+          url: itemData?.url || "",
+          iconUrl: itemData?.iconUrl || "",
+          totalSales
+        };
+      });
+      const handleMouseEnter = (event) => {
+        showTooltip.value = true;
+        tooltipPosition.value = {
+          x: event.clientX + 10,
+          y: event.clientY - 10
+        };
+      };
+      const handleMouseLeave = () => {
+        showTooltip.value = false;
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", {
+          class: "item-entry",
+          onMouseenter: handleMouseEnter,
+          onMouseleave: handleMouseLeave
+        }, [
+          vue.createVNode(ItemIcon, {
+            itemId: _ctx.item.itemId,
+            size: _ctx.size,
+            "privacy-mode": props.privacyMode
+          }, null, 8, ["itemId", "size", "privacy-mode"]),
+          vue.createElementVNode("span", _hoisted_1$8, [
+            vue.createVNode(MaskedText, {
+              value: _ctx.item.name,
+              masked: props.privacyMode,
+              "mask-char": "商品"
+            }, null, 8, ["value", "masked"]),
+            _cache[0] || (_cache[0] = vue.createTextVNode(" × ", -1)),
+            vue.createVNode(MaskedText, {
+              value: _ctx.item.quantity,
+              masked: props.privacyMode
+            }, null, 8, ["value", "masked"])
+          ]),
+          showTooltip.value ? (vue.openBlock(), vue.createElementBlock("div", {
+            key: 0,
+            class: "tooltip",
+            style: vue.normalizeStyle({
+              left: tooltipPosition.value.x + "px",
+              top: tooltipPosition.value.y + "px"
+            })
+          }, [
+            vue.createElementVNode("div", _hoisted_2$8, [
+              !props.privacyMode && itemDetails.value.iconUrl ? (vue.openBlock(), vue.createElementBlock("img", {
+                key: 0,
+                src: itemDetails.value.iconUrl,
+                alt: itemDetails.value.name,
+                class: "tooltip-icon"
+              }, null, 8, _hoisted_3$8)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$8, _cache[1] || (_cache[1] = [
+                vue.createElementVNode("svg", {
+                  width: "32",
+                  height: "32",
+                  viewBox: "0 0 32 32",
+                  fill: "none"
+                }, [
+                  vue.createElementVNode("rect", {
+                    width: "32",
+                    height: "32",
+                    rx: "4",
+                    fill: "#f3f4f6"
+                  }),
+                  vue.createElementVNode("path", {
+                    d: "M16 8c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
+                    fill: "#9ca3af"
+                  })
+                ], -1)
+              ]))) : vue.createCommentVNode("", true),
+              vue.createElementVNode("div", _hoisted_5$8, [
+                vue.createVNode(MaskedText, {
+                  value: itemDetails.value.name,
+                  masked: props.privacyMode,
+                  "mask-char": "商品"
+                }, null, 8, ["value", "masked"])
+              ])
+            ]),
+            vue.createElementVNode("div", _hoisted_6$7, [
+              vue.createElementVNode("div", _hoisted_7$7, [
+                _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "tooltip-label" }, "商品ID:", -1)),
+                vue.createElementVNode("span", _hoisted_8$6, [
+                  vue.createVNode(MaskedText, {
+                    value: _ctx.item.itemId,
+                    masked: props.privacyMode
+                  }, null, 8, ["value", "masked"])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_9$6, [
+                _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "tooltip-label" }, "状态:", -1)),
+                vue.createElementVNode("span", _hoisted_10$5, [
+                  vue.createVNode(MaskedText, {
+                    value: itemDetails.value.stateLabel,
+                    masked: props.privacyMode
+                  }, null, 8, ["value", "masked"])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_11$4, [
+                _cache[4] || (_cache[4] = vue.createElementVNode("span", { class: "tooltip-label" }, "订单数量:", -1)),
+                vue.createElementVNode("span", _hoisted_12$4, [
+                  vue.createVNode(MaskedText, {
+                    value: _ctx.item.quantity,
+                    masked: props.privacyMode
+                  }, null, 8, ["value", "masked"])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_13$4, [
+                _cache[5] || (_cache[5] = vue.createElementVNode("span", { class: "tooltip-label" }, "总销量:", -1)),
+                vue.createElementVNode("span", _hoisted_14$4, [
+                  vue.createVNode(MaskedText, {
+                    value: itemDetails.value.totalSales,
+                    masked: props.privacyMode
+                  }, null, 8, ["value", "masked"])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_15$4, [
+                _cache[6] || (_cache[6] = vue.createElementVNode("span", { class: "tooltip-label" }, "链接:", -1)),
+                !props.privacyMode && itemDetails.value.url ? (vue.openBlock(), vue.createElementBlock("a", {
+                  key: 0,
+                  href: itemDetails.value.url,
+                  target: "_blank",
+                  class: "tooltip-link"
+                }, " 查看商品 ", 8, _hoisted_16$3)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_17$2, "****")) : vue.createCommentVNode("", true)
+              ])
+            ])
+          ], 4)) : vue.createCommentVNode("", true)
+        ], 32);
+      };
+    }
+  });
+  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-164f6045"]]);
+  const _hoisted_1$7 = {
+    key: 0,
+    class: "order-number"
+  };
+  const _hoisted_2$7 = {
+    key: 1,
+    class: "date-cell"
+  };
+  const _hoisted_3$7 = { class: "date-main" };
+  const _hoisted_4$7 = {
+    key: 0,
+    class: "date-converted"
+  };
+  const _hoisted_5$7 = {
+    key: 2,
+    class: "items"
+  };
+  const _hoisted_6$6 = {
+    key: 0,
+    class: "item-list"
+  };
+  const _hoisted_7$6 = {
+    key: 1,
+    class: "no-items"
+  };
+  const _hoisted_8$5 = {
+    key: 3,
+    class: "payment-method"
+  };
+  const _hoisted_9$5 = {
+    key: 4,
+    class: "price-cell"
+  };
+  const _hoisted_10$4 = { class: "price-main" };
+  const _hoisted_11$3 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_12$3 = {
+    key: 5,
+    class: "booth-fee-cell"
+  };
+  const _hoisted_13$3 = { class: "price-main" };
+  const _hoisted_14$3 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _hoisted_15$3 = {
+    key: 6,
+    class: "net-amount-cell"
+  };
+  const _hoisted_16$2 = { class: "price-main" };
+  const _hoisted_17$1 = {
+    key: 0,
+    class: "price-converted"
+  };
+  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      orders: {},
+      targetCurrency: {},
+      userSettings: {}
+    },
+    setup(__props) {
+      const props = __props;
+      const orderColumns = [
+        { key: "orderNumber", label: "订单编号", width: "120px" },
+        { key: "createdAt", label: "订单时间", width: "192px" },
+        { key: "items", label: "商品", width: "300px" },
+        { key: "paymentMethod", label: "支付方式", width: "120px" },
+        { key: "totalPrice", label: "金额", width: "120px" },
+        { key: "boothFee", label: "手续费", width: "120px" },
+        { key: "netAmount", label: "净收入", width: "120px" }
+      ];
+      const formatNetAmountForOrder = (order) => {
+        return formatNetAmount(order.totalPrice, order.createdAt);
+      };
+      const formatBoothFeeForOrder = (order) => {
+        return formatBoothFee(order.totalPrice, order.createdAt);
+      };
+      const tableConfig = vue.computed(() => ({
+        pageSize: 50,
+        privacyMode: props.userSettings?.privacyMode || false,
+        scrollable: false,
+        showPagination: true,
+        getItemKey: (item) => item.orderNumber
+      }));
+      const displayConfig = {
+        title: "订单列表",
+        itemLabel: "条订单",
+        emptyIcon: "📋",
+        emptyText: "暂无订单数据",
+        emptyHint: "请先加载数据或调整筛选条件"
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createBlock(DataTable, {
+          data: _ctx.orders,
+          columns: orderColumns,
+          config: tableConfig.value,
+          display: displayConfig
+        }, {
+          cell: vue.withCtx(({ item, column }) => [
+            column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$7, [
+              vue.createVNode(MaskedText, {
+                value: item.orderNumber,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])
+            ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$7, [
+              vue.createElementVNode("div", _hoisted_3$7, [
+                vue.createVNode(MaskedText, {
+                  value: vue.unref(formatOriginalDateTime)(item.createdAt),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && _ctx.userSettings && vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$7, vue.toDisplayString(vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$7, [
+              item.items && item.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$6, [
+                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(item.items, (itemEntry) => {
+                  return vue.openBlock(), vue.createBlock(ItemEntry, {
+                    key: itemEntry.id,
+                    item: itemEntry,
+                    "all-orders": _ctx.orders,
+                    size: "20px",
+                    "privacy-mode": props.userSettings?.privacyMode || false
+                  }, null, 8, ["item", "all-orders", "privacy-mode"]);
+                }), 128))
+              ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$6, " 无商品信息 "))
+            ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$5, [
+              vue.createVNode(MaskedText, {
+                value: item.paymentMethod,
+                masked: props.userSettings?.privacyMode || false
+              }, null, 8, ["value", "masked"])
+            ])) : column.key === "totalPrice" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$5, [
+              vue.createElementVNode("div", _hoisted_10$4, [
+                vue.createVNode(MaskedText, {
+                  value: vue.unref(CurrencyManager).formatJPY(item.totalPrice || 0),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_11$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "boothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_12$3, [
+              vue.createElementVNode("div", _hoisted_13$3, [
+                vue.createVNode(MaskedText, {
+                  value: formatBoothFeeForOrder(item),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "netAmount" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$3, [
+              vue.createElementVNode("div", _hoisted_16$2, [
+                vue.createVNode(MaskedText, {
+                  value: formatNetAmountForOrder(item),
+                  masked: props.userSettings?.privacyMode || false
+                }, null, 8, ["value", "masked"])
+              ]),
+              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_17$1, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
+            ])) : vue.createCommentVNode("", true)
+          ]),
+          _: 1
+        }, 8, ["data", "config"]);
+      };
+    }
+  });
+  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-dd008aa1"]]);
+  const DEFAULT_SETTINGS = {
+    timezone: "Asia/Shanghai",
+    displayName: "中国标准时间",
+    targetCurrency: "CNY",
+    privacyMode: false
+  };
+  const TIMEZONE_OPTIONS = [
+    { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
+    { value: "Asia/Tokyo", label: "日本标准时间 (UTC+9)" },
+    { value: "America/New_York", label: "美国东部时间 (UTC-5)" },
+    { value: "America/Los_Angeles", label: "美国太平洋时间 (UTC-8)" },
+    { value: "Europe/London", label: "英国时间 (UTC+0)" },
+    { value: "Europe/Paris", label: "欧洲中部时间 (UTC+1)" },
+    { value: "Asia/Seoul", label: "韩国标准时间 (UTC+9)" },
+    { value: "Asia/Singapore", label: "新加坡时间 (UTC+8)" },
+    { value: "Australia/Sydney", label: "澳大利亚东部时间 (UTC+10)" },
+    { value: "UTC", label: "协调世界时 (UTC+0)" }
+  ];
+  const CURRENCY_OPTIONS = [
+    { value: "CNY", label: "人民币 (CNY)", symbol: "¥" },
+    { value: "JPY", label: "日元 (JPY)", symbol: "¥" },
+    { value: "USD", label: "美元 (USD)", symbol: "$" },
+    { value: "EUR", label: "欧元 (EUR)", symbol: "€" },
+    { value: "GBP", label: "英镑 (GBP)", symbol: "£" },
+    { value: "KRW", label: "韩元 (KRW)", symbol: "₩" },
+    { value: "HKD", label: "港币 (HKD)", symbol: "HK$" },
+    { value: "TWD", label: "台币 (TWD)", symbol: "NT$" }
+  ];
+  class SettingsManager {
+    static SETTINGS_KEY = "booth_order_analysis_settings";
+    /**
+     * 获取用户设置
+     */
+    static getSettings() {
+      try {
+        const savedSettings = _GM_getValue(this.SETTINGS_KEY, null);
+        if (savedSettings && typeof savedSettings === "object") {
+          return { ...DEFAULT_SETTINGS, ...savedSettings };
+        }
+      } catch (error) {
+        logger.error("读取设置失败:", error);
+      }
+      return { ...DEFAULT_SETTINGS };
+    }
+    /**
+     * 保存用户设置
+     */
+    static saveSettings(settings) {
+      try {
+        _GM_setValue(this.SETTINGS_KEY, settings);
+        logger.settings("设置已保存");
+      } catch (error) {
+        logger.error("保存设置失败:", error);
+      }
+    }
+    /**
+     * 更新部分设置
+     */
+    static updateSettings(partialSettings) {
+      const currentSettings = this.getSettings();
+      const newSettings = { ...currentSettings, ...partialSettings };
+      this.saveSettings(newSettings);
+    }
+    /**
+     * 重置为默认设置
+     */
+    static resetSettings() {
+      this.saveSettings(DEFAULT_SETTINGS);
+      logger.settings("设置已重置为默认值");
+    }
+  }
+  const _hoisted_1$6 = { class: "settings-content" };
+  const _hoisted_2$6 = { class: "setting-section" };
+  const _hoisted_3$6 = { class: "setting-item" };
+  const _hoisted_4$6 = ["value"];
+  const _hoisted_5$6 = { class: "current-time" };
+  const _hoisted_6$5 = { class: "setting-section" };
+  const _hoisted_7$5 = { class: "setting-item" };
+  const _hoisted_8$4 = ["value"];
+  const _hoisted_9$4 = { class: "exchange-rate-info" };
+  const _hoisted_10$3 = { class: "update-time" };
+  const _hoisted_11$2 = { class: "setting-section" };
+  const _hoisted_12$2 = { class: "setting-item" };
+  const _hoisted_13$2 = { class: "booth-toggle" };
+  const _hoisted_14$2 = { class: "setting-section" };
+  const _hoisted_15$2 = { class: "setting-actions" };
+  const _hoisted_16$1 = ["disabled"];
+  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
+    __name: "index",
+    props: {
+      visible: { type: Boolean }
+    },
+    emits: ["close", "settings-changed"],
+    setup(__props, { emit: __emit }) {
+      const emit = __emit;
+      const settings = vue.ref({
+        timezone: "Asia/Shanghai",
+        displayName: "中国标准时间",
+        targetCurrency: "CNY",
+        privacyMode: false
+      });
+      const isSaving = vue.ref(false);
+      const loadSettings = () => {
+        settings.value = SettingsManager.getSettings();
+      };
+      const saveSettings = async () => {
+        isSaving.value = true;
+        try {
+          SettingsManager.saveSettings(settings.value);
+          emit("settings-changed", settings.value);
+          setTimeout(() => {
+            isSaving.value = false;
+          }, 1e3);
+        } catch (error) {
+          console.error("保存设置失败:", error);
+          isSaving.value = false;
+        }
+      };
+      const resetSettings = () => {
+        SettingsManager.resetSettings();
+        loadSettings();
+        emit("settings-changed", settings.value);
+      };
+      const onTimezoneChange = (event) => {
+        const select = event.target;
+        const selectedOption = TIMEZONE_OPTIONS.find((option) => option.value === select.value);
+        if (selectedOption) {
+          settings.value.timezone = selectedOption.value;
+          settings.value.displayName = selectedOption.label.split(" ")[0];
+        }
+        emit("settings-changed", settings.value);
+      };
+      const getExchangeRateDisplay = vue.computed(() => {
+        const selectedCurrency = settings.value.targetCurrency;
+        if (selectedCurrency === "JPY") {
+          return "¥1.0000";
+        }
+        const rate = CurrencyManager.getExchangeRateSync(selectedCurrency);
+        const symbol = CURRENCY_OPTIONS.find((option) => option.value === selectedCurrency)?.symbol || "";
+        return `${symbol}${rate?.toFixed(4) || "0.0000"}`;
+      });
+      const getExchangeRateUpdateTime = vue.computed(() => {
+        const cacheStatus = CurrencyManager.getCacheStatus();
+        if (cacheStatus.updateTime) {
+          return `更新时间: ${cacheStatus.updateTime}`;
+        }
+        return "实时更新";
+      });
+      const handlePrivacyModeChange = () => {
+        emit("settings-changed", settings.value);
+      };
+      const handleCurrencyChange = () => {
+        emit("settings-changed", settings.value);
+      };
+      const closeSettings = () => {
+        emit("close");
+      };
+      vue.onMounted(() => {
+        loadSettings();
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createBlock(Modal, {
+          visible: _ctx.visible,
+          title: "设置",
+          size: "medium",
+          onClose: closeSettings
+        }, {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("div", _hoisted_1$6, [
+              vue.createElementVNode("div", _hoisted_2$6, [
+                _cache[4] || (_cache[4] = vue.createElementVNode("h3", null, "时区设置", -1)),
+                _cache[5] || (_cache[5] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_3$6, [
+                  _cache[3] || (_cache[3] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
+                  vue.withDirectives(vue.createElementVNode("select", {
+                    id: "timezone-select",
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
+                    onChange: onTimezoneChange,
+                    class: "timezone-select"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(TIMEZONE_OPTIONS), (option) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: option.value,
+                        value: option.value
+                      }, vue.toDisplayString(option.label), 9, _hoisted_4$6);
+                    }), 128))
+                  ], 544), [
+                    [vue.vModelSelect, settings.value.timezone]
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_5$6, [
+                  vue.createElementVNode("span", null, "当前时间：" + vue.toDisplayString((/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { timeZone: settings.value.timezone })), 1)
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_6$5, [
+                _cache[7] || (_cache[7] = vue.createElementVNode("h3", null, "货币设置", -1)),
+                _cache[8] || (_cache[8] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_7$5, [
+                  _cache[6] || (_cache[6] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
+                  vue.withDirectives(vue.createElementVNode("select", {
+                    id: "currency-select",
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
+                    onChange: handleCurrencyChange,
+                    class: "currency-select"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(CURRENCY_OPTIONS), (option) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: option.value,
+                        value: option.value
+                      }, vue.toDisplayString(option.label), 9, _hoisted_8$4);
+                    }), 128))
+                  ], 544), [
+                    [vue.vModelSelect, settings.value.targetCurrency]
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_9$4, [
+                  vue.createElementVNode("span", null, "当前汇率：1 JPY = " + vue.toDisplayString(getExchangeRateDisplay.value), 1),
+                  vue.createElementVNode("span", _hoisted_10$3, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_11$2, [
+                _cache[11] || (_cache[11] = vue.createElementVNode("h3", null, "隐私设置", -1)),
+                _cache[12] || (_cache[12] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
+                vue.createElementVNode("div", _hoisted_12$2, [
+                  vue.createElementVNode("label", _hoisted_13$2, [
+                    vue.withDirectives(vue.createElementVNode("input", {
+                      type: "checkbox",
+                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => settings.value.privacyMode = $event),
+                      onChange: handlePrivacyModeChange
+                    }, null, 544), [
+                      [vue.vModelCheckbox, settings.value.privacyMode]
+                    ]),
+                    _cache[9] || (_cache[9] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
+                  ])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_14$2, [
+                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                vue.createElementVNode("div", _hoisted_15$2, [
+                  vue.createElementVNode("button", {
+                    onClick: saveSettings,
+                    disabled: isSaving.value,
+                    class: "booth-btn booth-btn-success booth-btn-md"
+                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_16$1),
+                  vue.createElementVNode("button", {
+                    onClick: resetSettings,
+                    class: "booth-btn booth-btn-secondary booth-btn-md"
+                  }, "重置为默认")
+                ])
+              ])
+            ])
+          ]),
+          _: 1
+        }, 8, ["visible"]);
+      };
+    }
+  });
+  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-1a4ef441"]]);
+  const _hoisted_1$5 = { class: "item-ranking" };
+  const _hoisted_2$5 = { class: "ranking-header" };
+  const _hoisted_3$5 = { class: "ranking-controls" };
+  const _hoisted_4$5 = { class: "ranking-list" };
+  const _hoisted_5$5 = { class: "product-info" };
+  const _hoisted_6$4 = { class: "product-icon" };
+  const _hoisted_7$4 = { class: "product-details" };
+  const _hoisted_8$3 = { class: "product-name" };
+  const _hoisted_9$3 = ["href"];
+  const _hoisted_10$2 = {
+    key: 1,
     class: "product-link"
   };
-  const _hoisted_12$5 = { class: "sales-data" };
-  const _hoisted_13$5 = { class: "quantity" };
-  const _hoisted_14$5 = { class: "quantity-label" };
-  const _hoisted_15$5 = { class: "quantity-value" };
-  const _hoisted_16$5 = {
+  const _hoisted_11$1 = { class: "sales-data" };
+  const _hoisted_12$1 = { class: "quantity" };
+  const _hoisted_13$1 = { class: "quantity-label" };
+  const _hoisted_14$1 = { class: "quantity-value" };
+  const _hoisted_15$1 = {
     key: 0,
     class: "empty-state"
   };
-  const _sfc_main$h = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$5 = /* @__PURE__ */ vue.defineComponent({
     __name: "ItemRanking",
     props: {
       productData: {},
@@ -3445,6 +6318,15 @@
       const props = __props;
       const sortType = vue.ref("quantity");
       const itemManager2 = ItemManager.getInstance();
+      const sortOptions = [
+        { value: "quantity", label: "销量" },
+        { value: "revenue", label: "收入" }
+      ];
+      const handleSortChange = (value) => {
+        if (typeof value === "string" || typeof value === "number") {
+          sortType.value = value;
+        }
+      };
       const sortedProductData = vue.computed(() => {
         const sorted = [...props.productData];
         if (sortType.value === "quantity") {
@@ -3463,23 +6345,19 @@
         return itemManager2.getItemUrl(itemId);
       };
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
-          vue.createElementVNode("div", _hoisted_2$e, [
-            _cache[2] || (_cache[2] = vue.createElementVNode("h4", null, "商品排行", -1)),
-            vue.createElementVNode("div", _hoisted_3$d, [
-              vue.createElementVNode("div", _hoisted_4$d, [
-                vue.createElementVNode("button", {
-                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "quantity" }]),
-                  onClick: _cache[0] || (_cache[0] = ($event) => sortType.value = "quantity")
-                }, " 销量 ", 2),
-                vue.createElementVNode("button", {
-                  class: vue.normalizeClass(["sort-btn", { active: sortType.value === "revenue" }]),
-                  onClick: _cache[1] || (_cache[1] = ($event) => sortType.value = "revenue")
-                }, " 收入 ", 2)
-              ])
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$5, [
+          vue.createElementVNode("div", _hoisted_2$5, [
+            _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "商品排行", -1)),
+            vue.createElementVNode("div", _hoisted_3$5, [
+              vue.createVNode(Selector, {
+                options: sortOptions,
+                "model-value": sortType.value,
+                "onUpdate:modelValue": handleSortChange,
+                class: "sort-selector"
+              }, null, 8, ["model-value"])
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_5$b, [
+          vue.createElementVNode("div", _hoisted_4$5, [
             (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(limitedProductData.value, (product, index2) => {
               return vue.openBlock(), vue.createElementBlock("div", {
                 key: product.itemId,
@@ -3488,16 +6366,16 @@
                 vue.createElementVNode("div", {
                   class: vue.normalizeClass(["rank-badge", `rank-${index2 + 1}`])
                 }, vue.toDisplayString(index2 + 1), 3),
-                vue.createElementVNode("div", _hoisted_6$8, [
-                  vue.createElementVNode("div", _hoisted_7$8, [
+                vue.createElementVNode("div", _hoisted_5$5, [
+                  vue.createElementVNode("div", _hoisted_6$4, [
                     vue.createVNode(ItemIcon, {
                       "item-id": product.itemId,
                       size: "28px",
                       "privacy-mode": _ctx.userSettings?.privacyMode || false
                     }, null, 8, ["item-id", "privacy-mode"])
                   ]),
-                  vue.createElementVNode("div", _hoisted_8$7, [
-                    vue.createElementVNode("div", _hoisted_9$7, [
+                  vue.createElementVNode("div", _hoisted_7$4, [
+                    vue.createElementVNode("div", _hoisted_8$3, [
                       !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("a", {
                         key: 0,
                         href: getItemUrl(product.itemId),
@@ -3509,7 +6387,7 @@
                           masked: _ctx.userSettings?.privacyMode || false,
                           "mask-char": "商品"
                         }, null, 8, ["value", "masked"])
-                      ], 8, _hoisted_10$6)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$5, [
+                      ], 8, _hoisted_9$3)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_10$2, [
                         vue.createVNode(MaskedText, {
                           value: product.name,
                           masked: _ctx.userSettings?.privacyMode || false,
@@ -3519,10 +6397,10 @@
                     ])
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_12$5, [
-                  vue.createElementVNode("div", _hoisted_13$5, [
-                    vue.createElementVNode("span", _hoisted_14$5, vue.toDisplayString(sortType.value === "quantity" ? "销量" : "收入"), 1),
-                    vue.createElementVNode("span", _hoisted_15$5, [
+                vue.createElementVNode("div", _hoisted_11$1, [
+                  vue.createElementVNode("div", _hoisted_12$1, [
+                    vue.createElementVNode("span", _hoisted_13$1, vue.toDisplayString(sortType.value === "quantity" ? "销量" : "收入"), 1),
+                    vue.createElementVNode("span", _hoisted_14$1, [
                       sortType.value === "quantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
                         key: 0,
                         value: product.totalQuantity,
@@ -3538,7 +6416,7 @@
               ]);
             }), 128))
           ]),
-          limitedProductData.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_16$5, _cache[3] || (_cache[3] = [
+          limitedProductData.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$1, _cache[1] || (_cache[1] = [
             vue.createElementVNode("div", { class: "empty-icon" }, "📦", -1),
             vue.createElementVNode("div", { class: "empty-text" }, "暂无商品数据", -1)
           ]))) : vue.createCommentVNode("", true)
@@ -3546,7 +6424,7 @@
       };
     }
   });
-  const ItemRanking = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-0990fe6f"]]);
+  const ItemRanking = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-86224ee7"]]);
   /*!
    * @kurkle/color v0.3.4
    * https://github.com/kurkle/color#readme
@@ -18002,12 +20880,178 @@
     scales
   ];
   Chart.register(...registerables);
-  const _hoisted_1$f = { class: "chart-container" };
-  const _hoisted_2$d = { class: "chart-header" };
-  const _hoisted_3$c = { class: "chart-info" };
-  const _hoisted_4$c = { class: "data-points" };
-  const _hoisted_5$a = { class: "chart-wrapper" };
-  const _sfc_main$g = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_1$4 = { class: "chart-container" };
+  const _hoisted_2$4 = { class: "chart-header" };
+  const _hoisted_3$4 = { class: "chart-info" };
+  const _hoisted_4$4 = { class: "total-orders" };
+  const _hoisted_5$4 = { class: "chart-content" };
+  const _hoisted_6$3 = { class: "chart-wrapper" };
+  const _hoisted_7$3 = { class: "legend-container" };
+  const _hoisted_8$2 = { class: "legend-text" };
+  const _hoisted_9$2 = { class: "legend-label" };
+  const _hoisted_10$1 = { class: "legend-value" };
+  const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
+    __name: "PaymentMethodChart",
+    props: {
+      paymentData: {},
+      privacyMode: { type: Boolean, default: false }
+    },
+    setup(__props) {
+      const props = __props;
+      const chartCanvas = vue.ref();
+      let chart = null;
+      const generateFakeData = (originalData) => {
+        if (!props.privacyMode) {
+          return originalData;
+        }
+        const fakeMethods = ["魔法水晶支付", "时空传送支付", "意念转账", "彩虹币支付"];
+        const fakeData = fakeMethods.map((method, index2) => {
+          const count = Math.floor(Math.random() * 4e4) + 1e4;
+          return {
+            method,
+            count,
+            percentage: 0
+            // 稍后计算
+          };
+        });
+        const totalCount = fakeData.reduce((sum, item) => sum + item.count, 0);
+        fakeData.forEach((item) => {
+          item.percentage = Math.round(item.count / totalCount * 100);
+        });
+        return fakeData.sort((a, b) => b.count - a.count);
+      };
+      const displayData = vue.computed(() => {
+        return generateFakeData(props.paymentData);
+      });
+      const totalOrders = vue.computed(() => {
+        return displayData.value.reduce((sum, item) => sum + item.count, 0);
+      });
+      const getItemColor = (method) => {
+        const colors2 = DataAnalyzer.getChartColors(displayData.value.length);
+        const index2 = displayData.value.findIndex((item) => item.method === method);
+        return colors2[index2] || "#6b7280";
+      };
+      const createChartConfig = () => {
+        const labels = displayData.value.map((item) => item.method);
+        const data = displayData.value.map((item) => item.count);
+        const colors2 = displayData.value.map((item) => getItemColor(item.method));
+        return {
+          type: "doughnut",
+          data: {
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor: colors2,
+                borderColor: "#ffffff",
+                borderWidth: 2,
+                hoverOffset: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+                // 使用自定义图例
+              },
+              tooltip: {
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                titleColor: "#ffffff",
+                bodyColor: "#ffffff",
+                borderColor: "#3b82f6",
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || "";
+                    const value = context.parsed;
+                    const percentage = (value / totalOrders.value * 100).toFixed(1);
+                    return `${label}: ${value} 单 (${percentage}%)`;
+                  }
+                }
+              }
+            }
+          }
+        };
+      };
+      const initChart = () => {
+        if (!chartCanvas.value) return;
+        const config = createChartConfig();
+        chart = new Chart(chartCanvas.value, config);
+      };
+      const updateChart = () => {
+        if (!chart) return;
+        const config = createChartConfig();
+        chart.data = config.data;
+        if (config.options) {
+          chart.options = config.options;
+        }
+        chart.update();
+      };
+      const destroyChart = () => {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+      };
+      vue.watch([() => props.paymentData, () => props.privacyMode], () => {
+        if (chart) {
+          updateChart();
+        }
+      }, { deep: true });
+      vue.onMounted(() => {
+        initChart();
+      });
+      vue.onUnmounted(() => {
+        destroyChart();
+      });
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$4, [
+          vue.createElementVNode("div", _hoisted_2$4, [
+            _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "支付方式分布", -1)),
+            vue.createElementVNode("div", _hoisted_3$4, [
+              vue.createElementVNode("span", _hoisted_4$4, "共 " + vue.toDisplayString(totalOrders.value) + " 单", 1)
+            ])
+          ]),
+          vue.createElementVNode("div", _hoisted_5$4, [
+            vue.createElementVNode("div", _hoisted_6$3, [
+              vue.createElementVNode("canvas", {
+                ref_key: "chartCanvas",
+                ref: chartCanvas
+              }, null, 512)
+            ]),
+            vue.createElementVNode("div", _hoisted_7$3, [
+              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(displayData.value, (item) => {
+                return vue.openBlock(), vue.createElementBlock("div", {
+                  key: item.method,
+                  class: "legend-item"
+                }, [
+                  vue.createElementVNode("div", {
+                    class: "legend-color",
+                    style: vue.normalizeStyle({ backgroundColor: getItemColor(item.method) })
+                  }, null, 4),
+                  vue.createElementVNode("div", _hoisted_8$2, [
+                    vue.createElementVNode("span", _hoisted_9$2, vue.toDisplayString(item.method), 1),
+                    vue.createElementVNode("span", _hoisted_10$1, vue.toDisplayString(item.count) + " 单 (" + vue.toDisplayString(item.percentage) + "%)", 1)
+                  ])
+                ]);
+              }), 128))
+            ])
+          ])
+        ]);
+      };
+    }
+  });
+  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-c148746f"]]);
+  const _hoisted_1$3 = { class: "chart-container" };
+  const _hoisted_2$3 = { class: "chart-header" };
+  const _hoisted_3$3 = { class: "chart-info" };
+  const _hoisted_4$3 = { class: "data-points" };
+  const _hoisted_5$3 = { class: "chart-wrapper" };
+  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
     __name: "RevenueTrendChart",
     props: {
       dataPoints: {},
@@ -18200,14 +21244,14 @@
         destroyChart();
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
-          vue.createElementVNode("div", _hoisted_2$d, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$3, [
+          vue.createElementVNode("div", _hoisted_2$3, [
             _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "收入走势", -1)),
-            vue.createElementVNode("div", _hoisted_3$c, [
-              vue.createElementVNode("span", _hoisted_4$c, vue.toDisplayString(displayData.value.length) + " 个数据点", 1)
+            vue.createElementVNode("div", _hoisted_3$3, [
+              vue.createElementVNode("span", _hoisted_4$3, vue.toDisplayString(displayData.value.length) + " 个数据点", 1)
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_5$a, [
+          vue.createElementVNode("div", _hoisted_5$3, [
             vue.createElementVNode("canvas", {
               ref_key: "chartCanvas",
               ref: chartCanvas
@@ -18217,210 +21261,41 @@
       };
     }
   });
-  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-f5146599"]]);
-  const _hoisted_1$e = { class: "chart-container" };
-  const _hoisted_2$c = { class: "chart-header" };
-  const _hoisted_3$b = { class: "chart-info" };
-  const _hoisted_4$b = { class: "total-orders" };
-  const _hoisted_5$9 = { class: "chart-content" };
-  const _hoisted_6$7 = { class: "chart-wrapper" };
-  const _hoisted_7$7 = { class: "legend-container" };
-  const _hoisted_8$6 = { class: "legend-text" };
-  const _hoisted_9$6 = { class: "legend-label" };
-  const _hoisted_10$5 = { class: "legend-value" };
-  const _sfc_main$f = /* @__PURE__ */ vue.defineComponent({
-    __name: "PaymentMethodChart",
-    props: {
-      paymentData: {},
-      privacyMode: { type: Boolean, default: false }
-    },
-    setup(__props) {
-      const props = __props;
-      const chartCanvas = vue.ref();
-      let chart = null;
-      const generateFakeData = (originalData) => {
-        if (!props.privacyMode) {
-          return originalData;
-        }
-        const fakeMethods = ["魔法水晶支付", "时空传送支付", "意念转账", "彩虹币支付"];
-        const fakeData = fakeMethods.map((method, index2) => {
-          const count = Math.floor(Math.random() * 4e4) + 1e4;
-          return {
-            method,
-            count,
-            percentage: 0
-            // 稍后计算
-          };
-        });
-        const totalCount = fakeData.reduce((sum, item) => sum + item.count, 0);
-        fakeData.forEach((item) => {
-          item.percentage = Math.round(item.count / totalCount * 100);
-        });
-        return fakeData.sort((a, b) => b.count - a.count);
-      };
-      const displayData = vue.computed(() => {
-        return generateFakeData(props.paymentData);
-      });
-      const totalOrders = vue.computed(() => {
-        return displayData.value.reduce((sum, item) => sum + item.count, 0);
-      });
-      const getItemColor = (method) => {
-        const colors2 = DataAnalyzer.getChartColors(displayData.value.length);
-        const index2 = displayData.value.findIndex((item) => item.method === method);
-        return colors2[index2] || "#6b7280";
-      };
-      const createChartConfig = () => {
-        const labels = displayData.value.map((item) => item.method);
-        const data = displayData.value.map((item) => item.count);
-        const colors2 = displayData.value.map((item) => getItemColor(item.method));
-        return {
-          type: "doughnut",
-          data: {
-            labels,
-            datasets: [
-              {
-                data,
-                backgroundColor: colors2,
-                borderColor: "#ffffff",
-                borderWidth: 2,
-                hoverOffset: 4
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false
-                // 使用自定义图例
-              },
-              tooltip: {
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
-                titleColor: "#ffffff",
-                bodyColor: "#ffffff",
-                borderColor: "#3b82f6",
-                borderWidth: 1,
-                cornerRadius: 8,
-                callbacks: {
-                  label: function(context) {
-                    const label = context.label || "";
-                    const value = context.parsed;
-                    const percentage = (value / totalOrders.value * 100).toFixed(1);
-                    return `${label}: ${value} 单 (${percentage}%)`;
-                  }
-                }
-              }
-            }
-          }
-        };
-      };
-      const initChart = () => {
-        if (!chartCanvas.value) return;
-        const config = createChartConfig();
-        chart = new Chart(chartCanvas.value, config);
-      };
-      const updateChart = () => {
-        if (!chart) return;
-        const config = createChartConfig();
-        chart.data = config.data;
-        if (config.options) {
-          chart.options = config.options;
-        }
-        chart.update();
-      };
-      const destroyChart = () => {
-        if (chart) {
-          chart.destroy();
-          chart = null;
-        }
-      };
-      vue.watch([() => props.paymentData, () => props.privacyMode], () => {
-        if (chart) {
-          updateChart();
-        }
-      }, { deep: true });
-      vue.onMounted(() => {
-        initChart();
-      });
-      vue.onUnmounted(() => {
-        destroyChart();
-      });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
-          vue.createElementVNode("div", _hoisted_2$c, [
-            _cache[0] || (_cache[0] = vue.createElementVNode("h4", null, "支付方式分布", -1)),
-            vue.createElementVNode("div", _hoisted_3$b, [
-              vue.createElementVNode("span", _hoisted_4$b, "共 " + vue.toDisplayString(totalOrders.value) + " 单", 1)
-            ])
-          ]),
-          vue.createElementVNode("div", _hoisted_5$9, [
-            vue.createElementVNode("div", _hoisted_6$7, [
-              vue.createElementVNode("canvas", {
-                ref_key: "chartCanvas",
-                ref: chartCanvas
-              }, null, 512)
-            ]),
-            vue.createElementVNode("div", _hoisted_7$7, [
-              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(displayData.value, (item) => {
-                return vue.openBlock(), vue.createElementBlock("div", {
-                  key: item.method,
-                  class: "legend-item"
-                }, [
-                  vue.createElementVNode("div", {
-                    class: "legend-color",
-                    style: vue.normalizeStyle({ backgroundColor: getItemColor(item.method) })
-                  }, null, 4),
-                  vue.createElementVNode("div", _hoisted_8$6, [
-                    vue.createElementVNode("span", _hoisted_9$6, vue.toDisplayString(item.method), 1),
-                    vue.createElementVNode("span", _hoisted_10$5, vue.toDisplayString(item.count) + " 单 (" + vue.toDisplayString(item.percentage) + "%)", 1)
-                  ])
-                ]);
-              }), 128))
-            ])
-          ])
-        ]);
-      };
-    }
-  });
-  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-0b40678e"]]);
-  const _hoisted_1$d = { class: "statistics-panel" };
-  const _hoisted_2$b = { class: "stats-section" };
-  const _hoisted_3$a = { class: "stats-grid" };
-  const _hoisted_4$a = { class: "stat-card orders-card" };
-  const _hoisted_5$8 = { class: "stat-content" };
-  const _hoisted_6$6 = { class: "stat-value" };
-  const _hoisted_7$6 = { class: "stat-card revenue-card" };
-  const _hoisted_8$5 = { class: "stat-content" };
-  const _hoisted_9$5 = { class: "stat-value" };
-  const _hoisted_10$4 = {
+  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-f5146599"]]);
+  const _hoisted_1$2 = { class: "statistics-panel" };
+  const _hoisted_2$2 = { class: "stats-section" };
+  const _hoisted_3$2 = { class: "stats-grid" };
+  const _hoisted_4$2 = { class: "stat-card orders-card" };
+  const _hoisted_5$2 = { class: "stat-content" };
+  const _hoisted_6$2 = { class: "stat-value" };
+  const _hoisted_7$2 = { class: "stat-card revenue-card" };
+  const _hoisted_8$1 = { class: "stat-content" };
+  const _hoisted_9$1 = { class: "stat-value" };
+  const _hoisted_10 = {
     key: 0,
     class: "stat-converted"
   };
-  const _hoisted_11$4 = { class: "stat-card net-revenue-card" };
-  const _hoisted_12$4 = { class: "stat-content" };
-  const _hoisted_13$4 = { class: "stat-value" };
-  const _hoisted_14$4 = {
+  const _hoisted_11 = { class: "stat-card net-revenue-card" };
+  const _hoisted_12 = { class: "stat-content" };
+  const _hoisted_13 = { class: "stat-value" };
+  const _hoisted_14 = {
     key: 0,
     class: "stat-converted"
   };
-  const _hoisted_15$4 = { class: "filter-section" };
-  const _hoisted_16$4 = { class: "filter-header" };
-  const _hoisted_17$3 = { class: "current-period" };
-  const _hoisted_18$1 = { class: "filter-controls" };
-  const _hoisted_19$1 = { class: "period-buttons" };
-  const _hoisted_20$1 = ["onClick"];
-  const _hoisted_21$1 = { class: "date-picker-content" };
-  const _hoisted_22$1 = { class: "date-input-group" };
-  const _hoisted_23$1 = { class: "date-input-group" };
-  const _hoisted_24$1 = { class: "date-picker-actions" };
-  const _hoisted_25$1 = ["disabled"];
-  const _hoisted_26$1 = {
+  const _hoisted_15 = { class: "filter-section" };
+  const _hoisted_16 = { class: "filter-header" };
+  const _hoisted_17 = { class: "current-period" };
+  const _hoisted_18 = { class: "filter-controls" };
+  const _hoisted_19 = { class: "date-picker-content" };
+  const _hoisted_20 = { class: "date-input-group" };
+  const _hoisted_21 = { class: "date-input-group" };
+  const _hoisted_22 = ["disabled"];
+  const _hoisted_23 = {
     key: 0,
     class: "charts-section"
   };
-  const _hoisted_27$1 = { class: "charts-grid" };
-  const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_24 = { class: "charts-grid" };
+  const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       statistics: {},
@@ -18440,6 +21315,16 @@
       const customStartDate = vue.ref("");
       const customEndDate = vue.ref("");
       const availablePeriods = DataAnalyzer.getAvailablePeriods();
+      const periodOptions = availablePeriods.map((period) => ({
+        value: period.value,
+        label: period.label
+      }));
+      const handlePeriodChange = (value) => {
+        if (typeof value === "string" || typeof value === "number") {
+          const period = value;
+          selectedPeriod.value = period;
+        }
+      };
       vue.watch(selectedPeriod, (newValue) => {
         emit("update:modelValue", newValue);
         if (newValue === "custom") {
@@ -18450,9 +21335,6 @@
           showDatePicker.value = false;
         }
       });
-      const selectPeriod = (period) => {
-        selectedPeriod.value = period;
-      };
       const closeDatePicker = () => {
         showDatePicker.value = false;
         if (!customStartDate.value || !customEndDate.value) {
@@ -18509,13 +21391,13 @@
         return DataAnalyzer.generateProductSalesRanking(props.orders);
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
-          vue.createElementVNode("div", _hoisted_2$b, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$2, [
+          vue.createElementVNode("div", _hoisted_2$2, [
             _cache[6] || (_cache[6] = vue.createElementVNode("h3", null, "统计信息", -1)),
-            vue.createElementVNode("div", _hoisted_3$a, [
-              vue.createElementVNode("div", _hoisted_4$a, [
-                vue.createElementVNode("div", _hoisted_5$8, [
-                  vue.createElementVNode("div", _hoisted_6$6, [
+            vue.createElementVNode("div", _hoisted_3$2, [
+              vue.createElementVNode("div", _hoisted_4$2, [
+                vue.createElementVNode("div", _hoisted_5$2, [
+                  vue.createElementVNode("div", _hoisted_6$2, [
                     vue.createVNode(MaskedText, {
                       value: _ctx.statistics.totalOrders,
                       masked: _ctx.userSettings?.privacyMode || false
@@ -18524,67 +21406,66 @@
                 ]),
                 _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "stat-label" }, "总订单数", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_7$6, [
-                vue.createElementVNode("div", _hoisted_8$5, [
-                  vue.createElementVNode("div", _hoisted_9$5, [
+              vue.createElementVNode("div", _hoisted_7$2, [
+                vue.createElementVNode("div", _hoisted_8$1, [
+                  vue.createElementVNode("div", _hoisted_9$1, [
                     vue.createVNode(MaskedText, {
                       value: formatJPY(_ctx.statistics.totalRevenue),
                       masked: _ctx.userSettings?.privacyMode || false
                     }, null, 8, ["value", "masked"])
                   ]),
-                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10$4, vue.toDisplayString(formatConverted(_ctx.statistics.totalRevenue)), 1)) : vue.createCommentVNode("", true)
+                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10, vue.toDisplayString(formatConverted(_ctx.statistics.totalRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
                 _cache[4] || (_cache[4] = vue.createElementVNode("div", { class: "stat-label" }, "总收入", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_11$4, [
-                vue.createElementVNode("div", _hoisted_12$4, [
-                  vue.createElementVNode("div", _hoisted_13$4, [
+              vue.createElementVNode("div", _hoisted_11, [
+                vue.createElementVNode("div", _hoisted_12, [
+                  vue.createElementVNode("div", _hoisted_13, [
                     vue.createVNode(MaskedText, {
                       value: formatJPY(_ctx.statistics.totalNetRevenue),
                       masked: _ctx.userSettings?.privacyMode || false
                     }, null, 8, ["value", "masked"])
                   ]),
-                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalNetRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$4, vue.toDisplayString(formatConverted(_ctx.statistics.totalNetRevenue)), 1)) : vue.createCommentVNode("", true)
+                  !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalNetRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14, vue.toDisplayString(formatConverted(_ctx.statistics.totalNetRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
                 _cache[5] || (_cache[5] = vue.createElementVNode("div", { class: "stat-label" }, "到手收入", -1))
               ])
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_15$4, [
-            vue.createElementVNode("div", _hoisted_16$4, [
+          vue.createElementVNode("div", _hoisted_15, [
+            vue.createElementVNode("div", _hoisted_16, [
               _cache[7] || (_cache[7] = vue.createElementVNode("h4", null, "时间筛选", -1)),
-              vue.createElementVNode("span", _hoisted_17$3, vue.toDisplayString(getCurrentDisplayName()), 1)
+              vue.createElementVNode("span", _hoisted_17, vue.toDisplayString(getCurrentDisplayName()), 1)
             ]),
-            vue.createElementVNode("div", _hoisted_18$1, [
-              vue.createElementVNode("div", _hoisted_19$1, [
-                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(availablePeriods), (period) => {
-                  return vue.openBlock(), vue.createElementBlock("button", {
-                    key: period.value,
-                    class: vue.normalizeClass(["period-btn", { active: selectedPeriod.value === period.value }]),
-                    onClick: ($event) => selectPeriod(period.value)
-                  }, vue.toDisplayString(period.label), 11, _hoisted_20$1);
-                }), 128))
-              ]),
-              showDatePicker.value ? (vue.openBlock(), vue.createElementBlock("div", {
-                key: 0,
-                class: "date-picker-overlay",
-                onClick: closeDatePicker
-              }, [
-                vue.createElementVNode("div", {
-                  class: "date-picker-modal",
-                  onClick: _cache[2] || (_cache[2] = vue.withModifiers(() => {
-                  }, ["stop"]))
-                }, [
-                  vue.createElementVNode("div", { class: "date-picker-header" }, [
-                    _cache[8] || (_cache[8] = vue.createElementVNode("h5", null, "选择日期范围", -1)),
-                    vue.createElementVNode("button", {
-                      class: "close-btn",
-                      onClick: closeDatePicker
-                    }, "×")
-                  ]),
-                  vue.createElementVNode("div", _hoisted_21$1, [
-                    vue.createElementVNode("div", _hoisted_22$1, [
-                      _cache[9] || (_cache[9] = vue.createElementVNode("label", null, "开始日期：", -1)),
+            vue.createElementVNode("div", _hoisted_18, [
+              vue.createVNode(Selector, {
+                options: vue.unref(periodOptions),
+                "model-value": selectedPeriod.value,
+                "onUpdate:modelValue": handlePeriodChange,
+                class: "period-selector"
+              }, null, 8, ["options", "model-value"]),
+              vue.createVNode(Modal, {
+                visible: showDatePicker.value,
+                title: "选择日期范围",
+                size: "small",
+                onClose: closeDatePicker,
+                "onUpdate:visible": _cache[2] || (_cache[2] = ($event) => showDatePicker.value = $event)
+              }, {
+                footer: vue.withCtx(() => [
+                  vue.createElementVNode("button", {
+                    onClick: closeDatePicker,
+                    class: "booth-btn booth-btn-secondary booth-btn-md"
+                  }, "取消"),
+                  vue.createElementVNode("button", {
+                    onClick: applyCustomRange,
+                    class: "booth-btn booth-btn-success booth-btn-md",
+                    disabled: !customStartDate.value || !customEndDate.value
+                  }, " 应用 ", 8, _hoisted_22)
+                ]),
+                default: vue.withCtx(() => [
+                  vue.createElementVNode("div", _hoisted_19, [
+                    vue.createElementVNode("div", _hoisted_20, [
+                      _cache[8] || (_cache[8] = vue.createElementVNode("label", null, "开始日期：", -1)),
                       vue.withDirectives(vue.createElementVNode("input", {
                         "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => customStartDate.value = $event),
                         type: "date",
@@ -18593,8 +21474,8 @@
                         [vue.vModelText, customStartDate.value]
                       ])
                     ]),
-                    vue.createElementVNode("div", _hoisted_23$1, [
-                      _cache[10] || (_cache[10] = vue.createElementVNode("label", null, "结束日期：", -1)),
+                    vue.createElementVNode("div", _hoisted_21, [
+                      _cache[9] || (_cache[9] = vue.createElementVNode("label", null, "结束日期：", -1)),
                       vue.withDirectives(vue.createElementVNode("input", {
                         "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => customEndDate.value = $event),
                         type: "date",
@@ -18602,25 +21483,15 @@
                       }, null, 512), [
                         [vue.vModelText, customEndDate.value]
                       ])
-                    ]),
-                    vue.createElementVNode("div", _hoisted_24$1, [
-                      vue.createElementVNode("button", {
-                        onClick: closeDatePicker,
-                        class: "cancel-btn"
-                      }, "取消"),
-                      vue.createElementVNode("button", {
-                        onClick: applyCustomRange,
-                        class: "apply-btn",
-                        disabled: !customStartDate.value || !customEndDate.value
-                      }, " 应用 ", 8, _hoisted_25$1)
                     ])
                   ])
-                ])
-              ])) : vue.createCommentVNode("", true)
+                ]),
+                _: 1
+              }, 8, ["visible"])
             ])
           ]),
-          revenueTrendData.value.length > 0 || paymentMethodData.value.length > 0 || productRankingData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_26$1, [
-            vue.createElementVNode("div", _hoisted_27$1, [
+          revenueTrendData.value.length > 0 || paymentMethodData.value.length > 0 || productRankingData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_23, [
+            vue.createElementVNode("div", _hoisted_24, [
               revenueTrendData.value.length > 0 ? (vue.openBlock(), vue.createBlock(RevenueTrendChart, {
                 key: 0,
                 "data-points": revenueTrendData.value,
@@ -18645,2774 +21516,7 @@
       };
     }
   });
-  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-28e58dda"]]);
-  const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
-    try {
-      const jstDate = parseISO(jstDateTime + "+09:00");
-      if (!isValid(jstDate)) {
-        logger.error("无效的JST时间格式:", jstDateTime);
-        return jstDateTime;
-      }
-      const result = formatInTimeZone(jstDate, targetTimezone, "yyyy-MM-dd HH:mm:ss");
-      logger.timezone(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
-      return result;
-    } catch (error) {
-      logger.error("时区转换失败:", error);
-      return jstDateTime;
-    }
-  };
-  const formatOriginalDateTime = (dateString) => {
-    if (!dateString) return "";
-    const parts = dateString.split(" ");
-    if (parts.length !== 2) return dateString;
-    const [datePart, timePart] = parts;
-    const [year, month, day] = datePart.split("-");
-    const [hour, minute] = timePart.split(":");
-    return `${month}/${day} ${hour}:${minute}`;
-  };
-  const formatConvertedDateTime = (dateString, userSettings) => {
-    if (!dateString || !userSettings) return "";
-    if (userSettings.timezone === "Asia/Tokyo") return "";
-    try {
-      const convertedTime = convertJSTToTargetTimezone(dateString, userSettings.timezone);
-      const [datePart, timePart] = convertedTime.split(" ");
-      const [year, month, day] = datePart.split("-");
-      const [hour, minute] = timePart.split(":");
-      return `${month}/${day} ${hour}:${minute} (${userSettings.displayName})`;
-    } catch (error) {
-      return "";
-    }
-  };
-  const _hoisted_1$c = { class: "table-header" };
-  const _hoisted_2$a = { class: "table-info" };
-  const _hoisted_3$9 = { class: "item-count" };
-  const _hoisted_4$9 = {
-    key: 0,
-    class: "page-info"
-  };
-  const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
-    __name: "TableHeader",
-    props: {
-      title: {},
-      info: {},
-      privacyMode: { type: Boolean }
-    },
-    setup(__props) {
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$c, [
-          vue.createElementVNode("h3", null, vue.toDisplayString(_ctx.title), 1),
-          vue.createElementVNode("div", _hoisted_2$a, [
-            vue.createElementVNode("span", _hoisted_3$9, [
-              vue.createVNode(MaskedText, {
-                value: _ctx.info.totalItems,
-                masked: _ctx.privacyMode
-              }, null, 8, ["value", "masked"]),
-              vue.createTextVNode(" " + vue.toDisplayString(_ctx.info.itemLabel), 1)
-            ]),
-            _ctx.info.totalItems > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$9, [
-              _cache[0] || (_cache[0] = vue.createTextVNode(" 第 ", -1)),
-              vue.createVNode(MaskedText, {
-                value: _ctx.info.currentPage,
-                masked: _ctx.privacyMode
-              }, null, 8, ["value", "masked"]),
-              _cache[1] || (_cache[1] = vue.createTextVNode(" 页，共 ", -1)),
-              vue.createVNode(MaskedText, {
-                value: _ctx.info.totalPages,
-                masked: _ctx.privacyMode
-              }, null, 8, ["value", "masked"]),
-              _cache[2] || (_cache[2] = vue.createTextVNode(" 页 ", -1))
-            ])) : vue.createCommentVNode("", true)
-          ])
-        ]);
-      };
-    }
-  });
-  const TableHeader = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-1a8b5b31"]]);
-  const _hoisted_1$b = { class: "table-header-row" };
-  const _sfc_main$c = /* @__PURE__ */ vue.defineComponent({
-    __name: "TableHeaderRow",
-    props: {
-      columns: {}
-    },
-    setup(__props) {
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$b, [
-          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
-            return vue.openBlock(), vue.createElementBlock("div", {
-              key: column.key,
-              class: "table-header-cell",
-              style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
-            }, vue.toDisplayString(column.label), 5);
-          }), 128))
-        ]);
-      };
-    }
-  });
-  const TableHeaderRow = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-e13dda4b"]]);
-  const _hoisted_1$a = { key: 0 };
-  const _hoisted_2$9 = { key: 1 };
-  const _sfc_main$b = /* @__PURE__ */ vue.defineComponent({
-    __name: "TableCell",
-    props: {
-      item: {},
-      column: {},
-      privacyMode: { type: Boolean }
-    },
-    setup(__props) {
-      const props = __props;
-      const getCellValue = () => {
-        const value = props.item[props.column.key];
-        if (props.privacyMode) {
-          return typeof value === "string" ? "****" : "****";
-        }
-        return value;
-      };
-      return (_ctx, _cache) => {
-        return _ctx.column.render ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$a, [
-          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.column.render), {
-            item: _ctx.item,
-            column: _ctx.column,
-            "privacy-mode": _ctx.privacyMode
-          }, null, 8, ["item", "column", "privacy-mode"]))
-        ])) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_2$9, vue.toDisplayString(getCellValue()), 1));
-      };
-    }
-  });
-  const _hoisted_1$9 = { class: "table-content" };
-  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
-    __name: "TableBody",
-    props: {
-      data: {},
-      columns: {},
-      privacyMode: { type: Boolean },
-      getItemKey: { type: Function }
-    },
-    setup(__props) {
-      const getCellClass = (columnKey) => {
-        return `cell-${columnKey}`;
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
-          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.data, (item, index2) => {
-            return vue.openBlock(), vue.createElementBlock("div", {
-              key: _ctx.getItemKey(item, index2),
-              class: "table-row"
-            }, [
-              (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
-                return vue.openBlock(), vue.createElementBlock("div", {
-                  key: column.key,
-                  class: vue.normalizeClass(["table-cell", getCellClass(column.key)]),
-                  style: vue.normalizeStyle({ width: column.width, textAlign: column.align || "left" })
-                }, [
-                  vue.renderSlot(_ctx.$slots, "cell", {
-                    item,
-                    column,
-                    index: index2
-                  }, () => [
-                    vue.createVNode(_sfc_main$b, {
-                      item,
-                      column,
-                      "privacy-mode": _ctx.privacyMode
-                    }, null, 8, ["item", "column", "privacy-mode"])
-                  ], true)
-                ], 6);
-              }), 128))
-            ]);
-          }), 128))
-        ]);
-      };
-    }
-  });
-  const TableBody = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-040b6ec5"]]);
-  const _hoisted_1$8 = { class: "empty-state" };
-  const _hoisted_2$8 = { class: "empty-icon" };
-  const _hoisted_3$8 = { class: "empty-text" };
-  const _hoisted_4$8 = { class: "empty-hint" };
-  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
-    __name: "TableEmptyState",
-    props: {
-      config: {}
-    },
-    setup(__props) {
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$8, [
-          vue.createElementVNode("div", _hoisted_2$8, vue.toDisplayString(_ctx.config.icon), 1),
-          vue.createElementVNode("div", _hoisted_3$8, vue.toDisplayString(_ctx.config.text), 1),
-          vue.createElementVNode("div", _hoisted_4$8, vue.toDisplayString(_ctx.config.hint), 1)
-        ]);
-      };
-    }
-  });
-  const TableEmptyState = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-46fead2e"]]);
-  const _hoisted_1$7 = { class: "pagination" };
-  const _hoisted_2$7 = ["disabled"];
-  const _hoisted_3$7 = { class: "page-numbers" };
-  const _hoisted_4$7 = ["onClick"];
-  const _hoisted_5$7 = ["disabled"];
-  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
-    __name: "TablePagination",
-    props: {
-      currentPage: {},
-      totalPages: {},
-      goToPage: {},
-      goToPrevPage: {},
-      goToNextPage: {},
-      privacyMode: { type: Boolean, default: false }
-    },
-    setup(__props) {
-      const props = __props;
-      const getVisiblePages = () => {
-        const pages = [];
-        const total = props.totalPages;
-        const current = props.currentPage;
-        if (total <= 7) {
-          for (let i = 1; i <= total; i++) {
-            pages.push(i);
-          }
-        } else {
-          const start = Math.max(1, current - 2);
-          const end = Math.min(total, current + 2);
-          if (start > 1) {
-            pages.push(1);
-            if (start > 2) {
-              pages.push(-1);
-            }
-          }
-          for (let i = start; i <= end; i++) {
-            pages.push(i);
-          }
-          if (end < total) {
-            if (end < total - 1) {
-              pages.push(-1);
-            }
-            pages.push(total);
-          }
-        }
-        return pages;
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$7, [
-          vue.createElementVNode("button", {
-            onClick: _cache[0] || (_cache[0] = //@ts-ignore
-            (...args) => _ctx.goToPrevPage && _ctx.goToPrevPage(...args)),
-            disabled: _ctx.currentPage === 1,
-            class: "page-btn"
-          }, " 上一页 ", 8, _hoisted_2$7),
-          vue.createElementVNode("div", _hoisted_3$7, [
-            (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getVisiblePages(), (page) => {
-              return vue.openBlock(), vue.createElementBlock("button", {
-                key: page,
-                class: vue.normalizeClass(["page-btn", { active: _ctx.currentPage === page, ellipsis: page === -1 }]),
-                onClick: ($event) => page === -1 ? null : _ctx.goToPage(page)
-              }, vue.toDisplayString(page === -1 ? "..." : _ctx.privacyMode ? "***" : page), 11, _hoisted_4$7);
-            }), 128))
-          ]),
-          vue.createElementVNode("button", {
-            onClick: _cache[1] || (_cache[1] = //@ts-ignore
-            (...args) => _ctx.goToNextPage && _ctx.goToNextPage(...args)),
-            disabled: _ctx.currentPage === _ctx.totalPages,
-            class: "page-btn"
-          }, " 下一页 ", 8, _hoisted_5$7)
-        ]);
-      };
-    }
-  });
-  const TablePagination = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-dc3732c3"]]);
-  function useTableData(data, pageSize) {
-    const currentPage = vue.ref(1);
-    const totalItems = vue.computed(() => data.value.length);
-    const totalPages = vue.computed(() => Math.ceil(totalItems.value / pageSize.value));
-    const paginatedData = vue.computed(() => {
-      const start = (currentPage.value - 1) * pageSize.value;
-      const end = start + pageSize.value;
-      return data.value.slice(start, end);
-    });
-    vue.watch(data, () => {
-      currentPage.value = 1;
-    }, { deep: true });
-    const goToPage = (page) => {
-      if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
-      }
-    };
-    const goToPrevPage = () => {
-      if (currentPage.value > 1) {
-        currentPage.value--;
-      }
-    };
-    const goToNextPage = () => {
-      if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-      }
-    };
-    return {
-      currentPage,
-      totalPages,
-      paginatedData,
-      goToPage,
-      goToPrevPage,
-      goToNextPage
-    };
-  }
-  function useTablePrivacy(privacyMode) {
-    const maskValue = (value) => {
-      if (privacyMode.value) {
-        return typeof value === "string" ? "****" : "****";
-      }
-      return value;
-    };
-    const maskText = (text) => {
-      if (privacyMode.value) {
-        return "****";
-      }
-      return text;
-    };
-    const maskNumber = (number) => {
-      if (privacyMode.value) {
-        return "****";
-      }
-      return number;
-    };
-    return {
-      maskValue,
-      maskText,
-      maskNumber
-    };
-  }
-  function useTableConfig(data, display, config, currentPage, totalPages, goToPage, goToPrevPage, goToNextPage) {
-    const tableClasses = vue.computed(() => {
-      const classes = ["data-table"];
-      if (config.value?.scrollable) {
-        classes.push("table-scrollable");
-      }
-      return classes;
-    });
-    const tableInfo = vue.computed(() => ({
-      totalItems: data.value.length,
-      currentPage: currentPage.value,
-      totalPages: totalPages.value,
-      itemLabel: display.value?.itemLabel || "条记录"
-    }));
-    const emptyConfig = vue.computed(() => ({
-      icon: display.value?.emptyIcon || "📋",
-      text: display.value?.emptyText || "暂无数据",
-      hint: display.value?.emptyHint || "请先加载数据或调整筛选条件"
-    }));
-    const paginationInfo = vue.computed(() => ({
-      currentPage: currentPage.value,
-      totalPages: totalPages.value,
-      goToPage,
-      goToPrevPage,
-      goToNextPage
-    }));
-    return {
-      tableClasses,
-      tableInfo,
-      emptyConfig,
-      paginationInfo
-    };
-  }
-  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      data: {},
-      columns: {},
-      config: { default: () => ({
-        pageSize: 50,
-        privacyMode: false,
-        scrollable: false,
-        showPagination: true,
-        getItemKey: (item, index2) => item.id || item.orderNumber || item.itemId || index2
-      }) },
-      display: { default: () => ({
-        title: "数据表格",
-        itemLabel: "条记录",
-        emptyIcon: "📋",
-        emptyText: "暂无数据",
-        emptyHint: "请先加载数据或调整筛选条件"
-      }) }
-    },
-    setup(__props) {
-      const props = __props;
-      const {
-        currentPage,
-        totalPages,
-        paginatedData,
-        goToPage,
-        goToPrevPage,
-        goToNextPage
-      } = useTableData(
-        vue.computed(() => props.data),
-        vue.computed(() => props.config?.pageSize || 50)
-      );
-      useTablePrivacy(vue.computed(() => props.config?.privacyMode || false));
-      const { tableClasses, tableInfo, emptyConfig, paginationInfo } = useTableConfig(
-        vue.computed(() => props.data),
-        vue.computed(() => props.display),
-        vue.computed(() => props.config),
-        currentPage,
-        totalPages,
-        goToPage,
-        goToPrevPage,
-        goToNextPage
-      );
-      const privacyMode = vue.computed(() => props.config?.privacyMode || false);
-      const scrollable = vue.computed(() => props.config?.scrollable || false);
-      const showPagination = vue.computed(() => props.config?.showPagination !== false);
-      const getItemKey = vue.computed(() => props.config?.getItemKey || ((item, index2) => item.id || item.orderNumber || item.itemId || index2));
-      vue.watch(() => props.data, () => {
-        currentPage.value = 1;
-      }, { deep: true });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", {
-          class: vue.normalizeClass(["data-table", vue.unref(tableClasses)])
-        }, [
-          vue.renderSlot(_ctx.$slots, "header", {
-            title: _ctx.display?.title,
-            info: vue.unref(tableInfo)
-          }, () => [
-            vue.createVNode(TableHeader, {
-              title: _ctx.display?.title,
-              info: vue.unref(tableInfo),
-              "privacy-mode": privacyMode.value
-            }, null, 8, ["title", "info", "privacy-mode"])
-          ], true),
-          vue.createElementVNode("div", {
-            class: vue.normalizeClass(["table-container", { "table-scrollable": scrollable.value }])
-          }, [
-            vue.renderSlot(_ctx.$slots, "table-header", { columns: _ctx.columns }, () => [
-              vue.createVNode(TableHeaderRow, { columns: _ctx.columns }, null, 8, ["columns"])
-            ], true),
-            vue.renderSlot(_ctx.$slots, "table-body", {
-              data: vue.unref(paginatedData),
-              columns: _ctx.columns
-            }, () => [
-              vue.unref(paginatedData).length > 0 ? (vue.openBlock(), vue.createBlock(TableBody, {
-                key: 0,
-                data: vue.unref(paginatedData),
-                columns: _ctx.columns,
-                "privacy-mode": privacyMode.value,
-                "get-item-key": getItemKey.value
-              }, {
-                cell: vue.withCtx(({ item, column, index: index2 }) => [
-                  vue.renderSlot(_ctx.$slots, "cell", {
-                    item,
-                    column,
-                    index: index2
-                  }, () => [
-                    vue.createVNode(_sfc_main$b, {
-                      item,
-                      column,
-                      "privacy-mode": privacyMode.value
-                    }, null, 8, ["item", "column", "privacy-mode"])
-                  ], true)
-                ]),
-                _: 3
-              }, 8, ["data", "columns", "privacy-mode", "get-item-key"])) : (vue.openBlock(), vue.createBlock(TableEmptyState, {
-                key: 1,
-                config: vue.unref(emptyConfig)
-              }, null, 8, ["config"]))
-            ], true)
-          ], 2),
-          vue.renderSlot(_ctx.$slots, "pagination", { pagination: vue.unref(paginationInfo) }, () => [
-            showPagination.value ? (vue.openBlock(), vue.createBlock(TablePagination, {
-              key: 0,
-              "current-page": vue.unref(currentPage),
-              "total-pages": vue.unref(totalPages),
-              "go-to-page": vue.unref(goToPage),
-              "go-to-prev-page": vue.unref(goToPrevPage),
-              "go-to-next-page": vue.unref(goToNextPage),
-              "privacy-mode": privacyMode.value
-            }, null, 8, ["current-page", "total-pages", "go-to-page", "go-to-prev-page", "go-to-next-page", "privacy-mode"])) : vue.createCommentVNode("", true)
-          ], true)
-        ], 2);
-      };
-    }
-  });
-  const DataTable = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-88dfaae1"]]);
-  const _hoisted_1$6 = { class: "item-name" };
-  const _hoisted_2$6 = { class: "tooltip-header" };
-  const _hoisted_3$6 = ["src", "alt"];
-  const _hoisted_4$6 = {
-    key: 1,
-    class: "tooltip-icon-placeholder"
-  };
-  const _hoisted_5$6 = { class: "tooltip-title" };
-  const _hoisted_6$5 = { class: "tooltip-content" };
-  const _hoisted_7$5 = { class: "tooltip-row" };
-  const _hoisted_8$4 = { class: "tooltip-value" };
-  const _hoisted_9$4 = { class: "tooltip-row" };
-  const _hoisted_10$3 = { class: "tooltip-value" };
-  const _hoisted_11$3 = { class: "tooltip-row" };
-  const _hoisted_12$3 = { class: "tooltip-value" };
-  const _hoisted_13$3 = { class: "tooltip-row" };
-  const _hoisted_14$3 = { class: "tooltip-value sales-highlight" };
-  const _hoisted_15$3 = { class: "tooltip-row" };
-  const _hoisted_16$3 = ["href"];
-  const _hoisted_17$2 = {
-    key: 1,
-    class: "tooltip-value"
-  };
-  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
-    __name: "ItemEntry",
-    props: {
-      item: {},
-      size: { default: "20px" },
-      allOrders: {},
-      privacyMode: { type: Boolean, default: false }
-    },
-    setup(__props) {
-      const props = __props;
-      const showTooltip = vue.ref(false);
-      const tooltipPosition = vue.ref({ x: 0, y: 0 });
-      const itemDetails = vue.computed(() => {
-        const itemManager2 = ItemManager.getInstance();
-        const itemData = itemManager2.getItem(props.item.itemId);
-        let totalSales = 0;
-        if (props.allOrders) {
-          props.allOrders.forEach((order) => {
-            if (order.items && Array.isArray(order.items)) {
-              order.items.forEach((item) => {
-                if (item.itemId === props.item.itemId) {
-                  totalSales += item.quantity;
-                }
-              });
-            }
-          });
-        }
-        return {
-          name: itemData?.name || props.item.name,
-          state: itemData?.state || "",
-          stateLabel: itemData?.state_label || "",
-          url: itemData?.url || "",
-          iconUrl: itemData?.iconUrl || "",
-          totalSales
-        };
-      });
-      const handleMouseEnter = (event) => {
-        showTooltip.value = true;
-        tooltipPosition.value = {
-          x: event.clientX + 10,
-          y: event.clientY - 10
-        };
-      };
-      const handleMouseLeave = () => {
-        showTooltip.value = false;
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", {
-          class: "item-entry",
-          onMouseenter: handleMouseEnter,
-          onMouseleave: handleMouseLeave
-        }, [
-          vue.createVNode(ItemIcon, {
-            itemId: _ctx.item.itemId,
-            size: _ctx.size,
-            "privacy-mode": props.privacyMode
-          }, null, 8, ["itemId", "size", "privacy-mode"]),
-          vue.createElementVNode("span", _hoisted_1$6, [
-            vue.createVNode(MaskedText, {
-              value: _ctx.item.name,
-              masked: props.privacyMode,
-              "mask-char": "商品"
-            }, null, 8, ["value", "masked"]),
-            _cache[0] || (_cache[0] = vue.createTextVNode(" × ", -1)),
-            vue.createVNode(MaskedText, {
-              value: _ctx.item.quantity,
-              masked: props.privacyMode
-            }, null, 8, ["value", "masked"])
-          ]),
-          showTooltip.value ? (vue.openBlock(), vue.createElementBlock("div", {
-            key: 0,
-            class: "tooltip",
-            style: vue.normalizeStyle({
-              left: tooltipPosition.value.x + "px",
-              top: tooltipPosition.value.y + "px"
-            })
-          }, [
-            vue.createElementVNode("div", _hoisted_2$6, [
-              !props.privacyMode && itemDetails.value.iconUrl ? (vue.openBlock(), vue.createElementBlock("img", {
-                key: 0,
-                src: itemDetails.value.iconUrl,
-                alt: itemDetails.value.name,
-                class: "tooltip-icon"
-              }, null, 8, _hoisted_3$6)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$6, _cache[1] || (_cache[1] = [
-                vue.createElementVNode("svg", {
-                  width: "32",
-                  height: "32",
-                  viewBox: "0 0 32 32",
-                  fill: "none"
-                }, [
-                  vue.createElementVNode("rect", {
-                    width: "32",
-                    height: "32",
-                    rx: "4",
-                    fill: "#f3f4f6"
-                  }),
-                  vue.createElementVNode("path", {
-                    d: "M16 8c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z",
-                    fill: "#9ca3af"
-                  })
-                ], -1)
-              ]))) : vue.createCommentVNode("", true),
-              vue.createElementVNode("div", _hoisted_5$6, [
-                vue.createVNode(MaskedText, {
-                  value: itemDetails.value.name,
-                  masked: props.privacyMode,
-                  "mask-char": "商品"
-                }, null, 8, ["value", "masked"])
-              ])
-            ]),
-            vue.createElementVNode("div", _hoisted_6$5, [
-              vue.createElementVNode("div", _hoisted_7$5, [
-                _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "tooltip-label" }, "商品ID:", -1)),
-                vue.createElementVNode("span", _hoisted_8$4, [
-                  vue.createVNode(MaskedText, {
-                    value: _ctx.item.itemId,
-                    masked: props.privacyMode
-                  }, null, 8, ["value", "masked"])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_9$4, [
-                _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "tooltip-label" }, "状态:", -1)),
-                vue.createElementVNode("span", _hoisted_10$3, [
-                  vue.createVNode(MaskedText, {
-                    value: itemDetails.value.stateLabel,
-                    masked: props.privacyMode
-                  }, null, 8, ["value", "masked"])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_11$3, [
-                _cache[4] || (_cache[4] = vue.createElementVNode("span", { class: "tooltip-label" }, "订单数量:", -1)),
-                vue.createElementVNode("span", _hoisted_12$3, [
-                  vue.createVNode(MaskedText, {
-                    value: _ctx.item.quantity,
-                    masked: props.privacyMode
-                  }, null, 8, ["value", "masked"])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_13$3, [
-                _cache[5] || (_cache[5] = vue.createElementVNode("span", { class: "tooltip-label" }, "总销量:", -1)),
-                vue.createElementVNode("span", _hoisted_14$3, [
-                  vue.createVNode(MaskedText, {
-                    value: itemDetails.value.totalSales,
-                    masked: props.privacyMode
-                  }, null, 8, ["value", "masked"])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_15$3, [
-                _cache[6] || (_cache[6] = vue.createElementVNode("span", { class: "tooltip-label" }, "链接:", -1)),
-                !props.privacyMode && itemDetails.value.url ? (vue.openBlock(), vue.createElementBlock("a", {
-                  key: 0,
-                  href: itemDetails.value.url,
-                  target: "_blank",
-                  class: "tooltip-link"
-                }, " 查看商品 ", 8, _hoisted_16$3)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_17$2, "****")) : vue.createCommentVNode("", true)
-              ])
-            ])
-          ], 4)) : vue.createCommentVNode("", true)
-        ], 32);
-      };
-    }
-  });
-  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-164f6045"]]);
-  const _hoisted_1$5 = {
-    key: 0,
-    class: "order-number"
-  };
-  const _hoisted_2$5 = {
-    key: 1,
-    class: "date-cell"
-  };
-  const _hoisted_3$5 = { class: "date-main" };
-  const _hoisted_4$5 = {
-    key: 0,
-    class: "date-converted"
-  };
-  const _hoisted_5$5 = {
-    key: 2,
-    class: "items"
-  };
-  const _hoisted_6$4 = {
-    key: 0,
-    class: "item-list"
-  };
-  const _hoisted_7$4 = {
-    key: 1,
-    class: "no-items"
-  };
-  const _hoisted_8$3 = {
-    key: 3,
-    class: "payment-method"
-  };
-  const _hoisted_9$3 = {
-    key: 4,
-    class: "price-cell"
-  };
-  const _hoisted_10$2 = { class: "price-main" };
-  const _hoisted_11$2 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _hoisted_12$2 = {
-    key: 5,
-    class: "booth-fee-cell"
-  };
-  const _hoisted_13$2 = { class: "price-main" };
-  const _hoisted_14$2 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _hoisted_15$2 = {
-    key: 6,
-    class: "net-amount-cell"
-  };
-  const _hoisted_16$2 = { class: "price-main" };
-  const _hoisted_17$1 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _sfc_main$5 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      orders: {},
-      targetCurrency: {},
-      userSettings: {}
-    },
-    setup(__props) {
-      const props = __props;
-      const orderColumns = [
-        { key: "orderNumber", label: "订单编号", width: "120px" },
-        { key: "createdAt", label: "订单时间", width: "192px" },
-        { key: "items", label: "商品", width: "300px" },
-        { key: "paymentMethod", label: "支付方式", width: "120px" },
-        { key: "totalPrice", label: "金额", width: "120px" },
-        { key: "boothFee", label: "手续费", width: "120px" },
-        { key: "netAmount", label: "净收入", width: "120px" }
-      ];
-      const formatNetAmountForOrder = (order) => {
-        return formatNetAmount(order.totalPrice, order.createdAt);
-      };
-      const formatBoothFeeForOrder = (order) => {
-        return formatBoothFee(order.totalPrice, order.createdAt);
-      };
-      const tableConfig = vue.computed(() => ({
-        pageSize: 50,
-        privacyMode: props.userSettings?.privacyMode || false,
-        scrollable: false,
-        showPagination: true,
-        getItemKey: (item) => item.orderNumber
-      }));
-      const displayConfig = {
-        title: "订单列表",
-        itemLabel: "条订单",
-        emptyIcon: "📋",
-        emptyText: "暂无订单数据",
-        emptyHint: "请先加载数据或调整筛选条件"
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(DataTable, {
-          data: _ctx.orders,
-          columns: orderColumns,
-          config: tableConfig.value,
-          display: displayConfig
-        }, {
-          cell: vue.withCtx(({ item, column }) => [
-            column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$5, [
-              vue.createVNode(MaskedText, {
-                value: item.orderNumber,
-                masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])
-            ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, [
-              vue.createElementVNode("div", _hoisted_3$5, [
-                vue.createVNode(MaskedText, {
-                  value: vue.unref(formatOriginalDateTime)(item.createdAt),
-                  masked: props.userSettings?.privacyMode || false
-                }, null, 8, ["value", "masked"])
-              ]),
-              !(props.userSettings?.privacyMode || false) && _ctx.userSettings && vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$5, vue.toDisplayString(vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings)), 1)) : vue.createCommentVNode("", true)
-            ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$5, [
-              item.items && item.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$4, [
-                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(item.items, (itemEntry) => {
-                  return vue.openBlock(), vue.createBlock(ItemEntry, {
-                    key: itemEntry.id,
-                    item: itemEntry,
-                    "all-orders": _ctx.orders,
-                    size: "20px",
-                    "privacy-mode": props.userSettings?.privacyMode || false
-                  }, null, 8, ["item", "all-orders", "privacy-mode"]);
-                }), 128))
-              ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$4, " 无商品信息 "))
-            ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$3, [
-              vue.createVNode(MaskedText, {
-                value: item.paymentMethod,
-                masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])
-            ])) : column.key === "totalPrice" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$3, [
-              vue.createElementVNode("div", _hoisted_10$2, [
-                vue.createVNode(MaskedText, {
-                  value: vue.unref(CurrencyManager).formatJPY(item.totalPrice || 0),
-                  masked: props.userSettings?.privacyMode || false
-                }, null, 8, ["value", "masked"])
-              ]),
-              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_11$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
-            ])) : column.key === "boothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_12$2, [
-              vue.createElementVNode("div", _hoisted_13$2, [
-                vue.createVNode(MaskedText, {
-                  value: formatBoothFeeForOrder(item),
-                  masked: props.userSettings?.privacyMode || false
-                }, null, 8, ["value", "masked"])
-              ]),
-              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
-            ])) : column.key === "netAmount" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$2, [
-              vue.createElementVNode("div", _hoisted_16$2, [
-                vue.createVNode(MaskedText, {
-                  value: formatNetAmountForOrder(item),
-                  masked: props.userSettings?.privacyMode || false
-                }, null, 8, ["value", "masked"])
-              ]),
-              !(props.userSettings?.privacyMode || false) && item.totalPrice && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_17$1, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(item.totalPrice, _ctx.targetCurrency)), 1)) : vue.createCommentVNode("", true)
-            ])) : vue.createCommentVNode("", true)
-          ]),
-          _: 1
-        }, 8, ["data", "config"]);
-      };
-    }
-  });
-  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-d29745a8"]]);
-  class OrderManager {
-    static instance;
-    itemManager;
-    variantCache = /* @__PURE__ */ new Map();
-    lastProcessedOrders = [];
-    cachedItemsWithStats = null;
-    cachedSalesStats = null;
-    constructor() {
-      this.itemManager = ItemManager.getInstance();
-    }
-    /**
-     * 获取单例实例
-     */
-    static getInstance() {
-      if (!OrderManager.instance) {
-        OrderManager.instance = new OrderManager();
-      }
-      return OrderManager.instance;
-    }
-    /**
-     * 获取商品的销售统计
-     */
-    getItemSalesStats(itemId, orders) {
-      let totalQuantity = 0;
-      let totalRevenue = 0;
-      let totalBoothFee = 0;
-      let orderCount = 0;
-      orders.forEach((order) => {
-        order.items?.forEach((item) => {
-          if (item.itemId === itemId) {
-            const quantity = item.quantity || 0;
-            totalQuantity += quantity;
-            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
-            if (totalItemsInOrder > 0) {
-              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
-              totalRevenue += itemValue;
-              totalBoothFee += itemBoothFee;
-            }
-            orderCount += 1;
-          }
-        });
-      });
-      const totalNetRevenue = totalRevenue - totalBoothFee;
-      return {
-        totalQuantity,
-        totalRevenue,
-        totalBoothFee,
-        totalNetRevenue,
-        orderCount
-      };
-    }
-    /**
-     * 获取所有商品的销售统计（带缓存优化）
-     */
-    getAllItemSalesStats(orders) {
-      if (this.lastProcessedOrders.length === orders.length && this.cachedSalesStats) {
-        return this.cachedSalesStats;
-      }
-      const stats = /* @__PURE__ */ new Map();
-      const allItems = this.itemManager.getAllItems();
-      allItems.forEach((item, itemId) => {
-        stats.set(itemId, {
-          totalQuantity: 0,
-          totalRevenue: 0,
-          totalBoothFee: 0,
-          totalNetRevenue: 0,
-          orderCount: 0
-        });
-      });
-      orders.forEach((order) => {
-        order.items?.forEach((item) => {
-          const itemId = item.itemId;
-          const currentStats = stats.get(itemId);
-          if (currentStats) {
-            const quantity = item.quantity || 0;
-            const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
-            if (totalItemsInOrder > 0) {
-              const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
-              currentStats.totalQuantity += quantity;
-              currentStats.totalRevenue += itemValue;
-              currentStats.totalBoothFee += itemBoothFee;
-              currentStats.orderCount += 1;
-            }
-          }
-        });
-      });
-      stats.forEach((stat) => {
-        stat.totalNetRevenue = stat.totalRevenue - stat.totalBoothFee;
-      });
-      this.lastProcessedOrders = [...orders];
-      this.cachedSalesStats = stats;
-      return stats;
-    }
-    /**
-     * 获取商品的变体销售统计（优化版本，使用缓存）
-     */
-    getItemVariantStats(itemId, orders) {
-      if (this.shouldReprocessOrders(orders)) {
-        this.preprocessAllItemVariants(orders);
-        this.lastProcessedOrders = [...orders];
-      }
-      const cachedVariants = this.variantCache.get(itemId);
-      if (cachedVariants) {
-        logger.debug(`从缓存获取商品 ${itemId} 的变体数据，共 ${cachedVariants.length} 个变体`);
-        return cachedVariants;
-      }
-      const currentItem = this.itemManager.getItem(itemId);
-      if (!currentItem) {
-        logger.warn(`未找到商品: ${itemId}`);
-        return [];
-      }
-      logger.debug(`实时分析商品 ${itemId} (${currentItem.name}) 的变体数据`);
-      const variantStats = this.analyzeVariantsFromOrders(itemId, currentItem.name, orders);
-      logger.debug(`找到 ${variantStats.length} 个变体`);
-      return variantStats;
-    }
-    /**
-     * 检查是否需要重新处理订单数据
-     */
-    shouldReprocessOrders(orders) {
-      if (this.lastProcessedOrders.length !== orders.length) {
-        return true;
-      }
-      if (this.variantCache.size === 0) {
-        return true;
-      }
-      if (orders.length === 0) {
-        return false;
-      }
-      const currentItemIds = new Set(this.itemManager.getAllItemIds());
-      const cachedItemIds = new Set(this.variantCache.keys());
-      for (const itemId of currentItemIds) {
-        if (!cachedItemIds.has(itemId)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    /**
-     * 从订单数据中分析变体
-     * 主要逻辑：找到所有包含主商品名称但不等于主商品名称的订单项
-     */
-    analyzeVariantsFromOrders(itemId, mainItemName, orders) {
-      const variantStats = [];
-      const variantNames = /* @__PURE__ */ new Set();
-      orders.forEach((order) => {
-        order.items?.forEach((item) => {
-          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
-            const variantName = this.extractVariantName(item.name, mainItemName);
-            if (variantName && variantName !== mainItemName) {
-              variantNames.add(variantName);
-              logger.debug(`发现变体: ${variantName} (来自订单项: ${item.name})`);
-            }
-          }
-        });
-      });
-      variantNames.forEach((variantName) => {
-        const stats = this.calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders);
-        if (stats.totalQuantity > 0) {
-          variantStats.push(stats);
-          logger.debug(`变体 ${variantName} 统计: 销量=${stats.totalQuantity}, 收入=${stats.totalRevenue}`);
-        }
-      });
-      return variantStats;
-    }
-    /**
-     * 判断订单项是否是主商品的变体
-     */
-    isVariantOfMainItem(item, mainItemId, mainItemName) {
-      if (item.itemId === mainItemId) {
-        return true;
-      }
-      if (item.name.includes(mainItemName) && item.name !== mainItemName) {
-        return true;
-      }
-      return false;
-    }
-    /**
-     * 从订单项名称中提取变体名称
-     */
-    extractVariantName(itemName, mainItemName) {
-      if (itemName.includes(mainItemName)) {
-        const parts = itemName.split(mainItemName);
-        if (parts.length > 1) {
-          const variantPart = parts[1].trim();
-          if (variantPart && !variantPart.match(/^[-\s]+$/)) {
-            let cleanVariantName = variantPart.replace(/^[-\s]+/, "").replace(/[-\s]+$/, "").replace(/^[\(（]/, "").replace(/[\)）]$/, "");
-            if (cleanVariantName && cleanVariantName !== mainItemName) {
-              return cleanVariantName;
-            }
-          }
-        }
-      }
-      return itemName.replace(/^[\(（]/, "").replace(/[\)）]$/, "");
-    }
-    /**
-     * 从订单数据中计算变体的销售统计
-     */
-    calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders) {
-      let totalQuantity = 0;
-      let totalRevenue = 0;
-      let totalBoothFee = 0;
-      let orderCount = 0;
-      orders.forEach((order) => {
-        order.items?.forEach((item) => {
-          if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
-            const extractedVariantName = this.extractVariantName(item.name, mainItemName);
-            if (extractedVariantName === variantName || item.name.includes(variantName)) {
-              const quantity = item.quantity || 0;
-              totalQuantity += quantity;
-              const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
-              if (totalItemsInOrder > 0) {
-                const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-                const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
-                totalRevenue += itemValue;
-                totalBoothFee += itemBoothFee;
-              }
-              orderCount += 1;
-            }
-          }
-        });
-      });
-      const totalNetRevenue = totalRevenue - totalBoothFee;
-      return {
-        itemId,
-        variantName,
-        totalQuantity,
-        totalRevenue,
-        totalBoothFee,
-        totalNetRevenue,
-        orderCount
-      };
-    }
-    /**
-     * 获取商品的完整信息（包括销售统计和变体信息）
-     */
-    getItemWithStats(itemId, orders) {
-      const item = this.itemManager.getItem(itemId);
-      if (!item) return null;
-      const salesStats = this.getItemSalesStats(itemId, orders);
-      const variantStats = this.getItemVariantStats(itemId, orders);
-      return {
-        item,
-        salesStats,
-        variantStats
-      };
-    }
-    /**
-     * 预处理所有商品的变体数据
-     * 在订单分析阶段就完成变体数据的填充，提高后续使用效率
-     */
-    preprocessAllItemVariants(orders) {
-      this.variantCache.clear();
-      const allVariantsMap = /* @__PURE__ */ new Map();
-      const allItems = this.itemManager.getAllItems();
-      logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
-      let processedCount = 0;
-      let totalVariants = 0;
-      allItems.forEach((item, itemId) => {
-        const variantStats = this.analyzeVariantsFromOrders(itemId, item.name, orders);
-        if (variantStats.length > 0) {
-          allVariantsMap.set(itemId, variantStats);
-          this.variantCache.set(itemId, variantStats);
-          processedCount++;
-          totalVariants += variantStats.length;
-          logger.debug(`商品 ${itemId} (${item.name}) 预处理完成，找到 ${variantStats.length} 个变体`);
-        }
-      });
-      logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
-      return allVariantsMap;
-    }
-    /**
-     * 获取所有商品的销售统计（优化版本）
-     */
-    getAllItemsWithStats(orders) {
-      orders.length;
-      if (this.lastProcessedOrders.length === orders.length && this.cachedItemsWithStats) {
-        return this.cachedItemsWithStats;
-      }
-      if (!orders || orders.length === 0) {
-        return [];
-      }
-      const allSalesStats = this.getAllItemSalesStats(orders);
-      const result = [];
-      const allItems = this.itemManager.getAllItems();
-      allItems.forEach((item, itemId) => {
-        const salesStats = allSalesStats.get(itemId) || {
-          totalQuantity: 0,
-          totalRevenue: 0,
-          totalBoothFee: 0,
-          totalNetRevenue: 0,
-          orderCount: 0
-        };
-        const variantStats = this.variantCache.get(itemId) || [];
-        result.push({
-          itemId,
-          item,
-          salesStats,
-          variantStats
-        });
-      });
-      result.sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
-      this.lastProcessedOrders = [...orders];
-      this.cachedItemsWithStats = result;
-      return result;
-    }
-    /**
-     * 分析订单中的商品变体关系
-     */
-    analyzeOrderVariants(orders) {
-      const relationships = /* @__PURE__ */ new Map();
-      orders.forEach((order) => {
-        order.items?.forEach((item) => {
-          if (item.variants && item.variants.length > 0) {
-            const itemId = item.itemId;
-            const variantNames = item.variants.map((v) => v.variantName);
-            if (!relationships.has(itemId)) {
-              relationships.set(itemId, []);
-            }
-            const existingVariants = relationships.get(itemId);
-            variantNames.forEach((variantName) => {
-              if (!existingVariants.includes(variantName)) {
-                existingVariants.push(variantName);
-              }
-            });
-          }
-        });
-      });
-      return relationships;
-    }
-    /**
-     * 获取订单统计摘要
-     */
-    getOrderSummary(orders) {
-      const uniqueItems = /* @__PURE__ */ new Set();
-      let totalItems = 0;
-      let totalRevenue = 0;
-      let totalNetRevenue = 0;
-      orders.forEach((order) => {
-        totalRevenue += order.totalPrice;
-        totalNetRevenue += order.totalPrice * 0.9;
-        order.items?.forEach((item) => {
-          uniqueItems.add(item.itemId);
-          totalItems += item.quantity || 0;
-        });
-      });
-      return {
-        totalOrders: orders.length,
-        totalItems,
-        totalRevenue,
-        totalNetRevenue,
-        uniqueItems: uniqueItems.size
-      };
-    }
-    /**
-     * 获取变体统计摘要
-     */
-    getVariantSummary(itemId, orders) {
-      const variants = this.getItemVariantStats(itemId, orders);
-      const summary = {
-        totalVariants: variants.length,
-        totalVariantQuantity: 0,
-        totalVariantRevenue: 0,
-        totalVariantNetRevenue: 0
-      };
-      variants.forEach((variant) => {
-        summary.totalVariantQuantity += variant.totalQuantity;
-        summary.totalVariantRevenue += variant.totalRevenue;
-        summary.totalVariantNetRevenue += variant.totalNetRevenue;
-      });
-      return summary;
-    }
-    /**
-     * 分析所有商品的变体关系
-     */
-    analyzeAllVariantRelationships(orders) {
-      const relationships = /* @__PURE__ */ new Map();
-      const allItemIds = this.itemManager.getAllItemIds();
-      allItemIds.forEach((itemId) => {
-        const variantStats = this.getItemVariantStats(itemId, orders);
-        if (variantStats.length > 0) {
-          relationships.set(itemId, variantStats);
-        }
-      });
-      return relationships;
-    }
-  }
-  function getDefaultExportFromCjs(x) {
-    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
-  }
-  var papaparse_min$1 = { exports: {} };
-  /* @license
-  Papa Parse
-  v5.5.3
-  https://github.com/mholt/PapaParse
-  License: MIT
-  */
-  var papaparse_min = papaparse_min$1.exports;
-  var hasRequiredPapaparse_min;
-  function requirePapaparse_min() {
-    if (hasRequiredPapaparse_min) return papaparse_min$1.exports;
-    hasRequiredPapaparse_min = 1;
-    (function(module, exports) {
-      ((e, t) => {
-        module.exports = t();
-      })(papaparse_min, function r() {
-        var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
-        var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || false, o = {}, h = 0, v = {};
-        function u(e) {
-          this._handle = null, this._finished = false, this._completed = false, this._halted = false, this._input = null, this._baseIndex = 0, this._partialLine = "", this._rowCount = 0, this._start = 0, this._nextChunk = null, this.isFirstChunk = true, this._completeResults = { data: [], errors: [], meta: {} }, (function(e2) {
-            var t = b(e2);
-            t.chunkSize = parseInt(t.chunkSize), e2.step || e2.chunk || (t.chunkSize = null);
-            this._handle = new i(t), (this._handle.streamer = this)._config = t;
-          }).call(this, e), this.parseChunk = function(t, e2) {
-            var i2 = parseInt(this._config.skipFirstNLines) || 0;
-            if (this.isFirstChunk && 0 < i2) {
-              let e3 = this._config.newline;
-              e3 || (r2 = this._config.quoteChar || '"', e3 = this._handle.guessLineEndings(t, r2)), t = [...t.split(e3).slice(i2)].join(e3);
-            }
-            this.isFirstChunk && U(this._config.beforeFirstChunk) && void 0 !== (r2 = this._config.beforeFirstChunk(t)) && (t = r2), this.isFirstChunk = false, this._halted = false;
-            var i2 = this._partialLine + t, r2 = (this._partialLine = "", this._handle.parse(i2, this._baseIndex, !this._finished));
-            if (!this._handle.paused() && !this._handle.aborted()) {
-              t = r2.meta.cursor, i2 = (this._finished || (this._partialLine = i2.substring(t - this._baseIndex), this._baseIndex = t), r2 && r2.data && (this._rowCount += r2.data.length), this._finished || this._config.preview && this._rowCount >= this._config.preview);
-              if (a) n.postMessage({ results: r2, workerId: v.WORKER_ID, finished: i2 });
-              else if (U(this._config.chunk) && !e2) {
-                if (this._config.chunk(r2, this._handle), this._handle.paused() || this._handle.aborted()) return void (this._halted = true);
-                this._completeResults = r2 = void 0;
-              }
-              return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r2.data), this._completeResults.errors = this._completeResults.errors.concat(r2.errors), this._completeResults.meta = r2.meta), this._completed || !i2 || !U(this._config.complete) || r2 && r2.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = true), i2 || r2 && r2.meta.paused || this._nextChunk(), r2;
-            }
-            this._halted = true;
-          }, this._sendError = function(e2) {
-            U(this._config.error) ? this._config.error(e2) : a && this._config.error && n.postMessage({ workerId: v.WORKER_ID, error: e2, finished: false });
-          };
-        }
-        function f(e) {
-          var r2;
-          (e = e || {}).chunkSize || (e.chunkSize = v.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
-            this._readChunk(), this._chunkLoaded();
-          } : function() {
-            this._readChunk();
-          }, this.stream = function(e2) {
-            this._input = e2, this._nextChunk();
-          }, this._readChunk = function() {
-            if (this._finished) this._chunkLoaded();
-            else {
-              if (r2 = new XMLHttpRequest(), this._config.withCredentials && (r2.withCredentials = this._config.withCredentials), s || (r2.onload = y(this._chunkLoaded, this), r2.onerror = y(this._chunkError, this)), r2.open(this._config.downloadRequestBody ? "POST" : "GET", this._input, !s), this._config.downloadRequestHeaders) {
-                var e2, t = this._config.downloadRequestHeaders;
-                for (e2 in t) r2.setRequestHeader(e2, t[e2]);
-              }
-              var i2;
-              this._config.chunkSize && (i2 = this._start + this._config.chunkSize - 1, r2.setRequestHeader("Range", "bytes=" + this._start + "-" + i2));
-              try {
-                r2.send(this._config.downloadRequestBody);
-              } catch (e3) {
-                this._chunkError(e3.message);
-              }
-              s && 0 === r2.status && this._chunkError();
-            }
-          }, this._chunkLoaded = function() {
-            4 === r2.readyState && (r2.status < 200 || 400 <= r2.status ? this._chunkError() : (this._start += this._config.chunkSize || r2.responseText.length, this._finished = !this._config.chunkSize || this._start >= ((e2) => null !== (e2 = e2.getResponseHeader("Content-Range")) ? parseInt(e2.substring(e2.lastIndexOf("/") + 1)) : -1)(r2), this.parseChunk(r2.responseText)));
-          }, this._chunkError = function(e2) {
-            e2 = r2.statusText || e2;
-            this._sendError(new Error(e2));
-          };
-        }
-        function l(e) {
-          (e = e || {}).chunkSize || (e.chunkSize = v.LocalChunkSize), u.call(this, e);
-          var i2, r2, n2 = "undefined" != typeof FileReader;
-          this.stream = function(e2) {
-            this._input = e2, r2 = e2.slice || e2.webkitSlice || e2.mozSlice, n2 ? ((i2 = new FileReader()).onload = y(this._chunkLoaded, this), i2.onerror = y(this._chunkError, this)) : i2 = new FileReaderSync(), this._nextChunk();
-          }, this._nextChunk = function() {
-            this._finished || this._config.preview && !(this._rowCount < this._config.preview) || this._readChunk();
-          }, this._readChunk = function() {
-            var e2 = this._input, t = (this._config.chunkSize && (t = Math.min(this._start + this._config.chunkSize, this._input.size), e2 = r2.call(e2, this._start, t)), i2.readAsText(e2, this._config.encoding));
-            n2 || this._chunkLoaded({ target: { result: t } });
-          }, this._chunkLoaded = function(e2) {
-            this._start += this._config.chunkSize, this._finished = !this._config.chunkSize || this._start >= this._input.size, this.parseChunk(e2.target.result);
-          }, this._chunkError = function() {
-            this._sendError(i2.error);
-          };
-        }
-        function c(e) {
-          var i2;
-          u.call(this, e = e || {}), this.stream = function(e2) {
-            return i2 = e2, this._nextChunk();
-          }, this._nextChunk = function() {
-            var e2, t;
-            if (!this._finished) return e2 = this._config.chunkSize, i2 = e2 ? (t = i2.substring(0, e2), i2.substring(e2)) : (t = i2, ""), this._finished = !i2, this.parseChunk(t);
-          };
-        }
-        function p(e) {
-          u.call(this, e = e || {});
-          var t = [], i2 = true, r2 = false;
-          this.pause = function() {
-            u.prototype.pause.apply(this, arguments), this._input.pause();
-          }, this.resume = function() {
-            u.prototype.resume.apply(this, arguments), this._input.resume();
-          }, this.stream = function(e2) {
-            this._input = e2, this._input.on("data", this._streamData), this._input.on("end", this._streamEnd), this._input.on("error", this._streamError);
-          }, this._checkIsFinished = function() {
-            r2 && 1 === t.length && (this._finished = true);
-          }, this._nextChunk = function() {
-            this._checkIsFinished(), t.length ? this.parseChunk(t.shift()) : i2 = true;
-          }, this._streamData = y(function(e2) {
-            try {
-              t.push("string" == typeof e2 ? e2 : e2.toString(this._config.encoding)), i2 && (i2 = false, this._checkIsFinished(), this.parseChunk(t.shift()));
-            } catch (e3) {
-              this._streamError(e3);
-            }
-          }, this), this._streamError = y(function(e2) {
-            this._streamCleanUp(), this._sendError(e2);
-          }, this), this._streamEnd = y(function() {
-            this._streamCleanUp(), r2 = true, this._streamData("");
-          }, this), this._streamCleanUp = y(function() {
-            this._input.removeListener("data", this._streamData), this._input.removeListener("end", this._streamEnd), this._input.removeListener("error", this._streamError);
-          }, this);
-        }
-        function i(m2) {
-          var n2, s2, a2, t, o2 = Math.pow(2, 53), h3 = -o2, u2 = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d2 = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i2 = this, r2 = 0, f2 = 0, l2 = false, e = false, c2 = [], p2 = { data: [], errors: [], meta: {} };
-          function y2(e2) {
-            return "greedy" === m2.skipEmptyLines ? "" === e2.join("").trim() : 1 === e2.length && 0 === e2[0].length;
-          }
-          function g2() {
-            if (p2 && a2 && (k("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
-              return !y2(e3);
-            })), _2()) {
-              let t2 = function(e3, t3) {
-                U(m2.transformHeader) && (e3 = m2.transformHeader(e3, t3)), c2.push(e3);
-              };
-              if (p2) if (Array.isArray(p2.data[0])) {
-                for (var e2 = 0; _2() && e2 < p2.data.length; e2++) p2.data[e2].forEach(t2);
-                p2.data.splice(0, 1);
-              } else p2.data.forEach(t2);
-            }
-            function i3(e3, t2) {
-              for (var i4 = m2.header ? {} : [], r4 = 0; r4 < e3.length; r4++) {
-                var n3 = r4, s3 = e3[r4], s3 = ((e4, t3) => ((e5) => (m2.dynamicTypingFunction && void 0 === m2.dynamicTyping[e5] && (m2.dynamicTyping[e5] = m2.dynamicTypingFunction(e5)), true === (m2.dynamicTyping[e5] || m2.dynamicTyping)))(e4) ? "true" === t3 || "TRUE" === t3 || "false" !== t3 && "FALSE" !== t3 && (((e5) => {
-                  if (u2.test(e5)) {
-                    e5 = parseFloat(e5);
-                    if (h3 < e5 && e5 < o2) return 1;
-                  }
-                })(t3) ? parseFloat(t3) : d2.test(t3) ? new Date(t3) : "" === t3 ? null : t3) : t3)(n3 = m2.header ? r4 >= c2.length ? "__parsed_extra" : c2[r4] : n3, s3 = m2.transform ? m2.transform(s3, n3) : s3);
-                "__parsed_extra" === n3 ? (i4[n3] = i4[n3] || [], i4[n3].push(s3)) : i4[n3] = s3;
-              }
-              return m2.header && (r4 > c2.length ? k("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f2 + t2) : r4 < c2.length && k("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f2 + t2)), i4;
-            }
-            var r3;
-            p2 && (m2.header || m2.dynamicTyping || m2.transform) && (r3 = 1, !p2.data.length || Array.isArray(p2.data[0]) ? (p2.data = p2.data.map(i3), r3 = p2.data.length) : p2.data = i3(p2.data, 0), m2.header && p2.meta && (p2.meta.fields = c2), f2 += r3);
-          }
-          function _2() {
-            return m2.header && 0 === c2.length;
-          }
-          function k(e2, t2, i3, r3) {
-            e2 = { type: e2, code: t2, message: i3 };
-            void 0 !== r3 && (e2.row = r3), p2.errors.push(e2);
-          }
-          U(m2.step) && (t = m2.step, m2.step = function(e2) {
-            p2 = e2, _2() ? g2() : (g2(), 0 !== p2.data.length && (r2 += e2.data.length, m2.preview && r2 > m2.preview ? s2.abort() : (p2.data = p2.data[0], t(p2, i2))));
-          }), this.parse = function(e2, t2, i3) {
-            var r3 = m2.quoteChar || '"', r3 = (m2.newline || (m2.newline = this.guessLineEndings(e2, r3)), a2 = false, m2.delimiter ? U(m2.delimiter) && (m2.delimiter = m2.delimiter(e2), p2.meta.delimiter = m2.delimiter) : ((r3 = ((e3, t3, i4, r4, n3) => {
-              var s3, a3, o3, h4;
-              n3 = n3 || [",", "	", "|", ";", v.RECORD_SEP, v.UNIT_SEP];
-              for (var u3 = 0; u3 < n3.length; u3++) {
-                for (var d3, f3 = n3[u3], l3 = 0, c3 = 0, p3 = 0, g3 = (o3 = void 0, new E({ comments: r4, delimiter: f3, newline: t3, preview: 10 }).parse(e3)), _3 = 0; _3 < g3.data.length; _3++) i4 && y2(g3.data[_3]) ? p3++ : (d3 = g3.data[_3].length, c3 += d3, void 0 === o3 ? o3 = d3 : 0 < d3 && (l3 += Math.abs(d3 - o3), o3 = d3));
-                0 < g3.data.length && (c3 /= g3.data.length - p3), (void 0 === a3 || l3 <= a3) && (void 0 === h4 || h4 < c3) && 1.99 < c3 && (a3 = l3, s3 = f3, h4 = c3);
-              }
-              return { successful: !!(m2.delimiter = s3), bestDelimiter: s3 };
-            })(e2, m2.newline, m2.skipEmptyLines, m2.comments, m2.delimitersToGuess)).successful ? m2.delimiter = r3.bestDelimiter : (a2 = true, m2.delimiter = v.DefaultDelimiter), p2.meta.delimiter = m2.delimiter), b(m2));
-            return m2.preview && m2.header && r3.preview++, n2 = e2, s2 = new E(r3), p2 = s2.parse(n2, t2, i3), g2(), l2 ? { meta: { paused: true } } : p2 || { meta: { paused: false } };
-          }, this.paused = function() {
-            return l2;
-          }, this.pause = function() {
-            l2 = true, s2.abort(), n2 = U(m2.chunk) ? "" : n2.substring(s2.getCharIndex());
-          }, this.resume = function() {
-            i2.streamer._halted ? (l2 = false, i2.streamer.parseChunk(n2, true)) : setTimeout(i2.resume, 3);
-          }, this.aborted = function() {
-            return e;
-          }, this.abort = function() {
-            e = true, s2.abort(), p2.meta.aborted = true, U(m2.complete) && m2.complete(p2), n2 = "";
-          }, this.guessLineEndings = function(e2, t2) {
-            e2 = e2.substring(0, 1048576);
-            var t2 = new RegExp(P(t2) + "([^]*?)" + P(t2), "gm"), i3 = (e2 = e2.replace(t2, "")).split("\r"), t2 = e2.split("\n"), e2 = 1 < t2.length && t2[0].length < i3[0].length;
-            if (1 === i3.length || e2) return "\n";
-            for (var r3 = 0, n3 = 0; n3 < i3.length; n3++) "\n" === i3[n3][0] && r3++;
-            return r3 >= i3.length / 2 ? "\r\n" : "\r";
-          };
-        }
-        function P(e) {
-          return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        }
-        function E(C) {
-          var S = (C = C || {}).delimiter, O = C.newline, x = C.comments, I = C.step, A = C.preview, T = C.fastMode, D = null, L = false, F = null == C.quoteChar ? '"' : C.quoteChar, j = F;
-          if (void 0 !== C.escapeChar && (j = C.escapeChar), ("string" != typeof S || -1 < v.BAD_DELIMITERS.indexOf(S)) && (S = ","), x === S) throw new Error("Comment character same as delimiter");
-          true === x ? x = "#" : ("string" != typeof x || -1 < v.BAD_DELIMITERS.indexOf(x)) && (x = false), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
-          var z = 0, M = false;
-          this.parse = function(i2, t, r2) {
-            if ("string" != typeof i2) throw new Error("Input must be a string");
-            var n2 = i2.length, e = S.length, s2 = O.length, a2 = x.length, o2 = U(I), h3 = [], u2 = [], d2 = [], f2 = z = 0;
-            if (!i2) return w();
-            if (T || false !== T && -1 === i2.indexOf(F)) {
-              for (var l2 = i2.split(O), c2 = 0; c2 < l2.length; c2++) {
-                if (d2 = l2[c2], z += d2.length, c2 !== l2.length - 1) z += O.length;
-                else if (r2) return w();
-                if (!x || d2.substring(0, a2) !== x) {
-                  if (o2) {
-                    if (h3 = [], k(d2.split(S)), R(), M) return w();
-                  } else k(d2.split(S));
-                  if (A && A <= c2) return h3 = h3.slice(0, A), w(true);
-                }
-              }
-              return w();
-            }
-            for (var p2 = i2.indexOf(S, z), g2 = i2.indexOf(O, z), _2 = new RegExp(P(j) + P(F), "g"), m2 = i2.indexOf(F, z); ; ) if (i2[z] === F) for (m2 = z, z++; ; ) {
-              if (-1 === (m2 = i2.indexOf(F, m2 + 1))) return r2 || u2.push({ type: "Quotes", code: "MissingQuotes", message: "Quoted field unterminated", row: h3.length, index: z }), E2();
-              if (m2 === n2 - 1) return E2(i2.substring(z, m2).replace(_2, F));
-              if (F === j && i2[m2 + 1] === j) m2++;
-              else if (F === j || 0 === m2 || i2[m2 - 1] !== j) {
-                -1 !== p2 && p2 < m2 + 1 && (p2 = i2.indexOf(S, m2 + 1));
-                var y2 = v2(-1 === (g2 = -1 !== g2 && g2 < m2 + 1 ? i2.indexOf(O, m2 + 1) : g2) ? p2 : Math.min(p2, g2));
-                if (i2.substr(m2 + 1 + y2, e) === S) {
-                  d2.push(i2.substring(z, m2).replace(_2, F)), i2[z = m2 + 1 + y2 + e] !== F && (m2 = i2.indexOf(F, z)), p2 = i2.indexOf(S, z), g2 = i2.indexOf(O, z);
-                  break;
-                }
-                y2 = v2(g2);
-                if (i2.substring(m2 + 1 + y2, m2 + 1 + y2 + s2) === O) {
-                  if (d2.push(i2.substring(z, m2).replace(_2, F)), b2(m2 + 1 + y2 + s2), p2 = i2.indexOf(S, z), m2 = i2.indexOf(F, z), o2 && (R(), M)) return w();
-                  if (A && h3.length >= A) return w(true);
-                  break;
-                }
-                u2.push({ type: "Quotes", code: "InvalidQuotes", message: "Trailing quote on quoted field is malformed", row: h3.length, index: z }), m2++;
-              }
-            }
-            else if (x && 0 === d2.length && i2.substring(z, z + a2) === x) {
-              if (-1 === g2) return w();
-              z = g2 + s2, g2 = i2.indexOf(O, z), p2 = i2.indexOf(S, z);
-            } else if (-1 !== p2 && (p2 < g2 || -1 === g2)) d2.push(i2.substring(z, p2)), z = p2 + e, p2 = i2.indexOf(S, z);
-            else {
-              if (-1 === g2) break;
-              if (d2.push(i2.substring(z, g2)), b2(g2 + s2), o2 && (R(), M)) return w();
-              if (A && h3.length >= A) return w(true);
-            }
-            return E2();
-            function k(e2) {
-              h3.push(e2), f2 = z;
-            }
-            function v2(e2) {
-              var t2 = 0;
-              return t2 = -1 !== e2 && (e2 = i2.substring(m2 + 1, e2)) && "" === e2.trim() ? e2.length : t2;
-            }
-            function E2(e2) {
-              return r2 || (void 0 === e2 && (e2 = i2.substring(z)), d2.push(e2), z = n2, k(d2), o2 && R()), w();
-            }
-            function b2(e2) {
-              z = e2, k(d2), d2 = [], g2 = i2.indexOf(O, z);
-            }
-            function w(e2) {
-              if (C.header && !t && h3.length && !L) {
-                var s3 = h3[0], a3 = /* @__PURE__ */ Object.create(null), o3 = new Set(s3);
-                let n3 = false;
-                for (let r3 = 0; r3 < s3.length; r3++) {
-                  let i3 = s3[r3];
-                  if (a3[i3 = U(C.transformHeader) ? C.transformHeader(i3, r3) : i3]) {
-                    let e3, t2 = a3[i3];
-                    for (; e3 = i3 + "_" + t2, t2++, o3.has(e3); ) ;
-                    o3.add(e3), s3[r3] = e3, a3[i3]++, n3 = true, (D = null === D ? {} : D)[e3] = i3;
-                  } else a3[i3] = 1, s3[r3] = i3;
-                  o3.add(i3);
-                }
-                n3 && console.warn("Duplicate headers found and renamed."), L = true;
-              }
-              return { data: h3, errors: u2, meta: { delimiter: S, linebreak: O, aborted: M, truncated: !!e2, cursor: f2 + (t || 0), renamedHeaders: D } };
-            }
-            function R() {
-              I(w()), h3 = [], u2 = [];
-            }
-          }, this.abort = function() {
-            M = true;
-          }, this.getCharIndex = function() {
-            return z;
-          };
-        }
-        function g(e) {
-          var t = e.data, i2 = o[t.workerId], r2 = false;
-          if (t.error) i2.userError(t.error, t.file);
-          else if (t.results && t.results.data) {
-            var n2 = { abort: function() {
-              r2 = true, _(t.workerId, { data: [], errors: [], meta: { aborted: true } });
-            }, pause: m, resume: m };
-            if (U(i2.userStep)) {
-              for (var s2 = 0; s2 < t.results.data.length && (i2.userStep({ data: t.results.data[s2], errors: t.results.errors, meta: t.results.meta }, n2), !r2); s2++) ;
-              delete t.results;
-            } else U(i2.userChunk) && (i2.userChunk(t.results, n2, t.file), delete t.results);
-          }
-          t.finished && !r2 && _(t.workerId, t.results);
-        }
-        function _(e, t) {
-          var i2 = o[e];
-          U(i2.userComplete) && i2.userComplete(t), i2.terminate(), delete o[e];
-        }
-        function m() {
-          throw new Error("Not implemented.");
-        }
-        function b(e) {
-          if ("object" != typeof e || null === e) return e;
-          var t, i2 = Array.isArray(e) ? [] : {};
-          for (t in e) i2[t] = b(e[t]);
-          return i2;
-        }
-        function y(e, t) {
-          return function() {
-            e.apply(t, arguments);
-          };
-        }
-        function U(e) {
-          return "function" == typeof e;
-        }
-        return v.parse = function(e, t) {
-          var i2 = (t = t || {}).dynamicTyping || false;
-          U(i2) && (t.dynamicTypingFunction = i2, i2 = {});
-          if (t.dynamicTyping = i2, t.transform = !!U(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i2 = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = ((e2) => 65279 !== e2.charCodeAt(0) ? e2 : e2.slice(1))(e), i2 = new (t.download ? f : c)(t)) : true === e.readable && U(e.read) && U(e.on) ? i2 = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i2 = new l(t)), i2.stream(e);
-          (i2 = (() => {
-            var e2;
-            return !!v.WORKERS_SUPPORTED && (e2 = (() => {
-              var e3 = n.URL || n.webkitURL || null, t2 = r.toString();
-              return v.BLOB_URL || (v.BLOB_URL = e3.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ", "(", t2, ")();"], { type: "text/javascript" })));
-            })(), (e2 = new n.Worker(e2)).onmessage = g, e2.id = h++, o[e2.id] = e2);
-          })()).userStep = t.step, i2.userChunk = t.chunk, i2.userComplete = t.complete, i2.userError = t.error, t.step = U(t.step), t.chunk = U(t.chunk), t.complete = U(t.complete), t.error = U(t.error), delete t.worker, i2.postMessage({ input: e, config: t, workerId: i2.id });
-        }, v.unparse = function(e, t) {
-          var n2 = false, _2 = true, m2 = ",", y2 = "\r\n", s2 = '"', a2 = s2 + s2, i2 = false, r2 = null, o2 = false, h3 = ((() => {
-            if ("object" == typeof t) {
-              if ("string" != typeof t.delimiter || v.BAD_DELIMITERS.filter(function(e2) {
-                return -1 !== t.delimiter.indexOf(e2);
-              }).length || (m2 = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (n2 = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i2 = t.skipEmptyLines), "string" == typeof t.newline && (y2 = t.newline), "string" == typeof t.quoteChar && (s2 = t.quoteChar), "boolean" == typeof t.header && (_2 = t.header), Array.isArray(t.columns)) {
-                if (0 === t.columns.length) throw new Error("Option columns is empty");
-                r2 = t.columns;
-              }
-              void 0 !== t.escapeChar && (a2 = t.escapeChar + s2), t.escapeFormulae instanceof RegExp ? o2 = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (o2 = /^[=+\-@\t\r].*$/);
-            }
-          })(), new RegExp(P(s2), "g"));
-          "string" == typeof e && (e = JSON.parse(e));
-          if (Array.isArray(e)) {
-            if (!e.length || Array.isArray(e[0])) return u2(null, e, i2);
-            if ("object" == typeof e[0]) return u2(r2 || Object.keys(e[0]), e, i2);
-          } else if ("object" == typeof e) return "string" == typeof e.data && (e.data = JSON.parse(e.data)), Array.isArray(e.data) && (e.fields || (e.fields = e.meta && e.meta.fields || r2), e.fields || (e.fields = Array.isArray(e.data[0]) ? e.fields : "object" == typeof e.data[0] ? Object.keys(e.data[0]) : []), Array.isArray(e.data[0]) || "object" == typeof e.data[0] || (e.data = [e.data])), u2(e.fields || [], e.data || [], i2);
-          throw new Error("Unable to serialize unrecognized input");
-          function u2(e2, t2, i3) {
-            var r3 = "", n3 = ("string" == typeof e2 && (e2 = JSON.parse(e2)), "string" == typeof t2 && (t2 = JSON.parse(t2)), Array.isArray(e2) && 0 < e2.length), s3 = !Array.isArray(t2[0]);
-            if (n3 && _2) {
-              for (var a3 = 0; a3 < e2.length; a3++) 0 < a3 && (r3 += m2), r3 += k(e2[a3], a3);
-              0 < t2.length && (r3 += y2);
-            }
-            for (var o3 = 0; o3 < t2.length; o3++) {
-              var h4 = (n3 ? e2 : t2[o3]).length, u3 = false, d2 = n3 ? 0 === Object.keys(t2[o3]).length : 0 === t2[o3].length;
-              if (i3 && !n3 && (u3 = "greedy" === i3 ? "" === t2[o3].join("").trim() : 1 === t2[o3].length && 0 === t2[o3][0].length), "greedy" === i3 && n3) {
-                for (var f2 = [], l2 = 0; l2 < h4; l2++) {
-                  var c2 = s3 ? e2[l2] : l2;
-                  f2.push(t2[o3][c2]);
-                }
-                u3 = "" === f2.join("").trim();
-              }
-              if (!u3) {
-                for (var p2 = 0; p2 < h4; p2++) {
-                  0 < p2 && !d2 && (r3 += m2);
-                  var g2 = n3 && s3 ? e2[p2] : p2;
-                  r3 += k(t2[o3][g2], p2);
-                }
-                o3 < t2.length - 1 && (!i3 || 0 < h4 && !d2) && (r3 += y2);
-              }
-            }
-            return r3;
-          }
-          function k(e2, t2) {
-            var i3, r3;
-            return null == e2 ? "" : e2.constructor === Date ? JSON.stringify(e2).slice(1, 25) : (r3 = false, o2 && "string" == typeof e2 && o2.test(e2) && (e2 = "'" + e2, r3 = true), i3 = e2.toString().replace(h3, a2), (r3 = r3 || true === n2 || "function" == typeof n2 && n2(e2, t2) || Array.isArray(n2) && n2[t2] || ((e3, t3) => {
-              for (var i4 = 0; i4 < t3.length; i4++) if (-1 < e3.indexOf(t3[i4])) return true;
-              return false;
-            })(i3, v.BAD_DELIMITERS) || -1 < i3.indexOf(m2) || " " === i3.charAt(0) || " " === i3.charAt(i3.length - 1)) ? s2 + i3 + s2 : i3);
-          }
-        }, v.RECORD_SEP = String.fromCharCode(30), v.UNIT_SEP = String.fromCharCode(31), v.BYTE_ORDER_MARK = "\uFEFF", v.BAD_DELIMITERS = ["\r", "\n", '"', v.BYTE_ORDER_MARK], v.WORKERS_SUPPORTED = !s && !!n.Worker, v.NODE_STREAM_INPUT = 1, v.LocalChunkSize = 10485760, v.RemoteChunkSize = 5242880, v.DefaultDelimiter = ",", v.Parser = E, v.ParserHandle = i, v.NetworkStreamer = f, v.FileStreamer = l, v.StringStreamer = c, v.ReadableStreamStreamer = p, n.jQuery && ((d = n.jQuery).fn.parse = function(o2) {
-          var i2 = o2.config || {}, h3 = [];
-          return this.each(function(e2) {
-            if (!("INPUT" === d(this).prop("tagName").toUpperCase() && "file" === d(this).attr("type").toLowerCase() && n.FileReader) || !this.files || 0 === this.files.length) return true;
-            for (var t = 0; t < this.files.length; t++) h3.push({ file: this.files[t], inputElem: this, instanceConfig: d.extend({}, i2) });
-          }), e(), this;
-          function e() {
-            if (0 === h3.length) U(o2.complete) && o2.complete();
-            else {
-              var e2, t, i3, r2, n2 = h3[0];
-              if (U(o2.before)) {
-                var s2 = o2.before(n2.file, n2.inputElem);
-                if ("object" == typeof s2) {
-                  if ("abort" === s2.action) return e2 = "AbortError", t = n2.file, i3 = n2.inputElem, r2 = s2.reason, void (U(o2.error) && o2.error({ name: e2 }, t, i3, r2));
-                  if ("skip" === s2.action) return void u2();
-                  "object" == typeof s2.config && (n2.instanceConfig = d.extend(n2.instanceConfig, s2.config));
-                } else if ("skip" === s2) return void u2();
-              }
-              var a2 = n2.instanceConfig.complete;
-              n2.instanceConfig.complete = function(e3) {
-                U(a2) && a2(e3, n2.file, n2.inputElem), u2();
-              }, v.parse(n2.file, n2.instanceConfig);
-            }
-          }
-          function u2() {
-            h3.splice(0, 1), e();
-          }
-        }), a && (n.onmessage = function(e) {
-          e = e.data;
-          void 0 === v.WORKER_ID && e && (v.WORKER_ID = e.workerId);
-          "string" == typeof e.input ? n.postMessage({ workerId: v.WORKER_ID, results: v.parse(e.input, e.config), finished: true }) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = v.parse(e.input, e.config)) && n.postMessage({ workerId: v.WORKER_ID, results: e, finished: true });
-        }), (f.prototype = Object.create(u.prototype)).constructor = f, (l.prototype = Object.create(u.prototype)).constructor = l, (c.prototype = Object.create(c.prototype)).constructor = c, (p.prototype = Object.create(u.prototype)).constructor = p, v;
-      });
-    })(papaparse_min$1);
-    return papaparse_min$1.exports;
-  }
-  var papaparse_minExports = requirePapaparse_min();
-  const Papa = /* @__PURE__ */ getDefaultExportFromCjs(papaparse_minExports);
-  const HEADER_MAPPING = {
-    // 英文: Order Number
-    // 日文: 注文番号
-    // 简体中文: Order Number (保持英文)
-    // 繁体中文: Order Number (保持英文)
-    // 韩文: Order Number (保持英文)
-    orderNumber: ["Order Number", "注文番号"],
-    // 英文: Identification Code
-    // 日文: ユーザー識別コード
-    // 简体中文: Identification Code (保持英文)
-    // 繁体中文: Identification Code (保持英文)
-    // 韩文: Identification Code (保持英文)
-    identificationCode: ["Identification Code", "ユーザー識別コード"],
-    // 英文: Payment type
-    // 日文: お支払方法
-    // 简体中文: 支付方式
-    // 繁体中文: 支付方式
-    // 韩文: 신용카드 (但这里应该是支付方式)
-    paymentMethod: ["Payment type", "お支払方法", "支付方式", "신용카드"],
-    // 英文: State
-    // 日文: 注文状況
-    // 简体中文: State (保持英文)
-    // 繁体中文: State (保持英文)
-    // 韩文: State (保持英文)
-    state: ["State", "注文状況"],
-    // 英文: Created At
-    // 日文: 注文日時
-    // 简体中文: Created At (保持英文)
-    // 繁体中文: Created At (保持英文)
-    // 韩文: Created At (保持英文)
-    createdAt: ["Created At", "注文日時"],
-    // 英文: Paid At
-    // 日文: 支払い日時
-    // 简体中文: Paid At (保持英文)
-    // 繁体中文: Paid At (保持英文)
-    // 韩文: Paid At (保持英文)
-    paidAt: ["Paid At", "支払い日時"],
-    // 英文: Completed At
-    // 日文: 発送日時
-    // 简体中文: Completed At (保持英文)
-    // 繁体中文: Completed At (保持英文)
-    // 韩文: Completed At (保持英文)
-    completedAt: ["Completed At", "発送日時"],
-    // 英文: Total Price
-    // 日文: 合計金額
-    // 简体中文: Total Price (保持英文)
-    // 繁体中文: Total Price (保持英文)
-    // 韩文: Total Price (保持英文)
-    totalPrice: ["Total Price", "合計金額"],
-    // 英文: ZIP code
-    // 日文: 郵便番号
-    // 简体中文: 邮编
-    // 繁体中文: 郵編
-    // 韩文: 우편번호
-    postalCode: ["ZIP code", "郵便番号", "邮编", "郵編", "우편번호"],
-    // 英文: State / Province / Region / Prefecture
-    // 日文: 都道府県
-    // 简体中文: 都道府县
-    // 繁体中文: 都道府縣
-    // 韩文: 도도부현(광역 주소)
-    prefecture: ["State / Province / Region / Prefecture", "都道府県", "都道府县", "都道府縣", "도도부현(광역 주소)"],
-    // 英文: Address Line 1
-    // 日文: 市区町村・丁目・番地
-    // 简体中文: 市区町村、丁目、番地
-    // 繁体中文: 市區釘村、丁目、番地
-    // 韩文: 시구정촌·초메·번지(상세 주소)
-    city: ["Address Line 1", "市区町村・丁目・番地", "市区町村、丁目、番地", "市區釘村、丁目、番地", "시구정촌·초메·번지(상세 주소)"],
-    // 英文: Address Line 2
-    // 日文: マンション・建物名・部屋番号
-    // 简体中文: 公寓、建筑物名、房间号
-    // 繁体中文: 公寓、建築物名、房間號
-    // 韩文: 아파트 건물명 호수
-    building: ["Address Line 2", "マンション・建物名・部屋番号", "公寓、建筑物名、房间号", "公寓、建築物名、房間號", "아파트 건물명 호수"],
-    // 英文: Name
-    // 日文: 氏名
-    // 简体中文: 姓名
-    // 繁体中文: 姓名
-    // 韩文: 이름
-    customerName: ["Name", "氏名", "姓名", "이름"],
-    // 英文: Phone number
-    // 日文: 電話番号
-    // 简体中文: 电话号码
-    // 繁体中文: 電話號碼
-    // 韩文: 전화번호
-    phoneNumber: ["Phone number", "電話番号", "电话号码", "電話號碼", "전화번호"],
-    // 英文: Item ID / Quantity / Name
-    // 日文: 商品ID / 数量 / 商品名
-    // 简体中文: Item ID / Quantity / Name (保持英文)
-    // 繁体中文: Item ID / Quantity / Name (保持英文)
-    // 韩文: Item ID / Quantity / Name (保持英文)
-    items: ["Item ID / Quantity / Name", "商品ID / 数量 / 商品名"]
-  };
-  const ITEM_PATTERNS = [
-    // 英文模式
-    /Item ID : (\d+) \/ Quantity : (\d+) \/ (.+)/,
-    // 日文模式
-    /商品ID : (\d+) \/ 数量 : (\d+) \/ (.+)/,
-    // 通用模式（尝试匹配数字和文本）
-    /(\d+) \/ (\d+) \/ (.+)/
-  ];
-  const ORDER_STATUS_MAPPING = {
-    // 日语状态映射
-    "発送完了": "Completed",
-    // 发货完成
-    "キャンセル": "Cancelled",
-    // 已取消
-    "支払待ち": "Pending",
-    // 待支付
-    // 英文状态（保持原样）
-    "Completed": "Completed",
-    "Cancelled": "Cancelled",
-    "Pending": "Pending"
-  };
-  class DataMappings {
-    /**
-     * 根据表头数组查找对应的字段名
-     */
-    static findHeaderField(headers, field) {
-      const possibleHeaders = HEADER_MAPPING[field];
-      for (const header of headers) {
-        if (possibleHeaders.includes(header)) {
-          return header;
-        }
-      }
-      return null;
-    }
-    /**
-     * 解析多语言商品信息
-     */
-    static parseItemsMultiLanguage(itemString) {
-      const items = [];
-      if (!itemString) return items;
-      const itemLines = itemString.split("\n").filter((line) => line.trim());
-      for (const line of itemLines) {
-        for (const pattern of ITEM_PATTERNS) {
-          const match2 = line.match(pattern);
-          if (match2) {
-            items.push({
-              itemId: match2[1],
-              quantity: parseInt(match2[2], 10),
-              name: match2[3].trim()
-            });
-            break;
-          }
-        }
-      }
-      return items;
-    }
-    /**
-     * 标准化订单状态
-     */
-    static normalizeOrderState(rawState) {
-      const normalizedState = rawState.trim();
-      if (ORDER_STATUS_MAPPING[normalizedState]) {
-        return ORDER_STATUS_MAPPING[normalizedState];
-      }
-      return "Pending";
-    }
-    /**
-     * 获取支持的订单状态列表
-     */
-    static getSupportedOrderStates() {
-      return Object.keys(ORDER_STATUS_MAPPING);
-    }
-    /**
-     * 检查订单状态是否有效
-     */
-    static isValidOrderState(state) {
-      return Object.keys(ORDER_STATUS_MAPPING).includes(state);
-    }
-    /**
-     * 获取表头映射配置
-     */
-    static getHeaderMapping() {
-      return HEADER_MAPPING;
-    }
-    /**
-     * 获取订单状态映射配置
-     */
-    static getOrderStatusMapping() {
-      return ORDER_STATUS_MAPPING;
-    }
-  }
-  class CSVParser {
-    static parse(csvText) {
-      try {
-        const result = Papa.parse(csvText, {
-          header: true,
-          // 第一行作为表头
-          skipEmptyLines: true,
-          // 跳过空行
-          transformHeader: (header) => header.trim(),
-          // 清理表头空格
-          transform: (value) => value.trim()
-          // 清理数据空格
-        });
-        if (result.errors.length > 0) {
-          logger.error("CSV解析错误:", result.errors);
-          return {
-            success: false,
-            error: `CSV解析错误: ${result.errors.map((e) => e.message).join(", ")}`
-          };
-        }
-        if (!result.data || result.data.length === 0) {
-          return { success: false, error: "CSV文件为空或格式错误" };
-        }
-        const headers = result.meta.fields || [];
-        if (headers.length === 0) {
-          return { success: false, error: "CSV文件缺少表头" };
-        }
-        const orders = [];
-        let successCount = 0;
-        let errorCount = 0;
-        for (const row of result.data) {
-          const order = this.parseOrderRow(headers, row);
-          if (order) {
-            orders.push(order);
-            successCount++;
-          } else {
-            errorCount++;
-          }
-        }
-        if (orders.length === 0) {
-          return { success: false, error: "没有成功解析任何订单数据" };
-        }
-        return { success: true, data: orders };
-      } catch (error) {
-        logger.error("CSV解析失败:", error);
-        return { success: false, error: `解析CSV失败: ${error}` };
-      }
-    }
-    static parseOrderRow(headers, row) {
-      try {
-        const orderNumber = DataMappings.findHeaderField(headers, "orderNumber");
-        const identificationCode = DataMappings.findHeaderField(headers, "identificationCode");
-        const paymentMethod = DataMappings.findHeaderField(headers, "paymentMethod");
-        const state = DataMappings.findHeaderField(headers, "state");
-        const createdAt = DataMappings.findHeaderField(headers, "createdAt");
-        const paidAt = DataMappings.findHeaderField(headers, "paidAt");
-        const completedAt = DataMappings.findHeaderField(headers, "completedAt");
-        const totalPrice = DataMappings.findHeaderField(headers, "totalPrice");
-        const postalCode = DataMappings.findHeaderField(headers, "postalCode");
-        const prefecture = DataMappings.findHeaderField(headers, "prefecture");
-        const city = DataMappings.findHeaderField(headers, "city");
-        const building = DataMappings.findHeaderField(headers, "building");
-        const customerName = DataMappings.findHeaderField(headers, "customerName");
-        const phoneNumber = DataMappings.findHeaderField(headers, "phoneNumber");
-        const itemsField = DataMappings.findHeaderField(headers, "items");
-        const items = itemsField ? DataMappings.parseItemsMultiLanguage(row[itemsField] || "") : [];
-        const priceValue = totalPrice ? row[totalPrice] || "0" : "0";
-        const cleanPrice = priceValue.replace(/[^\d.-]/g, "");
-        const parsedPrice = parseFloat(cleanPrice) || 0;
-        const rawState = state ? row[state] || "" : "";
-        const normalizedState = DataMappings.normalizeOrderState(rawState);
-        return {
-          orderNumber: orderNumber ? row[orderNumber] || "" : "",
-          identificationCode: identificationCode ? row[identificationCode] || "" : "",
-          paymentMethod: paymentMethod ? row[paymentMethod] : "",
-          state: normalizedState,
-          createdAt: createdAt ? row[createdAt] || "" : "",
-          paidAt: paidAt ? row[paidAt] || "" : "",
-          completedAt: completedAt ? row[completedAt] || "" : "",
-          totalPrice: parsedPrice,
-          postalCode: postalCode ? row[postalCode] || "" : "",
-          prefecture: prefecture ? row[prefecture] || "" : "",
-          city: city ? row[city] || "" : "",
-          building: building ? row[building] || "" : "",
-          customerName: customerName ? row[customerName] || "" : "",
-          phoneNumber: phoneNumber ? row[phoneNumber] || "" : "",
-          items
-        };
-      } catch (error) {
-        logger.error("解析订单行失败:", error);
-        return null;
-      }
-    }
-    /**
-     * 流式解析CSV（用于大数据量）
-     */
-    static parseStream(csvText, onChunk, onComplete, onError) {
-      try {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          transformHeader: (header) => header.trim(),
-          transform: (value) => value.trim(),
-          chunk: (results) => {
-            const orders = [];
-            for (const row of results.data) {
-              const order = this.parseOrderRow(results.meta.fields || [], row);
-              if (order) {
-                orders.push(order);
-              }
-            }
-            if (orders.length > 0) {
-              onChunk(orders);
-            }
-          },
-          complete: () => {
-            onComplete();
-          },
-          error: (error) => {
-            logger.error("流式解析错误:", error);
-            onError(error.message);
-          }
-        });
-      } catch (error) {
-        logger.error("流式解析失败:", error);
-        onError(`流式解析失败: ${error}`);
-      }
-    }
-  }
-  class DataLoader {
-    static instance;
-    orders = [];
-    isLoading = false;
-    lastLoadTime = null;
-    constructor() {
-    }
-    static getInstance() {
-      if (!DataLoader.instance) {
-        DataLoader.instance = new DataLoader();
-      }
-      return DataLoader.instance;
-    }
-    // 获取订单数据
-    getOrders() {
-      return this.orders;
-    }
-    // 检查是否有数据
-    hasData() {
-      return this.orders.length > 0;
-    }
-    // 检查是否正在加载
-    isCurrentlyLoading() {
-      return this.isLoading;
-    }
-    // 获取最后加载时间
-    getLastLoadTime() {
-      return this.lastLoadTime;
-    }
-    // 通过下载流加载CSV数据
-    async loadOrdersFromCSV() {
-      if (this.isLoading) {
-        return { success: false, error: "正在加载中，请稍候..." };
-      }
-      this.isLoading = true;
-      try {
-        const csvData = await this.downloadCSV();
-        if (!csvData.success) {
-          this.isLoading = false;
-          return { success: false, error: csvData.error };
-        }
-        const parseResult = CSVParser.parse(csvData.data || "");
-        if (parseResult.success && parseResult.data) {
-          this.orders = parseResult.data;
-          this.lastLoadTime = /* @__PURE__ */ new Date();
-          this.preprocessAllItemVariants();
-          this.isLoading = false;
-          return { success: true, data: this.orders };
-        } else {
-          this.isLoading = false;
-          return { success: false, error: parseResult.error || "解析CSV数据失败" };
-        }
-      } catch (error) {
-        this.isLoading = false;
-        return { success: false, error: `加载失败: ${error}` };
-      }
-    }
-    // 下载CSV文件
-    downloadCSV() {
-      return new Promise((resolve2) => {
-        _GM_xmlhttpRequest({
-          method: "GET",
-          url: "https://manage.booth.pm/orders/csv",
-          headers: {
-            "Accept": "text/csv,application/csv,text/plain",
-            "Content-Type": "text/csv; charset=utf-8"
-          },
-          onload: (response) => {
-            if (response.status === 200) {
-              resolve2({ success: true, data: response.responseText });
-            } else {
-              resolve2({
-                success: false,
-                error: `下载失败: HTTP ${response.status} - ${response.statusText}`
-              });
-            }
-          },
-          onerror: (error) => {
-            resolve2({ success: false, error: "网络请求失败" });
-          },
-          ontimeout: () => {
-            resolve2({ success: false, error: "下载超时" });
-          }
-        });
-      });
-    }
-    // 清除数据
-    clearData() {
-      this.orders = [];
-      this.lastLoadTime = null;
-    }
-    // 获取数据统计
-    getDataStats() {
-      return {
-        totalOrders: this.orders.length,
-        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
-      };
-    }
-    /**
-     * 预处理所有商品的变体数据
-     * 在数据加载完成后统一处理，避免后续使用时重复计算
-     */
-    preprocessAllItemVariants() {
-      if (this.orders.length === 0) {
-        logger.warn("没有订单数据，跳过变体数据预处理");
-        return;
-      }
-      try {
-        const orderManager = OrderManager.getInstance();
-        orderManager.preprocessAllItemVariants(this.orders);
-      } catch (error) {
-        logger.error("变体数据预处理失败:", error);
-      }
-    }
-  }
-  const getNestedValue = (obj, path) => {
-    return path.split(".").reduce((current, key) => {
-      return current && current[key] !== void 0 ? current[key] : void 0;
-    }, obj);
-  };
-  const _hoisted_1$4 = { class: "modal-header" };
-  const _hoisted_2$4 = { class: "modal-title" };
-  const _hoisted_3$4 = ["title"];
-  const _hoisted_4$4 = { class: "modal-body" };
-  const _hoisted_5$4 = {
-    key: 0,
-    class: "modal-footer"
-  };
-  const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      visible: { type: Boolean },
-      title: { default: "" },
-      closeButtonTitle: { default: "关闭" },
-      closeOnOverlayClick: { type: Boolean, default: true },
-      size: { default: "medium" }
-    },
-    emits: ["close", "update:visible"],
-    setup(__props, { emit: __emit }) {
-      const props = __props;
-      const emit = __emit;
-      const handleClose = () => {
-        emit("close");
-        emit("update:visible", false);
-      };
-      const handleOverlayClick = () => {
-        if (props.closeOnOverlayClick) {
-          handleClose();
-        }
-      };
-      const modalSizeClass = vue.computed(() => {
-        return `modal-${props.size}`;
-      });
-      return (_ctx, _cache) => {
-        return _ctx.visible ? (vue.openBlock(), vue.createElementBlock("div", {
-          key: 0,
-          class: "modal-overlay",
-          onClick: handleOverlayClick
-        }, [
-          vue.createElementVNode("div", {
-            class: vue.normalizeClass(["modal-content", modalSizeClass.value]),
-            onClick: _cache[0] || (_cache[0] = vue.withModifiers(() => {
-            }, ["stop"]))
-          }, [
-            vue.createElementVNode("div", _hoisted_1$4, [
-              vue.createElementVNode("h3", _hoisted_2$4, vue.toDisplayString(_ctx.title), 1),
-              vue.createElementVNode("button", {
-                onClick: handleClose,
-                class: "modal-close",
-                title: _ctx.closeButtonTitle
-              }, " × ", 8, _hoisted_3$4)
-            ]),
-            vue.createElementVNode("div", _hoisted_4$4, [
-              vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
-            ]),
-            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$4, [
-              vue.renderSlot(_ctx.$slots, "footer", {}, void 0, true)
-            ])) : vue.createCommentVNode("", true)
-          ], 2)
-        ])) : vue.createCommentVNode("", true);
-      };
-    }
-  });
-  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-b6b52a8b"]]);
-  const _hoisted_1$3 = {
-    key: 5,
-    class: "price-cell"
-  };
-  const _hoisted_2$3 = { class: "price-main" };
-  const _hoisted_3$3 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _hoisted_4$3 = {
-    key: 6,
-    class: "price-cell"
-  };
-  const _hoisted_5$3 = { class: "price-main" };
-  const _hoisted_6$3 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _hoisted_7$3 = {
-    key: 7,
-    class: "price-cell"
-  };
-  const _hoisted_8$2 = { class: "price-main" };
-  const _hoisted_9$2 = {
-    key: 0,
-    class: "price-converted"
-  };
-  const _hoisted_10$1 = ["href"];
-  const _hoisted_11$1 = {
-    key: 1,
-    class: "item-link-masked"
-  };
-  const _hoisted_12$1 = {
-    key: 2,
-    class: "no-link"
-  };
-  const _hoisted_13$1 = ["disabled", "onClick"];
-  const _hoisted_14$1 = {
-    key: 0,
-    class: "sales-details"
-  };
-  const _hoisted_15$1 = { class: "item-info" };
-  const _hoisted_16$1 = { class: "item-icon" };
-  const _hoisted_17 = { class: "item-details" };
-  const _hoisted_18 = { class: "item-id" };
-  const _hoisted_19 = { class: "sales-summary" };
-  const _hoisted_20 = { class: "summary-item" };
-  const _hoisted_21 = { class: "summary-value" };
-  const _hoisted_22 = { class: "summary-item" };
-  const _hoisted_23 = { class: "summary-value" };
-  const _hoisted_24 = { class: "summary-item" };
-  const _hoisted_25 = { class: "summary-value" };
-  const _hoisted_26 = { class: "variant-sales" };
-  const _hoisted_27 = {
-    key: 0,
-    class: "variant-summary"
-  };
-  const _hoisted_28 = { class: "summary-stats" };
-  const _hoisted_29 = { class: "summary-stat" };
-  const _hoisted_30 = { class: "summary-stat" };
-  const _hoisted_31 = { class: "summary-stat" };
-  const _hoisted_32 = { class: "variant-list" };
-  const _hoisted_33 = { class: "variant-info" };
-  const _hoisted_34 = { class: "variant-details" };
-  const _hoisted_35 = { class: "variant-name" };
-  const _hoisted_36 = {
-    key: 0,
-    class: "variant-source"
-  };
-  const _hoisted_37 = { class: "variant-stats" };
-  const _hoisted_38 = { class: "variant-quantity" };
-  const _hoisted_39 = { class: "variant-revenue" };
-  const _hoisted_40 = {
-    key: 1,
-    class: "no-variants"
-  };
-  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      userSettings: {},
-      selectedPeriod: {},
-      customRange: {},
-      targetCurrency: {}
-    },
-    setup(__props) {
-      const props = __props;
-      const showSalesModal = vue.ref(false);
-      const selectedItem = vue.ref(null);
-      const dataLoader2 = DataLoader.getInstance();
-      const orders = vue.computed(() => dataLoader2.getOrders());
-      const filteredOrders = vue.computed(() => {
-        if (orders.value.length === 0) return [];
-        const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
-          period: props.selectedPeriod || "all",
-          customRange: props.customRange
-        });
-        return result;
-      });
-      const items = vue.computed(() => {
-        const orderManager = OrderManager.getInstance();
-        return orderManager.getAllItemsWithStats(filteredOrders.value);
-      });
-      const itemColumns = [
-        { key: "itemId", label: "商品ID", width: "80px" },
-        { key: "icon", label: "图标", width: "60px" },
-        { key: "name", label: "商品名称", width: "300px" },
-        { key: "state", label: "状态", width: "100px" },
-        { key: "totalQuantity", label: "销量", width: "80px" },
-        { key: "totalRevenue", label: "总收入", width: "100px" },
-        { key: "totalBoothFee", label: "手续费", width: "80px" },
-        { key: "totalNetRevenue", label: "净收入", width: "100px" },
-        { key: "link", label: "链接", width: "120px" },
-        { key: "action", label: "操作", width: "100px" }
-      ];
-      const tableConfig = vue.computed(() => ({
-        pageSize: 50,
-        privacyMode: props.userSettings?.privacyMode || false,
-        scrollable: true,
-        showPagination: true,
-        getItemKey: (item) => item.itemId
-      }));
-      const displayConfig = {
-        title: "商品列表",
-        itemLabel: "个商品",
-        emptyIcon: "📦",
-        emptyText: "暂无商品数据",
-        emptyHint: "请先加载数据"
-      };
-      const getItemVariants = (itemId) => {
-        const currentItem = items.value.find((item) => item.itemId === itemId);
-        return currentItem?.variantStats || [];
-      };
-      const getVariantTotalQuantity = (itemId) => {
-        const variants = getItemVariants(itemId);
-        return variants.reduce((sum, variant) => sum + variant.totalQuantity, 0);
-      };
-      const getVariantTotalRevenue = (itemId) => {
-        const variants = getItemVariants(itemId);
-        return variants.reduce((sum, variant) => sum + variant.totalRevenue, 0);
-      };
-      const showSalesDetails = (item) => {
-        selectedItem.value = item;
-        showSalesModal.value = true;
-      };
-      const closeSalesModal = () => {
-        showSalesModal.value = false;
-        selectedItem.value = null;
-      };
-      const formatJPY = (price) => {
-        return CurrencyManager.formatCurrencyWithCode(price, "JPY");
-      };
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(DataTable, {
-            data: items.value,
-            columns: itemColumns,
-            config: tableConfig.value,
-            display: displayConfig
-          }, {
-            cell: vue.withCtx(({ item, column }) => [
-              column.key === "itemId" ? (vue.openBlock(), vue.createBlock(MaskedText, {
-                key: 0,
-                value: item.itemId,
-                masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])) : column.key === "icon" ? (vue.openBlock(), vue.createBlock(ItemIcon, {
-                key: 1,
-                "item-id": item.itemId,
-                size: "40px",
-                "privacy-mode": props.userSettings?.privacyMode || false
-              }, null, 8, ["item-id", "privacy-mode"])) : column.key === "name" ? (vue.openBlock(), vue.createBlock(MaskedText, {
-                key: 2,
-                value: item.item.name,
-                masked: props.userSettings?.privacyMode || false,
-                "mask-char": "商品"
-              }, null, 8, ["value", "masked"])) : column.key === "state" ? (vue.openBlock(), vue.createBlock(MaskedText, {
-                key: 3,
-                value: item.item.state_label,
-                masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])) : column.key === "totalQuantity" ? (vue.openBlock(), vue.createBlock(MaskedText, {
-                key: 4,
-                value: vue.unref(getNestedValue)(item, "salesStats.totalQuantity") || 0,
-                masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])) : column.key === "totalRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$3, [
-                vue.createElementVNode("div", _hoisted_2$3, [
-                  vue.createVNode(MaskedText, {
-                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalRevenue") || 0),
-                    masked: props.userSettings?.privacyMode || false
-                  }, null, 8, ["value", "masked"])
-                ]),
-                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
-                  vue.unref(getNestedValue)(item, "salesStats.totalRevenue"),
-                  _ctx.targetCurrency
-                )), 1)) : vue.createCommentVNode("", true)
-              ])) : column.key === "totalBoothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$3, [
-                vue.createElementVNode("div", _hoisted_5$3, [
-                  vue.createVNode(MaskedText, {
-                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") || 0),
-                    masked: props.userSettings?.privacyMode || false
-                  }, null, 8, ["value", "masked"])
-                ]),
-                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$3, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
-                  vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"),
-                  _ctx.targetCurrency
-                )), 1)) : vue.createCommentVNode("", true)
-              ])) : column.key === "totalNetRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$3, [
-                vue.createElementVNode("div", _hoisted_8$2, [
-                  vue.createVNode(MaskedText, {
-                    value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") || 0),
-                    masked: props.userSettings?.privacyMode || false
-                  }, null, 8, ["value", "masked"])
-                ]),
-                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$2, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
-                  vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue"),
-                  _ctx.targetCurrency
-                )), 1)) : vue.createCommentVNode("", true)
-              ])) : column.key === "link" ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 8 }, [
-                !(props.userSettings?.privacyMode || false) && item.item.url ? (vue.openBlock(), vue.createElementBlock("a", {
-                  key: 0,
-                  href: item.item.url,
-                  target: "_blank",
-                  class: "item-link"
-                }, " 查看商品 ", 8, _hoisted_10$1)) : props.userSettings?.privacyMode || false ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$1, " **** ")) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_12$1, " 无链接 "))
-              ], 64)) : column.key === "action" ? (vue.openBlock(), vue.createElementBlock("button", {
-                key: 9,
-                class: "sales-btn",
-                disabled: props.userSettings?.privacyMode || false,
-                onClick: ($event) => showSalesDetails(item)
-              }, " 查看销量 ", 8, _hoisted_13$1)) : vue.createCommentVNode("", true)
-            ]),
-            _: 1
-          }, 8, ["data", "config"]),
-          vue.createVNode(Modal, {
-            visible: showSalesModal.value,
-            title: "销量详情",
-            size: "large",
-            onClose: closeSalesModal
-          }, {
-            default: vue.withCtx(() => [
-              selectedItem.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$1, [
-                vue.createElementVNode("div", _hoisted_15$1, [
-                  vue.createElementVNode("div", _hoisted_16$1, [
-                    vue.createVNode(ItemIcon, {
-                      "item-id": selectedItem.value.itemId,
-                      size: "60px",
-                      "privacy-mode": _ctx.userSettings?.privacyMode || false
-                    }, null, 8, ["item-id", "privacy-mode"])
-                  ]),
-                  vue.createElementVNode("div", _hoisted_17, [
-                    vue.createElementVNode("h4", null, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "商品" : selectedItem.value.item.name), 1),
-                    vue.createElementVNode("p", _hoisted_18, "商品ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_19, [
-                  vue.createElementVNode("div", _hoisted_20, [
-                    _cache[0] || (_cache[0] = vue.createElementVNode("span", { class: "summary-label" }, "总销量:", -1)),
-                    vue.createElementVNode("span", _hoisted_21, [
-                      vue.createVNode(MaskedText, {
-                        value: selectedItem.value.salesStats.totalQuantity,
-                        masked: _ctx.userSettings?.privacyMode || false
-                      }, null, 8, ["value", "masked"])
-                    ])
-                  ]),
-                  vue.createElementVNode("div", _hoisted_22, [
-                    _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "summary-label" }, "总收入:", -1)),
-                    vue.createElementVNode("span", _hoisted_23, [
-                      vue.createVNode(MaskedText, {
-                        value: formatJPY(selectedItem.value.salesStats.totalRevenue),
-                        masked: _ctx.userSettings?.privacyMode || false
-                      }, null, 8, ["value", "masked"])
-                    ])
-                  ]),
-                  vue.createElementVNode("div", _hoisted_24, [
-                    _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "summary-label" }, "净收入:", -1)),
-                    vue.createElementVNode("span", _hoisted_25, [
-                      vue.createVNode(MaskedText, {
-                        value: formatJPY(selectedItem.value.salesStats.totalNetRevenue),
-                        masked: _ctx.userSettings?.privacyMode || false
-                      }, null, 8, ["value", "masked"])
-                    ])
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_26, [
-                  _cache[9] || (_cache[9] = vue.createElementVNode("h5", null, "变体销量详情", -1)),
-                  getItemVariants(selectedItem.value.itemId).length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_27, [
-                    vue.createElementVNode("div", _hoisted_28, [
-                      vue.createElementVNode("span", _hoisted_29, [
-                        _cache[3] || (_cache[3] = vue.createTextVNode(" 变体数量: ", -1)),
-                        vue.createElementVNode("strong", null, [
-                          vue.createVNode(MaskedText, {
-                            value: getItemVariants(selectedItem.value.itemId).length,
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ])
-                      ]),
-                      vue.createElementVNode("span", _hoisted_30, [
-                        _cache[4] || (_cache[4] = vue.createTextVNode(" 变体总销量: ", -1)),
-                        vue.createElementVNode("strong", null, [
-                          vue.createVNode(MaskedText, {
-                            value: getVariantTotalQuantity(selectedItem.value.itemId),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ])
-                      ]),
-                      vue.createElementVNode("span", _hoisted_31, [
-                        _cache[5] || (_cache[5] = vue.createTextVNode(" 变体总收入: ", -1)),
-                        vue.createElementVNode("strong", null, [
-                          vue.createVNode(MaskedText, {
-                            value: formatJPY(getVariantTotalRevenue(selectedItem.value.itemId)),
-                            masked: _ctx.userSettings?.privacyMode || false
-                          }, null, 8, ["value", "masked"])
-                        ])
-                      ])
-                    ])
-                  ])) : vue.createCommentVNode("", true),
-                  vue.createElementVNode("div", _hoisted_32, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getItemVariants(selectedItem.value.itemId), (variant) => {
-                      return vue.openBlock(), vue.createElementBlock("div", {
-                        key: variant.variantName,
-                        class: "variant-item"
-                      }, [
-                        vue.createElementVNode("div", _hoisted_33, [
-                          vue.createElementVNode("div", _hoisted_34, [
-                            vue.createElementVNode("span", _hoisted_35, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "变体商品" : variant.variantName), 1),
-                            !_ctx.userSettings?.privacyMode ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_36, " 来自订单数据 ")) : vue.createCommentVNode("", true)
-                          ])
-                        ]),
-                        vue.createElementVNode("div", _hoisted_37, [
-                          vue.createElementVNode("span", _hoisted_38, [
-                            _cache[6] || (_cache[6] = vue.createTextVNode(" 销量: ", -1)),
-                            vue.createVNode(MaskedText, {
-                              value: variant.totalQuantity,
-                              masked: _ctx.userSettings?.privacyMode || false
-                            }, null, 8, ["value", "masked"])
-                          ]),
-                          vue.createElementVNode("span", _hoisted_39, [
-                            _cache[7] || (_cache[7] = vue.createTextVNode(" 收入: ", -1)),
-                            vue.createVNode(MaskedText, {
-                              value: formatJPY(variant.totalRevenue),
-                              masked: _ctx.userSettings?.privacyMode || false
-                            }, null, 8, ["value", "masked"])
-                          ])
-                        ])
-                      ]);
-                    }), 128))
-                  ]),
-                  getItemVariants(selectedItem.value.itemId).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_40, _cache[8] || (_cache[8] = [
-                    vue.createElementVNode("p", null, "暂无变体商品", -1)
-                  ]))) : vue.createCommentVNode("", true)
-                ])
-              ])) : vue.createCommentVNode("", true)
-            ]),
-            _: 1
-          }, 8, ["visible"])
-        ], 64);
-      };
-    }
-  });
-  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-7d6ecca6"]]);
-  const DEFAULT_SETTINGS = {
-    timezone: "Asia/Shanghai",
-    displayName: "中国标准时间",
-    targetCurrency: "CNY",
-    privacyMode: false
-  };
-  const TIMEZONE_OPTIONS = [
-    { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
-    { value: "Asia/Tokyo", label: "日本标准时间 (UTC+9)" },
-    { value: "America/New_York", label: "美国东部时间 (UTC-5)" },
-    { value: "America/Los_Angeles", label: "美国太平洋时间 (UTC-8)" },
-    { value: "Europe/London", label: "英国时间 (UTC+0)" },
-    { value: "Europe/Paris", label: "欧洲中部时间 (UTC+1)" },
-    { value: "Asia/Seoul", label: "韩国标准时间 (UTC+9)" },
-    { value: "Asia/Singapore", label: "新加坡时间 (UTC+8)" },
-    { value: "Australia/Sydney", label: "澳大利亚东部时间 (UTC+10)" },
-    { value: "UTC", label: "协调世界时 (UTC+0)" }
-  ];
-  const CURRENCY_OPTIONS = [
-    { value: "CNY", label: "人民币 (CNY)", symbol: "¥" },
-    { value: "JPY", label: "日元 (JPY)", symbol: "¥" },
-    { value: "USD", label: "美元 (USD)", symbol: "$" },
-    { value: "EUR", label: "欧元 (EUR)", symbol: "€" },
-    { value: "GBP", label: "英镑 (GBP)", symbol: "£" },
-    { value: "KRW", label: "韩元 (KRW)", symbol: "₩" },
-    { value: "HKD", label: "港币 (HKD)", symbol: "HK$" },
-    { value: "TWD", label: "台币 (TWD)", symbol: "NT$" }
-  ];
-  class SettingsManager {
-    static SETTINGS_KEY = "booth_order_analysis_settings";
-    /**
-     * 获取用户设置
-     */
-    static getSettings() {
-      try {
-        const savedSettings = _GM_getValue(this.SETTINGS_KEY, null);
-        if (savedSettings && typeof savedSettings === "object") {
-          return { ...DEFAULT_SETTINGS, ...savedSettings };
-        }
-      } catch (error) {
-        logger.error("读取设置失败:", error);
-      }
-      return { ...DEFAULT_SETTINGS };
-    }
-    /**
-     * 保存用户设置
-     */
-    static saveSettings(settings) {
-      try {
-        _GM_setValue(this.SETTINGS_KEY, settings);
-        logger.settings("设置已保存");
-      } catch (error) {
-        logger.error("保存设置失败:", error);
-      }
-    }
-    /**
-     * 更新部分设置
-     */
-    static updateSettings(partialSettings) {
-      const currentSettings = this.getSettings();
-      const newSettings = { ...currentSettings, ...partialSettings };
-      this.saveSettings(newSettings);
-    }
-    /**
-     * 重置为默认设置
-     */
-    static resetSettings() {
-      this.saveSettings(DEFAULT_SETTINGS);
-      logger.settings("设置已重置为默认值");
-    }
-  }
-  const _hoisted_1$2 = { class: "settings-content" };
-  const _hoisted_2$2 = { class: "setting-section" };
-  const _hoisted_3$2 = { class: "setting-item" };
-  const _hoisted_4$2 = ["value"];
-  const _hoisted_5$2 = { class: "current-time" };
-  const _hoisted_6$2 = { class: "setting-section" };
-  const _hoisted_7$2 = { class: "setting-item" };
-  const _hoisted_8$1 = ["value"];
-  const _hoisted_9$1 = { class: "exchange-rate-info" };
-  const _hoisted_10 = { class: "update-time" };
-  const _hoisted_11 = { class: "setting-section" };
-  const _hoisted_12 = { class: "setting-item" };
-  const _hoisted_13 = { class: "privacy-toggle" };
-  const _hoisted_14 = { class: "setting-section" };
-  const _hoisted_15 = { class: "setting-actions" };
-  const _hoisted_16 = ["disabled"];
-  const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
-    __name: "index",
-    props: {
-      visible: { type: Boolean }
-    },
-    emits: ["close", "settings-changed"],
-    setup(__props, { emit: __emit }) {
-      const emit = __emit;
-      const settings = vue.ref({
-        timezone: "Asia/Shanghai",
-        displayName: "中国标准时间",
-        targetCurrency: "CNY",
-        privacyMode: false
-      });
-      const isSaving = vue.ref(false);
-      const loadSettings = () => {
-        settings.value = SettingsManager.getSettings();
-      };
-      const saveSettings = async () => {
-        isSaving.value = true;
-        try {
-          SettingsManager.saveSettings(settings.value);
-          emit("settings-changed", settings.value);
-          setTimeout(() => {
-            isSaving.value = false;
-          }, 1e3);
-        } catch (error) {
-          console.error("保存设置失败:", error);
-          isSaving.value = false;
-        }
-      };
-      const resetSettings = () => {
-        SettingsManager.resetSettings();
-        loadSettings();
-        emit("settings-changed", settings.value);
-      };
-      const onTimezoneChange = (event) => {
-        const select = event.target;
-        const selectedOption = TIMEZONE_OPTIONS.find((option) => option.value === select.value);
-        if (selectedOption) {
-          settings.value.timezone = selectedOption.value;
-          settings.value.displayName = selectedOption.label.split(" ")[0];
-        }
-        emit("settings-changed", settings.value);
-      };
-      const getExchangeRateDisplay = vue.computed(() => {
-        const selectedCurrency = settings.value.targetCurrency;
-        if (selectedCurrency === "JPY") {
-          return "¥1.0000";
-        }
-        const rate = CurrencyManager.getExchangeRateSync(selectedCurrency);
-        const symbol = CURRENCY_OPTIONS.find((option) => option.value === selectedCurrency)?.symbol || "";
-        return `${symbol}${rate?.toFixed(4) || "0.0000"}`;
-      });
-      const getExchangeRateUpdateTime = vue.computed(() => {
-        const cacheStatus = CurrencyManager.getCacheStatus();
-        if (cacheStatus.updateTime) {
-          return `更新时间: ${cacheStatus.updateTime}`;
-        }
-        return "实时更新";
-      });
-      const handlePrivacyModeChange = () => {
-        emit("settings-changed", settings.value);
-      };
-      const handleCurrencyChange = () => {
-        emit("settings-changed", settings.value);
-      };
-      const closeSettings = () => {
-        emit("close");
-      };
-      vue.onMounted(() => {
-        loadSettings();
-      });
-      return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(Modal, {
-          visible: _ctx.visible,
-          title: "设置",
-          size: "medium",
-          onClose: closeSettings
-        }, {
-          default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$2, [
-              vue.createElementVNode("div", _hoisted_2$2, [
-                _cache[4] || (_cache[4] = vue.createElementVNode("h3", null, "时区设置", -1)),
-                _cache[5] || (_cache[5] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_3$2, [
-                  _cache[3] || (_cache[3] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
-                  vue.withDirectives(vue.createElementVNode("select", {
-                    id: "timezone-select",
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
-                    onChange: onTimezoneChange,
-                    class: "timezone-select"
-                  }, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(TIMEZONE_OPTIONS), (option) => {
-                      return vue.openBlock(), vue.createElementBlock("option", {
-                        key: option.value,
-                        value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_4$2);
-                    }), 128))
-                  ], 544), [
-                    [vue.vModelSelect, settings.value.timezone]
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_5$2, [
-                  vue.createElementVNode("span", null, "当前时间：" + vue.toDisplayString((/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { timeZone: settings.value.timezone })), 1)
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_6$2, [
-                _cache[7] || (_cache[7] = vue.createElementVNode("h3", null, "货币设置", -1)),
-                _cache[8] || (_cache[8] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_7$2, [
-                  _cache[6] || (_cache[6] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
-                  vue.withDirectives(vue.createElementVNode("select", {
-                    id: "currency-select",
-                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
-                    onChange: handleCurrencyChange,
-                    class: "currency-select"
-                  }, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(CURRENCY_OPTIONS), (option) => {
-                      return vue.openBlock(), vue.createElementBlock("option", {
-                        key: option.value,
-                        value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_8$1);
-                    }), 128))
-                  ], 544), [
-                    [vue.vModelSelect, settings.value.targetCurrency]
-                  ])
-                ]),
-                vue.createElementVNode("div", _hoisted_9$1, [
-                  vue.createElementVNode("span", null, "当前汇率：1 JPY = " + vue.toDisplayString(getExchangeRateDisplay.value), 1),
-                  vue.createElementVNode("span", _hoisted_10, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_11, [
-                _cache[11] || (_cache[11] = vue.createElementVNode("h3", null, "隐私设置", -1)),
-                _cache[12] || (_cache[12] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
-                vue.createElementVNode("div", _hoisted_12, [
-                  vue.createElementVNode("label", _hoisted_13, [
-                    vue.withDirectives(vue.createElementVNode("input", {
-                      type: "checkbox",
-                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => settings.value.privacyMode = $event),
-                      onChange: handlePrivacyModeChange,
-                      class: "privacy-checkbox"
-                    }, null, 544), [
-                      [vue.vModelCheckbox, settings.value.privacyMode]
-                    ]),
-                    _cache[9] || (_cache[9] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
-                  ])
-                ])
-              ]),
-              vue.createElementVNode("div", _hoisted_14, [
-                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "数据管理", -1)),
-                vue.createElementVNode("div", _hoisted_15, [
-                  vue.createElementVNode("button", {
-                    onClick: saveSettings,
-                    disabled: isSaving.value,
-                    class: "save-btn"
-                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_16),
-                  vue.createElementVNode("button", {
-                    onClick: resetSettings,
-                    class: "reset-btn"
-                  }, "重置为默认")
-                ])
-              ])
-            ])
-          ]),
-          _: 1
-        }, 8, ["visible"]);
-      };
-    }
-  });
-  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-64cf404d"]]);
+  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-fef2f70b"]]);
   const _hoisted_1$1 = { class: "exchange-rate-status" };
   const _hoisted_2$1 = { class: "status-info" };
   const _hoisted_3$1 = { class: "rate-info" };
@@ -21472,6 +21576,16 @@
         };
         return symbols[currency] || currency;
       };
+      const formatAge = (milliseconds) => {
+        const seconds = Math.floor(milliseconds / 1e3);
+        if (seconds < 60) {
+          return `${seconds}秒前`;
+        } else if (seconds < 3600) {
+          return `${Math.floor(seconds / 60)}分钟前`;
+        } else {
+          return `${Math.floor(seconds / 3600)}小时前`;
+        }
+      };
       const updateCacheStatus = () => {
         cacheStatus.value = CurrencyManager.getCacheStatus();
       };
@@ -21514,12 +21628,12 @@
           }, null, 4),
           vue.createElementVNode("div", _hoisted_2$1, [
             vue.createElementVNode("span", _hoisted_3$1, vue.toDisplayString(currentRate.value), 1),
-            cacheStatus.value.updateTime ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$1, vue.toDisplayString(cacheStatus.value.updateTime), 1)) : vue.createCommentVNode("", true)
+            cacheStatus.value.hasCache ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_4$1, vue.toDisplayString(cacheStatus.value.age === 0 ? "刚刚更新" : formatAge(cacheStatus.value.age)), 1)) : vue.createCommentVNode("", true)
           ]),
           vue.createElementVNode("button", {
             onClick: refreshRates,
             disabled: isRefreshing.value,
-            class: "refresh-btn",
+            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
             title: "刷新汇率"
           }, [
             !isRefreshing.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_6$1, _cache[0] || (_cache[0] = [
@@ -21531,7 +21645,7 @@
       };
     }
   });
-  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-66b9449e"]]);
+  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-16151a4c"]]);
   const _hoisted_1 = { class: "analysis-content" };
   const _hoisted_2 = { class: "header" };
   const _hoisted_3 = { class: "header-right" };
@@ -21644,7 +21758,7 @@
               }, null, 8, ["target-currency"]),
               vue.createElementVNode("button", {
                 onClick: openSettings,
-                class: "settings-btn",
+                class: "booth-btn booth-btn-secondary booth-btn-icon booth-btn-sm",
                 title: "设置"
               }, _cache[2] || (_cache[2] = [
                 vue.createElementVNode("svg", {
@@ -21661,7 +21775,7 @@
               vue.createElementVNode("button", {
                 onClick: refreshData,
                 disabled: isLoading.value,
-                class: "refresh-btn",
+                class: "booth-btn booth-btn-success booth-btn-icon booth-btn-sm",
                 title: "刷新数据"
               }, [
                 !isLoading.value ? (vue.openBlock(), vue.createElementBlock("svg", _hoisted_5, _cache[3] || (_cache[3] = [
@@ -21678,7 +21792,7 @@
               ], 8, _hoisted_4),
               vue.createElementVNode("button", {
                 onClick: closePanel,
-                class: "close-btn",
+                class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
                 title: "关闭"
               }, " × ")
             ])
@@ -21696,11 +21810,11 @@
             }, null, 8, ["statistics", "orders", "model-value", "custom-range", "target-currency", "user-settings"]),
             vue.createElementVNode("div", _hoisted_8, [
               vue.createElementVNode("button", {
-                class: vue.normalizeClass(["tab-btn", { active: activeTab.value === "orders" }]),
+                class: vue.normalizeClass(["booth-btn", "booth-btn-ghost", "booth-btn-md", { "booth-btn-primary": activeTab.value === "orders" }]),
                 onClick: _cache[0] || (_cache[0] = ($event) => switchTab("orders"))
               }, " 订单列表 ", 2),
               vue.createElementVNode("button", {
-                class: vue.normalizeClass(["tab-btn", { active: activeTab.value === "items" }]),
+                class: vue.normalizeClass(["booth-btn", "booth-btn-ghost", "booth-btn-md", { "booth-btn-primary": activeTab.value === "items" }]),
                 onClick: _cache[1] || (_cache[1] = ($event) => switchTab("items"))
               }, " 商品列表 ", 2)
             ]),
@@ -21729,7 +21843,7 @@
       };
     }
   });
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-91d212d9"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-8d0e684c"]]);
   function isBoothOrdersPage() {
     return window.location.href.includes("manage.booth.pm/orders");
   }
@@ -21748,15 +21862,8 @@
       </div>
       <span class="button-text">订单分析</span>
     `;
+      button.className = "booth-btn booth-btn-primary booth-btn-md";
       button.style.cssText = `
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
       margin-left: 12px;
       position: relative;
       min-width: 100px;
@@ -21764,22 +21871,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
     `;
       const style = document.createElement("style");
       style.textContent = `
       #booth-analysis-button {
         position: relative;
         overflow: hidden;
-      }
-      
-      #booth-analysis-button:hover {
-        background: #2563eb;
-        transform: translateY(-1px);
-      }
-      
-      #booth-analysis-button:active {
-        transform: translateY(0);
       }
       
       #booth-analysis-button .button-text {
@@ -21801,8 +21898,8 @@
       #booth-analysis-button .spinner {
         width: 16px;
         height: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top: 2px solid white;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-top: 2px solid #3b82f6;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -21810,11 +21907,6 @@
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
-      }
-      
-      #booth-analysis-button:disabled {
-        background: #6b7280;
-        cursor: not-allowed;
       }
     `;
       document.head.appendChild(style);

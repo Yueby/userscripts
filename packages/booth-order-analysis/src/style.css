@@ -1,0 +1,341 @@
+/* 全局按钮样式系统 */
+
+/* 基础按钮样式 */
+.booth-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    /* 默认样式 - 如果没有指定颜色变体，使用 secondary 样式 */
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.booth-btn:hover:not(:disabled) {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.booth-btn:active:not(:disabled) {
+    background: #d1d5db;
+    transform: translateY(1px);
+}
+
+/* 按钮尺寸 */
+.booth-btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-height: 24px;
+}
+
+.booth-btn-md {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+}
+
+.booth-btn-lg {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-height: 40px;
+}
+
+/* 按钮颜色变体 */
+.booth-btn-primary {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+}
+
+.booth-btn-primary:hover:not(:disabled) {
+    background: #2563eb;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+}
+
+.booth-btn-primary:active:not(:disabled) {
+    background: #1d4ed8;
+    transform: translateY(1px);
+}
+
+.booth-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.booth-btn-secondary:hover:not(:disabled) {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.booth-btn-secondary:active:not(:disabled) {
+    background: #d1d5db;
+    transform: translateY(1px);
+}
+
+.booth-btn-success {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}
+
+.booth-btn-success:hover:not(:disabled) {
+    background: #059669;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);
+}
+
+.booth-btn-success:active:not(:disabled) {
+    background: #047857;
+    transform: translateY(1px);
+}
+
+.booth-btn-danger {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3);
+}
+
+.booth-btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+}
+
+.booth-btn-danger:active:not(:disabled) {
+    background: #b91c1c;
+    transform: translateY(1px);
+}
+
+.booth-btn-ghost {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid transparent;
+}
+
+.booth-btn-ghost:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.booth-btn-ghost:active:not(:disabled) {
+    background: #e2e8f0;
+    transform: translateY(1px);
+}
+
+/* 按钮状态 */
+.booth-btn:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.booth-btn:disabled:hover {
+    background: #f3f4f6;
+    color: #9ca3af;
+    box-shadow: none;
+    transform: none;
+}
+
+/* 按钮组样式 */
+.booth-btn-group {
+    display: inline-flex;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.booth-btn-group .booth-btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.booth-btn-group .booth-btn:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.booth-btn-group .booth-btn:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-right: none;
+}
+
+/* 图标按钮 */
+.booth-btn-icon {
+    padding: 6px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.booth-btn-icon.booth-btn-sm {
+    padding: 4px;
+    min-width: 24px;
+    min-height: 24px;
+}
+
+.booth-btn-icon.booth-btn-lg {
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .booth-btn-md {
+        padding: 5px 10px;
+        font-size: 11px;
+        min-height: 28px;
+    }
+
+    .booth-btn-lg {
+        padding: 7px 14px;
+        font-size: 13px;
+        min-height: 36px;
+    }
+}
+
+/* 动画效果 */
+.booth-btn {
+    transition: all 0.15s ease;
+}
+
+.booth-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.booth-btn:focus:not(:focus-visible) {
+    box-shadow: none;
+}
+
+/* 加载状态 */
+.booth-btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.booth-btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: booth-btn-spin 0.6s linear infinite;
+}
+
+@keyframes booth-btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Toggle 开关样式 */
+.booth-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.booth-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.booth-toggle .toggle-slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #d1d5db;
+    border-radius: 12px;
+    transition: all 0.15s ease;
+}
+
+.booth-toggle .toggle-slider:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.booth-toggle input[type="checkbox"]:checked+.toggle-slider {
+    background: #10b981;
+}
+
+.booth-toggle input[type="checkbox"]:checked+.toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.booth-toggle .toggle-label {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Toggle 点击效果 */
+.booth-toggle input[type="checkbox"]:active+.toggle-slider {
+    transform: translateY(1px);
+}
+
+.booth-toggle input[type="checkbox"]:active+.toggle-slider:before {
+    transform: translateX(2px);
+}
+
+.booth-toggle input[type="checkbox"]:checked:active+.toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* Toggle 尺寸变体 */
+.booth-toggle-sm .toggle-slider {
+    width: 36px;
+    height: 20px;
+}
+
+.booth-toggle-sm .toggle-slider:before {
+    width: 16px;
+    height: 16px;
+}
+
+.booth-toggle-sm input[type="checkbox"]:checked+.toggle-slider:before {
+    transform: translateX(16px);
+}
+
+.booth-toggle-lg .toggle-slider {
+    width: 52px;
+    height: 28px;
+}
+
+.booth-toggle-lg .toggle-slider:before {
+    width: 24px;
+    height: 24px;
+}
+
+.booth-toggle-lg input[type="checkbox"]:checked+.toggle-slider:before {
+    transform: translateX(24px);
+}

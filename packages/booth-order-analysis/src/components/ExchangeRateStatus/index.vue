@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { CurrencyManager } from '../../utils/currency/currency-manager';
-import { logger } from '../../utils/core/logger';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { Currency } from '../../types/settings';
+import { logger } from '../../utils/core/logger';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
 
 interface Props {
   targetCurrency?: Currency;
@@ -50,6 +50,18 @@ const getCurrencySymbol = (currency: Currency): string => {
   return symbols[currency] || currency;
 };
 
+// 格式化时间
+const formatAge = (milliseconds: number): string => {
+  const seconds = Math.floor(milliseconds / 1000);
+  if (seconds < 60) {
+    return `${seconds}秒前`;
+  } else if (seconds < 3600) {
+    return `${Math.floor(seconds / 60)}分钟前`;
+  } else {
+    return `${Math.floor(seconds / 3600)}小时前`;
+  }
+};
+
 // 更新缓存状态
 const updateCacheStatus = () => {
   cacheStatus.value = CurrencyManager.getCacheStatus();
@@ -71,31 +83,12 @@ const refreshRates = async () => {
   }
 };
 
-// 格式化时间
-const formatAge = (seconds: number): string => {
-  if (seconds < 60) {
-    return `${seconds}秒前`;
-  } else if (seconds < 3600) {
-    return `${Math.floor(seconds / 60)}分钟前`;
-  } else {
-    return `${Math.floor(seconds / 3600)}小时前`;
-  }
-};
-
 // 获取状态颜色
 const getStatusColor = () => {
   if (isInitializing.value) return '#6b7280'; // 灰色（初始化中）
   if (!cacheStatus.value.hasCache) return '#ef4444'; // 红色
   if (!cacheStatus.value.isValid) return '#f59e0b'; // 橙色
   return '#10b981'; // 绿色
-};
-
-// 获取状态文本
-const getStatusText = () => {
-  if (isInitializing.value) return '初始化中';
-  if (!cacheStatus.value.hasCache) return '未缓存';
-  if (!cacheStatus.value.isValid) return '已过期';
-  return '实时';
 };
 
 onMounted(() => {
@@ -121,14 +114,16 @@ onUnmounted(() => {
     <div class="status-indicator" :style="{ backgroundColor: getStatusColor() }"></div>
     <div class="status-info">
       <span class="rate-info">{{ currentRate }}</span>
-      <span v-if="cacheStatus.updateTime" class="update-time">
-        {{ cacheStatus.updateTime }}
+      <span v-if="cacheStatus.hasCache" class="update-time">
+        {{ cacheStatus.age === 0 ? '刚刚更新' : formatAge(cacheStatus.age) }}
       </span>
     </div>
-    <button @click="refreshRates" :disabled="isRefreshing" class="refresh-btn" title="刷新汇率">
-      <svg v-if="!isRefreshing" class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M1 4v6h6M23 20v-6h-6"/>
-        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+    <button @click="refreshRates" :disabled="isRefreshing" class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm"
+      title="刷新汇率">
+      <svg v-if="!isRefreshing" class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2">
+        <path d="M1 4v6h6M23 20v-6h-6" />
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
       </svg>
       <div v-else class="spinner"></div>
     </button>
@@ -139,7 +134,7 @@ onUnmounted(() => {
 .exchange-rate-status {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   padding: 3px 6px;
   background: #f8fafc;
   border-radius: 4px;
@@ -157,8 +152,9 @@ onUnmounted(() => {
 
 .status-info {
   display: flex;
-  flex-direction: column;
-  gap: 0px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
   flex: 1;
   min-width: 0;
 }
@@ -186,30 +182,6 @@ onUnmounted(() => {
   color: #6b7280;
   font-size: 10px;
   white-space: nowrap;
-}
-
-.refresh-btn {
-  background: none;
-  border: none;
-  padding: 2px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: #e5e7eb;
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .refresh-icon {

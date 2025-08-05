@@ -3,7 +3,7 @@
     <div :class="['modal-content', modalSizeClass]" @click.stop>
       <div class="modal-header">
         <h3 class="modal-title">{{ title }}</h3>
-        <button @click="handleClose" class="modal-close" :title="closeButtonTitle">
+        <button @click="handleClose" class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" :title="closeButtonTitle">
           ×
         </button>
       </div>
@@ -117,27 +117,6 @@ const modalSizeClass = computed(() => {
   color: #374151;
   font-size: 18px;
   font-weight: 600;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.modal-close:hover {
-  background: #f3f4f6;
-  color: #374151;
 }
 
 .modal-body {

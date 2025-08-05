@@ -1,5 +1,10 @@
 <template>
-    <DataTable :data="items" :columns="itemColumns" :config="tableConfig" :display="displayConfig">
+    <DataTable :data="sortedItems" :columns="itemColumns" :config="tableConfig" :display="displayConfig">
+        <!-- 头部控制区域 -->
+        <template #header-controls>
+            <Selector v-model="sortMode" :options="sortOptions" @change="handleSortChange" />
+        </template>
+
         <!-- 自定义单元格渲染 -->
         <template #cell="{ item, column }">
             <!-- 商品ID -->
@@ -38,7 +43,7 @@
                     <div v-if="!(props.userSettings?.privacyMode || false) && getNestedValue(item, 'salesStats.totalRevenue') && targetCurrency && CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalRevenue'), targetCurrency as any)"
                         class="price-converted">
                         {{ CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalRevenue'),
-                        targetCurrency as any) }}
+                            targetCurrency as any) }}
                     </div>
                 </div>
             </template>
@@ -53,7 +58,7 @@
                     <div v-if="!(props.userSettings?.privacyMode || false) && getNestedValue(item, 'salesStats.totalBoothFee') && targetCurrency && CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalBoothFee'), targetCurrency as any)"
                         class="price-converted">
                         {{ CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalBoothFee'),
-                        targetCurrency as any) }}
+                            targetCurrency as any) }}
                     </div>
                 </div>
             </template>
@@ -68,7 +73,7 @@
                     <div v-if="!(props.userSettings?.privacyMode || false) && getNestedValue(item, 'salesStats.totalNetRevenue') && targetCurrency && CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalNetRevenue'), targetCurrency as any)"
                         class="price-converted">
                         {{ CurrencyManager.formatConverted(getNestedValue(item, 'salesStats.totalNetRevenue'),
-                        targetCurrency as any) }}
+                            targetCurrency as any) }}
                     </div>
                 </div>
             </template>
@@ -89,8 +94,8 @@
 
             <!-- 操作按钮 -->
             <template v-else-if="column.key === 'action'">
-                <button class="sales-btn" :disabled="props.userSettings?.privacyMode || false"
-                    @click="showSalesDetails(item)">
+                <button class="booth-btn booth-btn-primary booth-btn-sm"
+                    :disabled="props.userSettings?.privacyMode || false" @click="showSalesDetails(item)">
                     查看销量
                 </button>
             </template>
@@ -202,10 +207,11 @@ import { OrderManager } from '../../utils/booth/order-manager';
 import { DataLoader } from '../../utils/core/data-loader';
 import { getNestedValue } from '../../utils/core/object-utils';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
-import DataTable from '../DataTable/index.vue';
+import DataTable from '../common/DataTable/index.vue';
 import ItemIcon from '../common/ItemIcon/index.vue';
 import MaskedText from '../common/MaskedText/index.vue';
 import Modal from '../common/Modal/index.vue';
+import Selector from '../common/Selector/index.vue';
 
 interface Props {
     userSettings?: UserSettings;
@@ -219,6 +225,9 @@ const props = defineProps<Props>();
 // 弹窗状态
 const showSalesModal = ref(false);
 const selectedItem = ref<any>(null);
+
+// 排序状态
+const sortMode = ref<'original' | 'sales'>('original');
 
 // 获取订单数据
 const dataLoader = DataLoader.getInstance();
@@ -241,6 +250,34 @@ const items = computed(() => {
     const orderManager = OrderManager.getInstance();
     return orderManager.getAllItemsWithStats(filteredOrders.value);
 });
+
+// 根据排序模式获取排序后的商品数据
+const sortedItems = computed(() => {
+    if (sortMode.value === 'original') {
+        return items.value;
+    } else if (sortMode.value === 'sales') {
+        return [...items.value].sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
+    }
+    return items.value;
+});
+
+// 排序选项配置
+const sortOptions = [
+    { value: 'original', label: '原始顺序' },
+    { value: 'sales', label: '按销量' }
+];
+
+// 设置排序模式
+const setSortMode = (mode: 'original' | 'sales') => {
+    sortMode.value = mode;
+};
+
+// 处理排序变化
+const handleSortChange = (value: string | number | (string | number)[]) => {
+    if (typeof value === 'string' || typeof value === 'number') {
+        sortMode.value = value as 'original' | 'sales';
+    }
+};
 
 // 表格列配置
 const itemColumns = [
@@ -312,28 +349,6 @@ const formatJPY = (price: number) => {
 
 <style scoped>
 /* 继承DataTable的样式，只保留弹窗相关样式 */
-
-/* 销量按钮样式 */
-.sales-btn {
-    padding: 6px 12px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.sales-btn:hover:not(:disabled) {
-    background: #2563eb;
-}
-
-.sales-btn:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
-}
 
 /* 商品链接样式 */
 .item-link {

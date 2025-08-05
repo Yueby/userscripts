@@ -66,7 +66,7 @@ const getCellClass = (columnKey: string): string => {
 
 /* 确保单元格内容正确对齐 */
 .table-cell>* {
-  width: 100%;
+  width: auto;
 }
 
 /* 响应式设计 */

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { CurrencyManager } from '../../utils/currency/currency-manager';
-import { ItemManager } from '../../utils/booth/item-manager';
-import MaskedText from '../common/MaskedText/index.vue';
-import ItemIcon from '../common/ItemIcon/index.vue';
-import type { ProductSalesData } from '../../utils/analysis/data-analyzer';
 import type { Currency, UserSettings } from '../../types/settings';
+import type { ProductSalesData } from '../../utils/analysis/data-analyzer';
+import { ItemManager } from '../../utils/booth/item-manager';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
+import ItemIcon from '../common/ItemIcon/index.vue';
+import MaskedText from '../common/MaskedText/index.vue';
+import type { SelectorOption } from '../common/Selector/index.vue';
+import Selector from '../common/Selector/index.vue';
 
 interface Props {
   productData: ProductSalesData[];
@@ -21,6 +23,19 @@ const props = withDefaults(defineProps<Props>(), {
 const sortType = ref<'quantity' | 'revenue'>('quantity');
 
 const itemManager = ItemManager.getInstance();
+
+// 排序选项
+const sortOptions: SelectorOption[] = [
+  { value: 'quantity', label: '销量' },
+  { value: 'revenue', label: '收入' }
+];
+
+// 处理排序变化
+const handleSortChange = (value: string | number | (string | number)[]) => {
+  if (typeof value === 'string' || typeof value === 'number') {
+    sortType.value = value as 'quantity' | 'revenue';
+  }
+};
 
 // 根据排序类型处理数据
 const sortedProductData = computed(() => {
@@ -63,20 +78,12 @@ const getItemUrl = (itemId: string) => {
     <div class="ranking-header">
       <h4>商品排行</h4>
       <div class="ranking-controls">
-        <div class="sort-buttons">
-          <button 
-            :class="['sort-btn', { active: sortType === 'quantity' }]" 
-            @click="sortType = 'quantity'"
-          >
-            销量
-          </button>
-          <button 
-            :class="['sort-btn', { active: sortType === 'revenue' }]" 
-            @click="sortType = 'revenue'"
-          >
-            收入
-          </button>
-        </div>
+        <Selector
+          :options="sortOptions"
+          :model-value="sortType"
+          @update:model-value="handleSortChange"
+          class="sort-selector"
+        />
       </div>
     </div>
 
@@ -163,38 +170,8 @@ const getItemUrl = (itemId: string) => {
   align-items: center;
 }
 
-.sort-buttons {
-  display: flex;
-  gap: 4px;
-}
-
-.sort-btn {
-  padding: 3px 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 3px;
+.sort-selector {
   font-size: 10px;
-  font-weight: 500;
-  background: white;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.sort-btn:hover {
-  border-color: #9ca3af;
-  color: #374151;
-  background: #f9fafb;
-}
-
-.sort-btn.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
-}
-
-.sort-btn.active:hover {
-  background: #2563eb;
-  border-color: #2563eb;
 }
 
 .ranking-list {

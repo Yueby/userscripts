@@ -1,6 +1,6 @@
-import type { Order, OrderItem, BoothItem, VariantSalesStats } from '../../types/order';
-import { ItemManager } from './item-manager';
+import type { BoothItem, Order, OrderItem, VariantSalesStats } from '../../types/order';
 import { logger } from '../core/logger';
+import { ItemManager } from './item-manager';
 
 /**
  * 订单管理器
@@ -468,6 +468,7 @@ export class OrderManager {
     const allItems = this.itemManager.getAllItems();
 
     // 使用预计算的销售统计，避免重复计算
+    // 保持item数组的原始顺序，不进行排序
     allItems.forEach((item, itemId) => {
       const salesStats = allSalesStats.get(itemId) || {
         totalQuantity: 0,
@@ -488,8 +489,7 @@ export class OrderManager {
       });
     });
 
-    // 按销量排序
-    result.sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
+    // 移除按销量排序，保持item数组的原始顺序
 
     // 更新缓存
     this.lastProcessedOrders = [...orders];

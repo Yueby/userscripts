@@ -169,12 +169,11 @@ onMounted(() => {
         </p>
 
         <div class="setting-item">
-          <label class="privacy-toggle">
+          <label class="booth-toggle">
             <input 
               type="checkbox" 
               v-model="settings.privacyMode" 
               @change="handlePrivacyModeChange"
-              class="privacy-checkbox"
             />
             <span class="toggle-slider"></span>
             <span class="toggle-label">隐私模式</span>
@@ -185,10 +184,10 @@ onMounted(() => {
       <div class="setting-section">
         <h3>数据管理</h3>
         <div class="setting-actions">
-          <button @click="saveSettings" :disabled="isSaving" class="save-btn">
+          <button @click="saveSettings" :disabled="isSaving" class="booth-btn booth-btn-success booth-btn-md">
             {{ isSaving ? '保存中...' : '保存设置' }}
           </button>
-          <button @click="resetSettings" class="reset-btn">重置为默认</button>
+          <button @click="resetSettings" class="booth-btn booth-btn-secondary booth-btn-md">重置为默认</button>
         </div>
       </div>
     </div>
@@ -258,90 +257,4 @@ onMounted(() => {
   gap: 12px;
 }
 
-.save-btn,
-.reset-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.save-btn {
-  background: #10b981;
-  color: white;
-}
-
-.save-btn:hover:not(:disabled) {
-  background: #059669;
-}
-
-.save-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.reset-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.reset-btn:hover {
-  background: #e5e7eb;
-}
-
-/* 隐私模式开关样式 */
-.privacy-toggle {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  position: relative;
-}
-
-.privacy-checkbox {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: relative;
-  width: 44px;
-  height: 24px;
-  background: #d1d5db;
-  border-radius: 12px;
-  transition: background 0.3s;
-}
-
-.toggle-slider:before {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  transition: transform 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.privacy-checkbox:checked + .toggle-slider {
-  background: #10b981;
-}
-
-.privacy-checkbox:checked + .toggle-slider:before {
-  transform: translateX(20px);
-}
-
-.toggle-label {
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-}
 </style>

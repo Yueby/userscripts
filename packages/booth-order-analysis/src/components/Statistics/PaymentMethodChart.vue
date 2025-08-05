@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { PaymentMethodData } from '../../utils/analysis/data-analyzer';
 import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 
@@ -46,7 +46,7 @@ const generateFakeData = (originalData: PaymentMethodData[]): PaymentMethodData[
   if (!props.privacyMode) {
     return originalData;
   }
-  
+
   // 生成虚假的支付方式数据，确保总订单数至少1万
   const fakeMethods = ['魔法水晶支付', '时空传送支付', '意念转账', '彩虹币支付'];
   const fakeData: PaymentMethodData[] = fakeMethods.map((method, index) => {
@@ -58,13 +58,13 @@ const generateFakeData = (originalData: PaymentMethodData[]): PaymentMethodData[
       percentage: 0 // 稍后计算
     };
   });
-  
+
   // 计算百分比
   const totalCount = fakeData.reduce((sum, item) => sum + item.count, 0);
   fakeData.forEach(item => {
     item.percentage = Math.round((item.count / totalCount) * 100);
   });
-  
+
   return fakeData.sort((a, b) => b.count - a.count);
 };
 

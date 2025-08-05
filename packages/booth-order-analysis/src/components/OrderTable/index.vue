@@ -5,8 +5,8 @@ import type { Currency, UserSettings } from '../../types/settings';
 import { formatBoothFee, formatNetAmount } from '../../utils/booth/booth-fee-calculator';
 import { formatConvertedDateTime, formatOriginalDateTime } from '../../utils/core/date-formatter';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
+import DataTable from '../common/DataTable/index.vue';
 import MaskedText from '../common/MaskedText/index.vue';
-import DataTable from '../DataTable/index.vue';
 import ItemEntry from './ItemEntry.vue';
 
 interface Props {

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { DataAnalyzer, type TimePeriod, type CustomDateRange } from '../../utils/analysis/data-analyzer';
-import { CurrencyManager } from '../../utils/currency/currency-manager';
-import type { OrderStats } from '../../types/order';
-import type { Order } from '../../types/order';
+import { computed, ref, watch } from 'vue';
+import type { Order, OrderStats } from '../../types/order';
 import type { Currency, UserSettings } from '../../types/settings';
+import { DataAnalyzer, type CustomDateRange, type TimePeriod } from '../../utils/analysis/data-analyzer';
+import { CurrencyManager } from '../../utils/currency/currency-manager';
+import type { SelectorOption } from '../common/Selector/index.vue';
 
 import MaskedText from '../common/MaskedText/index.vue';
+import Modal from '../common/Modal/index.vue';
+import Selector from '../common/Selector/index.vue';
 import ItemRanking from './ItemRanking.vue';
-import RevenueTrendChart from './RevenueTrendChart.vue';
 import PaymentMethodChart from './PaymentMethodChart.vue';
-
+import RevenueTrendChart from './RevenueTrendChart.vue';
 
 interface Props {
   statistics: OrderStats;
@@ -38,6 +39,20 @@ const customEndDate = ref('');
 // 获取可用的时间周期选项
 const availablePeriods = DataAnalyzer.getAvailablePeriods();
 
+// 转换为 Selector 选项格式
+const periodOptions: SelectorOption[] = availablePeriods.map(period => ({
+  value: period.value,
+  label: period.label
+}));
+
+// 处理时间筛选变化
+const handlePeriodChange = (value: string | number | (string | number)[]) => {
+  if (typeof value === 'string' || typeof value === 'number') {
+    const period = value as TimePeriod;
+    selectedPeriod.value = period;
+  }
+};
+
 // 监听选择变化
 watch(selectedPeriod, (newValue) => {
   emit('update:modelValue', newValue);
@@ -50,11 +65,6 @@ watch(selectedPeriod, (newValue) => {
     showDatePicker.value = false;
   }
 });
-
-// 选择时间周期
-const selectPeriod = (period: TimePeriod) => {
-  selectedPeriod.value = period;
-};
 
 // 关闭日期选择器
 const closeDatePicker = () => {
@@ -178,38 +188,39 @@ const productRankingData = computed(() => {
       </div>
 
       <div class="filter-controls">
-        <div class="period-buttons">
-          <button v-for="period in availablePeriods" :key="period.value"
-            :class="['period-btn', { active: selectedPeriod === period.value }]" @click="selectPeriod(period.value)">
-            {{ period.label }}
-          </button>
-        </div>
+        <Selector
+          :options="periodOptions"
+          :model-value="selectedPeriod"
+          @update:model-value="handlePeriodChange"
+          class="period-selector"
+        />
 
         <!-- 日期选择器弹窗 -->
-        <div v-if="showDatePicker" class="date-picker-overlay" @click="closeDatePicker">
-          <div class="date-picker-modal" @click.stop>
-            <div class="date-picker-header">
-              <h5>选择日期范围</h5>
-              <button class="close-btn" @click="closeDatePicker">×</button>
+        <Modal
+          :visible="showDatePicker"
+          title="选择日期范围"
+          size="small"
+          @close="closeDatePicker"
+          @update:visible="showDatePicker = $event"
+        >
+          <div class="date-picker-content">
+            <div class="date-input-group">
+              <label>开始日期：</label>
+              <input v-model="customStartDate" type="date" class="date-input" />
             </div>
-            <div class="date-picker-content">
-              <div class="date-input-group">
-                <label>开始日期：</label>
-                <input v-model="customStartDate" type="date" class="date-input" />
-              </div>
-              <div class="date-input-group">
-                <label>结束日期：</label>
-                <input v-model="customEndDate" type="date" class="date-input" />
-              </div>
-              <div class="date-picker-actions">
-                <button @click="closeDatePicker" class="cancel-btn">取消</button>
-                <button @click="applyCustomRange" class="apply-btn" :disabled="!customStartDate || !customEndDate">
-                  应用
-                </button>
-              </div>
+            <div class="date-input-group">
+              <label>结束日期：</label>
+              <input v-model="customEndDate" type="date" class="date-input" />
             </div>
           </div>
-        </div>
+          
+                     <template #footer>
+             <button @click="closeDatePicker" class="booth-btn booth-btn-secondary booth-btn-md">取消</button>
+             <button @click="applyCustomRange" class="booth-btn booth-btn-success booth-btn-md" :disabled="!customStartDate || !customEndDate">
+               应用
+             </button>
+           </template>
+        </Modal>
       </div>
     </div>
 
@@ -379,101 +390,13 @@ const productRankingData = computed(() => {
   gap: 12px;
 }
 
-.period-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.period-selector {
+  font-size: 11px;
 }
 
-.period-btn {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  background: white;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.period-btn:hover {
-  border-color: #9ca3af;
-  color: #374151;
-  background: #f9fafb;
-}
-
-.period-btn.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
-}
-
-.period-btn.active:hover {
-  background: #2563eb;
-  border-color: #2563eb;
-}
-
-/* 日期选择器弹窗 */
-.date-picker-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.date-picker-modal {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 400px;
-  max-width: 90vw;
-}
-
-.date-picker-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.date-picker-header h5 {
-  margin: 0;
-  color: #374151;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.close-btn:hover {
-  background: #f3f4f6;
-}
-
+/* 日期选择器内容 */
 .date-picker-content {
-  padding: 20px;
+  padding: 0;
 }
 
 .date-input-group {
@@ -504,49 +427,7 @@ const productRankingData = computed(() => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.date-picker-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
 
-.cancel-btn {
-  padding: 8px 16px;
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cancel-btn:hover {
-  background: #e5e7eb;
-}
-
-.apply-btn {
-  padding: 8px 16px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.apply-btn:hover:not(:disabled) {
-  background: #059669;
-}
-
-.apply-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
 
 /* 图表部分 */
 .charts-section {
@@ -600,18 +481,8 @@ const productRankingData = computed(() => {
     padding: 3px 8px;
   }
 
-  .period-buttons {
-    gap: 6px;
-  }
-
-  .period-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .date-picker-modal {
-    width: 90vw;
-    margin: 20px;
+  .period-selector {
+    font-size: 10px;
   }
 
   .charts-grid {

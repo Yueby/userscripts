@@ -5,15 +5,14 @@
       <span class="item-count">
         <MaskedText :value="info.totalItems" :masked="privacyMode" /> {{ info.itemLabel }}
       </span>
-      <span v-if="info.totalItems > 0" class="page-info">
-        第 <MaskedText :value="info.currentPage" :masked="privacyMode" /> 页，共 <MaskedText :value="info.totalPages" :masked="privacyMode" /> 页
-      </span>
+      <!-- 额外的控制区域槽位 -->
+      <slot name="controls" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import MaskedText from '../../common/MaskedText/index.vue';
+import MaskedText from '../../MaskedText/index.vue';
 
 interface TableInfo {
   totalItems: number;
@@ -36,15 +35,15 @@ defineProps<Props>();
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--table-border-color, #e5e7eb);
 }
 
 .table-header h3 {
   margin: 0;
   color: var(--table-text-primary, #1f2937);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -52,21 +51,16 @@ defineProps<Props>();
 .table-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .item-count {
-  font-size: 14px;
-  color: var(--table-text-secondary, #6b7280);
-  background: #f3f4f6;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 500;
-}
-
-.page-info {
   font-size: 13px;
   color: var(--table-text-secondary, #6b7280);
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-weight: 500;
 }
 
@@ -78,4 +72,4 @@ defineProps<Props>();
     gap: 8px;
   }
 }
-</style> 
+</style>
