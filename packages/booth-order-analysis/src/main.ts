@@ -39,7 +39,6 @@ function insertButton(): void {
     button.style.cssText = `
       margin-left: 12px;
       position: relative;
-      min-width: 100px;
       height: 36px;
       display: flex;
       align-items: center;
