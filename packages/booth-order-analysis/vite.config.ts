@@ -26,7 +26,7 @@ export default defineConfig({
           'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
         },
         author: 'Yueby',
-        version: '0.1.4',
+        version: '0.1.5',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

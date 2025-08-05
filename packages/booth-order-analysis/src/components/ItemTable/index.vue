@@ -227,7 +227,7 @@ const showSalesModal = ref(false);
 const selectedItem = ref<any>(null);
 
 // 排序状态
-const sortMode = ref<'original' | 'sales'>('original');
+const sortMode = ref<'original' | 'sales' | 'revenue'>('original');
 
 // 获取订单数据
 const dataLoader = DataLoader.getInstance();
@@ -257,25 +257,23 @@ const sortedItems = computed(() => {
         return items.value;
     } else if (sortMode.value === 'sales') {
         return [...items.value].sort((a, b) => b.salesStats.totalQuantity - a.salesStats.totalQuantity);
+    } else if (sortMode.value === 'revenue') {
+        return [...items.value].sort((a, b) => b.salesStats.totalRevenue - a.salesStats.totalRevenue);
     }
     return items.value;
 });
 
 // 排序选项配置
 const sortOptions = [
-    { value: 'original', label: '原始顺序' },
-    { value: 'sales', label: '按销量' }
+    { value: 'original', label: '默认' },
+    { value: 'sales', label: '销量' },
+    { value: 'revenue', label: '收入' }
 ];
-
-// 设置排序模式
-const setSortMode = (mode: 'original' | 'sales') => {
-    sortMode.value = mode;
-};
 
 // 处理排序变化
 const handleSortChange = (value: string | number | (string | number)[]) => {
     if (typeof value === 'string' || typeof value === 'number') {
-        sortMode.value = value as 'original' | 'sales';
+        sortMode.value = value as 'original' | 'sales' | 'revenue';
     }
 };
 
