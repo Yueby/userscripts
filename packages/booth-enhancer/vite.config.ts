@@ -1,6 +1,6 @@
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import monkey from 'vite-plugin-monkey';
-import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +24,7 @@ export default defineConfig({
           'zh-CN': '增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能'
         },
         author: 'Yueby',
-        version: '0.1.7',
+        version: '0.1.8',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

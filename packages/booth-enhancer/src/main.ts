@@ -29,7 +29,7 @@ class BoothEnhancer {
 				}
 			}
 
-			console.log('Booth Enhancer 已启动');
+			// console.log('Booth Enhancer 已启动');
 		} catch (error) {
 			handleError(error, () => {
 				console.error('Booth Enhancer 启动失败');

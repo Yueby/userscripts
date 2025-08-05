@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.7
+// @version            0.1.8
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -852,7 +852,6 @@ ${errorText}`);
             handleError(error);
           }
         }
-        console.log("Booth Enhancer 已启动");
       } catch (error) {
         handleError(error, () => {
           console.error("Booth Enhancer 启动失败");
