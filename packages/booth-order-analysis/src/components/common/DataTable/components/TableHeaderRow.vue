@@ -23,6 +23,7 @@ defineProps<Props>();
   display: flex;
   background: var(--table-header-bg, #f8fafc);
   border-bottom: 1px solid var(--table-border-color, #e5e7eb);
+  min-width: fit-content;
 }
 
 .table-header-cell {
@@ -31,6 +32,7 @@ defineProps<Props>();
   color: var(--table-text-primary, #374151);
   font-size: 14px;
   border-right: 1px solid var(--table-border-color, #e5e7eb);
+  flex-shrink: 0;
 }
 
 .table-header-cell:last-child {

@@ -240,7 +240,7 @@ const filteredOrders = computed(() => {
     const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
         period: props.selectedPeriod || 'all',
         customRange: props.customRange
-    });
+    }, props.userSettings);
 
     return result;
 });
@@ -295,7 +295,7 @@ const itemColumns = [
 const tableConfig = computed(() => ({
     pageSize: 50,
     privacyMode: props.userSettings?.privacyMode || false,
-    scrollable: true,
+    scrollable: false,
     showPagination: true,
     getItemKey: (item: any) => item.itemId
 }));

@@ -36,6 +36,7 @@ const getCellClass = (columnKey: string): string => {
   max-height: 600px;
   overflow-y: auto;
   overflow-x: auto;
+  min-width: fit-content;
 }
 
 .table-row {
@@ -43,6 +44,7 @@ const getCellClass = (columnKey: string): string => {
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.2s;
   min-height: 36px;
+  min-width: fit-content;
 }
 
 .table-row:hover {
@@ -58,6 +60,7 @@ const getCellClass = (columnKey: string): string => {
   align-items: center;
   justify-content: flex-start;
   min-height: 36px;
+  flex-shrink: 0;
 }
 
 .table-cell:last-child {

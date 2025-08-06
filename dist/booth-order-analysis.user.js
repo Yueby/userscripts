@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.5
+// @version            0.1.6
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -19,402 +19,11 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const e=document.createElement("style");e.textContent=t,document.head.append(e)})(' .table-content[data-v-329525ad]{max-height:600px;overflow-y:auto;overflow-x:auto}.table-row[data-v-329525ad]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px}.table-row[data-v-329525ad]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-329525ad]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px}.table-cell[data-v-329525ad]:last-child{border-right:none}.table-cell[data-v-329525ad]>*{width:auto}@media (max-width: 768px){.table-content[data-v-329525ad]{max-height:500px}.table-cell[data-v-329525ad]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-c9bb81ee]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-c9bb81ee]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb)}.table-header-cell[data-v-c9bb81ee]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-c9bb81ee]{padding:8px;font-size:13px}}.pagination[data-v-5d0c40cc]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-5d0c40cc]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-5d0c40cc]{position:absolute;bottom:0;right:0;display:flex;justify-content:flex-end}.page-info[data-v-5d0c40cc]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-5d0c40cc],.page-total[data-v-5d0c40cc]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-5d0c40cc]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-5d0c40cc]{flex-wrap:wrap}}.data-table[data-v-95d88070]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-95d88070]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-95d88070]{min-width:1200px}.data-table[data-v-95d88070]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-95d88070]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-7f00327b]{display:inline-flex}.selector-controls[data-v-7f00327b]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d}@media (max-width: 768px){.selector-controls[data-v-7f00327b]{gap:1px;padding:1px}}.item-link[data-v-b3679cb8]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-b3679cb8]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-b3679cb8],.no-link[data-v-b3679cb8]{color:#9ca3af;font-style:italic}.price-cell[data-v-b3679cb8]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-b3679cb8]{font-weight:500;color:#374151}.price-converted[data-v-b3679cb8]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-b3679cb8]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-b3679cb8]{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:6px}.item-details h4[data-v-b3679cb8]{margin:0 0 4px;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-b3679cb8]{margin:0;color:#6b7280;font-size:14px}.sales-summary[data-v-b3679cb8]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:16px;background:#f8fafc;border-radius:6px}.summary-item[data-v-b3679cb8]{display:flex;flex-direction:column;gap:4px}.summary-label[data-v-b3679cb8]{font-size:12px;color:#6b7280;font-weight:500}.summary-value[data-v-b3679cb8]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-b3679cb8]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600}.variant-list[data-v-b3679cb8]{display:flex;flex-direction:column;gap:12px}.variant-item[data-v-b3679cb8]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-b3679cb8]{display:flex;align-items:center}.variant-details[data-v-b3679cb8]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-b3679cb8]{font-size:14px;color:#374151;font-weight:500}.variant-stats[data-v-b3679cb8]{display:flex;flex-direction:column;gap:4px;text-align:right}.variant-quantity[data-v-b3679cb8],.variant-revenue[data-v-b3679cb8]{font-size:12px;color:#6b7280}.variant-summary[data-v-b3679cb8]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-b3679cb8]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-b3679cb8]{font-size:13px;color:#0369a1}.variant-source[data-v-b3679cb8]{font-size:11px;color:#059669;font-style:italic}.no-variants[data-v-b3679cb8]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-b3679cb8]{width:95%;margin:20px}.variant-item[data-v-b3679cb8]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-b3679cb8]{text-align:left;width:100%}}.item-entry[data-v-164f6045]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-164f6045]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-164f6045]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-164f6045 .2s ease-out}.tooltip-header[data-v-164f6045]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-164f6045]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-164f6045]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-164f6045]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-164f6045]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-164f6045]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-164f6045]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-164f6045]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-164f6045]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-164f6045]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-164f6045]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-164f6045{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-164f6045]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-164f6045]{width:28px;height:28px}}.order-number[data-v-dd008aa1]{font-weight:500;color:#374151}.date-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-dd008aa1]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-dd008aa1]{font-weight:500;color:#374151}.price-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-dd008aa1]{align-items:center}.items[data-v-dd008aa1]{max-height:80px}.price-cell[data-v-dd008aa1],.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{padding-top:4px}}.settings-content[data-v-1a4ef441]{padding:24px}.setting-section[data-v-1a4ef441]{margin-bottom:24px}.setting-section h3[data-v-1a4ef441]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-1a4ef441]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-1a4ef441]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-1a4ef441]{font-size:14px;color:#374151;font-weight:500;min-width:60px}.timezone-select[data-v-1a4ef441],.currency-select[data-v-1a4ef441]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.current-time[data-v-1a4ef441],.exchange-rate-info[data-v-1a4ef441]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-1a4ef441]{display:flex;gap:12px}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-c148746f]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-c148746f]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-c148746f]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-c148746f]{display:flex;align-items:center;gap:8px}.total-orders[data-v-c148746f]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-c148746f]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-c148746f]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-c148746f]{width:100%!important;height:100%!important}.legend-container[data-v-c148746f]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-c148746f]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-c148746f]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-c148746f]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-c148746f]{display:flex;flex-direction:row;gap:4px;align-items:center}.legend-label[data-v-c148746f]{font-size:10px;font-weight:500;color:#374151}.legend-value[data-v-c148746f]{font-size:9px;color:#6b7280}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-fef2f70b]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-fef2f70b]{margin-bottom:24px}.stats-section h3[data-v-fef2f70b]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-fef2f70b]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-fef2f70b]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-fef2f70b]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-fef2f70b]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-fef2f70b]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-fef2f70b]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-fef2f70b]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-fef2f70b]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-fef2f70b]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.filter-section[data-v-fef2f70b]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-fef2f70b]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-fef2f70b]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-fef2f70b]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-fef2f70b]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-fef2f70b]{font-size:11px}.date-picker-content[data-v-fef2f70b]{padding:0}.date-input-group[data-v-fef2f70b]{margin-bottom:16px}.date-input-group label[data-v-fef2f70b]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-fef2f70b]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-fef2f70b]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.charts-section[data-v-fef2f70b]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-fef2f70b]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-fef2f70b]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-fef2f70b]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-fef2f70b]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-fef2f70b]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-fef2f70b]{padding:16px 12px}.stat-value[data-v-fef2f70b]{font-size:24px}.stat-converted[data-v-fef2f70b]{font-size:11px;padding:3px 8px}.period-selector[data-v-fef2f70b]{font-size:10px}.charts-grid[data-v-fef2f70b]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-fef2f70b]{padding:12px}.item-ranking .ranking-header h4[data-v-fef2f70b]{font-size:13px}.item-ranking .ranking-item[data-v-fef2f70b]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-fef2f70b]{width:100%}.item-ranking .sales-data[data-v-fef2f70b]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-16151a4c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:200px;border:1px solid #e5e7eb}.status-indicator[data-v-16151a4c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-16151a4c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-16151a4c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-16151a4c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-16151a4c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-16151a4c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-16151a4c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-16151a4c]{color:#374151}.spinner[data-v-16151a4c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-16151a4c 1s linear infinite}@keyframes spin-16151a4c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-8d0e684c]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-8d0e684c]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.header-left[data-v-8d0e684c]{display:flex;align-items:center}.title[data-v-8d0e684c]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-8d0e684c]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-8d0e684c]{width:18px;height:18px}.refresh-icon[data-v-8d0e684c]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-8d0e684c]{animation:spin-8d0e684c 1s linear infinite;transform-origin:center}@keyframes spin-8d0e684c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-8d0e684c]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-8d0e684c]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-8d0e684c]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-8d0e684c]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-8d0e684c]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-8d0e684c]{flex:1}@media (max-width: 768px){.header[data-v-8d0e684c]{padding:12px 16px}.title[data-v-8d0e684c]{font-size:16px}.header-right[data-v-8d0e684c]{gap:6px}.settings-icon[data-v-8d0e684c],.refresh-icon[data-v-8d0e684c]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-8d0e684c]{padding:10px 12px}.title[data-v-8d0e684c]{font-size:14px}.header-right[data-v-8d0e684c]{gap:4px}.settings-icon[data-v-8d0e684c],.refresh-icon[data-v-8d0e684c]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const e=document.createElement("style");e.textContent=t,document.head.append(e)})(' .table-content[data-v-a9fcc20e]{max-height:600px;overflow-y:auto;overflow-x:auto;min-width:fit-content}.table-row[data-v-a9fcc20e]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px;min-width:fit-content}.table-row[data-v-a9fcc20e]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-a9fcc20e]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px;flex-shrink:0}.table-cell[data-v-a9fcc20e]:last-child{border-right:none}.table-cell[data-v-a9fcc20e]>*{width:auto}@media (max-width: 768px){.table-content[data-v-a9fcc20e]{max-height:500px}.table-cell[data-v-a9fcc20e]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-d01cfb85]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb);min-width:fit-content}.table-header-cell[data-v-d01cfb85]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb);flex-shrink:0}.table-header-cell[data-v-d01cfb85]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-d01cfb85]{padding:8px;font-size:13px}}.pagination[data-v-8cac1dac]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-8cac1dac]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-8cac1dac]{display:flex;justify-content:center;margin-top:8px}.page-info[data-v-8cac1dac]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-8cac1dac],.page-total[data-v-8cac1dac]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-8cac1dac]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-8cac1dac]{flex-wrap:wrap}}.data-table[data-v-d200fb90]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-d200fb90]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-d200fb90]{min-width:1200px}.table-container[data-v-d200fb90]:not(.table-scrollable){overflow-x:auto}.data-table[data-v-d200fb90]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-d200fb90]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-595fdcdb]{display:inline-flex}.selector-controls[data-v-595fdcdb]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d;flex-wrap:wrap;min-height:28px}@media (max-width: 768px){.selector-controls[data-v-595fdcdb]{gap:1px;padding:1px}}.item-link[data-v-69996fe7]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-69996fe7]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-69996fe7],.no-link[data-v-69996fe7]{color:#9ca3af;font-style:italic}.price-cell[data-v-69996fe7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-69996fe7]{font-weight:500;color:#374151}.price-converted[data-v-69996fe7]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-69996fe7]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-69996fe7]{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:6px}.item-details h4[data-v-69996fe7]{margin:0 0 4px;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-69996fe7]{margin:0;color:#6b7280;font-size:14px}.sales-summary[data-v-69996fe7]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:16px;background:#f8fafc;border-radius:6px}.summary-item[data-v-69996fe7]{display:flex;flex-direction:column;gap:4px}.summary-label[data-v-69996fe7]{font-size:12px;color:#6b7280;font-weight:500}.summary-value[data-v-69996fe7]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-69996fe7]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600}.variant-list[data-v-69996fe7]{display:flex;flex-direction:column;gap:12px}.variant-item[data-v-69996fe7]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-69996fe7]{display:flex;align-items:center}.variant-details[data-v-69996fe7]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-69996fe7]{font-size:14px;color:#374151;font-weight:500}.variant-stats[data-v-69996fe7]{display:flex;flex-direction:column;gap:4px;text-align:right}.variant-quantity[data-v-69996fe7],.variant-revenue[data-v-69996fe7]{font-size:12px;color:#6b7280}.variant-summary[data-v-69996fe7]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-69996fe7]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-69996fe7]{font-size:13px;color:#0369a1}.variant-source[data-v-69996fe7]{font-size:11px;color:#059669;font-style:italic}.no-variants[data-v-69996fe7]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-69996fe7]{width:95%;margin:20px}.variant-item[data-v-69996fe7]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-69996fe7]{text-align:left;width:100%}}.item-entry[data-v-164f6045]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-164f6045]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-164f6045]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-164f6045 .2s ease-out}.tooltip-header[data-v-164f6045]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-164f6045]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-164f6045]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-164f6045]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-164f6045]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-164f6045]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-164f6045]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-164f6045]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-164f6045]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-164f6045]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-164f6045]:hover{color:#2563eb;text-decoration:underline}@keyframes tooltipFadeIn-164f6045{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-164f6045]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-164f6045]{width:28px;height:28px}}.order-number[data-v-dd008aa1]{font-weight:500;color:#374151}.date-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-dd008aa1]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-dd008aa1]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-dd008aa1]{font-weight:500;color:#374151}.price-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-dd008aa1]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-dd008aa1]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-dd008aa1]{align-items:center}.items[data-v-dd008aa1]{max-height:80px}.price-cell[data-v-dd008aa1],.booth-fee-cell[data-v-dd008aa1],.net-amount-cell[data-v-dd008aa1]{padding-top:4px}}.settings-content[data-v-af501e35]{padding:24px}.setting-section[data-v-af501e35]{margin-bottom:24px}.setting-section h3[data-v-af501e35]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-af501e35]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-af501e35]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-af501e35]{font-size:14px;color:#374151;font-weight:500;flex-shrink:0}.timezone-select[data-v-af501e35],.currency-select[data-v-af501e35]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151;min-width:0;width:100%}.current-time[data-v-af501e35],.exchange-rate-info[data-v-af501e35]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-af501e35]{display:flex;gap:12px}.date-filter[data-v-2d60ca69]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-2d60ca69]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-2d60ca69]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-2d60ca69]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-2d60ca69]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-2d60ca69]{font-size:11px}.date-picker-content[data-v-2d60ca69]{padding:0}.date-input-group[data-v-2d60ca69]{margin-bottom:16px}.date-input-group label[data-v-2d60ca69]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-2d60ca69]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-2d60ca69]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}@media (max-width: 768px){.period-selector[data-v-2d60ca69]{font-size:10px}}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-fd8dd5d5]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-fd8dd5d5]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-fd8dd5d5]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-fd8dd5d5]{display:flex;align-items:center;gap:8px}.total-orders[data-v-fd8dd5d5]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-fd8dd5d5]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-fd8dd5d5]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-fd8dd5d5]{width:100%!important;height:100%!important}.legend-container[data-v-fd8dd5d5]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-fd8dd5d5]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-fd8dd5d5]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-fd8dd5d5]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-fd8dd5d5]{display:flex;align-items:center}.legend-label[data-v-fd8dd5d5]{font-size:11px;font-weight:500;color:#374151}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-b96e3217]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-b96e3217]{margin-bottom:24px}.stats-section h3[data-v-b96e3217]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-b96e3217]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-b96e3217]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-b96e3217]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-b96e3217]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-b96e3217]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-b96e3217]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-b96e3217]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-b96e3217]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.charts-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-b96e3217]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-b96e3217]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-b96e3217]{padding:16px 12px}.stat-value[data-v-b96e3217]{font-size:24px}.stat-converted[data-v-b96e3217]{font-size:11px;padding:3px 8px}.period-selector[data-v-b96e3217]{font-size:10px}.charts-grid[data-v-b96e3217]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-b96e3217]{padding:12px}.item-ranking .ranking-header h4[data-v-b96e3217]{font-size:13px}.item-ranking .ranking-item[data-v-b96e3217]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-b96e3217]{width:100%}.item-ranking .sales-data[data-v-b96e3217]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-f349a9c1]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:160px;border:1px solid #e5e7eb}.status-indicator[data-v-f349a9c1]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-f349a9c1]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-f349a9c1]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-f349a9c1]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-f349a9c1]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-f349a9c1]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-f349a9c1]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-f349a9c1]{color:#374151}.spinner[data-v-f349a9c1]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-f349a9c1 1s linear infinite}@keyframes spin-f349a9c1{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-5bd8cb6a]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-5bd8cb6a]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafccc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(229,231,235,.6);flex-shrink:0}.header-left[data-v-5bd8cb6a]{display:flex;align-items:center}.title[data-v-5bd8cb6a]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-5bd8cb6a]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-5bd8cb6a]{width:18px;height:18px}.refresh-icon[data-v-5bd8cb6a]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-5bd8cb6a]{animation:spin-5bd8cb6a 1s linear infinite;transform-origin:center}@keyframes spin-5bd8cb6a{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-5bd8cb6a]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-5bd8cb6a]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-5bd8cb6a]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-5bd8cb6a]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-5bd8cb6a]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-5bd8cb6a]{flex:1}@media (max-width: 768px){.header[data-v-5bd8cb6a]{padding:12px 16px}.title[data-v-5bd8cb6a]{font-size:16px}.header-right[data-v-5bd8cb6a]{gap:6px}.settings-icon[data-v-5bd8cb6a],.refresh-icon[data-v-5bd8cb6a]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-5bd8cb6a]{padding:10px 12px}.title[data-v-5bd8cb6a]{font-size:14px}.header-right[data-v-5bd8cb6a]{gap:4px}.settings-icon[data-v-5bd8cb6a],.refresh-icon[data-v-5bd8cb6a]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
 
 (function (vue) {
   'use strict';
 
-  const DEFAULT_CONFIG = {
-    level: 1,
-    enableTimestamp: true,
-    enablePrefix: true,
-    prefix: "[Booth Analysis]"
-  };
-  class Logger {
-    static instance;
-    config;
-    constructor() {
-      this.config = { ...DEFAULT_CONFIG };
-    }
-    static getInstance() {
-      if (!Logger.instance) {
-        Logger.instance = new Logger();
-      }
-      return Logger.instance;
-    }
-    /**
-     * 设置日志级别
-     */
-    setLevel(level) {
-      this.config.level = level;
-    }
-    /**
-     * 设置配置
-     */
-    setConfig(config) {
-      this.config = { ...this.config, ...config };
-    }
-    /**
-     * 获取当前时间戳
-     */
-    getTimestamp() {
-      if (!this.config.enableTimestamp) return "";
-      return (/* @__PURE__ */ new Date()).toLocaleString("zh-CN");
-    }
-    /**
-     * 格式化日志消息
-     */
-    formatMessage(level, message2, ...args) {
-      const parts = [];
-      if (this.config.enableTimestamp) {
-        parts.push(`[${this.getTimestamp()}]`);
-      }
-      if (this.config.enablePrefix) {
-        parts.push(this.config.prefix);
-      }
-      parts.push(`[${level}]`);
-      parts.push(message2);
-      return parts.join(" ");
-    }
-    /**
-     * 输出日志
-     */
-    log(level, levelName, message2, ...args) {
-      if (level < this.config.level) return;
-      const formattedMessage = this.formatMessage(levelName, message2);
-      switch (level) {
-        case 0:
-          console.debug(formattedMessage, ...args);
-          break;
-        case 1:
-          console.info(formattedMessage, ...args);
-          break;
-        case 2:
-          console.warn(formattedMessage, ...args);
-          break;
-        case 3:
-          console.error(formattedMessage, ...args);
-          break;
-      }
-    }
-    /**
-     * Debug日志
-     */
-    debug(message2, ...args) {
-      this.log(0, "DEBUG", message2, ...args);
-    }
-    /**
-     * Info日志
-     */
-    info(message2, ...args) {
-      this.log(1, "INFO", message2, ...args);
-    }
-    /**
-     * Warn日志
-     */
-    warn(message2, ...args) {
-      this.log(2, "WARN", message2, ...args);
-    }
-    /**
-     * Error日志
-     */
-    error(message2, ...args) {
-      this.log(3, "ERROR", message2, ...args);
-    }
-    /**
-     * 成功日志（Info级别）
-     */
-    success(message2, ...args) {
-      this.log(1, "SUCCESS", message2, ...args);
-    }
-    /**
-     * 数据加载日志
-     */
-    dataLoad(message2, ...args) {
-      this.log(1, "DATA", message2, ...args);
-    }
-    /**
-     * 设置日志
-     */
-    settings(message2, ...args) {
-      this.log(1, "SETTINGS", message2, ...args);
-    }
-    /**
-     * 时区转换日志
-     */
-    timezone(message2, ...args) {
-      this.log(0, "TIMEZONE", message2, ...args);
-    }
-    /**
-     * 过滤器日志
-     */
-    filter(message2, ...args) {
-      this.log(1, "FILTER", message2, ...args);
-    }
-    /**
-     * 统计日志
-     */
-    stats(message2, ...args) {
-      this.log(1, "STATS", message2, ...args);
-    }
-    /**
-     * 网络请求日志
-     */
-    network(message2, ...args) {
-      this.log(1, "NETWORK", message2, ...args);
-    }
-    /**
-     * 性能日志
-     */
-    performance(message2, ...args) {
-      this.log(0, "PERF", message2, ...args);
-    }
-    /**
-     * 汇率日志
-     */
-    exchange(message2, ...args) {
-      this.log(1, "EXCHANGE", message2, ...args);
-    }
-  }
-  const logger = Logger.getInstance();
-  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
-  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
-  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  class ItemManager {
-    static instance;
-    itemsMap = /* @__PURE__ */ new Map();
-    isInitialized = false;
-    constructor() {
-    }
-    /**
-     * 获取单例实例
-     */
-    static getInstance() {
-      if (!ItemManager.instance) {
-        ItemManager.instance = new ItemManager();
-      }
-      return ItemManager.instance;
-    }
-    /**
-     * 初始化商品数据
-     * 从Booth管理页面获取所有商品信息
-     */
-    async initialize() {
-      if (this.isInitialized) {
-        return;
-      }
-      try {
-        await this.loadItemsFromManagePage();
-        this.isInitialized = true;
-      } catch (error) {
-        this.isInitialized = true;
-      }
-    }
-    /**
-     * 从管理页面加载商品数据
-     */
-    async loadItemsFromManagePage() {
-      try {
-        let page = 1;
-        let hasMorePages = true;
-        while (hasMorePages) {
-          const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
-          const response = await new Promise((resolve2, reject) => {
-            _GM_xmlhttpRequest({
-              method: "GET",
-              url: boothManageUrl,
-              onload: function(response2) {
-                if (response2.status === 200) {
-                  resolve2(response2.responseText);
-                } else {
-                  reject(new Error(`HTTP ${response2.status}`));
-                }
-              },
-              onerror: function(error) {
-                reject(error);
-              }
-            });
-          });
-          const data = JSON.parse(response);
-          if (data && data.items && Array.isArray(data.items)) {
-            data.items.forEach((item, index2) => {
-              try {
-                if (item.id && item.name) {
-                  const itemId = item.id.toString();
-                  const name = item.name.trim();
-                  let iconUrl = "";
-                  if (item.primary_image && item.primary_image.base_resized && item.primary_image.base_resized.url) {
-                    iconUrl = item.primary_image.base_resized.url;
-                  } else if (item.primary_image && item.primary_image.url) {
-                    iconUrl = item.primary_image.url;
-                  }
-                  const variants = [];
-                  if (item.variants && Array.isArray(item.variants)) {
-                    item.variants.forEach((variant) => {
-                      const variantName = variant.name || variant.value || variant.variantName;
-                      if (variantName && !variants.includes(variantName)) {
-                        variants.push(variantName);
-                      }
-                    });
-                  }
-                  const itemData = {
-                    itemId,
-                    state: item.state,
-                    url: item.url,
-                    name,
-                    state_label: item.state_label,
-                    iconUrl,
-                    variants
-                  };
-                  this.itemsMap.set(itemId, itemData);
-                }
-              } catch (error) {
-              }
-            });
-            if (data.metadata && data.metadata.next_page) {
-              page++;
-            } else {
-              hasMorePages = false;
-            }
-          } else {
-            hasMorePages = false;
-          }
-        }
-      } catch (error) {
-        throw error;
-      }
-    }
-    /**
-     * 根据商品ID获取商品数据
-     */
-    getItem(id) {
-      return this.itemsMap.get(id) || null;
-    }
-    /**
-     * 根据商品ID获取商品图标
-     */
-    getItemIcon(id) {
-      const item = this.getItem(id);
-      if (!item) {
-        logger.warn(`未找到商品ID: ${id}`);
-      }
-      return item?.iconUrl || this.getDefaultIcon();
-    }
-    /**
-     * 根据商品ID获取指定尺寸的图片URL
-     * @param id 商品ID
-     * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
-     */
-    getItemImageUrl(id, size = "72x72") {
-      const item = this.getItem(id);
-      if (!item) {
-        return this.getDefaultIcon();
-      }
-      return item.iconUrl || this.getDefaultIcon();
-    }
-    /**
-     * 根据商品ID获取商品名称
-     */
-    getItemName(id) {
-      const item = this.getItem(id);
-      return item?.name || "未知商品";
-    }
-    /**
-     * 根据商品ID获取商品状态
-     */
-    getItemState(id) {
-      const item = this.getItem(id);
-      return item?.state || "";
-    }
-    /**
-     * 根据商品ID获取商品URL
-     */
-    getItemUrl(id) {
-      const item = this.getItem(id);
-      return item?.url || "";
-    }
-    /**
-     * 根据商品ID获取商品状态标签
-     */
-    getItemStateLabel(id) {
-      const item = this.getItem(id);
-      return item?.state_label || "";
-    }
-    /**
-     * 根据商品ID获取商品变体列表
-     */
-    getItemVariants(id) {
-      const item = this.getItem(id);
-      return item?.variants || [];
-    }
-    /**
-     * 获取所有商品数据
-     */
-    getAllItems() {
-      return new Map(this.itemsMap);
-    }
-    /**
-     * 获取所有商品ID
-     */
-    getAllItemIds() {
-      return Array.from(this.itemsMap.keys());
-    }
-    /**
-     * 检查商品是否存在
-     */
-    hasItem(id) {
-      return this.itemsMap.has(id);
-    }
-    /**
-     * 获取商品总数
-     */
-    getItemCount() {
-      return this.itemsMap.size;
-    }
-    /**
-     * 获取默认图标URL
-     */
-    getDefaultIcon() {
-      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iOCIgZmlsbD0iI0YzRjRGNiIvPgo8cGF0aCBkPSJNMzYgMjRDMzAuNDc3MiAyNCAyNiAyOC40NzcyIDI2IDM0QzI2IDM5LjUyMjggMzAuNDc3MiA0NCAzNiA0NEM0MS41MjI4IDQ0IDQ2IDM5LjUyMjggNDYgMzRDNDYgMjguNDc3MiA0MS41MjI4IDI0IDM2IDI0Wk0zNiA0MEMzMi42ODYzIDQwIDMwIDM3LjMxMzcgMzAgMzRDMzAgMzAuNjg2MyAzMi42ODYzIDI4IDM2IDI4QzM5LjMxMzcgMjggNDIgMzAuNjg2MyA0MiAzNEM0MiAzNy4zMTM3IDM5LjMxMzcgNDAgMzYgNDBaIiBmaWxsPSIjNkI3MjgwIi8+CjxwYXRoIGQ9Ik0yNCA0OEg0OFY1MkgyNFY0OFoiIGZpbGw9IiM2QjcyODAiLz4KPC9zdmc+";
-    }
-    /**
-     * 清除缓存数据
-     */
-    clearCache() {
-      this.itemsMap.clear();
-      this.isInitialized = false;
-    }
-    /**
-     * 重新加载商品数据
-     */
-    async reload() {
-      this.clearCache();
-      await this.initialize();
-    }
-  }
-  const FEE_CHANGE_DATE = /* @__PURE__ */ new Date("2025-10-28T13:00:00+09:00");
-  const FEE_RATE = 0.056;
-  const FEE_FIXED_AMOUNT_BEFORE = 22;
-  const FEE_FIXED_AMOUNT_AFTER = 45;
-  function calculateBoothFee(price, orderDateStr) {
-    const orderDate = /* @__PURE__ */ new Date(orderDateStr + "+09:00");
-    const isAfterChange = orderDate >= FEE_CHANGE_DATE;
-    const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;
-    const fee = Math.ceil(price * FEE_RATE) + fixedAmount;
-    return fee;
-  }
-  function calculateNetAmount(price, orderDateStr) {
-    const fee = calculateBoothFee(price, orderDateStr);
-    return price - fee;
-  }
-  function formatBoothFee(price, orderDateStr) {
-    const fee = calculateBoothFee(price, orderDateStr);
-    return `¥${fee.toLocaleString()}`;
-  }
-  function formatNetAmount(price, orderDateStr) {
-    const netAmount = calculateNetAmount(price, orderDateStr);
-    return `¥${netAmount.toLocaleString()}`;
-  }
   const formatDistanceLocale = {
     lessThanXSeconds: {
       one: "less than a second",
@@ -2732,6 +2341,397 @@
     };
     return format(toZonedTime(date, timeZone, { timeZone: options.timeZone }), formatStr, options);
   }
+  const FEE_CHANGE_DATE = /* @__PURE__ */ new Date("2025-10-28T13:00:00+09:00");
+  const FEE_RATE = 0.056;
+  const FEE_FIXED_AMOUNT_BEFORE = 22;
+  const FEE_FIXED_AMOUNT_AFTER = 45;
+  function calculateBoothFee(price, orderDateStr) {
+    const orderDate = /* @__PURE__ */ new Date(orderDateStr + "+09:00");
+    const isAfterChange = orderDate >= FEE_CHANGE_DATE;
+    const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;
+    const fee = Math.ceil(price * FEE_RATE) + fixedAmount;
+    return fee;
+  }
+  function calculateNetAmount(price, orderDateStr) {
+    const fee = calculateBoothFee(price, orderDateStr);
+    return price - fee;
+  }
+  function formatBoothFee(price, orderDateStr) {
+    const fee = calculateBoothFee(price, orderDateStr);
+    return `¥${fee.toLocaleString()}`;
+  }
+  function formatNetAmount(price, orderDateStr) {
+    const netAmount = calculateNetAmount(price, orderDateStr);
+    return `¥${netAmount.toLocaleString()}`;
+  }
+  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  const DEFAULT_CONFIG = {
+    level: 1,
+    enableTimestamp: true,
+    enablePrefix: true,
+    prefix: "[Booth Analysis]"
+  };
+  class Logger {
+    static instance;
+    config;
+    constructor() {
+      this.config = { ...DEFAULT_CONFIG };
+    }
+    static getInstance() {
+      if (!Logger.instance) {
+        Logger.instance = new Logger();
+      }
+      return Logger.instance;
+    }
+    /**
+     * 设置日志级别
+     */
+    setLevel(level) {
+      this.config.level = level;
+    }
+    /**
+     * 设置配置
+     */
+    setConfig(config) {
+      this.config = { ...this.config, ...config };
+    }
+    /**
+     * 获取当前时间戳
+     */
+    getTimestamp() {
+      if (!this.config.enableTimestamp) return "";
+      return (/* @__PURE__ */ new Date()).toLocaleString("zh-CN");
+    }
+    /**
+     * 格式化日志消息
+     */
+    formatMessage(level, message2, ...args) {
+      const parts = [];
+      if (this.config.enableTimestamp) {
+        parts.push(`[${this.getTimestamp()}]`);
+      }
+      if (this.config.enablePrefix) {
+        parts.push(this.config.prefix);
+      }
+      parts.push(`[${level}]`);
+      parts.push(message2);
+      return parts.join(" ");
+    }
+    /**
+     * 输出日志
+     */
+    log(level, levelName, message2, ...args) {
+      if (level < this.config.level) return;
+      const formattedMessage = this.formatMessage(levelName, message2);
+      switch (level) {
+        case 0:
+          console.debug(formattedMessage, ...args);
+          break;
+        case 1:
+          console.info(formattedMessage, ...args);
+          break;
+        case 2:
+          console.warn(formattedMessage, ...args);
+          break;
+        case 3:
+          console.error(formattedMessage, ...args);
+          break;
+      }
+    }
+    /**
+     * Debug日志
+     */
+    debug(message2, ...args) {
+      this.log(0, "DEBUG", message2, ...args);
+    }
+    /**
+     * Info日志
+     */
+    info(message2, ...args) {
+      this.log(1, "INFO", message2, ...args);
+    }
+    /**
+     * Warn日志
+     */
+    warn(message2, ...args) {
+      this.log(2, "WARN", message2, ...args);
+    }
+    /**
+     * Error日志
+     */
+    error(message2, ...args) {
+      this.log(3, "ERROR", message2, ...args);
+    }
+    /**
+     * 成功日志（Info级别）
+     */
+    success(message2, ...args) {
+      this.log(1, "SUCCESS", message2, ...args);
+    }
+    /**
+     * 数据加载日志
+     */
+    dataLoad(message2, ...args) {
+      this.log(1, "DATA", message2, ...args);
+    }
+    /**
+     * 设置日志
+     */
+    settings(message2, ...args) {
+      this.log(1, "SETTINGS", message2, ...args);
+    }
+    /**
+     * 时区转换日志
+     */
+    timezone(message2, ...args) {
+      this.log(0, "TIMEZONE", message2, ...args);
+    }
+    /**
+     * 过滤器日志
+     */
+    filter(message2, ...args) {
+      this.log(1, "FILTER", message2, ...args);
+    }
+    /**
+     * 统计日志
+     */
+    stats(message2, ...args) {
+      this.log(1, "STATS", message2, ...args);
+    }
+    /**
+     * 网络请求日志
+     */
+    network(message2, ...args) {
+      this.log(1, "NETWORK", message2, ...args);
+    }
+    /**
+     * 性能日志
+     */
+    performance(message2, ...args) {
+      this.log(0, "PERF", message2, ...args);
+    }
+    /**
+     * 汇率日志
+     */
+    exchange(message2, ...args) {
+      this.log(1, "EXCHANGE", message2, ...args);
+    }
+  }
+  const logger = Logger.getInstance();
+  class ItemManager {
+    static instance;
+    itemsMap = /* @__PURE__ */ new Map();
+    isInitialized = false;
+    constructor() {
+    }
+    /**
+     * 获取单例实例
+     */
+    static getInstance() {
+      if (!ItemManager.instance) {
+        ItemManager.instance = new ItemManager();
+      }
+      return ItemManager.instance;
+    }
+    /**
+     * 初始化商品数据
+     * 从Booth管理页面获取所有商品信息
+     */
+    async initialize() {
+      if (this.isInitialized) {
+        return;
+      }
+      try {
+        await this.loadItemsFromManagePage();
+        this.isInitialized = true;
+      } catch (error) {
+        this.isInitialized = true;
+      }
+    }
+    /**
+     * 从管理页面加载商品数据
+     */
+    async loadItemsFromManagePage() {
+      try {
+        let page = 1;
+        let hasMorePages = true;
+        while (hasMorePages) {
+          const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
+          const response = await new Promise((resolve2, reject) => {
+            _GM_xmlhttpRequest({
+              method: "GET",
+              url: boothManageUrl,
+              onload: function(response2) {
+                if (response2.status === 200) {
+                  resolve2(response2.responseText);
+                } else {
+                  reject(new Error(`HTTP ${response2.status}`));
+                }
+              },
+              onerror: function(error) {
+                reject(error);
+              }
+            });
+          });
+          const data = JSON.parse(response);
+          if (data && data.items && Array.isArray(data.items)) {
+            data.items.forEach((item, index2) => {
+              try {
+                if (item.id && item.name) {
+                  const itemId = item.id.toString();
+                  const name = item.name.trim();
+                  let iconUrl = "";
+                  if (item.primary_image && item.primary_image.base_resized && item.primary_image.base_resized.url) {
+                    iconUrl = item.primary_image.base_resized.url;
+                  } else if (item.primary_image && item.primary_image.url) {
+                    iconUrl = item.primary_image.url;
+                  }
+                  const variants = [];
+                  if (item.variants && Array.isArray(item.variants)) {
+                    item.variants.forEach((variant) => {
+                      const variantName = variant.name || variant.value || variant.variantName;
+                      if (variantName && !variants.includes(variantName)) {
+                        variants.push(variantName);
+                      }
+                    });
+                  }
+                  const itemData = {
+                    itemId,
+                    state: item.state,
+                    url: item.url,
+                    name,
+                    state_label: item.state_label,
+                    iconUrl,
+                    variants
+                  };
+                  this.itemsMap.set(itemId, itemData);
+                }
+              } catch (error) {
+              }
+            });
+            if (data.metadata && data.metadata.next_page) {
+              page++;
+            } else {
+              hasMorePages = false;
+            }
+          } else {
+            hasMorePages = false;
+          }
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+    /**
+     * 根据商品ID获取商品数据
+     */
+    getItem(id) {
+      return this.itemsMap.get(id) || null;
+    }
+    /**
+     * 根据商品ID获取商品图标
+     */
+    getItemIcon(id) {
+      const item = this.getItem(id);
+      if (!item) {
+        logger.warn(`未找到商品ID: ${id}`);
+      }
+      return item?.iconUrl || this.getDefaultIcon();
+    }
+    /**
+     * 根据商品ID获取指定尺寸的图片URL
+     * @param id 商品ID
+     * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
+     */
+    getItemImageUrl(id, size = "72x72") {
+      const item = this.getItem(id);
+      if (!item) {
+        return this.getDefaultIcon();
+      }
+      return item.iconUrl || this.getDefaultIcon();
+    }
+    /**
+     * 根据商品ID获取商品名称
+     */
+    getItemName(id) {
+      const item = this.getItem(id);
+      return item?.name || "未知商品";
+    }
+    /**
+     * 根据商品ID获取商品状态
+     */
+    getItemState(id) {
+      const item = this.getItem(id);
+      return item?.state || "";
+    }
+    /**
+     * 根据商品ID获取商品URL
+     */
+    getItemUrl(id) {
+      const item = this.getItem(id);
+      return item?.url || "";
+    }
+    /**
+     * 根据商品ID获取商品状态标签
+     */
+    getItemStateLabel(id) {
+      const item = this.getItem(id);
+      return item?.state_label || "";
+    }
+    /**
+     * 根据商品ID获取商品变体列表
+     */
+    getItemVariants(id) {
+      const item = this.getItem(id);
+      return item?.variants || [];
+    }
+    /**
+     * 获取所有商品数据
+     */
+    getAllItems() {
+      return new Map(this.itemsMap);
+    }
+    /**
+     * 获取所有商品ID
+     */
+    getAllItemIds() {
+      return Array.from(this.itemsMap.keys());
+    }
+    /**
+     * 检查商品是否存在
+     */
+    hasItem(id) {
+      return this.itemsMap.has(id);
+    }
+    /**
+     * 获取商品总数
+     */
+    getItemCount() {
+      return this.itemsMap.size;
+    }
+    /**
+     * 获取默认图标URL
+     */
+    getDefaultIcon() {
+      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iOCIgZmlsbD0iI0YzRjRGNiIvPgo8cGF0aCBkPSJNMzYgMjRDMzAuNDc3MiAyNCAyNiAyOC40NzcyIDI2IDM0QzI2IDM5LjUyMjggMzAuNDc3MiA0NCAzNiA0NEM0MS41MjI4IDQ0IDQ2IDM5LjUyMjggNDYgMzRDNDYgMjguNDc3MiA0MS41MjI4IDI0IDM2IDI0Wk0zNiA0MEMzMi42ODYzIDQwIDMwIDM3LjMxMzcgMzAgMzRDMzAgMzAuNjg2MyAzMi42ODYzIDI4IDM2IDI4QzM5LjMxMzcgMjggNDIgMzAuNjg2MyA0MiAzNEM0MiAzNy4zMTM3IDM5LjMxMzcgNDAgMzYgNDBaIiBmaWxsPSIjNkI3MjgwIi8+CjxwYXRoIGQ9Ik0yNCA0OEg0OFY1MkgyNFY0OFoiIGZpbGw9IiM2QjcyODAiLz4KPC9zdmc+";
+    }
+    /**
+     * 清除缓存数据
+     */
+    clearCache() {
+      this.itemsMap.clear();
+      this.isInitialized = false;
+    }
+    /**
+     * 重新加载商品数据
+     */
+    async reload() {
+      this.clearCache();
+      await this.initialize();
+    }
+  }
   class DataAnalyzer {
     /**
      * 计算订单统计信息
@@ -2753,7 +2753,7 @@
     /**
      * 根据时间周期过滤订单数据
      */
-    static filterOrdersByPeriod(orders, options) {
+    static filterOrdersByPeriod(orders, options, userSettings) {
       const { period, customRange } = options;
       const completedOrders = orders.filter((order) => order.state === "Completed");
       let filteredOrders;
@@ -2768,10 +2768,10 @@
           filteredOrders = this.filterByYesterday(completedOrders);
           break;
         case "thisWeek":
-          filteredOrders = this.filterByThisWeek(completedOrders);
+          filteredOrders = this.filterByThisWeek(completedOrders, userSettings);
           break;
         case "lastWeek":
-          filteredOrders = this.filterByLastWeek(completedOrders);
+          filteredOrders = this.filterByLastWeek(completedOrders, userSettings);
           break;
         case "thisMonth":
           filteredOrders = this.filterByThisMonth(completedOrders);
@@ -2906,7 +2906,7 @@
     /**
      * 格式化日期为显示格式
      */
-    static formatDateRange(period, customRange) {
+    static formatDateRange(period, customRange, userSettings) {
       switch (period) {
         case "all":
           return "全部";
@@ -2915,10 +2915,10 @@
         case "yesterday":
           return this.getJSTDateWithOffset(-1);
         case "thisWeek":
-          const thisWeekRange = this.getThisWeekJSTRange();
+          const thisWeekRange = this.getThisWeekJSTRange(userSettings);
           return `${thisWeekRange.start.substring(5)} 至 ${thisWeekRange.end.substring(5)}`;
         case "lastWeek":
-          const lastWeekRange = this.getLastWeekJSTRange();
+          const lastWeekRange = this.getLastWeekJSTRange(userSettings);
           return `${lastWeekRange.start.substring(5)} 至 ${lastWeekRange.end.substring(5)}`;
         case "thisMonth":
           return this.getCurrentJSTMonth().replace("-", "年") + "月";
@@ -2996,16 +2996,16 @@
       });
       return filtered;
     }
-    static filterByThisWeek(orders) {
-      const weekRange = this.getThisWeekJSTRange();
+    static filterByThisWeek(orders, userSettings) {
+      const weekRange = this.getThisWeekJSTRange(userSettings);
       const filtered = orders.filter((order) => {
         const orderDateStr = this.parseOrderDate(order.createdAt);
         return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
       });
       return filtered;
     }
-    static filterByLastWeek(orders) {
-      const weekRange = this.getLastWeekJSTRange();
+    static filterByLastWeek(orders, userSettings) {
+      const weekRange = this.getLastWeekJSTRange(userSettings);
       const filtered = orders.filter((order) => {
         const orderDateStr = this.parseOrderDate(order.createdAt);
         return orderDateStr >= weekRange.start && orderDateStr <= weekRange.end;
@@ -3072,10 +3072,16 @@
       const targetDate = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
       return formatInTimeZone(targetDate, "Asia/Tokyo", "yyyy-MM");
     }
-    static getThisWeekJSTRange() {
+    static getThisWeekJSTRange(userSettings) {
       const today = /* @__PURE__ */ new Date();
       const dayOfWeek = today.getDay();
-      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const mondayAsFirstDay = userSettings?.mondayAsFirstDay ?? true;
+      let mondayOffset;
+      if (mondayAsFirstDay) {
+        mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      } else {
+        mondayOffset = dayOfWeek;
+      }
       const monday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
       const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1e3);
       return {
@@ -3083,10 +3089,16 @@
         end: formatInTimeZone(sunday, "Asia/Tokyo", "yyyy-MM-dd")
       };
     }
-    static getLastWeekJSTRange() {
+    static getLastWeekJSTRange(userSettings) {
       const today = /* @__PURE__ */ new Date();
       const dayOfWeek = today.getDay();
-      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const mondayAsFirstDay = userSettings?.mondayAsFirstDay ?? true;
+      let mondayOffset;
+      if (mondayAsFirstDay) {
+        mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      } else {
+        mondayOffset = dayOfWeek;
+      }
       const thisMonday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1e3);
       const lastMonday = new Date(thisMonday.getTime() - 7 * 24 * 60 * 60 * 1e3);
       const lastSunday = new Date(lastMonday.getTime() + 6 * 24 * 60 * 60 * 1e3);
@@ -4537,9 +4549,9 @@
       updateTime = null;
     }
   }
-  const _hoisted_1$i = { key: 0 };
-  const _hoisted_2$g = { key: 1 };
-  const _sfc_main$k = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_1$j = { key: 0 };
+  const _hoisted_2$h = { key: 1 };
+  const _sfc_main$l = /* @__PURE__ */ vue.defineComponent({
     __name: "TableCell",
     props: {
       item: {},
@@ -4556,18 +4568,18 @@
         return value;
       };
       return (_ctx, _cache) => {
-        return _ctx.column.render ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$i, [
+        return _ctx.column.render ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$j, [
           (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.column.render), {
             item: _ctx.item,
             column: _ctx.column,
             "privacy-mode": _ctx.privacyMode
           }, null, 8, ["item", "column", "privacy-mode"]))
-        ])) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_2$g, vue.toDisplayString(getCellValue()), 1));
+        ])) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_2$h, vue.toDisplayString(getCellValue()), 1));
       };
     }
   });
-  const _hoisted_1$h = { class: "table-content" };
-  const _sfc_main$j = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_1$i = { class: "table-content" };
+  const _sfc_main$k = /* @__PURE__ */ vue.defineComponent({
     __name: "TableBody",
     props: {
       data: {},
@@ -4580,7 +4592,7 @@
         return `cell-${columnKey}`;
       };
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$i, [
           (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.data, (item, index2) => {
             return vue.openBlock(), vue.createElementBlock("div", {
               key: _ctx.getItemKey(item, index2),
@@ -4597,7 +4609,7 @@
                     column,
                     index: index2
                   }, () => [
-                    vue.createVNode(_sfc_main$k, {
+                    vue.createVNode(_sfc_main$l, {
                       item,
                       column,
                       "privacy-mode": _ctx.privacyMode
@@ -4618,28 +4630,28 @@
     }
     return target;
   };
-  const TableBody = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-329525ad"]]);
-  const _hoisted_1$g = { class: "empty-state" };
-  const _hoisted_2$f = { class: "empty-icon" };
-  const _hoisted_3$f = { class: "empty-text" };
-  const _hoisted_4$d = { class: "empty-hint" };
-  const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
+  const TableBody = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["__scopeId", "data-v-a9fcc20e"]]);
+  const _hoisted_1$h = { class: "empty-state" };
+  const _hoisted_2$g = { class: "empty-icon" };
+  const _hoisted_3$g = { class: "empty-text" };
+  const _hoisted_4$e = { class: "empty-hint" };
+  const _sfc_main$j = /* @__PURE__ */ vue.defineComponent({
     __name: "TableEmptyState",
     props: {
       config: {}
     },
     setup(__props) {
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
-          vue.createElementVNode("div", _hoisted_2$f, vue.toDisplayString(_ctx.config.icon), 1),
-          vue.createElementVNode("div", _hoisted_3$f, vue.toDisplayString(_ctx.config.text), 1),
-          vue.createElementVNode("div", _hoisted_4$d, vue.toDisplayString(_ctx.config.hint), 1)
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+          vue.createElementVNode("div", _hoisted_2$g, vue.toDisplayString(_ctx.config.icon), 1),
+          vue.createElementVNode("div", _hoisted_3$g, vue.toDisplayString(_ctx.config.text), 1),
+          vue.createElementVNode("div", _hoisted_4$e, vue.toDisplayString(_ctx.config.hint), 1)
         ]);
       };
     }
   });
-  const TableEmptyState = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-09fe5d20"]]);
-  const _sfc_main$h = /* @__PURE__ */ vue.defineComponent({
+  const TableEmptyState = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-09fe5d20"]]);
+  const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       value: {},
@@ -4671,11 +4683,11 @@
       };
     }
   });
-  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-38e65878"]]);
-  const _hoisted_1$f = { class: "table-header" };
-  const _hoisted_2$e = { class: "table-info" };
-  const _hoisted_3$e = { class: "item-count" };
-  const _sfc_main$g = /* @__PURE__ */ vue.defineComponent({
+  const MaskedText = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-38e65878"]]);
+  const _hoisted_1$g = { class: "table-header" };
+  const _hoisted_2$f = { class: "table-info" };
+  const _hoisted_3$f = { class: "item-count" };
+  const _sfc_main$h = /* @__PURE__ */ vue.defineComponent({
     __name: "TableHeader",
     props: {
       title: {},
@@ -4684,10 +4696,10 @@
     },
     setup(__props) {
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
           vue.createElementVNode("h3", null, vue.toDisplayString(_ctx.title), 1),
-          vue.createElementVNode("div", _hoisted_2$e, [
-            vue.createElementVNode("span", _hoisted_3$e, [
+          vue.createElementVNode("div", _hoisted_2$f, [
+            vue.createElementVNode("span", _hoisted_3$f, [
               vue.createVNode(MaskedText, {
                 value: _ctx.info.totalItems,
                 masked: _ctx.privacyMode
@@ -4700,16 +4712,16 @@
       };
     }
   });
-  const TableHeader = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-2985fc97"]]);
-  const _hoisted_1$e = { class: "table-header-row" };
-  const _sfc_main$f = /* @__PURE__ */ vue.defineComponent({
+  const TableHeader = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-2985fc97"]]);
+  const _hoisted_1$f = { class: "table-header-row" };
+  const _sfc_main$g = /* @__PURE__ */ vue.defineComponent({
     __name: "TableHeaderRow",
     props: {
       columns: {}
     },
     setup(__props) {
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
           (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.columns, (column) => {
             return vue.openBlock(), vue.createElementBlock("div", {
               key: column.key,
@@ -4721,21 +4733,21 @@
       };
     }
   });
-  const TableHeaderRow = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-c9bb81ee"]]);
-  const _hoisted_1$d = { class: "pagination" };
-  const _hoisted_2$d = { class: "pagination-controls" };
-  const _hoisted_3$d = ["disabled"];
-  const _hoisted_4$c = { class: "page-numbers" };
-  const _hoisted_5$b = ["onClick"];
-  const _hoisted_6$9 = ["disabled"];
-  const _hoisted_7$9 = { class: "pagination-info" };
-  const _hoisted_8$8 = {
+  const TableHeaderRow = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-d01cfb85"]]);
+  const _hoisted_1$e = { class: "pagination" };
+  const _hoisted_2$e = { class: "pagination-controls" };
+  const _hoisted_3$e = ["disabled"];
+  const _hoisted_4$d = { class: "page-numbers" };
+  const _hoisted_5$c = ["onClick"];
+  const _hoisted_6$a = ["disabled"];
+  const _hoisted_7$a = { class: "pagination-info" };
+  const _hoisted_8$9 = {
     key: 0,
     class: "page-info"
   };
   const _hoisted_9$8 = { class: "page-current" };
-  const _hoisted_10$7 = { class: "page-total" };
-  const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_10$6 = { class: "page-total" };
+  const _sfc_main$f = /* @__PURE__ */ vue.defineComponent({
     __name: "TablePagination",
     props: {
       currentPage: {},
@@ -4777,15 +4789,16 @@
         return pages;
       };
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
-          vue.createElementVNode("div", _hoisted_2$d, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
+          vue.createElementVNode("div", _hoisted_2$e, [
             vue.createElementVNode("button", {
               onClick: _cache[0] || (_cache[0] = //@ts-ignore
               (...args) => _ctx.goToPrevPage && _ctx.goToPrevPage(...args)),
               disabled: _ctx.currentPage === 1,
-              class: "booth-btn booth-btn-secondary booth-btn-sm"
-            }, " 上一页 ", 8, _hoisted_3$d),
-            vue.createElementVNode("div", _hoisted_4$c, [
+              class: "booth-btn booth-btn-secondary booth-btn-sm",
+              title: "上一页"
+            }, " ‹ ", 8, _hoisted_3$e),
+            vue.createElementVNode("div", _hoisted_4$d, [
               (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(getVisiblePages(), (page) => {
                 return vue.openBlock(), vue.createElementBlock("button", {
                   key: page,
@@ -4795,22 +4808,23 @@
                     "booth-btn-secondary": page !== -1 && _ctx.currentPage !== page
                   }]),
                   onClick: ($event) => page === -1 ? null : _ctx.goToPage(page)
-                }, vue.toDisplayString(page === -1 ? "..." : _ctx.privacyMode ? "***" : page), 11, _hoisted_5$b);
+                }, vue.toDisplayString(page === -1 ? "..." : _ctx.privacyMode ? "***" : page), 11, _hoisted_5$c);
               }), 128))
             ]),
             vue.createElementVNode("button", {
               onClick: _cache[1] || (_cache[1] = //@ts-ignore
               (...args) => _ctx.goToNextPage && _ctx.goToNextPage(...args)),
               disabled: _ctx.currentPage === _ctx.totalPages,
-              class: "booth-btn booth-btn-secondary booth-btn-sm"
-            }, " 下一页 ", 8, _hoisted_6$9)
+              class: "booth-btn booth-btn-secondary booth-btn-sm",
+              title: "下一页"
+            }, " › ", 8, _hoisted_6$a)
           ]),
-          vue.createElementVNode("div", _hoisted_7$9, [
-            _ctx.totalPages > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$8, [
+          vue.createElementVNode("div", _hoisted_7$a, [
+            _ctx.totalPages > 0 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$9, [
               _cache[2] || (_cache[2] = vue.createTextVNode(" 第 ", -1)),
               vue.createElementVNode("span", _hoisted_9$8, vue.toDisplayString(_ctx.privacyMode ? "***" : _ctx.currentPage), 1),
               _cache[3] || (_cache[3] = vue.createTextVNode(" 页，共 ", -1)),
-              vue.createElementVNode("span", _hoisted_10$7, vue.toDisplayString(_ctx.privacyMode ? "***" : _ctx.totalPages), 1),
+              vue.createElementVNode("span", _hoisted_10$6, vue.toDisplayString(_ctx.privacyMode ? "***" : _ctx.totalPages), 1),
               _cache[4] || (_cache[4] = vue.createTextVNode(" 页 ", -1))
             ])) : vue.createCommentVNode("", true)
           ])
@@ -4818,7 +4832,7 @@
       };
     }
   });
-  const TablePagination = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-5d0c40cc"]]);
+  const TablePagination = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-8cac1dac"]]);
   function useTableConfig(data, display, config, currentPage, totalPages, goToPage, goToPrevPage, goToNextPage) {
     const tableClasses = vue.computed(() => {
       const classes = ["data-table"];
@@ -4913,7 +4927,7 @@
       maskNumber
     };
   }
-  const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       data: {},
@@ -5006,7 +5020,7 @@
                     column,
                     index: index2
                   }, () => [
-                    vue.createVNode(_sfc_main$k, {
+                    vue.createVNode(_sfc_main$l, {
                       item,
                       column,
                       "privacy-mode": privacyMode.value
@@ -5035,15 +5049,15 @@
       };
     }
   });
-  const DataTable = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-95d88070"]]);
-  const _hoisted_1$c = { class: "item-icon-container" };
-  const _hoisted_2$c = ["src", "alt"];
-  const _hoisted_3$c = {
+  const DataTable = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-d200fb90"]]);
+  const _hoisted_1$d = { class: "item-icon-container" };
+  const _hoisted_2$d = ["src", "alt"];
+  const _hoisted_3$d = {
     key: 1,
     class: "privacy-icon"
   };
-  const _hoisted_4$b = ["width", "height"];
-  const _sfc_main$c = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_4$c = ["width", "height"];
+  const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       itemId: {},
@@ -5089,14 +5103,14 @@
         loadIcon();
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$c, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
           !props.privacyMode && iconUrl.value ? (vue.openBlock(), vue.createElementBlock("img", {
             key: 0,
             src: iconUrl.value,
             alt: _ctx.alt,
             onError: onImageError,
             class: "item-icon"
-          }, null, 40, _hoisted_2$c)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$c, [
+          }, null, 40, _hoisted_2$d)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$d, [
             (vue.openBlock(), vue.createElementBlock("svg", {
               width: iconSize.value,
               height: iconSize.value,
@@ -5113,22 +5127,22 @@
                 d: "M8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
                 fill: "#9ca3af"
               }, null, -1)
-            ]), 8, _hoisted_4$b))
+            ]), 8, _hoisted_4$c))
           ]))
         ]);
       };
     }
   });
-  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-d70e735f"]]);
-  const _hoisted_1$b = { class: "modal-header" };
-  const _hoisted_2$b = { class: "modal-title" };
-  const _hoisted_3$b = ["title"];
-  const _hoisted_4$a = { class: "modal-body" };
-  const _hoisted_5$a = {
+  const ItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-d70e735f"]]);
+  const _hoisted_1$c = { class: "modal-header" };
+  const _hoisted_2$c = { class: "modal-title" };
+  const _hoisted_3$c = ["title"];
+  const _hoisted_4$b = { class: "modal-body" };
+  const _hoisted_5$b = {
     key: 0,
     class: "modal-footer"
   };
-  const _sfc_main$b = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$c = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       visible: { type: Boolean },
@@ -5164,18 +5178,18 @@
             onClick: _cache[0] || (_cache[0] = vue.withModifiers(() => {
             }, ["stop"]))
           }, [
-            vue.createElementVNode("div", _hoisted_1$b, [
-              vue.createElementVNode("h3", _hoisted_2$b, vue.toDisplayString(_ctx.title), 1),
+            vue.createElementVNode("div", _hoisted_1$c, [
+              vue.createElementVNode("h3", _hoisted_2$c, vue.toDisplayString(_ctx.title), 1),
               vue.createElementVNode("button", {
                 onClick: handleClose,
                 class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
                 title: _ctx.closeButtonTitle
-              }, " × ", 8, _hoisted_3$b)
+              }, " × ", 8, _hoisted_3$c)
             ]),
-            vue.createElementVNode("div", _hoisted_4$a, [
+            vue.createElementVNode("div", _hoisted_4$b, [
               vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
             ]),
-            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$a, [
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$b, [
               vue.renderSlot(_ctx.$slots, "footer", {}, void 0, true)
             ])) : vue.createCommentVNode("", true)
           ], 2)
@@ -5183,11 +5197,11 @@
       };
     }
   });
-  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-fe927469"]]);
-  const _hoisted_1$a = { class: "selector-container" };
-  const _hoisted_2$a = { class: "selector-controls" };
-  const _hoisted_3$a = ["disabled", "onClick"];
-  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
+  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-fe927469"]]);
+  const _hoisted_1$b = { class: "selector-container" };
+  const _hoisted_2$b = { class: "selector-controls" };
+  const _hoisted_3$b = ["disabled", "onClick"];
+  const _sfc_main$b = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       options: {},
@@ -5235,8 +5249,8 @@
         emit("change", newValue);
       };
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$a, [
-          vue.createElementVNode("div", _hoisted_2$a, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$b, [
+          vue.createElementVNode("div", _hoisted_2$b, [
             (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.options, (option, index2) => {
               return vue.openBlock(), vue.createElementBlock("button", {
                 key: option.value,
@@ -5247,42 +5261,42 @@
                 }]),
                 disabled: option.disabled,
                 onClick: ($event) => handleOptionClick(option.value)
-              }, vue.toDisplayString(option.label), 11, _hoisted_3$a);
+              }, vue.toDisplayString(option.label), 11, _hoisted_3$b);
             }), 128))
           ])
         ]);
       };
     }
   });
-  const Selector = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-7f00327b"]]);
-  const _hoisted_1$9 = {
+  const Selector = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-595fdcdb"]]);
+  const _hoisted_1$a = {
     key: 5,
     class: "price-cell"
   };
-  const _hoisted_2$9 = { class: "price-main" };
-  const _hoisted_3$9 = {
+  const _hoisted_2$a = { class: "price-main" };
+  const _hoisted_3$a = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_4$9 = {
+  const _hoisted_4$a = {
     key: 6,
     class: "price-cell"
   };
-  const _hoisted_5$9 = { class: "price-main" };
-  const _hoisted_6$8 = {
+  const _hoisted_5$a = { class: "price-main" };
+  const _hoisted_6$9 = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_7$8 = {
+  const _hoisted_7$9 = {
     key: 7,
     class: "price-cell"
   };
-  const _hoisted_8$7 = { class: "price-main" };
+  const _hoisted_8$8 = { class: "price-main" };
   const _hoisted_9$7 = {
     key: 0,
     class: "price-converted"
   };
-  const _hoisted_10$6 = ["href"];
+  const _hoisted_10$5 = ["href"];
   const _hoisted_11$5 = {
     key: 1,
     class: "item-link-masked"
@@ -5301,11 +5315,11 @@
   const _hoisted_17$3 = { class: "item-details" };
   const _hoisted_18$1 = { class: "item-id" };
   const _hoisted_19$1 = { class: "sales-summary" };
-  const _hoisted_20$1 = { class: "summary-item" };
-  const _hoisted_21$1 = { class: "summary-value" };
-  const _hoisted_22$1 = { class: "summary-item" };
-  const _hoisted_23$1 = { class: "summary-value" };
-  const _hoisted_24$1 = { class: "summary-item" };
+  const _hoisted_20 = { class: "summary-item" };
+  const _hoisted_21 = { class: "summary-value" };
+  const _hoisted_22 = { class: "summary-item" };
+  const _hoisted_23 = { class: "summary-value" };
+  const _hoisted_24 = { class: "summary-item" };
   const _hoisted_25 = { class: "summary-value" };
   const _hoisted_26 = { class: "variant-sales" };
   const _hoisted_27 = {
@@ -5331,7 +5345,7 @@
     key: 1,
     class: "no-variants"
   };
-  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       userSettings: {},
@@ -5351,7 +5365,7 @@
         const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
           period: props.selectedPeriod || "all",
           customRange: props.customRange
-        });
+        }, props.userSettings);
         return result;
       });
       const items = vue.computed(() => {
@@ -5393,7 +5407,7 @@
       const tableConfig = vue.computed(() => ({
         pageSize: 50,
         privacyMode: props.userSettings?.privacyMode || false,
-        scrollable: true,
+        scrollable: false,
         showPagination: true,
         getItemKey: (item) => item.itemId
       }));
@@ -5466,30 +5480,30 @@
                 key: 4,
                 value: vue.unref(getNestedValue)(item, "salesStats.totalQuantity") || 0,
                 masked: props.userSettings?.privacyMode || false
-              }, null, 8, ["value", "masked"])) : column.key === "totalRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
-                vue.createElementVNode("div", _hoisted_2$9, [
+              }, null, 8, ["value", "masked"])) : column.key === "totalRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$a, [
+                vue.createElementVNode("div", _hoisted_2$a, [
                   vue.createVNode(MaskedText, {
                     value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalRevenue") || 0),
                     masked: props.userSettings?.privacyMode || false
                   }, null, 8, ["value", "masked"])
                 ]),
-                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$9, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalRevenue") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalRevenue"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$a, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
                   vue.unref(getNestedValue)(item, "salesStats.totalRevenue"),
                   _ctx.targetCurrency
                 )), 1)) : vue.createCommentVNode("", true)
-              ])) : column.key === "totalBoothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$9, [
-                vue.createElementVNode("div", _hoisted_5$9, [
+              ])) : column.key === "totalBoothFee" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$a, [
+                vue.createElementVNode("div", _hoisted_5$a, [
                   vue.createVNode(MaskedText, {
                     value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") || 0),
                     masked: props.userSettings?.privacyMode || false
                   }, null, 8, ["value", "masked"])
                 ]),
-                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$8, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
+                !(props.userSettings?.privacyMode || false) && vue.unref(getNestedValue)(item, "salesStats.totalBoothFee") && _ctx.targetCurrency && vue.unref(CurrencyManager).formatConverted(vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"), _ctx.targetCurrency) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$9, vue.toDisplayString(vue.unref(CurrencyManager).formatConverted(
                   vue.unref(getNestedValue)(item, "salesStats.totalBoothFee"),
                   _ctx.targetCurrency
                 )), 1)) : vue.createCommentVNode("", true)
-              ])) : column.key === "totalNetRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$8, [
-                vue.createElementVNode("div", _hoisted_8$7, [
+              ])) : column.key === "totalNetRevenue" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$9, [
+                vue.createElementVNode("div", _hoisted_8$8, [
                   vue.createVNode(MaskedText, {
                     value: formatJPY(vue.unref(getNestedValue)(item, "salesStats.totalNetRevenue") || 0),
                     masked: props.userSettings?.privacyMode || false
@@ -5505,7 +5519,7 @@
                   href: item.item.url,
                   target: "_blank",
                   class: "item-link"
-                }, " 查看商品 ", 8, _hoisted_10$6)) : props.userSettings?.privacyMode || false ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$5, " **** ")) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_12$5, " 无链接 "))
+                }, " 查看商品 ", 8, _hoisted_10$5)) : props.userSettings?.privacyMode || false ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_11$5, " **** ")) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_12$5, " 无链接 "))
               ], 64)) : column.key === "action" ? (vue.openBlock(), vue.createElementBlock("button", {
                 key: 9,
                 class: "booth-btn booth-btn-primary booth-btn-sm",
@@ -5537,25 +5551,25 @@
                   ])
                 ]),
                 vue.createElementVNode("div", _hoisted_19$1, [
-                  vue.createElementVNode("div", _hoisted_20$1, [
+                  vue.createElementVNode("div", _hoisted_20, [
                     _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "summary-label" }, "总销量:", -1)),
-                    vue.createElementVNode("span", _hoisted_21$1, [
+                    vue.createElementVNode("span", _hoisted_21, [
                       vue.createVNode(MaskedText, {
                         value: selectedItem.value.salesStats.totalQuantity,
                         masked: _ctx.userSettings?.privacyMode || false
                       }, null, 8, ["value", "masked"])
                     ])
                   ]),
-                  vue.createElementVNode("div", _hoisted_22$1, [
+                  vue.createElementVNode("div", _hoisted_22, [
                     _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "summary-label" }, "总收入:", -1)),
-                    vue.createElementVNode("span", _hoisted_23$1, [
+                    vue.createElementVNode("span", _hoisted_23, [
                       vue.createVNode(MaskedText, {
                         value: formatJPY(selectedItem.value.salesStats.totalRevenue),
                         masked: _ctx.userSettings?.privacyMode || false
                       }, null, 8, ["value", "masked"])
                     ])
                   ]),
-                  vue.createElementVNode("div", _hoisted_24$1, [
+                  vue.createElementVNode("div", _hoisted_24, [
                     _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "summary-label" }, "净收入:", -1)),
                     vue.createElementVNode("span", _hoisted_25, [
                       vue.createVNode(MaskedText, {
@@ -5641,7 +5655,7 @@
       };
     }
   });
-  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-b3679cb8"]]);
+  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-69996fe7"]]);
   const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
     try {
       const jstDate = parseISO(jstDateTime + "+09:00");
@@ -5679,19 +5693,19 @@
       return "";
     }
   };
-  const _hoisted_1$8 = { class: "item-name" };
-  const _hoisted_2$8 = { class: "tooltip-header" };
-  const _hoisted_3$8 = ["src", "alt"];
-  const _hoisted_4$8 = {
+  const _hoisted_1$9 = { class: "item-name" };
+  const _hoisted_2$9 = { class: "tooltip-header" };
+  const _hoisted_3$9 = ["src", "alt"];
+  const _hoisted_4$9 = {
     key: 1,
     class: "tooltip-icon-placeholder"
   };
-  const _hoisted_5$8 = { class: "tooltip-title" };
-  const _hoisted_6$7 = { class: "tooltip-content" };
-  const _hoisted_7$7 = { class: "tooltip-row" };
-  const _hoisted_8$6 = { class: "tooltip-value" };
+  const _hoisted_5$9 = { class: "tooltip-title" };
+  const _hoisted_6$8 = { class: "tooltip-content" };
+  const _hoisted_7$8 = { class: "tooltip-row" };
+  const _hoisted_8$7 = { class: "tooltip-value" };
   const _hoisted_9$6 = { class: "tooltip-row" };
-  const _hoisted_10$5 = { class: "tooltip-value" };
+  const _hoisted_10$4 = { class: "tooltip-value" };
   const _hoisted_11$4 = { class: "tooltip-row" };
   const _hoisted_12$4 = { class: "tooltip-value" };
   const _hoisted_13$4 = { class: "tooltip-row" };
@@ -5702,7 +5716,7 @@
     key: 1,
     class: "tooltip-value"
   };
-  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$9 = /* @__PURE__ */ vue.defineComponent({
     __name: "ItemEntry",
     props: {
       item: {},
@@ -5759,7 +5773,7 @@
             size: _ctx.size,
             "privacy-mode": props.privacyMode
           }, null, 8, ["itemId", "size", "privacy-mode"]),
-          vue.createElementVNode("span", _hoisted_1$8, [
+          vue.createElementVNode("span", _hoisted_1$9, [
             vue.createVNode(MaskedText, {
               value: _ctx.item.name,
               masked: props.privacyMode,
@@ -5779,13 +5793,13 @@
               top: tooltipPosition.value.y + "px"
             })
           }, [
-            vue.createElementVNode("div", _hoisted_2$8, [
+            vue.createElementVNode("div", _hoisted_2$9, [
               !props.privacyMode && itemDetails.value.iconUrl ? (vue.openBlock(), vue.createElementBlock("img", {
                 key: 0,
                 src: itemDetails.value.iconUrl,
                 alt: itemDetails.value.name,
                 class: "tooltip-icon"
-              }, null, 8, _hoisted_3$8)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$8, _cache[1] || (_cache[1] = [
+              }, null, 8, _hoisted_3$9)) : props.privacyMode ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$9, _cache[1] || (_cache[1] = [
                 vue.createElementVNode("svg", {
                   width: "32",
                   height: "32",
@@ -5804,7 +5818,7 @@
                   })
                 ], -1)
               ]))) : vue.createCommentVNode("", true),
-              vue.createElementVNode("div", _hoisted_5$8, [
+              vue.createElementVNode("div", _hoisted_5$9, [
                 vue.createVNode(MaskedText, {
                   value: itemDetails.value.name,
                   masked: props.privacyMode,
@@ -5812,10 +5826,10 @@
                 }, null, 8, ["value", "masked"])
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_6$7, [
-              vue.createElementVNode("div", _hoisted_7$7, [
+            vue.createElementVNode("div", _hoisted_6$8, [
+              vue.createElementVNode("div", _hoisted_7$8, [
                 _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "tooltip-label" }, "商品ID:", -1)),
-                vue.createElementVNode("span", _hoisted_8$6, [
+                vue.createElementVNode("span", _hoisted_8$7, [
                   vue.createVNode(MaskedText, {
                     value: _ctx.item.itemId,
                     masked: props.privacyMode
@@ -5824,7 +5838,7 @@
               ]),
               vue.createElementVNode("div", _hoisted_9$6, [
                 _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "tooltip-label" }, "状态:", -1)),
-                vue.createElementVNode("span", _hoisted_10$5, [
+                vue.createElementVNode("span", _hoisted_10$4, [
                   vue.createVNode(MaskedText, {
                     value: itemDetails.value.stateLabel,
                     masked: props.privacyMode
@@ -5864,33 +5878,33 @@
       };
     }
   });
-  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-164f6045"]]);
-  const _hoisted_1$7 = {
+  const ItemEntry = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-164f6045"]]);
+  const _hoisted_1$8 = {
     key: 0,
     class: "order-number"
   };
-  const _hoisted_2$7 = {
+  const _hoisted_2$8 = {
     key: 1,
     class: "date-cell"
   };
-  const _hoisted_3$7 = { class: "date-main" };
-  const _hoisted_4$7 = {
+  const _hoisted_3$8 = { class: "date-main" };
+  const _hoisted_4$8 = {
     key: 0,
     class: "date-converted"
   };
-  const _hoisted_5$7 = {
+  const _hoisted_5$8 = {
     key: 2,
     class: "items"
   };
-  const _hoisted_6$6 = {
+  const _hoisted_6$7 = {
     key: 0,
     class: "item-list"
   };
-  const _hoisted_7$6 = {
+  const _hoisted_7$7 = {
     key: 1,
     class: "no-items"
   };
-  const _hoisted_8$5 = {
+  const _hoisted_8$6 = {
     key: 3,
     class: "payment-method"
   };
@@ -5898,7 +5912,7 @@
     key: 4,
     class: "price-cell"
   };
-  const _hoisted_10$4 = { class: "price-main" };
+  const _hoisted_10$3 = { class: "price-main" };
   const _hoisted_11$3 = {
     key: 0,
     class: "price-converted"
@@ -5921,7 +5935,7 @@
     key: 0,
     class: "price-converted"
   };
-  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$8 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       orders: {},
@@ -5967,21 +5981,21 @@
           display: displayConfig
         }, {
           cell: vue.withCtx(({ item, column }) => [
-            column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$7, [
+            column.key === "orderNumber" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_1$8, [
               vue.createVNode(MaskedText, {
                 value: item.orderNumber,
                 masked: props.userSettings?.privacyMode || false
               }, null, 8, ["value", "masked"])
-            ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$7, [
-              vue.createElementVNode("div", _hoisted_3$7, [
+            ])) : column.key === "createdAt" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$8, [
+              vue.createElementVNode("div", _hoisted_3$8, [
                 vue.createVNode(MaskedText, {
                   value: vue.unref(formatOriginalDateTime)(item.createdAt),
                   masked: props.userSettings?.privacyMode || false
                 }, null, 8, ["value", "masked"])
               ]),
-              !(props.userSettings?.privacyMode || false) && _ctx.userSettings && vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$7, vue.toDisplayString(vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings)), 1)) : vue.createCommentVNode("", true)
-            ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$7, [
-              item.items && item.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$6, [
+              !(props.userSettings?.privacyMode || false) && _ctx.userSettings && vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$8, vue.toDisplayString(vue.unref(formatConvertedDateTime)(item.createdAt, _ctx.userSettings)), 1)) : vue.createCommentVNode("", true)
+            ])) : column.key === "items" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$8, [
+              item.items && item.items.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6$7, [
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(item.items, (itemEntry) => {
                   return vue.openBlock(), vue.createBlock(ItemEntry, {
                     key: itemEntry.id,
@@ -5991,14 +6005,14 @@
                     "privacy-mode": props.userSettings?.privacyMode || false
                   }, null, 8, ["item", "all-orders", "privacy-mode"]);
                 }), 128))
-              ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$6, " 无商品信息 "))
-            ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$5, [
+              ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$7, " 无商品信息 "))
+            ])) : column.key === "paymentMethod" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_8$6, [
               vue.createVNode(MaskedText, {
                 value: item.paymentMethod,
                 masked: props.userSettings?.privacyMode || false
               }, null, 8, ["value", "masked"])
             ])) : column.key === "totalPrice" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9$5, [
-              vue.createElementVNode("div", _hoisted_10$4, [
+              vue.createElementVNode("div", _hoisted_10$3, [
                 vue.createVNode(MaskedText, {
                   value: vue.unref(CurrencyManager).formatJPY(item.totalPrice || 0),
                   masked: props.userSettings?.privacyMode || false
@@ -6028,12 +6042,13 @@
       };
     }
   });
-  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-dd008aa1"]]);
+  const OrderTable = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-dd008aa1"]]);
   const DEFAULT_SETTINGS = {
     timezone: "Asia/Shanghai",
     displayName: "中国标准时间",
     targetCurrency: "CNY",
-    privacyMode: false
+    privacyMode: false,
+    mondayAsFirstDay: true
   };
   const TIMEZONE_OPTIONS = [
     { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
@@ -6100,23 +6115,26 @@
       logger.settings("设置已重置为默认值");
     }
   }
-  const _hoisted_1$6 = { class: "settings-content" };
-  const _hoisted_2$6 = { class: "setting-section" };
-  const _hoisted_3$6 = { class: "setting-item" };
-  const _hoisted_4$6 = ["value"];
-  const _hoisted_5$6 = { class: "current-time" };
-  const _hoisted_6$5 = { class: "setting-section" };
-  const _hoisted_7$5 = { class: "setting-item" };
-  const _hoisted_8$4 = ["value"];
+  const _hoisted_1$7 = { class: "settings-content" };
+  const _hoisted_2$7 = { class: "setting-section" };
+  const _hoisted_3$7 = { class: "setting-item" };
+  const _hoisted_4$7 = ["value"];
+  const _hoisted_5$7 = { class: "current-time" };
+  const _hoisted_6$6 = { class: "setting-section" };
+  const _hoisted_7$6 = { class: "setting-item" };
+  const _hoisted_8$5 = ["value"];
   const _hoisted_9$4 = { class: "exchange-rate-info" };
-  const _hoisted_10$3 = { class: "update-time" };
+  const _hoisted_10$2 = { class: "update-time" };
   const _hoisted_11$2 = { class: "setting-section" };
   const _hoisted_12$2 = { class: "setting-item" };
   const _hoisted_13$2 = { class: "booth-toggle" };
   const _hoisted_14$2 = { class: "setting-section" };
-  const _hoisted_15$2 = { class: "setting-actions" };
-  const _hoisted_16$1 = ["disabled"];
-  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
+  const _hoisted_15$2 = { class: "setting-item" };
+  const _hoisted_16$1 = { class: "booth-toggle" };
+  const _hoisted_17 = { class: "setting-section" };
+  const _hoisted_18 = { class: "setting-actions" };
+  const _hoisted_19 = ["disabled"];
+  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
       visible: { type: Boolean }
@@ -6128,7 +6146,8 @@
         timezone: "Asia/Shanghai",
         displayName: "中国标准时间",
         targetCurrency: "CNY",
-        privacyMode: false
+        privacyMode: false,
+        mondayAsFirstDay: true
       });
       const isSaving = vue.ref(false);
       const loadSettings = () => {
@@ -6183,6 +6202,9 @@
       const handleCurrencyChange = () => {
         emit("settings-changed", settings.value);
       };
+      const handleMondayAsFirstDayChange = () => {
+        emit("settings-changed", settings.value);
+      };
       const closeSettings = () => {
         emit("close");
       };
@@ -6197,12 +6219,12 @@
           onClose: closeSettings
         }, {
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$6, [
-              vue.createElementVNode("div", _hoisted_2$6, [
-                _cache[4] || (_cache[4] = vue.createElementVNode("h3", null, "时区设置", -1)),
-                _cache[5] || (_cache[5] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_3$6, [
-                  _cache[3] || (_cache[3] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
+            vue.createElementVNode("div", _hoisted_1$7, [
+              vue.createElementVNode("div", _hoisted_2$7, [
+                _cache[5] || (_cache[5] = vue.createElementVNode("h3", null, "时区设置", -1)),
+                _cache[6] || (_cache[6] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_3$7, [
+                  _cache[4] || (_cache[4] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
                   vue.withDirectives(vue.createElementVNode("select", {
                     id: "timezone-select",
                     "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
@@ -6213,21 +6235,21 @@
                       return vue.openBlock(), vue.createElementBlock("option", {
                         key: option.value,
                         value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_4$6);
+                      }, vue.toDisplayString(option.label), 9, _hoisted_4$7);
                     }), 128))
                   ], 544), [
                     [vue.vModelSelect, settings.value.timezone]
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_5$6, [
+                vue.createElementVNode("div", _hoisted_5$7, [
                   vue.createElementVNode("span", null, "当前时间：" + vue.toDisplayString((/* @__PURE__ */ new Date()).toLocaleString("zh-CN", { timeZone: settings.value.timezone })), 1)
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_6$5, [
-                _cache[7] || (_cache[7] = vue.createElementVNode("h3", null, "货币设置", -1)),
-                _cache[8] || (_cache[8] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
-                vue.createElementVNode("div", _hoisted_7$5, [
-                  _cache[6] || (_cache[6] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
+              vue.createElementVNode("div", _hoisted_6$6, [
+                _cache[8] || (_cache[8] = vue.createElementVNode("h3", null, "货币设置", -1)),
+                _cache[9] || (_cache[9] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
+                vue.createElementVNode("div", _hoisted_7$6, [
+                  _cache[7] || (_cache[7] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
                   vue.withDirectives(vue.createElementVNode("select", {
                     id: "currency-select",
                     "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
@@ -6238,7 +6260,7 @@
                       return vue.openBlock(), vue.createElementBlock("option", {
                         key: option.value,
                         value: option.value
-                      }, vue.toDisplayString(option.label), 9, _hoisted_8$4);
+                      }, vue.toDisplayString(option.label), 9, _hoisted_8$5);
                     }), 128))
                   ], 544), [
                     [vue.vModelSelect, settings.value.targetCurrency]
@@ -6246,12 +6268,12 @@
                 ]),
                 vue.createElementVNode("div", _hoisted_9$4, [
                   vue.createElementVNode("span", null, "当前汇率：1 JPY = " + vue.toDisplayString(getExchangeRateDisplay.value), 1),
-                  vue.createElementVNode("span", _hoisted_10$3, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
+                  vue.createElementVNode("span", _hoisted_10$2, vue.toDisplayString(getExchangeRateUpdateTime.value), 1)
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_11$2, [
-                _cache[11] || (_cache[11] = vue.createElementVNode("h3", null, "隐私设置", -1)),
-                _cache[12] || (_cache[12] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
+                _cache[12] || (_cache[12] = vue.createElementVNode("h3", null, "隐私设置", -1)),
+                _cache[13] || (_cache[13] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
                 vue.createElementVNode("div", _hoisted_12$2, [
                   vue.createElementVNode("label", _hoisted_13$2, [
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -6261,19 +6283,36 @@
                     }, null, 544), [
                       [vue.vModelCheckbox, settings.value.privacyMode]
                     ]),
-                    _cache[9] || (_cache[9] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
+                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[11] || (_cache[11] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
                   ])
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_14$2, [
-                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                _cache[16] || (_cache[16] = vue.createElementVNode("h3", null, "时间设置", -1)),
+                _cache[17] || (_cache[17] = vue.createElementVNode("p", { class: "setting-description" }, ' 选择一周的第一天，影响"本周"和"上周"的时间范围计算。 ', -1)),
                 vue.createElementVNode("div", _hoisted_15$2, [
+                  vue.createElementVNode("label", _hoisted_16$1, [
+                    vue.withDirectives(vue.createElementVNode("input", {
+                      type: "checkbox",
+                      "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => settings.value.mondayAsFirstDay = $event),
+                      onChange: handleMondayAsFirstDayChange
+                    }, null, 544), [
+                      [vue.vModelCheckbox, settings.value.mondayAsFirstDay]
+                    ]),
+                    _cache[14] || (_cache[14] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "toggle-label" }, "以周一起始", -1))
+                  ])
+                ])
+              ]),
+              vue.createElementVNode("div", _hoisted_17, [
+                _cache[18] || (_cache[18] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                vue.createElementVNode("div", _hoisted_18, [
                   vue.createElementVNode("button", {
                     onClick: saveSettings,
                     disabled: isSaving.value,
                     class: "booth-btn booth-btn-success booth-btn-md"
-                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_16$1),
+                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_19),
                   vue.createElementVNode("button", {
                     onClick: resetSettings,
                     class: "booth-btn booth-btn-secondary booth-btn-md"
@@ -6287,7 +6326,138 @@
       };
     }
   });
-  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-1a4ef441"]]);
+  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-af501e35"]]);
+  const _hoisted_1$6 = { class: "date-filter" };
+  const _hoisted_2$6 = { class: "filter-header" };
+  const _hoisted_3$6 = { class: "current-period" };
+  const _hoisted_4$6 = { class: "filter-controls" };
+  const _hoisted_5$6 = { class: "date-picker-content" };
+  const _hoisted_6$5 = { class: "date-input-group" };
+  const _hoisted_7$5 = { class: "date-input-group" };
+  const _hoisted_8$4 = ["disabled"];
+  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
+    __name: "DateFilter",
+    props: {
+      modelValue: {},
+      customRange: {},
+      userSettings: {}
+    },
+    emits: ["update:modelValue", "update:customRange"],
+    setup(__props, { emit: __emit }) {
+      const props = __props;
+      const emit = __emit;
+      const selectedPeriod = vue.ref(props.modelValue || "all");
+      const showCustomRange = vue.ref(false);
+      const showDatePicker = vue.ref(false);
+      const customStartDate = vue.ref("");
+      const customEndDate = vue.ref("");
+      const availablePeriods = DataAnalyzer.getAvailablePeriods();
+      const periodOptions = availablePeriods.map((period) => ({
+        value: period.value,
+        label: period.label
+      }));
+      const handlePeriodChange = (value) => {
+        if (typeof value === "string" || typeof value === "number") {
+          const period = value;
+          selectedPeriod.value = period;
+        }
+      };
+      vue.watch(selectedPeriod, (newValue) => {
+        emit("update:modelValue", newValue);
+        if (newValue === "custom") {
+          showCustomRange.value = true;
+          showDatePicker.value = true;
+        } else {
+          showCustomRange.value = false;
+          showDatePicker.value = false;
+        }
+      });
+      const closeDatePicker = () => {
+        showDatePicker.value = false;
+        if (!customStartDate.value || !customEndDate.value) {
+          selectedPeriod.value = "all";
+          showCustomRange.value = false;
+        }
+      };
+      const applyCustomRange = () => {
+        if (customStartDate.value && customEndDate.value) {
+          const customRange = {
+            startDate: customStartDate.value,
+            endDate: customEndDate.value
+          };
+          emit("update:customRange", customRange);
+          showDatePicker.value = false;
+        }
+      };
+      const getCurrentDisplayName = () => {
+        if (selectedPeriod.value === "custom" && props.customRange) {
+          return DataAnalyzer.formatDateRange("custom", props.customRange, props.userSettings);
+        }
+        return DataAnalyzer.getPeriodDisplayName(selectedPeriod.value);
+      };
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$6, [
+          vue.createElementVNode("div", _hoisted_2$6, [
+            _cache[3] || (_cache[3] = vue.createElementVNode("h4", null, "时间筛选", -1)),
+            vue.createElementVNode("span", _hoisted_3$6, vue.toDisplayString(getCurrentDisplayName()), 1)
+          ]),
+          vue.createElementVNode("div", _hoisted_4$6, [
+            vue.createVNode(Selector, {
+              options: vue.unref(periodOptions),
+              "model-value": selectedPeriod.value,
+              "onUpdate:modelValue": handlePeriodChange,
+              class: "period-selector"
+            }, null, 8, ["options", "model-value"]),
+            vue.createVNode(Modal, {
+              visible: showDatePicker.value,
+              title: "选择日期范围",
+              size: "small",
+              onClose: closeDatePicker,
+              "onUpdate:visible": _cache[2] || (_cache[2] = ($event) => showDatePicker.value = $event)
+            }, {
+              footer: vue.withCtx(() => [
+                vue.createElementVNode("button", {
+                  onClick: closeDatePicker,
+                  class: "booth-btn booth-btn-secondary booth-btn-md"
+                }, "取消"),
+                vue.createElementVNode("button", {
+                  onClick: applyCustomRange,
+                  class: "booth-btn booth-btn-success booth-btn-md",
+                  disabled: !customStartDate.value || !customEndDate.value
+                }, " 应用 ", 8, _hoisted_8$4)
+              ]),
+              default: vue.withCtx(() => [
+                vue.createElementVNode("div", _hoisted_5$6, [
+                  vue.createElementVNode("div", _hoisted_6$5, [
+                    _cache[4] || (_cache[4] = vue.createElementVNode("label", null, "开始日期：", -1)),
+                    vue.withDirectives(vue.createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => customStartDate.value = $event),
+                      type: "date",
+                      class: "date-input"
+                    }, null, 512), [
+                      [vue.vModelText, customStartDate.value]
+                    ])
+                  ]),
+                  vue.createElementVNode("div", _hoisted_7$5, [
+                    _cache[5] || (_cache[5] = vue.createElementVNode("label", null, "结束日期：", -1)),
+                    vue.withDirectives(vue.createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => customEndDate.value = $event),
+                      type: "date",
+                      class: "date-input"
+                    }, null, 512), [
+                      [vue.vModelText, customEndDate.value]
+                    ])
+                  ])
+                ])
+              ]),
+              _: 1
+            }, 8, ["visible"])
+          ])
+        ]);
+      };
+    }
+  });
+  const DateFilter = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-2d60ca69"]]);
   const _hoisted_1$5 = { class: "item-ranking" };
   const _hoisted_2$5 = { class: "ranking-header" };
   const _hoisted_3$5 = { class: "ranking-controls" };
@@ -6297,7 +6467,7 @@
   const _hoisted_7$4 = { class: "product-details" };
   const _hoisted_8$3 = { class: "product-name" };
   const _hoisted_9$3 = ["href"];
-  const _hoisted_10$2 = {
+  const _hoisted_10$1 = {
     key: 1,
     class: "product-link"
   };
@@ -6390,7 +6560,7 @@
                           masked: _ctx.userSettings?.privacyMode || false,
                           "mask-char": "商品"
                         }, null, 8, ["value", "masked"])
-                      ], 8, _hoisted_9$3)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_10$2, [
+                      ], 8, _hoisted_9$3)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_10$1, [
                         vue.createVNode(MaskedText, {
                           value: product.name,
                           masked: _ctx.userSettings?.privacyMode || false,
@@ -20892,7 +21062,6 @@
   const _hoisted_7$3 = { class: "legend-container" };
   const _hoisted_8$2 = { class: "legend-text" };
   const _hoisted_9$2 = { class: "legend-label" };
-  const _hoisted_10$1 = { class: "legend-value" };
   const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
     __name: "PaymentMethodChart",
     props: {
@@ -21037,8 +21206,7 @@
                     style: vue.normalizeStyle({ backgroundColor: getItemColor(item.method) })
                   }, null, 4),
                   vue.createElementVNode("div", _hoisted_8$2, [
-                    vue.createElementVNode("span", _hoisted_9$2, vue.toDisplayString(item.method), 1),
-                    vue.createElementVNode("span", _hoisted_10$1, vue.toDisplayString(item.count) + " 单 (" + vue.toDisplayString(item.percentage) + "%)", 1)
+                    vue.createElementVNode("span", _hoisted_9$2, vue.toDisplayString(item.method), 1)
                   ])
                 ]);
               }), 128))
@@ -21048,7 +21216,7 @@
       };
     }
   });
-  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-c148746f"]]);
+  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-fd8dd5d5"]]);
   const _hoisted_1$3 = { class: "chart-container" };
   const _hoisted_2$3 = { class: "chart-header" };
   const _hoisted_3$3 = { class: "chart-info" };
@@ -21285,19 +21453,11 @@
     key: 0,
     class: "stat-converted"
   };
-  const _hoisted_15 = { class: "filter-section" };
-  const _hoisted_16 = { class: "filter-header" };
-  const _hoisted_17 = { class: "current-period" };
-  const _hoisted_18 = { class: "filter-controls" };
-  const _hoisted_19 = { class: "date-picker-content" };
-  const _hoisted_20 = { class: "date-input-group" };
-  const _hoisted_21 = { class: "date-input-group" };
-  const _hoisted_22 = ["disabled"];
-  const _hoisted_23 = {
+  const _hoisted_15 = {
     key: 0,
     class: "charts-section"
   };
-  const _hoisted_24 = { class: "charts-grid" };
+  const _hoisted_16 = { class: "charts-grid" };
   const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
@@ -21312,55 +21472,6 @@
     setup(__props, { emit: __emit }) {
       const props = __props;
       const emit = __emit;
-      const selectedPeriod = vue.ref(props.modelValue || "all");
-      const showCustomRange = vue.ref(false);
-      const showDatePicker = vue.ref(false);
-      const customStartDate = vue.ref("");
-      const customEndDate = vue.ref("");
-      const availablePeriods = DataAnalyzer.getAvailablePeriods();
-      const periodOptions = availablePeriods.map((period) => ({
-        value: period.value,
-        label: period.label
-      }));
-      const handlePeriodChange = (value) => {
-        if (typeof value === "string" || typeof value === "number") {
-          const period = value;
-          selectedPeriod.value = period;
-        }
-      };
-      vue.watch(selectedPeriod, (newValue) => {
-        emit("update:modelValue", newValue);
-        if (newValue === "custom") {
-          showCustomRange.value = true;
-          showDatePicker.value = true;
-        } else {
-          showCustomRange.value = false;
-          showDatePicker.value = false;
-        }
-      });
-      const closeDatePicker = () => {
-        showDatePicker.value = false;
-        if (!customStartDate.value || !customEndDate.value) {
-          selectedPeriod.value = "all";
-          showCustomRange.value = false;
-        }
-      };
-      const applyCustomRange = () => {
-        if (customStartDate.value && customEndDate.value) {
-          const customRange = {
-            startDate: customStartDate.value,
-            endDate: customEndDate.value
-          };
-          emit("update:customRange", customRange);
-          showDatePicker.value = false;
-        }
-      };
-      const getCurrentDisplayName = () => {
-        if (selectedPeriod.value === "custom" && props.customRange) {
-          return DataAnalyzer.formatDateRange("custom", props.customRange);
-        }
-        return DataAnalyzer.getPeriodDisplayName(selectedPeriod.value);
-      };
       const formatJPY = (amount) => {
         return CurrencyManager.formatCurrencyWithCode(amount, "JPY");
       };
@@ -21373,10 +21484,10 @@
         return CurrencyManager.formatCurrencyWithCode(convertedAmount, targetCurrency);
       };
       const revenueTrendData = vue.computed(() => {
-        if (selectedPeriod.value === "today" || selectedPeriod.value === "yesterday") {
+        if (props.modelValue === "today" || props.modelValue === "yesterday") {
           return [];
         }
-        if (selectedPeriod.value === "custom" && props.customRange) {
+        if (props.modelValue === "custom" && props.customRange) {
           const startDate = new Date(props.customRange.startDate);
           const endDate = new Date(props.customRange.endDate);
           const timeDiff = endDate.getTime() - startDate.getTime();
@@ -21396,7 +21507,7 @@
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$2, [
           vue.createElementVNode("div", _hoisted_2$2, [
-            _cache[6] || (_cache[6] = vue.createElementVNode("h3", null, "统计信息", -1)),
+            _cache[5] || (_cache[5] = vue.createElementVNode("h3", null, "统计信息", -1)),
             vue.createElementVNode("div", _hoisted_3$2, [
               vue.createElementVNode("div", _hoisted_4$2, [
                 vue.createElementVNode("div", _hoisted_5$2, [
@@ -21407,7 +21518,7 @@
                     }, null, 8, ["value", "masked"])
                   ])
                 ]),
-                _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "stat-label" }, "总订单数", -1))
+                _cache[2] || (_cache[2] = vue.createElementVNode("div", { class: "stat-label" }, "总订单数", -1))
               ]),
               vue.createElementVNode("div", _hoisted_7$2, [
                 vue.createElementVNode("div", _hoisted_8$1, [
@@ -21419,7 +21530,7 @@
                   ]),
                   !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10, vue.toDisplayString(formatConverted(_ctx.statistics.totalRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
-                _cache[4] || (_cache[4] = vue.createElementVNode("div", { class: "stat-label" }, "总收入", -1))
+                _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "stat-label" }, "总收入", -1))
               ]),
               vue.createElementVNode("div", _hoisted_11, [
                 vue.createElementVNode("div", _hoisted_12, [
@@ -21431,70 +21542,19 @@
                   ]),
                   !_ctx.userSettings?.privacyMode && formatConverted(_ctx.statistics.totalNetRevenue) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_14, vue.toDisplayString(formatConverted(_ctx.statistics.totalNetRevenue)), 1)) : vue.createCommentVNode("", true)
                 ]),
-                _cache[5] || (_cache[5] = vue.createElementVNode("div", { class: "stat-label" }, "到手收入", -1))
+                _cache[4] || (_cache[4] = vue.createElementVNode("div", { class: "stat-label" }, "到手收入", -1))
               ])
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_15, [
+          vue.createVNode(DateFilter, {
+            "model-value": _ctx.modelValue,
+            "custom-range": _ctx.customRange,
+            "user-settings": _ctx.userSettings,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => emit("update:modelValue", value)),
+            "onUpdate:customRange": _cache[1] || (_cache[1] = (value) => emit("update:customRange", value))
+          }, null, 8, ["model-value", "custom-range", "user-settings"]),
+          revenueTrendData.value.length > 0 || paymentMethodData.value.length > 0 || productRankingData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15, [
             vue.createElementVNode("div", _hoisted_16, [
-              _cache[7] || (_cache[7] = vue.createElementVNode("h4", null, "时间筛选", -1)),
-              vue.createElementVNode("span", _hoisted_17, vue.toDisplayString(getCurrentDisplayName()), 1)
-            ]),
-            vue.createElementVNode("div", _hoisted_18, [
-              vue.createVNode(Selector, {
-                options: vue.unref(periodOptions),
-                "model-value": selectedPeriod.value,
-                "onUpdate:modelValue": handlePeriodChange,
-                class: "period-selector"
-              }, null, 8, ["options", "model-value"]),
-              vue.createVNode(Modal, {
-                visible: showDatePicker.value,
-                title: "选择日期范围",
-                size: "small",
-                onClose: closeDatePicker,
-                "onUpdate:visible": _cache[2] || (_cache[2] = ($event) => showDatePicker.value = $event)
-              }, {
-                footer: vue.withCtx(() => [
-                  vue.createElementVNode("button", {
-                    onClick: closeDatePicker,
-                    class: "booth-btn booth-btn-secondary booth-btn-md"
-                  }, "取消"),
-                  vue.createElementVNode("button", {
-                    onClick: applyCustomRange,
-                    class: "booth-btn booth-btn-success booth-btn-md",
-                    disabled: !customStartDate.value || !customEndDate.value
-                  }, " 应用 ", 8, _hoisted_22)
-                ]),
-                default: vue.withCtx(() => [
-                  vue.createElementVNode("div", _hoisted_19, [
-                    vue.createElementVNode("div", _hoisted_20, [
-                      _cache[8] || (_cache[8] = vue.createElementVNode("label", null, "开始日期：", -1)),
-                      vue.withDirectives(vue.createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => customStartDate.value = $event),
-                        type: "date",
-                        class: "date-input"
-                      }, null, 512), [
-                        [vue.vModelText, customStartDate.value]
-                      ])
-                    ]),
-                    vue.createElementVNode("div", _hoisted_21, [
-                      _cache[9] || (_cache[9] = vue.createElementVNode("label", null, "结束日期：", -1)),
-                      vue.withDirectives(vue.createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => customEndDate.value = $event),
-                        type: "date",
-                        class: "date-input"
-                      }, null, 512), [
-                        [vue.vModelText, customEndDate.value]
-                      ])
-                    ])
-                  ])
-                ]),
-                _: 1
-              }, 8, ["visible"])
-            ])
-          ]),
-          revenueTrendData.value.length > 0 || paymentMethodData.value.length > 0 || productRankingData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_23, [
-            vue.createElementVNode("div", _hoisted_24, [
               revenueTrendData.value.length > 0 ? (vue.openBlock(), vue.createBlock(RevenueTrendChart, {
                 key: 0,
                 "data-points": revenueTrendData.value,
@@ -21519,7 +21579,7 @@
       };
     }
   });
-  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-fef2f70b"]]);
+  const Statistics = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b96e3217"]]);
   const _hoisted_1$1 = { class: "exchange-rate-status" };
   const _hoisted_2$1 = { class: "status-info" };
   const _hoisted_3$1 = { class: "rate-info" };
@@ -21648,7 +21708,7 @@
       };
     }
   });
-  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-16151a4c"]]);
+  const ExchangeRateStatus = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-f349a9c1"]]);
   const _hoisted_1 = { class: "analysis-content" };
   const _hoisted_2 = { class: "header" };
   const _hoisted_3 = { class: "header-right" };
@@ -21682,7 +21742,8 @@
         timezone: "Asia/Shanghai",
         displayName: "中国标准时间",
         targetCurrency: "CNY",
-        privacyMode: false
+        privacyMode: false,
+        mondayAsFirstDay: true
       });
       const selectedPeriod = vue.ref("all");
       const customRange = vue.ref();
@@ -21695,7 +21756,7 @@
         const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
           period: selectedPeriod.value,
           customRange: customRange.value
-        });
+        }, userSettings.value);
         return result;
       });
       const statistics = vue.computed(() => {
@@ -21846,7 +21907,7 @@
       };
     }
   });
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-8d0e684c"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-5bd8cb6a"]]);
   function isBoothOrdersPage() {
     return window.location.href.includes("manage.booth.pm/orders");
   }

@@ -139,7 +139,7 @@ onUnmounted(() => {
   background: #f8fafc;
   border-radius: 4px;
   font-size: 11px;
-  min-width: 200px;
+  min-width: 160px;
   border: 1px solid #e5e7eb;
 }
 

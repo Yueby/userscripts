@@ -1,9 +1,9 @@
-import type { Order, OrderStats } from '../../types/order';
-import { logger } from '../core/logger';
-import { ItemManager } from '../booth/item-manager';
-import { calculateNetAmount } from '../booth/booth-fee-calculator';
 import { formatInTimeZone } from 'date-fns-tz';
-import { parseISO, isValid } from 'date-fns';
+import type { Order, OrderStats } from '../../types/order';
+import type { UserSettings } from '../../types/settings';
+import { calculateNetAmount } from '../booth/booth-fee-calculator';
+import { ItemManager } from '../booth/item-manager';
+import { logger } from '../core/logger';
 
 // 图表数据接口
 export interface ChartDataPoint {
@@ -74,7 +74,7 @@ export class DataAnalyzer {
   /**
    * 根据时间周期过滤订单数据
    */
-  static filterOrdersByPeriod(orders: Order[], options: FilterOptions): Order[] {
+  static filterOrdersByPeriod(orders: Order[], options: FilterOptions, userSettings?: UserSettings): Order[] {
     const { period, customRange } = options;
 
     // 首先过滤出已完成的订单
@@ -93,10 +93,10 @@ export class DataAnalyzer {
         filteredOrders = this.filterByYesterday(completedOrders);
         break;
       case 'thisWeek':
-        filteredOrders = this.filterByThisWeek(completedOrders);
+        filteredOrders = this.filterByThisWeek(completedOrders, userSettings);
         break;
       case 'lastWeek':
-        filteredOrders = this.filterByLastWeek(completedOrders);
+        filteredOrders = this.filterByLastWeek(completedOrders, userSettings);
         break;
       case 'thisMonth':
         filteredOrders = this.filterByThisMonth(completedOrders);
@@ -273,7 +273,7 @@ export class DataAnalyzer {
   /**
    * 格式化日期为显示格式
    */
-  static formatDateRange(period: TimePeriod, customRange?: CustomDateRange): string {
+  static formatDateRange(period: TimePeriod, customRange?: CustomDateRange, userSettings?: UserSettings): string {
     switch (period) {
       case 'all':
         return '全部';
@@ -282,10 +282,10 @@ export class DataAnalyzer {
       case 'yesterday':
         return this.getJSTDateWithOffset(-1);
       case 'thisWeek':
-        const thisWeekRange = this.getThisWeekJSTRange();
+        const thisWeekRange = this.getThisWeekJSTRange(userSettings);
         return `${thisWeekRange.start.substring(5)} 至 ${thisWeekRange.end.substring(5)}`;
       case 'lastWeek':
-        const lastWeekRange = this.getLastWeekJSTRange();
+        const lastWeekRange = this.getLastWeekJSTRange(userSettings);
         return `${lastWeekRange.start.substring(5)} 至 ${lastWeekRange.end.substring(5)}`;
       case 'thisMonth':
         return this.getCurrentJSTMonth().replace('-', '年') + '月';
@@ -365,8 +365,8 @@ export class DataAnalyzer {
     return filtered;
   }
 
-  private static filterByThisWeek(orders: Order[]): Order[] {
-    const weekRange = this.getThisWeekJSTRange();
+  private static filterByThisWeek(orders: Order[], userSettings?: UserSettings): Order[] {
+    const weekRange = this.getThisWeekJSTRange(userSettings);
     
     const filtered = orders.filter(order => {
       const orderDateStr = this.parseOrderDate(order.createdAt);
@@ -376,8 +376,8 @@ export class DataAnalyzer {
     return filtered;
   }
 
-  private static filterByLastWeek(orders: Order[]): Order[] {
-    const weekRange = this.getLastWeekJSTRange();
+  private static filterByLastWeek(orders: Order[], userSettings?: UserSettings): Order[] {
+    const weekRange = this.getLastWeekJSTRange(userSettings);
     
     const filtered = orders.filter(order => {
       const orderDateStr = this.parseOrderDate(order.createdAt);
@@ -463,10 +463,30 @@ export class DataAnalyzer {
     return formatInTimeZone(targetDate, 'Asia/Tokyo', 'yyyy-MM');
   }
 
-  private static getThisWeekJSTRange(): { start: string; end: string } {
+  private static getThisWeekJSTRange(userSettings?: UserSettings): { start: string; end: string } {
     const today = new Date();
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const dayOfWeek = today.getDay(); // 0=周日, 1=周一, ..., 6=周六
+    
+    // 根据用户设置决定一周的第一天
+    const mondayAsFirstDay = userSettings?.mondayAsFirstDay ?? true;
+    
+    let mondayOffset: number;
+    if (mondayAsFirstDay) {
+      // 以周一作为一周第一天
+      // 如果今天是周日(0)，需要往前推6天到本周一
+      // 如果今天是周一(1)，需要往前推0天
+      // 如果今天是周二(2)，需要往前推1天
+      // 以此类推...
+      mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    } else {
+      // 以周日作为一周第一天
+      // 如果今天是周日(0)，需要往前推0天
+      // 如果今天是周一(1)，需要往前推1天
+      // 如果今天是周二(2)，需要往前推2天
+      // 以此类推...
+      mondayOffset = dayOfWeek;
+    }
+    
     const monday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1000);
     const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1000);
     
@@ -476,12 +496,27 @@ export class DataAnalyzer {
     };
   }
 
-  private static getLastWeekJSTRange(): { start: string; end: string } {
+  private static getLastWeekJSTRange(userSettings?: UserSettings): { start: string; end: string } {
     const today = new Date();
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const dayOfWeek = today.getDay(); // 0=周日, 1=周一, ..., 6=周六
+    
+    // 根据用户设置决定一周的第一天
+    const mondayAsFirstDay = userSettings?.mondayAsFirstDay ?? true;
+    
+    let mondayOffset: number;
+    if (mondayAsFirstDay) {
+      // 以周一作为一周第一天
+      mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    } else {
+      // 以周日作为一周第一天
+      mondayOffset = dayOfWeek;
+    }
+    
+    // 先找到本周一
     const thisMonday = new Date(today.getTime() - mondayOffset * 24 * 60 * 60 * 1000);
+    // 再往前推7天找到上周一
     const lastMonday = new Date(thisMonday.getTime() - 7 * 24 * 60 * 60 * 1000);
+    // 上周日就是上周一加6天
     const lastSunday = new Date(lastMonday.getTime() + 6 * 24 * 60 * 60 * 1000);
     
     return {

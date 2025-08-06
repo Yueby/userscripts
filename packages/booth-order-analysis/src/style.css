@@ -24,6 +24,7 @@
 .booth-btn:hover:not(:disabled) {
     background: #e5e7eb;
     border-color: #9ca3af;
+    transform: translateY(-1px);
 }
 
 .booth-btn:active:not(:disabled) {
@@ -296,6 +297,16 @@
     font-size: 14px;
     color: #374151;
     font-weight: 500;
+}
+
+/* Toggle hover 效果 */
+.booth-toggle:hover .toggle-slider {
+    background: #9ca3af;
+    transform: translateY(-1px);
+}
+
+.booth-toggle:hover .toggle-label {
+    color: #1f2937;
 }
 
 /* Toggle 点击效果 */

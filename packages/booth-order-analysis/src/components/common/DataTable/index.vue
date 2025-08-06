@@ -169,8 +169,6 @@ const handlePageChange = (page: number) => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
-
 .table-container {
   border: 1px solid var(--table-border-color, #e5e7eb);
   border-radius: 6px;
@@ -179,6 +177,11 @@ const handlePageChange = (page: number) => {
 
 .table-container.table-scrollable {
   min-width: 1200px;
+}
+
+/* 非滚动模式下也允许横向滚动 */
+.table-container:not(.table-scrollable) {
+  overflow-x: auto;
 }
 
 /* 主题变量 */

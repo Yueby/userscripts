@@ -16,7 +16,8 @@ const userSettings = ref<SettingsType>({
   timezone: 'Asia/Shanghai',
   displayName: '中国标准时间',
   targetCurrency: 'CNY',
-  privacyMode: false
+  privacyMode: false,
+  mondayAsFirstDay: true
 });
 
 // 过滤器状态
@@ -38,7 +39,7 @@ const filteredOrders = computed(() => {
   const result = DataAnalyzer.filterOrdersByPeriod(orders.value, {
     period: selectedPeriod.value,
     customRange: customRange.value
-  });
+  }, userSettings.value);
 
   return result;
 });
@@ -214,8 +215,10 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
   flex-shrink: 0;
 }
 

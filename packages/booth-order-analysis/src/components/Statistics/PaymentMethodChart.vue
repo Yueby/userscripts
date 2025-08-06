@@ -15,7 +15,6 @@
           <div class="legend-color" :style="{ backgroundColor: getItemColor(item.method) }"></div>
           <div class="legend-text">
             <span class="legend-label">{{ item.method }}</span>
-            <span class="legend-value">{{ item.count }} 单 ({{ item.percentage }}%)</span>
           </div>
         </div>
       </div>
@@ -279,19 +278,12 @@ canvas {
 
 .legend-text {
   display: flex;
-  flex-direction: row;
-  gap: 4px;
   align-items: center;
 }
 
 .legend-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: #374151;
-}
-
-.legend-value {
-  font-size: 9px;
-  color: #6b7280;
 }
 </style>

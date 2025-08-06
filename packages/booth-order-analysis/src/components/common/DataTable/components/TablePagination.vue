@@ -1,8 +1,8 @@
 <template>
   <div class="pagination">
     <div class="pagination-controls">
-      <button @click="goToPrevPage" :disabled="currentPage === 1" class="booth-btn booth-btn-secondary booth-btn-sm">
-        上一页
+      <button @click="goToPrevPage" :disabled="currentPage === 1" class="booth-btn booth-btn-secondary booth-btn-sm" title="上一页">
+        ‹
       </button>
 
       <div class="page-numbers">
@@ -15,8 +15,8 @@
         </button>
       </div>
 
-      <button @click="goToNextPage" :disabled="currentPage === totalPages" class="booth-btn booth-btn-secondary booth-btn-sm">
-        下一页
+      <button @click="goToNextPage" :disabled="currentPage === totalPages" class="booth-btn booth-btn-secondary booth-btn-sm" title="下一页">
+        ›
       </button>
     </div>
 
@@ -101,11 +101,9 @@ const getVisiblePages = () => {
 }
 
 .pagination-info {
-  position: absolute;
-  bottom: 0;
-  right: 0;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .page-info {

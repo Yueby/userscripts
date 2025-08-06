@@ -21,7 +21,8 @@ const settings = ref<UserSettings>({
   timezone: 'Asia/Shanghai',
   displayName: '中国标准时间',
   targetCurrency: 'CNY',
-  privacyMode: false
+  privacyMode: false,
+  mondayAsFirstDay: true
 });
 
 const isSaving = ref(false);
@@ -99,6 +100,12 @@ const handlePrivacyModeChange = () => {
 
 // 处理货币变化
 const handleCurrencyChange = () => {
+  // 实时触发设置变化事件
+  emit('settings-changed', settings.value);
+};
+
+// 处理周一作为第一天变化
+const handleMondayAsFirstDayChange = () => {
   // 实时触发设置变化事件
   emit('settings-changed', settings.value);
 };
@@ -182,6 +189,25 @@ onMounted(() => {
       </div>
 
       <div class="setting-section">
+        <h3>时间设置</h3>
+        <p class="setting-description">
+          选择一周的第一天，影响"本周"和"上周"的时间范围计算。
+        </p>
+
+        <div class="setting-item">
+          <label class="booth-toggle">
+            <input 
+              type="checkbox" 
+              v-model="settings.mondayAsFirstDay" 
+              @change="handleMondayAsFirstDayChange"
+            />
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">以周一起始</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-section">
         <h3>数据管理</h3>
         <div class="setting-actions">
           <button @click="saveSettings" :disabled="isSaving" class="booth-btn booth-btn-success booth-btn-md">
@@ -229,7 +255,7 @@ onMounted(() => {
   font-size: 14px;
   color: #374151;
   font-weight: 500;
-  min-width: 60px;
+  flex-shrink: 0;
 }
 
 .timezone-select,
@@ -241,6 +267,8 @@ onMounted(() => {
   font-size: 14px;
   background: white;
   color: #374151;
+  min-width: 0;
+  width: 100%;
 }
 
 .current-time,
