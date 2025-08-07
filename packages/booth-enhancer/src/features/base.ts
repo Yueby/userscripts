@@ -24,7 +24,7 @@ export abstract class Feature {
      * 执行页面功能
      */
     async execute(): Promise<void> {
-        console.log(`${this.constructor.name} executed`);
+        // console.log(`${this.constructor.name} executed`);
     }
 
     /**

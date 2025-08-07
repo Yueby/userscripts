@@ -65,18 +65,18 @@ export class Logger {
    */
   private formatMessage(level: string, message: string, ...args: any[]): string {
     const parts: string[] = [];
-    
+
     if (this.config.enableTimestamp) {
       parts.push(`[${this.getTimestamp()}]`);
     }
-    
+
     if (this.config.enablePrefix) {
       parts.push(this.config.prefix);
     }
-    
+
     parts.push(`[${level}]`);
     parts.push(message);
-    
+
     return parts.join(' ');
   }
 
@@ -85,9 +85,9 @@ export class Logger {
    */
   private log(level: LogLevel, levelName: string, message: string, ...args: any[]): void {
     if (level < this.config.level) return;
-    
+
     const formattedMessage = this.formatMessage(levelName, message);
-    
+
     switch (level) {
       case LogLevel.DEBUG:
         console.debug(formattedMessage, ...args);
@@ -132,68 +132,6 @@ export class Logger {
     this.log(LogLevel.ERROR, 'ERROR', message, ...args);
   }
 
-  /**
-   * 成功日志（Info级别）
-   */
-  success(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'SUCCESS', message, ...args);
-  }
-
-  /**
-   * 数据加载日志
-   */
-  dataLoad(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'DATA', message, ...args);
-  }
-
-  /**
-   * 设置日志
-   */
-  settings(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'SETTINGS', message, ...args);
-  }
-
-  /**
-   * 时区转换日志
-   */
-  timezone(message: string, ...args: any[]): void {
-    this.log(LogLevel.DEBUG, 'TIMEZONE', message, ...args);
-  }
-
-  /**
-   * 过滤器日志
-   */
-  filter(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'FILTER', message, ...args);
-  }
-
-  /**
-   * 统计日志
-   */
-  stats(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'STATS', message, ...args);
-  }
-
-  /**
-   * 网络请求日志
-   */
-  network(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'NETWORK', message, ...args);
-  }
-
-  /**
-   * 性能日志
-   */
-  performance(message: string, ...args: any[]): void {
-    this.log(LogLevel.DEBUG, 'PERF', message, ...args);
-  }
-
-  /**
-   * 汇率日志
-   */
-  exchange(message: string, ...args: any[]): void {
-    this.log(LogLevel.INFO, 'EXCHANGE', message, ...args);
-  }
 }
 
 // 导出默认Logger实例

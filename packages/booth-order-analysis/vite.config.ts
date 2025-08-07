@@ -26,8 +26,12 @@ export default defineConfig({
           'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
         },
         author: 'Yueby',
-        version: '0.1.6',
-        connect: ['raw.githubusercontent.com'],
+        version: '0.1.7',
+        connect: [
+          'raw.githubusercontent.com',
+          'api.exchangerate-api.com',
+          'manage.booth.pm'
+        ],
         grant: [
           'GM_xmlhttpRequest',
           'GM_setClipboard',

@@ -37,17 +37,6 @@ export interface Order {
   items: OrderItem[];           // 商品信息
 }
 
-// 商品数据结构（简化版）
-export interface BoothItem {
-  itemId: string;               // 商品ID
-  name: string;                 // 商品名称
-  state: string;                // 商品状态
-  state_label: string;          // 状态标签
-  url: string;                  // 商品URL
-  iconUrl: string;              // 商品图标URL
-  variants: string[];           // 商品变体列表（只保留变体名）
-}
-
 // 变体销售统计（简化版）
 export interface VariantSalesStats {
   itemId: string;               // 商品ID

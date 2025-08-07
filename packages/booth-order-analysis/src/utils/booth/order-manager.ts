@@ -1,4 +1,5 @@
-import type { BoothItem, Order, OrderItem, VariantSalesStats } from '../../types/order';
+import type { BoothItem } from '../../types/item';
+import type { Order, OrderItem, VariantSalesStats } from '../../types/order';
 import { logger } from '../core/logger';
 import { ItemManager } from './item-manager';
 
@@ -115,7 +116,7 @@ export class OrderManager {
     }>();
 
     // 初始化所有商品的统计
-    const allItems = this.itemManager.getAllItems();
+    const allItems = this.itemManager.getAllBoothItems();
     allItems.forEach((item, itemId) => {
       stats.set(itemId, {
         totalQuantity: 0,
@@ -175,21 +176,17 @@ export class OrderManager {
     // 从缓存中获取变体数据
     const cachedVariants = this.variantCache.get(itemId);
     if (cachedVariants) {
-      logger.debug(`从缓存获取商品 ${itemId} 的变体数据，共 ${cachedVariants.length} 个变体`);
       return cachedVariants;
     }
 
     // 如果缓存中没有，则实时分析（这种情况应该很少发生）
-    const currentItem = this.itemManager.getItem(itemId);
+    const currentItem = this.itemManager.getBoothItem(itemId);
     if (!currentItem) {
       logger.warn(`未找到商品: ${itemId}`);
       return [];
     }
 
-    logger.debug(`实时分析商品 ${itemId} (${currentItem.name}) 的变体数据`);
     const variantStats = this.analyzeVariantsFromOrders(itemId, currentItem.name, orders);
-
-    logger.debug(`找到 ${variantStats.length} 个变体`);
     return variantStats;
   }
 
@@ -213,7 +210,7 @@ export class OrderManager {
     }
 
     // 检查是否有新的商品ID（这种情况很少发生）
-    const currentItemIds = new Set(this.itemManager.getAllItemIds());
+    const currentItemIds = new Set(this.itemManager.getAllBoothItemIds());
     const cachedItemIds = new Set(this.variantCache.keys());
 
     // 如果有新的商品ID，需要重新处理
@@ -227,33 +224,23 @@ export class OrderManager {
   }
 
   /**
-   * 从订单数据中分析变体
-   * 主要逻辑：找到所有包含主商品名称但不等于主商品名称的订单项
+   * 从BoothItem的HTML数据中获取变体信息
+   * 直接从variants中获取变体名称，然后从订单中统计销售数据
    */
   private analyzeVariantsFromOrders(itemId: string, mainItemName: string, orders: Order[]): VariantSalesStats[] {
+    const boothItem = this.itemManager.getBoothItem(itemId);
+    if (!boothItem || !boothItem.variants) {
+      return [];
+    }
+
     const variantStats: VariantSalesStats[] = [];
-    const variantNames = new Set<string>();
+    const htmlVariants = boothItem.variants;
 
-    // 1. 从订单中提取所有可能的变体名称
-    orders.forEach(order => {
-      order.items?.forEach((item: OrderItem) => {
-        // 检查是否是当前商品的变体
-        if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
-          const variantName = this.extractVariantName(item.name, mainItemName);
-          if (variantName && variantName !== mainItemName) {
-            variantNames.add(variantName);
-            logger.debug(`发现变体: ${variantName} (来自订单项: ${item.name})`);
-          }
-        }
-      });
-    });
-
-    // 2. 为每个变体计算销售统计
-    variantNames.forEach(variantName => {
-      const stats = this.calculateVariantStatsFromOrders(itemId, variantName, mainItemName, orders);
+    // 为每个HTML变体计算销售统计
+    htmlVariants.forEach(htmlVariant => {
+      const stats = this.calculateVariantStatsFromOrders(itemId, htmlVariant.name, mainItemName, orders);
       if (stats.totalQuantity > 0) {
         variantStats.push(stats);
-        logger.debug(`变体 ${variantName} 统计: 销量=${stats.totalQuantity}, 收入=${stats.totalRevenue}`);
       }
     });
 
@@ -278,39 +265,9 @@ export class OrderManager {
   }
 
   /**
-   * 从订单项名称中提取变体名称
-   */
-  private extractVariantName(itemName: string, mainItemName: string): string {
-    // 如果名称包含主商品名称，提取变体部分
-    if (itemName.includes(mainItemName)) {
-      // 尝试提取变体信息，比如 "商品名 - 红色" 中的 "红色"
-      const parts = itemName.split(mainItemName);
-      if (parts.length > 1) {
-        const variantPart = parts[1].trim();
-        if (variantPart && !variantPart.match(/^[-\s]+$/)) {
-          // 去掉括号和多余的空格
-          let cleanVariantName = variantPart
-            .replace(/^[-\s]+/, '')  // 去掉开头的连字符和空格
-            .replace(/[-\s]+$/, '')  // 去掉结尾的连字符和空格
-            .replace(/^[\(（]/, '')  // 去掉开头的括号
-            .replace(/[\)）]$/, ''); // 去掉结尾的括号
-
-          // 如果清理后的名称不为空且不等于主商品名称，则返回
-          if (cleanVariantName && cleanVariantName !== mainItemName) {
-            return cleanVariantName;
-          }
-        }
-      }
-    }
-
-    // 如果无法提取或提取失败，返回完整名称（去掉括号）
-    return itemName
-      .replace(/^[\(（]/, '')
-      .replace(/[\)）]$/, '');
-  }
-
-  /**
    * 从订单数据中计算变体的销售统计
+   * 匹配HTML变体名称和订单中的商品名称
+   * 订单格式: "商品名 (变体名)"
    */
   private calculateVariantStatsFromOrders(
     itemId: string,
@@ -323,14 +280,16 @@ export class OrderManager {
     let totalBoothFee = 0;
     let orderCount = 0;
 
+    const expectedVariantName = `${mainItemName} (${variantName})`;
+
     orders.forEach(order => {
       order.items?.forEach((item: OrderItem) => {
         // 检查是否匹配变体
         if (this.isVariantOfMainItem(item, itemId, mainItemName)) {
-          const extractedVariantName = this.extractVariantName(item.name, mainItemName);
-
-          // 如果提取的变体名称匹配，或者订单项名称包含变体名称
-          if (extractedVariantName === variantName || item.name.includes(variantName)) {
+          // 检查订单项名称是否匹配变体格式: "商品名 (变体名)"
+          const orderItemName = item.name;
+          
+          if (orderItemName === expectedVariantName) {
             const quantity = item.quantity || 0;
             totalQuantity += quantity;
 
@@ -375,14 +334,14 @@ export class OrderManager {
     };
     variantStats: VariantSalesStats[];
   } | null {
-    const item = this.itemManager.getItem(itemId);
-    if (!item) return null;
+    const boothItem = this.itemManager.getBoothItem(itemId);
+    if (!boothItem) return null;
 
     const salesStats = this.getItemSalesStats(itemId, orders);
     const variantStats = this.getItemVariantStats(itemId, orders);
 
     return {
-      item,
+      item: boothItem,
       salesStats,
       variantStats
     };
@@ -397,22 +356,21 @@ export class OrderManager {
     this.variantCache.clear();
 
     const allVariantsMap = new Map<string, VariantSalesStats[]>();
-    const allItems = this.itemManager.getAllItems();
+    const allItems = this.itemManager.getAllBoothItems();
 
     logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
 
     let processedCount = 0;
     let totalVariants = 0;
 
-    allItems.forEach((item, itemId) => {
-      const variantStats = this.analyzeVariantsFromOrders(itemId, item.name, orders);
+    allItems.forEach((boothItem, itemId) => {
+      const variantStats = this.analyzeVariantsFromOrders(itemId, boothItem.name, orders);
       if (variantStats.length > 0) {
         allVariantsMap.set(itemId, variantStats);
         // 同时更新缓存
         this.variantCache.set(itemId, variantStats);
         processedCount++;
         totalVariants += variantStats.length;
-        logger.debug(`商品 ${itemId} (${item.name}) 预处理完成，找到 ${variantStats.length} 个变体`);
       }
     });
 
@@ -435,9 +393,6 @@ export class OrderManager {
     };
     variantStats: VariantSalesStats[];
   }> {
-    // 使用订单数量作为缓存键，更智能的缓存机制
-    const cacheKey = orders.length;
-
     // 检查缓存
     if (this.lastProcessedOrders.length === orders.length && this.cachedItemsWithStats) {
       return this.cachedItemsWithStats;
@@ -450,6 +405,13 @@ export class OrderManager {
 
     // 预计算所有商品的销售统计，避免重复计算
     const allSalesStats = this.getAllItemSalesStats(orders);
+
+    // 预处理所有商品的变体数据（一次性处理，避免重复计算）
+    if (this.shouldReprocessOrders(orders)) {
+      logger.debug(`需要重新处理订单数据，开始预处理变体`);
+      this.preprocessAllItemVariants(orders);
+      this.lastProcessedOrders = [...orders];
+    }
 
     const result: Array<{
       itemId: string;
@@ -464,12 +426,12 @@ export class OrderManager {
       variantStats: VariantSalesStats[];
     }> = [];
 
-    // 获取所有商品
-    const allItems = this.itemManager.getAllItems();
+    // 获取所有BoothItem
+    const allBoothItems = this.itemManager.getAllBoothItems();
 
     // 使用预计算的销售统计，避免重复计算
     // 保持item数组的原始顺序，不进行排序
-    allItems.forEach((item, itemId) => {
+    allBoothItems.forEach((boothItem, itemId) => {
       const salesStats = allSalesStats.get(itemId) || {
         totalQuantity: 0,
         totalRevenue: 0,
@@ -478,18 +440,16 @@ export class OrderManager {
         orderCount: 0
       };
 
-      // 使用缓存的变体数据
+      // 使用预处理的变体数据
       const variantStats = this.variantCache.get(itemId) || [];
 
       result.push({
         itemId,
-        item,
+        item: boothItem,
         salesStats,
         variantStats
       });
     });
-
-    // 移除按销量排序，保持item数组的原始顺序
 
     // 更新缓存
     this.lastProcessedOrders = [...orders];

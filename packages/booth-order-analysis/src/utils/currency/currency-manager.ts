@@ -1,4 +1,6 @@
+import { GM_xmlhttpRequest } from '$';
 import type { Currency } from '../../types/settings';
+import { logger } from '../core/logger';
 
 // 汇率缓存
 let exchangeRates: Partial<Record<Currency, number>> = {};
@@ -152,10 +154,13 @@ export class CurrencyManager {
    */
   static async initializeRates(): Promise<void> {
     try {
+      logger.info('开始初始化汇率...');
       const rates = await this.fetchExchangeRates();
       this.updateExchangeRates(rates);
+      logger.info('汇率初始化成功 (实时数据):', rates);
     } catch (error) {
-      console.error('初始化汇率失败:', error);
+      logger.error('初始化汇率失败:', error);
+      logger.info('汇率初始化完成 (使用默认数据)');
     }
   }
 
@@ -164,28 +169,48 @@ export class CurrencyManager {
    */
   private static async fetchExchangeRates(): Promise<Record<Currency, number>> {
     try {
-      const response = await fetch('https://api.exchangerate-api.com/v4/latest/JPY');
-      const data: RatesResponse = await response.json();
+      const response = await new Promise<RatesResponse>((resolve, reject) => {
+        GM_xmlhttpRequest({
+          method: 'GET',
+          url: 'https://api.exchangerate-api.com/v4/latest/JPY',
+          onload: function (response) {
+            if (response.status === 200) {
+              try {
+                const data: RatesResponse = JSON.parse(response.responseText);
+                resolve(data);
+              } catch (error) {
+                reject(new Error('解析汇率响应失败'));
+              }
+            } else {
+              reject(new Error(`HTTP ${response.status}: ${response.statusText}`));
+            }
+          },
+          onerror: function (error) {
+            reject(error);
+          }
+        });
+      });
 
-      if (!data.rates) {
+      if (!response.rates) {
         throw new Error('无效的汇率响应');
       }
 
       const rates: Record<Currency, number> = {
         JPY: 1, // 基准货币
-        CNY: data.rates.CNY || 0,
-        USD: data.rates.USD || 0,
-        EUR: data.rates.EUR || 0,
-        GBP: data.rates.GBP || 0,
-        KRW: data.rates.KRW || 0,
-        HKD: data.rates.HKD || 0,
-        TWD: data.rates.TWD || 0
+        CNY: response.rates.CNY || 0,
+        USD: response.rates.USD || 0,
+        EUR: response.rates.EUR || 0,
+        GBP: response.rates.GBP || 0,
+        KRW: response.rates.KRW || 0,
+        HKD: response.rates.HKD || 0,
+        TWD: response.rates.TWD || 0
       };
 
-      updateTime = data.date;
+      updateTime = response.date;
       return rates;
     } catch (error) {
-      console.error('获取汇率失败:', error);
+      logger.error('获取汇率失败:', error);
+      logger.warn('使用默认汇率数据作为备用');
       // 返回默认汇率
       return {
         JPY: 1,
@@ -230,4 +255,3 @@ export class CurrencyManager {
   }
 }
 
- 

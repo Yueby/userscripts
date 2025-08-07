@@ -3,10 +3,10 @@
  * 提供日期时间格式化相关的工具函数
  */
 
+import { isValid, parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { parseISO, isValid } from 'date-fns';
-import { logger } from './logger';
 import type { UserSettings } from '../../types/settings';
+import { logger } from './logger';
 
 /**
  * 将JST时间转换为目标时区
@@ -24,7 +24,7 @@ export const convertJSTToTargetTimezone = (jstDateTime: string, targetTimezone: 
     // 使用date-fns-tz进行时区转换，从JST转换到目标时区
     const result = formatInTimeZone(jstDate, targetTimezone, 'yyyy-MM-dd HH:mm:ss');
     
-    logger.timezone(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
+    // logger.info(`时区转换: ${jstDateTime} -> ${result} (目标时区: ${targetTimezone})`);
     return result;
   } catch (error) {
     logger.error('时区转换失败:', error);

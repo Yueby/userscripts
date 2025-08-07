@@ -134,7 +134,7 @@ async function handleButtonClick(): Promise<void> {
 async function loadDataOnly(): Promise<void> {
   try {
     const result = await dataLoader.loadOrdersFromCSV();
-    
+
     if (result.success) {
       updateButtonState(false);
     } else {
@@ -142,7 +142,7 @@ async function loadDataOnly(): Promise<void> {
       updateButtonState(false);
       alert(`数据加载失败: ${result.error}`);
     }
-    
+
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
@@ -154,7 +154,7 @@ async function loadDataOnly(): Promise<void> {
 async function loadDataAndShowPanel(): Promise<void> {
   try {
     const result = await dataLoader.loadOrdersFromCSV();
-    
+
     if (result.success) {
       updateButtonState(false);
       showVuePanel();
@@ -163,7 +163,7 @@ async function loadDataAndShowPanel(): Promise<void> {
       updateButtonState(false);
       alert(`数据加载失败: ${result.error}`);
     }
-    
+
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
@@ -221,10 +221,12 @@ if (isBoothOrdersPage()) {
     logger.warn('初始化失败，使用默认设置:', error);
   });
 
+
+
   // 自动加载数据
   setTimeout(async () => {
     insertButton();
-    
+
     // 检查是否已有数据，如果没有则自动加载
     if (!dataLoader.hasData()) {
       updateButtonState(true);

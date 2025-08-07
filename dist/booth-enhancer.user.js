@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.8
+// @version            0.1.9
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -138,7 +138,6 @@
      * 执行页面功能
      */
     async execute() {
-      console.log(`${this.constructor.name} executed`);
     }
     /**
      * 清理资源

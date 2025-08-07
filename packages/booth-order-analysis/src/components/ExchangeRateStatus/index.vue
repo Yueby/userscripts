@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { Currency } from '../../types/settings';
-import { logger } from '../../utils/core/logger';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
 
 interface Props {
@@ -75,9 +74,8 @@ const refreshRates = async () => {
   try {
     await CurrencyManager.initializeRates();
     updateCacheStatus();
-    logger.success('汇率手动刷新成功');
   } catch (error) {
-    logger.exchange('汇率刷新失败:', error);
+    // 错误日志已经在 CurrencyManager 中输出，这里不需要重复
   } finally {
     isRefreshing.value = false;
   }

@@ -28,7 +28,7 @@ export class SettingsManager {
     static saveSettings(settings: UserSettings): void {
         try {
             GM_setValue(this.SETTINGS_KEY, settings);
-            logger.settings('设置已保存');
+            logger.info('设置已保存');
         } catch (error) {
             logger.error('保存设置失败:', error);
         }
@@ -48,6 +48,6 @@ export class SettingsManager {
      */
     static resetSettings(): void {
         this.saveSettings(DEFAULT_SETTINGS);
-        logger.settings('设置已重置为默认值');
+        logger.info('设置已重置为默认值');
     }
 } 

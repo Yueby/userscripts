@@ -22,9 +22,15 @@
                 <MaskedText :value="item.item.name" :masked="props.userSettings?.privacyMode || false" mask-char="商品" />
             </template>
 
-            <!-- 商品状态 -->
-            <template v-else-if="column.key === 'state'">
-                <MaskedText :value="item.item.state_label" :masked="props.userSettings?.privacyMode || false" />
+            <!-- 点赞数 -->
+            <template v-else-if="column.key === 'favorites'">
+                <div v-if="item.item.favorites > 0" class="favorites-cell">
+                    <svg class="heart-icon" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                    </svg>
+                    <MaskedText :value="item.item.favorites || 0" :masked="props.userSettings?.privacyMode || false" />
+                </div>
+                <span v-else class="no-favorites">-</span>
             </template>
 
             <!-- 总销量 -->
@@ -111,8 +117,34 @@
                         :privacy-mode="userSettings?.privacyMode || false" />
                 </div>
                 <div class="item-details">
-                    <h4>{{ userSettings?.privacyMode ? '商品' : selectedItem.item.name }}</h4>
-                    <p class="item-id">商品ID: {{ userSettings?.privacyMode ? '****' : selectedItem.itemId }}</p>
+                    <div class="item-header">
+                        <h4>{{ userSettings?.privacyMode ? '商品' : selectedItem.item.name }}</h4>
+                        <span class="item-id">ID: {{ userSettings?.privacyMode ? '****' : selectedItem.itemId }}</span>
+                    </div>
+
+                    <!-- 商品状态、链接和点赞数 -->
+                    <div class="item-meta">
+                        <div class="meta-left">
+                            <span v-if="selectedItem.item.state" class="item-state">
+                                <span class="state-dot"></span>
+                                {{ userSettings?.privacyMode ? '****' : selectedItem.item.state }}
+                            </span>
+                            <a v-if="!(userSettings?.privacyMode || false) && selectedItem.item.url"
+                                :href="selectedItem.item.url" target="_blank" class="item-link">
+                                查看商品页面
+                            </a>
+                        </div>
+                        <div v-if="selectedItem.item.favorites > 0" class="meta-right">
+                            <span class="favorites-item">
+                                <svg class="heart-icon" viewBox="0 0 16 16" fill="currentColor">
+                                    <path
+                                        d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                                </svg>
+                                <MaskedText :value="selectedItem.item.favorites || 0"
+                                    :masked="userSettings?.privacyMode || false" />
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -142,11 +174,11 @@
 
             <div class="variant-sales">
                 <h5>变体销量详情</h5>
-                <div v-if="getItemVariants(selectedItem.itemId).length > 0" class="variant-summary">
+                <div v-if="selectedItem.item.variants && selectedItem.item.variants.length > 0" class="variant-summary">
                     <div class="summary-stats">
                         <span class="summary-stat">
                             变体数量: <strong>
-                                <MaskedText :value="getItemVariants(selectedItem.itemId).length"
+                                <MaskedText :value="selectedItem.item.variants.length"
                                     :masked="userSettings?.privacyMode || false" />
                             </strong>
                         </span>
@@ -165,32 +197,33 @@
                     </div>
                 </div>
                 <div class="variant-list">
-                    <div v-for="variant in getItemVariants(selectedItem.itemId)" :key="variant.variantName"
-                        class="variant-item">
+                    <div v-for="htmlVariant in selectedItem.item.variants" :key="htmlVariant.name" class="variant-item">
                         <div class="variant-info">
                             <div class="variant-details">
-                                <span class="variant-name">{{ userSettings?.privacyMode ? '变体商品' :
-                                    variant.variantName }}</span>
+                                <span class="variant-name">{{ userSettings?.privacyMode ? '变体商品' : htmlVariant.name
+                                    }}</span>
                                 <span v-if="!userSettings?.privacyMode" class="variant-source">
-                                    来自订单数据
+                                    变体价格: {{ formatJPY(htmlVariant.price) }}
                                 </span>
                             </div>
                         </div>
                         <div class="variant-stats">
                             <span class="variant-quantity">
                                 销量:
-                                <MaskedText :value="variant.totalQuantity"
+                                <MaskedText
+                                    :value="getVariantSalesStats(selectedItem.itemId, htmlVariant.name)?.totalQuantity || 0"
                                     :masked="userSettings?.privacyMode || false" />
                             </span>
                             <span class="variant-revenue">
                                 收入:
-                                <MaskedText :value="formatJPY(variant.totalRevenue)"
+                                <MaskedText
+                                    :value="formatJPY(getVariantSalesStats(selectedItem.itemId, htmlVariant.name)?.totalRevenue || 0)"
                                     :masked="userSettings?.privacyMode || false" />
                             </span>
                         </div>
                     </div>
                 </div>
-                <div v-if="getItemVariants(selectedItem.itemId).length === 0" class="no-variants">
+                <div v-if="!selectedItem.item.variants || selectedItem.item.variants.length === 0" class="no-variants">
                     <p>暂无变体商品</p>
                 </div>
             </div>
@@ -200,9 +233,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import type { BoothItem } from '../../types/item';
+import type { VariantSalesStats } from '../../types/order';
 import type { UserSettings } from '../../types/settings';
 import type { CustomDateRange, TimePeriod } from '../../utils/analysis/data-analyzer';
 import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
+import { ItemManager } from '../../utils/booth/item-manager';
 import { OrderManager } from '../../utils/booth/order-manager';
 import { DataLoader } from '../../utils/core/data-loader';
 import { getNestedValue } from '../../utils/core/object-utils';
@@ -247,8 +283,53 @@ const filteredOrders = computed(() => {
 
 // 获取商品数据（包含销量统计）
 const items = computed(() => {
+    const itemManager = ItemManager.getInstance();
     const orderManager = OrderManager.getInstance();
-    return orderManager.getAllItemsWithStats(filteredOrders.value);
+    
+    // 获取所有基础商品信息
+    const allBoothItems = itemManager.getAllBoothItems();
+    
+    // 获取销售统计数据（使用OrderManager的缓存机制）
+    const salesStatsMap = orderManager.getAllItemSalesStats(filteredOrders.value);
+    
+    // 获取变体统计数据（使用OrderManager的缓存机制）
+    const variantStatsMap = orderManager.preprocessAllItemVariants(filteredOrders.value);
+    
+    // 合并数据
+    const result: Array<{
+        itemId: string;
+        item: BoothItem;
+        salesStats: {
+            totalQuantity: number;
+            totalRevenue: number;
+            totalBoothFee: number;
+            totalNetRevenue: number;
+            orderCount: number;
+        };
+        variantStats: VariantSalesStats[];
+    }> = [];
+
+    allBoothItems.forEach((boothItem, itemId) => {
+        const salesStats = salesStatsMap.get(itemId) || {
+            totalQuantity: 0,
+            totalRevenue: 0,
+            totalBoothFee: 0,
+            totalNetRevenue: 0,
+            orderCount: 0
+        };
+
+        // 使用预处理的变体数据，避免重复计算
+        const variantStats = variantStatsMap.get(itemId) || [];
+
+        result.push({
+            itemId,
+            item: boothItem,
+            salesStats,
+            variantStats
+        });
+    });
+
+    return result;
 });
 
 // 根据排序模式获取排序后的商品数据
@@ -282,7 +363,7 @@ const itemColumns = [
     { key: 'itemId', label: '商品ID', width: '80px' },
     { key: 'icon', label: '图标', width: '60px' },
     { key: 'name', label: '商品名称', width: '300px' },
-    { key: 'state', label: '状态', width: '100px' },
+    { key: 'favorites', label: '点赞数', width: '80px' },
     { key: 'totalQuantity', label: '销量', width: '80px' },
     { key: 'totalRevenue', label: '总收入', width: '100px' },
     { key: 'totalBoothFee', label: '手续费', width: '80px' },
@@ -310,9 +391,9 @@ const displayConfig = {
 
 // 获取商品的变体信息（使用缓存优化性能）
 const getItemVariants = (itemId: string) => {
-    // 从当前商品数据中获取变体信息，避免重复计算
-    const currentItem = items.value.find(item => item.itemId === itemId);
-    return currentItem?.variantStats || [];
+    // 直接从items computed中获取变体数据，避免重复计算
+    const item = items.value.find(item => item.itemId === itemId);
+    return item?.variantStats || [];
 };
 
 // 计算变体总销量（缓存计算结果）
@@ -325,6 +406,12 @@ const getVariantTotalQuantity = (itemId: string) => {
 const getVariantTotalRevenue = (itemId: string) => {
     const variants = getItemVariants(itemId);
     return variants.reduce((sum, variant) => sum + variant.totalRevenue, 0);
+};
+
+// 获取变体销售统计
+const getVariantSalesStats = (itemId: string, variantName: string) => {
+    const variants = getItemVariants(itemId);
+    return variants.find(variant => variant.variantName === variantName);
 };
 
 // 显示销量详情
@@ -343,6 +430,7 @@ const closeSalesModal = () => {
 const formatJPY = (price: number) => {
     return CurrencyManager.formatCurrencyWithCode(price, 'JPY');
 };
+
 </script>
 
 <style scoped>
@@ -399,45 +487,150 @@ const formatJPY = (price: number) => {
 
 .item-info {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
     padding: 16px;
-    background: #f9fafb;
-    border-radius: 6px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .item-details h4 {
-    margin: 0 0 4px 0;
+    margin: 0;
     color: #374151;
     font-size: 16px;
     font-weight: 600;
 }
 
 .item-id {
-    margin: 0;
     color: #6b7280;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.meta-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.meta-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.item-state {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.state-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    flex-shrink: 0;
+}
+
+.item-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    transition: all 0.2s;
+}
+
+.item-link:hover {
+    background: #dbeafe;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.favorites-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.heart-icon {
+    width: 12px;
+    height: 12px;
+    color: #ef4444;
+    flex-shrink: 0;
+}
+
+.favorites-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+}
+
+.no-favorites {
+    color: #9ca3af;
+    font-style: italic;
 }
 
 .sales-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
     padding: 16px;
     background: #f8fafc;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .summary-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
 }
 
 .summary-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .summary-value {
@@ -451,12 +644,14 @@ const formatJPY = (price: number) => {
     color: #374151;
     font-size: 14px;
     font-weight: 600;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .variant-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .variant-item {
@@ -472,6 +667,7 @@ const formatJPY = (price: number) => {
 .variant-info {
     display: flex;
     align-items: center;
+    flex: 1;
 }
 
 .variant-details {
@@ -486,17 +682,25 @@ const formatJPY = (price: number) => {
     font-weight: 500;
 }
 
+.variant-source {
+    font-size: 11px;
+    color: #059669;
+    font-weight: 500;
+}
+
 .variant-stats {
     display: flex;
     flex-direction: column;
     gap: 4px;
     text-align: right;
+    min-width: 100px;
 }
 
 .variant-quantity,
 .variant-revenue {
     font-size: 12px;
     color: #6b7280;
+    font-weight: 500;
 }
 
 .variant-summary {
@@ -514,14 +718,14 @@ const formatJPY = (price: number) => {
 }
 
 .summary-stat {
-    font-size: 13px;
+    font-size: 12px;
     color: #0369a1;
+    font-weight: 500;
 }
 
-.variant-source {
-    font-size: 11px;
-    color: #059669;
-    font-style: italic;
+.summary-stat strong {
+    color: #0c4a6e;
+    font-weight: 600;
 }
 
 .no-variants {

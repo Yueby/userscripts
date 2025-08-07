@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
+import type { Order } from '../../types/order';
+import { ItemManager } from '../../utils/booth/item-manager';
 import ItemIcon from '../common/ItemIcon/index.vue';
 import MaskedText from '../common/MaskedText/index.vue';
-import { ItemManager } from '../../utils/booth/item-manager';
-import type { Order } from '../../types/order';
 
 interface Props {
   item: {
@@ -28,6 +28,7 @@ const tooltipPosition = ref({ x: 0, y: 0 });
 const itemDetails = computed(() => {
   const itemManager = ItemManager.getInstance();
   const itemData = itemManager.getItem(props.item.itemId);
+  const boothItem = itemManager.getBoothItem(props.item.itemId);
   
   // 计算该商品在所有订单中的总销量
   let totalSales = 0;
@@ -44,12 +45,13 @@ const itemDetails = computed(() => {
   }
   
   return {
-    name: itemData?.name || props.item.name,
-    state: itemData?.state || '',
-    stateLabel: itemData?.state_label || '',
-    url: itemData?.url || '',
-    iconUrl: itemData?.iconUrl || '',
-    totalSales: totalSales
+    name: boothItem?.name || itemData?.name || props.item.name,
+    state: boothItem?.state || itemData?.state || '',
+    stateLabel: boothItem?.state || itemData?.state_label || '',
+    url: boothItem?.url || itemData?.url || '',
+    iconUrl: boothItem?.iconUrl || itemData?.iconUrl || '',
+    totalSales: totalSales,
+    favorites: boothItem?.favorites || 0
   };
 });
 
@@ -129,6 +131,15 @@ const handleMouseLeave = () => {
            <span class="tooltip-label">总销量:</span>
            <span class="tooltip-value sales-highlight">
              <MaskedText :value="itemDetails.totalSales" :masked="props.privacyMode" />
+           </span>
+         </div>
+                 <div class="tooltip-row">
+           <span class="tooltip-label">点赞数:</span>
+           <span class="tooltip-value favorites-display">
+             <svg class="heart-icon" viewBox="0 0 16 16" fill="currentColor">
+               <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+             </svg>
+             <MaskedText :value="itemDetails.favorites" :masked="props.privacyMode" />
            </span>
          </div>
                  <div class="tooltip-row">
@@ -262,6 +273,18 @@ const handleMouseLeave = () => {
 .tooltip-link:hover {
   color: #2563eb;
   text-decoration: underline;
+}
+
+.favorites-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.heart-icon {
+  width: 12px;
+  height: 12px;
+  color: #ef4444; /* Red color for the heart icon */
 }
 
 @keyframes tooltipFadeIn {
