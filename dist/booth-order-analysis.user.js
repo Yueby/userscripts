@@ -18054,6 +18054,7 @@
             }
           },
           onerror: (error) => {
+            alert(error);
             resolve2({ success: false, error });
           },
           ontimeout: () => {
