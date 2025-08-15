@@ -15982,12 +15982,6 @@
       }
     }
     /**
-     * Debug日志
-     */
-    debug(message2, ...args) {
-      this.log(0, "DEBUG", message2, ...args);
-    }
-    /**
      * Info日志
      */
     info(message2, ...args) {
@@ -16220,7 +16214,7 @@
             const headers = {};
             if (sessionValue) {
               headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
-              logger.debug(`使用 Session 访问第 ${page} 页商品数据`);
+              logger.info(`使用 Session 访问第 ${page} 页商品数据`);
             } else {
               logger.warn("未找到有效 Session，将尝试无认证请求");
             }
@@ -16232,7 +16226,19 @@
               onload: function(response2) {
                 clearTimeout(timeout);
                 if (response2.status === 200) {
-                  resolve2(response2.responseText);
+                  logger.info(`API 响应状态: ${response2.status}, 响应头: ${response2.responseHeaders?.substring(0, 200)}...`);
+                  logger.info(`API 响应内容前200字符: ${response2.responseText.substring(0, 200)}...`);
+                  const contentType = response2.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
+                  if (contentType && contentType.includes("application/json")) {
+                    resolve2(response2.responseText);
+                  } else {
+                    const text2 = response2.responseText.trim();
+                    if (text2.startsWith("{") || text2.startsWith("[")) {
+                      resolve2(response2.responseText);
+                    } else {
+                      reject(new Error(`API 返回的不是 JSON 数据，而是: ${text2.substring(0, 100)}...`));
+                    }
+                  }
                 } else if (response2.status === 401) {
                   reject(new Error(`认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
                 } else {
@@ -16249,7 +16255,14 @@
               }
             });
           });
-          const data2 = JSON.parse(response);
+          let data2;
+          try {
+            data2 = JSON.parse(response);
+          } catch (parseError) {
+            const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+            logger.error(`JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
+            throw new Error(`API 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
+          }
           if (data2 && data2.items && Array.isArray(data2.items)) {
             data2.items.forEach((item, index2) => {
               try {
@@ -16288,7 +16301,7 @@
             hasMorePages = false;
           }
         }
-        logger.debug(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+        logger.info(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
       } catch (error) {
         logger.error("API数据加载失败:", error);
         throw error;
@@ -16316,7 +16329,7 @@
           };
           if (sessionValue) {
             headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
-            logger.debug("使用 Session 访问 HTML 商品数据");
+            logger.info("使用 Session 访问 HTML 商品数据");
           } else {
             logger.warn("未找到有效 Session，将尝试无认证请求");
           }
@@ -16364,7 +16377,7 @@
         const itemsFromElements = this.parseItemsFromElements($2);
         if (itemsFromElements.length > 0) {
           this.processItemsFromElements(itemsFromElements);
-          logger.debug(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+          logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
         } else {
           logger.warn("未从HTML元素中找到商品数据");
         }
@@ -17281,7 +17294,7 @@
       this.variantCache.clear();
       const allVariantsMap = /* @__PURE__ */ new Map();
       const allItems = this.itemManager.getAllBoothItems();
-      logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
+      logger.info(`开始预处理 ${allItems.size} 个商品的变体数据`);
       let processedCount = 0;
       let totalVariants = 0;
       allItems.forEach((boothItem, itemId) => {
@@ -17293,7 +17306,7 @@
           totalVariants += variantStats.length;
         }
       });
-      logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
+      logger.info(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
       return allVariantsMap;
     }
     /**
@@ -17308,7 +17321,7 @@
       }
       const allSalesStats = this.getAllItemSalesStats(orders);
       if (this.shouldReprocessOrders(orders)) {
-        logger.debug(`需要重新处理订单数据，开始预处理变体`);
+        logger.info(`需要重新处理订单数据，开始预处理变体`);
         this.preprocessAllItemVariants(orders);
         this.lastProcessedOrders = [...orders];
       }

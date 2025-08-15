@@ -80,7 +80,7 @@ export class ItemManager {
 					// 如果有 Session，添加到请求头
 					if (sessionValue) {
 						headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-						logger.debug(`使用 Session 访问第 ${page} 页商品数据`);
+						logger.info(`使用 Session 访问第 ${page} 页商品数据`);
 					} else {
 						logger.warn('未找到有效 Session，将尝试无认证请求');
 					}
@@ -93,7 +93,23 @@ export class ItemManager {
 						onload: function (response) {
 							clearTimeout(timeout);
 							if (response.status === 200) {
-								resolve(response.responseText);
+								// 记录响应头信息用于调试
+								logger.info(`API 响应状态: ${response.status}, 响应头: ${response.responseHeaders?.substring(0, 200)}...`);
+								logger.info(`API 响应内容前200字符: ${response.responseText.substring(0, 200)}...`);
+
+								// 检查响应内容类型
+								const contentType = response.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
+								if (contentType && contentType.includes('application/json')) {
+									resolve(response.responseText);
+								} else {
+									// 如果不是 JSON，检查内容是否以 { 开头
+									const text = response.responseText.trim();
+									if (text.startsWith('{') || text.startsWith('[')) {
+										resolve(response.responseText);
+									} else {
+										reject(new Error(`API 返回的不是 JSON 数据，而是: ${text.substring(0, 100)}...`));
+									}
+								}
 							} else if (response.status === 401) {
 								reject(new Error(`认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`));
 							} else {
@@ -111,7 +127,15 @@ export class ItemManager {
 					});
 				});
 
-				const data = JSON.parse(response);
+				// 尝试解析 JSON 数据
+				let data;
+				try {
+					data = JSON.parse(response);
+				} catch (parseError: unknown) {
+					const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+					logger.error(`JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
+					throw new Error(`API 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
+				}
 
 				if (data && data.items && Array.isArray(data.items)) {
 					data.items.forEach((item: any, index: number) => {
@@ -158,7 +182,7 @@ export class ItemManager {
 				}
 			}
 
-			logger.debug(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+			logger.info(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
 		} catch (error) {
 			logger.error('API数据加载失败:', error);
 			throw error;
@@ -192,7 +216,7 @@ export class ItemManager {
 				// 如果有 Session，添加到请求头
 				if (sessionValue) {
 					headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-					logger.debug('使用 Session 访问 HTML 商品数据');
+					logger.info('使用 Session 访问 HTML 商品数据');
 				} else {
 					logger.warn('未找到有效 Session，将尝试无认证请求');
 				}
@@ -247,7 +271,7 @@ export class ItemManager {
 
 			if (itemsFromElements.length > 0) {
 				this.processItemsFromElements(itemsFromElements);
-				logger.debug(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+				logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
 			} else {
 				logger.warn('未从HTML元素中找到商品数据');
 			}
