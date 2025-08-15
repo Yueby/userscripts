@@ -16217,9 +16217,7 @@
             const timeout = setTimeout(() => {
               reject(new Error("请求超时"));
             }, 1e4);
-            const headers = {
-              Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-            };
+            const headers = {};
             if (sessionValue) {
               headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
               logger.debug(`使用 Session 访问第 ${page} 页商品数据`);
@@ -16231,7 +16229,6 @@
               url: boothManageUrl,
               timeout: 1e4,
               headers,
-              // 不设置请求头，返回JSON数据
               onload: function(response2) {
                 clearTimeout(timeout);
                 if (response2.status === 200) {

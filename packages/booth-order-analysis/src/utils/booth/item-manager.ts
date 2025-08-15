@@ -75,9 +75,7 @@ export class ItemManager {
 						reject(new Error('请求超时'));
 					}, 10000);
 
-					const headers: Record<string, string> = {
-						Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-					};
+					const headers: Record<string, string> = {};
 
 					// 如果有 Session，添加到请求头
 					if (sessionValue) {
@@ -92,7 +90,6 @@ export class ItemManager {
 						url: boothManageUrl,
 						timeout: 10000,
 						headers,
-						// 不设置请求头，返回JSON数据
 						onload: function (response) {
 							clearTimeout(timeout);
 							if (response.status === 200) {
