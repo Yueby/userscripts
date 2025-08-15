@@ -64,6 +64,8 @@ export class DataLoader {
 				this.orders = parseResult.data;
 				this.lastLoadTime = new Date();
 
+				logger.info(`加载 ${this.orders.length} 条订单数据`);
+
 				// 数据加载完成后，统一处理所有商品的变体数据
 				this.preprocessAllItemVariants();
 

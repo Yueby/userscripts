@@ -37,7 +37,7 @@ export class ItemManager {
 		}
 
 		try {
-			logger.info('[ItemManager] 开始融合加载 API 和 HTML 数据');
+			logger.info('开始融合加载 API 和 HTML 数据');
 
 			// 融合加载：先通过 API 获取商品列表和页数信息，再并行加载 HTML 数据
 			await this.loadItemsFused();
@@ -46,10 +46,10 @@ export class ItemManager {
 			this.initializeBoothItems();
 
 			this.isInitialized = true;
-			logger.info('[ItemManager] 商品数据初始化完成');
+			logger.info('商品数据初始化完成');
 		} catch (error) {
-			logger.error('[ItemManager] 商品数据初始化失败:', error);
-			logger.warn('[ItemManager] 商品数据初始化失败，将使用空数据继续运行');
+			logger.error('商品数据初始化失败:', error);
+			logger.warn('商品数据初始化失败，将使用空数据继续运行');
 			// 不抛出错误，而是标记为已初始化以避免重复尝试
 			this.isInitialized = true;
 		}
@@ -108,7 +108,7 @@ export class ItemManager {
 								this.itemsMap.set(itemId, itemData);
 							}
 						} catch (error) {
-							logger.warn(`[API] 解析API商品数据失败 (索引 ${index}):`, error);
+							logger.warn(`解析API商品数据失败 (索引 ${index}):`, error);
 						}
 					});
 
@@ -130,12 +130,12 @@ export class ItemManager {
 				}
 			}
 
-			logger.info(`[API] API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
+			logger.info(`API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
 
 			// 并行加载所有页面的 HTML 数据
 			await this.loadAllHTMLPages(totalPages);
 		} catch (error) {
-			logger.error('[ItemManager] 融合数据加载失败:', error);
+			logger.error('融合数据加载失败:', error);
 			throw error;
 		}
 	}
@@ -187,7 +187,7 @@ export class ItemManager {
 			}
 
 			// 等待所有页面加载完成
-			logger.info(`[HTML] 开始并行加载 ${totalPages} 页 HTML 数据`);
+			logger.info(`开始并行加载 ${totalPages} 页 HTML 数据`);
 			const htmlResults = await Promise.allSettled(htmlPromises);
 
 			// 处理结果
@@ -203,18 +203,18 @@ export class ItemManager {
 						this.parseItemsFromHTML(content, page);
 						successCount++;
 					} else {
-						logger.warn(`[HTML] 第 ${page} 页响应内容不是HTML页面`);
+						logger.warn(`第 ${page} 页响应内容不是HTML页面`);
 						failCount++;
 					}
 				} else {
-					logger.error(`[HTML] HTML 页面加载失败:`, result.reason);
+					logger.error(`HTML 页面加载失败:`, result.reason);
 					failCount++;
 				}
 			});
 
-			logger.info(`[HTML] HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
+			logger.info(`HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
 		} catch (error) {
-			logger.error('[HTML] HTML 数据加载失败:', error);
+			logger.error('HTML 数据加载失败:', error);
 			throw error;
 		}
 	}
@@ -231,12 +231,12 @@ export class ItemManager {
 
 			if (itemsFromElements.length > 0) {
 				this.processItemsFromElements(itemsFromElements, page);
-				logger.info(`[HTML] HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
+				logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
 			} else {
-				logger.warn(`[HTML] 第 ${page} 页未从HTML元素中找到商品数据`);
+				logger.warn(`第 ${page} 页未从HTML元素中找到商品数据`);
 			}
 		} catch (error) {
-			logger.error(`[HTML] 解析HTML时出错 (页码: ${page}):`, error);
+			logger.error(`解析HTML时出错 (页码: ${page}):`, error);
 		}
 	}
 
@@ -260,12 +260,12 @@ export class ItemManager {
 
 					// 检查商品名称是否为空
 					if (!itemName) {
-						logger.warn(`[HTML] 商品名称为空 (索引 ${index}), 尝试备用选择器`);
+						logger.warn(`商品名称为空 (索引 ${index}), 尝试备用选择器`);
 						// 尝试备用选择器
 						const backupNameElement = $item.find('.cell.item-label span a');
 						const backupName = backupNameElement.text().trim();
 						if (!backupName) {
-							logger.warn(`[HTML] 跳过商品 (索引 ${index}): 无法获取商品名称`);
+							logger.warn(`跳过商品 (索引 ${index}): 无法获取商品名称`);
 							return; // 跳过这个商品
 						}
 						itemName = backupName;
@@ -315,7 +315,7 @@ export class ItemManager {
 
 							variants.push(variant);
 						} catch (variantError) {
-							logger.warn(`[HTML] 解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
+							logger.warn(`解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
 						}
 					});
 
@@ -328,11 +328,11 @@ export class ItemManager {
 
 					items.push(item);
 				} catch (error) {
-					logger.warn(`[HTML] 解析商品元素失败 (索引 ${index}):`, error);
+					logger.warn(`解析商品元素失败 (索引 ${index}):`, error);
 				}
 			});
 		} catch (error) {
-			logger.error('[HTML] 从HTML元素解析商品数据失败:', error);
+			logger.error('从HTML元素解析商品数据失败:', error);
 		}
 
 		return items;
