@@ -61,9 +61,6 @@ export class ItemManager {
 	 */
 	private async loadItemsFromApi(): Promise<void> {
 		try {
-			const sessionManager = SessionManager.getInstance();
-			const sessionValue = await sessionManager.getValidSession();
-
 			let page = 1;
 			let hasMorePages = true;
 
@@ -75,28 +72,17 @@ export class ItemManager {
 						reject(new Error('请求超时'));
 					}, 10000);
 
-					const headers: Record<string, string> = {};
-
-					// 如果有 Session，添加到请求头
-					if (sessionValue) {
-						headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-						logger.info(`使用 Session 访问第 ${page} 页商品数据`);
-					} else {
-						logger.warn('未找到有效 Session，将尝试无认证请求');
-					}
-
 					GM_xmlhttpRequest({
 						method: 'GET',
 						url: boothManageUrl,
 						timeout: 10000,
-						headers,
 						onload: function (response) {
 							clearTimeout(timeout);
 							if (response.status === 200) {
 								// 记录响应头信息用于调试
-								logger.info(`API 响应状态: ${response.status}, 响应头: ${response.responseHeaders?.substring(0, 200)}...`);
-								logger.info(`API 响应内容前200字符: ${response.responseText.substring(0, 200)}...`);
-
+								logger.info(`[API] 响应状态: ${response.status}, 响应头: ${response.responseHeaders?.substring(0, 200)}...`);
+								logger.info(`[API] 响应内容前200字符: ${response.responseText.substring(0, 200)}...`);
+								
 								// 检查响应内容类型
 								const contentType = response.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
 								if (contentType && contentType.includes('application/json')) {
@@ -107,13 +93,11 @@ export class ItemManager {
 									if (text.startsWith('{') || text.startsWith('[')) {
 										resolve(response.responseText);
 									} else {
-										reject(new Error(`API 返回的不是 JSON 数据，而是: ${text.substring(0, 100)}...`));
+										reject(new Error(`[API] 返回的不是 JSON 数据，而是: ${text.substring(0, 100)}...`));
 									}
 								}
-							} else if (response.status === 401) {
-								reject(new Error(`认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`));
 							} else {
-								reject(new Error(`HTTP ${response.status}: ${response.statusText}`));
+								reject(new Error(`[API] HTTP ${response.status}: ${response.statusText}`));
 							}
 						},
 						onerror: function (error) {
@@ -122,7 +106,7 @@ export class ItemManager {
 						},
 						ontimeout: function () {
 							clearTimeout(timeout);
-							reject(new Error('请求超时'));
+							reject(new Error('[API] 请求超时'));
 						}
 					});
 				});
@@ -133,8 +117,8 @@ export class ItemManager {
 					data = JSON.parse(response);
 				} catch (parseError: unknown) {
 					const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
-					logger.error(`JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
-					throw new Error(`API 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
+					logger.error(`[API] JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
+					throw new Error(`[API] 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
 				}
 
 				if (data && data.items && Array.isArray(data.items)) {
@@ -182,9 +166,9 @@ export class ItemManager {
 				}
 			}
 
-			logger.info(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+			logger.info(`[API] API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
 		} catch (error) {
-			logger.error('API数据加载失败:', error);
+			logger.error('[API] API数据加载失败:', error);
 			throw error;
 		}
 	}
@@ -216,9 +200,9 @@ export class ItemManager {
 				// 如果有 Session，添加到请求头
 				if (sessionValue) {
 					headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-					logger.info('使用 Session 访问 HTML 商品数据');
+					logger.info('[HTML] 使用 Session 访问 HTML 商品数据');
 				} else {
-					logger.warn('未找到有效 Session，将尝试无认证请求');
+					logger.warn('[HTML] 未找到有效 Session，将尝试无认证请求');
 				}
 
 				GM_xmlhttpRequest({
@@ -231,9 +215,9 @@ export class ItemManager {
 						if (response.status === 200) {
 							resolve(response.responseText);
 						} else if (response.status === 401) {
-							reject(new Error(`认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`));
+							reject(new Error(`[HTML] 认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`));
 						} else {
-							reject(new Error(`HTTP ${response.status}: ${response.statusText}`));
+							reject(new Error(`[HTML] HTTP ${response.status}: ${response.statusText}`));
 						}
 					},
 					onerror: function (error) {
@@ -242,7 +226,7 @@ export class ItemManager {
 					},
 					ontimeout: function () {
 						clearTimeout(timeout);
-						reject(new Error('请求超时'));
+						reject(new Error('[HTML] 请求超时'));
 					}
 				});
 			});
@@ -251,10 +235,10 @@ export class ItemManager {
 			if (response.includes('<html') || response.includes('<!DOCTYPE')) {
 				this.parseItemsFromHTML(response);
 			} else {
-				logger.warn('响应内容不是HTML页面');
+				logger.warn('[HTML] 响应内容不是HTML页面');
 			}
 		} catch (error) {
-			logger.error('HTML解析加载商品数据时发生错误:', error);
+			logger.error('[HTML] HTML解析加载商品数据时发生错误:', error);
 			throw error;
 		}
 	}
@@ -271,12 +255,12 @@ export class ItemManager {
 
 			if (itemsFromElements.length > 0) {
 				this.processItemsFromElements(itemsFromElements);
-				logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+				logger.info(`[HTML] HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
 			} else {
-				logger.warn('未从HTML元素中找到商品数据');
+				logger.warn('[HTML] 未从HTML元素中找到商品数据');
 			}
 		} catch (error) {
-			logger.error('解析HTML时出错:', error);
+			logger.error('[HTML] 解析HTML时出错:', error);
 		}
 	}
 

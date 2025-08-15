@@ -16201,8 +16201,6 @@
      */
     async loadItemsFromApi() {
       try {
-        const sessionManager = SessionManager.getInstance();
-        const sessionValue = await sessionManager.getValidSession();
         let page = 1;
         let hasMorePages = true;
         while (hasMorePages) {
@@ -16211,23 +16209,15 @@
             const timeout = setTimeout(() => {
               reject(new Error("请求超时"));
             }, 1e4);
-            const headers = {};
-            if (sessionValue) {
-              headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
-              logger.info(`使用 Session 访问第 ${page} 页商品数据`);
-            } else {
-              logger.warn("未找到有效 Session，将尝试无认证请求");
-            }
             _GM_xmlhttpRequest({
               method: "GET",
               url: boothManageUrl,
               timeout: 1e4,
-              headers,
               onload: function(response2) {
                 clearTimeout(timeout);
                 if (response2.status === 200) {
-                  logger.info(`API 响应状态: ${response2.status}, 响应头: ${response2.responseHeaders?.substring(0, 200)}...`);
-                  logger.info(`API 响应内容前200字符: ${response2.responseText.substring(0, 200)}...`);
+                  logger.info(`[API] 响应状态: ${response2.status}, 响应头: ${response2.responseHeaders?.substring(0, 200)}...`);
+                  logger.info(`[API] 响应内容前200字符: ${response2.responseText.substring(0, 200)}...`);
                   const contentType = response2.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
                   if (contentType && contentType.includes("application/json")) {
                     resolve2(response2.responseText);
@@ -16236,13 +16226,11 @@
                     if (text2.startsWith("{") || text2.startsWith("[")) {
                       resolve2(response2.responseText);
                     } else {
-                      reject(new Error(`API 返回的不是 JSON 数据，而是: ${text2.substring(0, 100)}...`));
+                      reject(new Error(`[API] 返回的不是 JSON 数据，而是: ${text2.substring(0, 100)}...`));
                     }
                   }
-                } else if (response2.status === 401) {
-                  reject(new Error(`认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
                 } else {
-                  reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
+                  reject(new Error(`[API] HTTP ${response2.status}: ${response2.statusText}`));
                 }
               },
               onerror: function(error) {
@@ -16251,7 +16239,7 @@
               },
               ontimeout: function() {
                 clearTimeout(timeout);
-                reject(new Error("请求超时"));
+                reject(new Error("[API] 请求超时"));
               }
             });
           });
@@ -16260,8 +16248,8 @@
             data2 = JSON.parse(response);
           } catch (parseError) {
             const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
-            logger.error(`JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
-            throw new Error(`API 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
+            logger.error(`[API] JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
+            throw new Error(`[API] 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
           }
           if (data2 && data2.items && Array.isArray(data2.items)) {
             data2.items.forEach((item, index2) => {
@@ -16301,9 +16289,9 @@
             hasMorePages = false;
           }
         }
-        logger.info(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+        logger.info(`[API] API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
       } catch (error) {
-        logger.error("API数据加载失败:", error);
+        logger.error("[API] API数据加载失败:", error);
         throw error;
       }
     }
@@ -16329,9 +16317,9 @@
           };
           if (sessionValue) {
             headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
-            logger.info("使用 Session 访问 HTML 商品数据");
+            logger.info("[HTML] 使用 Session 访问 HTML 商品数据");
           } else {
-            logger.warn("未找到有效 Session，将尝试无认证请求");
+            logger.warn("[HTML] 未找到有效 Session，将尝试无认证请求");
           }
           _GM_xmlhttpRequest({
             method: "GET",
@@ -16343,9 +16331,9 @@
               if (response2.status === 200) {
                 resolve2(response2.responseText);
               } else if (response2.status === 401) {
-                reject(new Error(`认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
+                reject(new Error(`[HTML] 认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
               } else {
-                reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
+                reject(new Error(`[HTML] HTTP ${response2.status}: ${response2.statusText}`));
               }
             },
             onerror: function(error) {
@@ -16354,17 +16342,17 @@
             },
             ontimeout: function() {
               clearTimeout(timeout);
-              reject(new Error("请求超时"));
+              reject(new Error("[HTML] 请求超时"));
             }
           });
         });
         if (response.includes("<html") || response.includes("<!DOCTYPE")) {
           this.parseItemsFromHTML(response);
         } else {
-          logger.warn("响应内容不是HTML页面");
+          logger.warn("[HTML] 响应内容不是HTML页面");
         }
       } catch (error) {
-        logger.error("HTML解析加载商品数据时发生错误:", error);
+        logger.error("[HTML] HTML解析加载商品数据时发生错误:", error);
         throw error;
       }
     }
@@ -16377,12 +16365,12 @@
         const itemsFromElements = this.parseItemsFromElements($2);
         if (itemsFromElements.length > 0) {
           this.processItemsFromElements(itemsFromElements);
-          logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+          logger.info(`[HTML] HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
         } else {
-          logger.warn("未从HTML元素中找到商品数据");
+          logger.warn("[HTML] 未从HTML元素中找到商品数据");
         }
       } catch (error) {
-        logger.error("解析HTML时出错:", error);
+        logger.error("[HTML] 解析HTML时出错:", error);
       }
     }
     /**
