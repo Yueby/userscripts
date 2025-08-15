@@ -1,8 +1,8 @@
-import { CSVParser } from './csv-parser';
-import type { Order } from '../../types/order';
 import { GM_xmlhttpRequest } from '$';
-import { logger } from './logger';
+import type { Order } from '../../types/order';
 import { OrderManager } from '../booth/order-manager';
+import { CSVParser } from './csv-parser';
+import { logger } from './logger';
 
 // 数据加载器
 export class DataLoader {
@@ -100,7 +100,7 @@ export class DataLoader {
                     }
                 },
                 onerror: (error: any) => {
-                    resolve({ success: false, error: '网络请求失败' });
+                    resolve({ success: false, error: error });
                 },
                 ontimeout: () => {
                     resolve({ success: false, error: '下载超时' });
