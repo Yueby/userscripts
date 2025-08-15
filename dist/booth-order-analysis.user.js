@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.7
+// @version            0.1.8
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -17981,6 +17981,8 @@
     orders = [];
     isLoading = false;
     lastLoadTime = null;
+    sessionInfo = null;
+    // 添加 Session 存储
     constructor() {
     }
     static getInstance() {
@@ -18033,19 +18035,108 @@
         return { success: false, error: `加载失败: ${error}` };
       }
     }
-    // 下载CSV文件
-    downloadCSV() {
+    // 新增：获取有效的 Session
+    async getValidSession() {
+      if (this.sessionInfo && this.isSessionValid()) {
+        return this.sessionInfo._plaza_session_nktz7u;
+      }
+      try {
+        const newSession = await this.fetchSession();
+        if (newSession) {
+          this.sessionInfo = newSession;
+          return newSession._plaza_session_nktz7u;
+        }
+      } catch (error) {
+        logger.warn("获取 Session 失败:", error);
+      }
+      return null;
+    }
+    // 新增：检查 Session 是否有效
+    isSessionValid() {
+      if (!this.sessionInfo) return false;
+      if (!this.sessionInfo.expires_at) return true;
+      const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
+      const currentTime = Date.now();
+      const bufferTime = 5 * 60 * 1e3;
+      return currentTime < expiresTime - bufferTime;
+    }
+    // 新增：获取 Session 信息
+    async fetchSession() {
       return new Promise((resolve2) => {
         _GM_xmlhttpRequest({
           method: "GET",
-          url: "https://manage.booth.pm/orders/csv",
+          url: "https://manage.booth.pm/orders",
           headers: {
-            "Accept": "text/csv,application/csv,text/plain",
-            "Content-Type": "text/csv; charset=utf-8"
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
           },
+          onload: (response) => {
+            const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+            if (cookieInfo) {
+              const sessionData = {
+                _plaza_session_nktz7u: cookieInfo.value,
+                updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+                expires_at: cookieInfo.expires
+              };
+              logger.info("成功获取 Session");
+              resolve2(sessionData);
+            } else {
+              logger.warn("未找到有效的 Session");
+              resolve2(null);
+            }
+          },
+          onerror: (error) => {
+            logger.error("获取 Session 请求失败:", error);
+            resolve2(null);
+          },
+          ontimeout: () => {
+            logger.warn("获取 Session 请求超时");
+            resolve2(null);
+          }
+        });
+      });
+    }
+    // 新增：从响应头提取 Cookie 信息
+    extractCookieInfo(headers) {
+      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+      if (!cookieHeader) return null;
+      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+      const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
+      return {
+        value,
+        expires: expires ? new Date(expires).toISOString() : null
+      };
+    }
+    // 改进：下载 CSV 文件，自动添加 Session
+    async downloadCSV() {
+      const sessionValue = await this.getValidSession();
+      return new Promise((resolve2) => {
+        const headers = {
+          "Accept": "text/csv,application/csv,text/plain",
+          "Content-Type": "text/csv; charset=utf-8"
+        };
+        if (sessionValue) {
+          headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
+          logger.info("使用 Session 进行认证");
+        } else {
+          logger.warn("未找到有效 Session，将尝试无认证请求");
+        }
+        _GM_xmlhttpRequest({
+          method: "GET",
+          url: "https://manage.booth.pm/orders/csv",
+          headers,
           onload: (response) => {
             if (response.status === 200) {
               resolve2({ success: true, data: response.responseText });
+            } else if (response.status === 401) {
+              if (sessionValue) {
+                this.sessionInfo = null;
+                logger.warn("Session 已失效，已清除");
+              }
+              resolve2({
+                success: false,
+                error: `认证失败 (401): ${sessionValue ? "Session 已失效，请重新登录" : "请先登录 Booth 账户"}`
+              });
             } else {
               resolve2({
                 success: false,
@@ -18054,7 +18145,18 @@
             }
           },
           onerror: (error) => {
-            resolve2({ success: false, error });
+            let errorMessage = "网络错误";
+            if (error.status === 401) {
+              errorMessage = "认证失败: 请先登录 Booth 账户";
+            } else if (error.status === 403) {
+              errorMessage = "访问被拒绝: 可能没有权限访问此页面";
+            } else if (error.status === 404) {
+              errorMessage = "页面不存在: 请检查 URL 是否正确";
+            }
+            resolve2({
+              success: false,
+              error: `${errorMessage} (${error.status || "unknown"})`
+            });
           },
           ontimeout: () => {
             resolve2({ success: false, error: "下载超时" });
@@ -18062,32 +18164,49 @@
         });
       });
     }
+    // 新增：手动刷新 Session
+    async refreshSession() {
+      try {
+        const newSession = await this.fetchSession();
+        if (newSession) {
+          this.sessionInfo = newSession;
+          logger.info("Session 刷新成功");
+          return true;
+        }
+        return false;
+      } catch (error) {
+        logger.error("刷新 Session 失败:", error);
+        return false;
+      }
+    }
+    // 新增：获取当前 Session 状态
+    getSessionStatus() {
+      return {
+        hasSession: !!this.sessionInfo,
+        isValid: this.isSessionValid(),
+        expiresAt: this.sessionInfo?.expires_at || void 0
+      };
+    }
     // 清除数据
     clearData() {
       this.orders = [];
       this.lastLoadTime = null;
+      this.sessionInfo = null;
     }
-    // 获取数据统计
+    // 获取数据统计信息
     getDataStats() {
       return {
         totalOrders: this.orders.length,
-        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
+        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toISOString() : null
       };
     }
-    /**
-     * 预处理所有商品的变体数据
-     * 在数据加载完成后统一处理，避免后续使用时重复计算
-     */
+    // 预处理所有商品的变体数据
     preprocessAllItemVariants() {
-      if (this.orders.length === 0) {
-        logger.warn("没有订单数据，跳过变体数据预处理");
-        return;
-      }
       try {
         const orderManager = OrderManager.getInstance();
         orderManager.preprocessAllItemVariants(this.orders);
       } catch (error) {
-        logger.error("变体数据预处理失败:", error);
+        logger.warn("预处理商品变体数据失败:", error);
       }
     }
   }
