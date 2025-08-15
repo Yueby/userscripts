@@ -18054,7 +18054,6 @@
             }
           },
           onerror: (error) => {
-            alert(error);
             resolve2({ success: false, error });
           },
           ontimeout: () => {
@@ -35892,7 +35891,7 @@
       } else {
         logger.error("数据加载失败:", result.error);
         updateButtonState(false);
-        alert(`数据加载失败: ${result.error}`);
+        alert(`数据加载失败: ${JSON.stringify(result.error)}`);
       }
     } catch (error) {
       logger.error("加载过程出错:", error);

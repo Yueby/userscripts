@@ -100,7 +100,6 @@ export class DataLoader {
                     }
                 },
                 onerror: (error: any) => {
-                    alert(error);
                     resolve({ success: false, error: error });
                 },
                 ontimeout: () => {

@@ -161,7 +161,7 @@ async function loadDataAndShowPanel(): Promise<void> {
     } else {
       logger.error('数据加载失败:', result.error);
       updateButtonState(false);
-      alert(`数据加载失败: ${result.error}`);
+      alert(`数据加载失败: ${JSON.stringify(result.error)}`);
     }
 
   } catch (error) {
@@ -220,8 +220,6 @@ if (isBoothOrdersPage()) {
   ]).catch(error => {
     logger.warn('初始化失败，使用默认设置:', error);
   });
-
-
 
   // 自动加载数据
   setTimeout(async () => {
