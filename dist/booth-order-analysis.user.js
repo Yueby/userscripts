@@ -3487,11 +3487,11 @@
         if (href2) {
           entry.link = href2;
         }
-        const description = fetch("summary", children2) || fetch("content", children2);
+        const description = fetch$1("summary", children2) || fetch$1("content", children2);
         if (description) {
           entry.description = description;
         }
-        const pubDate = fetch("updated", children2);
+        const pubDate = fetch$1("updated", children2);
         if (pubDate) {
           entry.pubDate = new Date(pubDate);
         }
@@ -3505,7 +3505,7 @@
       feed.link = href;
     }
     addConditionally(feed, "description", "subtitle", childs);
-    const updated = fetch("updated", childs);
+    const updated = fetch$1("updated", childs);
     if (updated) {
       feed.updated = new Date(updated);
     }
@@ -3525,7 +3525,7 @@
         addConditionally(entry, "title", "title", children2);
         addConditionally(entry, "link", "link", children2);
         addConditionally(entry, "description", "description", children2);
-        const pubDate = fetch("pubDate", children2) || fetch("dc:date", children2);
+        const pubDate = fetch$1("pubDate", children2) || fetch$1("dc:date", children2);
         if (pubDate)
           entry.pubDate = new Date(pubDate);
         return entry;
@@ -3534,7 +3534,7 @@
     addConditionally(feed, "title", "title", childs);
     addConditionally(feed, "link", "link", childs);
     addConditionally(feed, "description", "description", childs);
-    const updated = fetch("lastBuildDate", childs);
+    const updated = fetch$1("lastBuildDate", childs);
     if (updated) {
       feed.updated = new Date(updated);
     }
@@ -3578,11 +3578,11 @@
   function getOneElement(tagName, node) {
     return getElementsByTagName(tagName, node, true, 1)[0];
   }
-  function fetch(tagName, where, recurse = false) {
+  function fetch$1(tagName, where, recurse = false) {
     return textContent(getElementsByTagName(tagName, where, recurse, 1)).trim();
   }
   function addConditionally(obj, prop2, tagName, where, recurse = false) {
-    const val2 = fetch(tagName, where, recurse);
+    const val2 = fetch$1(tagName, where, recurse);
     if (val2)
       obj[prop2] = val2;
   }
@@ -16191,7 +16191,8 @@
         this.initializeBoothItems();
         this.isInitialized = true;
       } catch (error) {
-        logger.error("[ItemManager] 商品数据初始化失败:", error);
+        logger.error("商品数据初始化失败:", error);
+        logger.warn("商品数据初始化失败，将使用空数据继续运行");
         this.isInitialized = true;
       }
     }
@@ -16204,52 +16205,11 @@
         let hasMorePages = true;
         while (hasMorePages) {
           const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
-          const response = await new Promise((resolve2, reject) => {
-            const timeout = setTimeout(() => {
-              reject(new Error("[API] 请求超时"));
-            }, 1e4);
-            _GM_xmlhttpRequest({
-              method: "GET",
-              url: boothManageUrl,
-              timeout: 1e4,
-              onload: function(response2) {
-                clearTimeout(timeout);
-                if (response2.status === 200) {
-                  logger.info(`[API] 响应状态: ${response2.status}, 响应头: ${response2.responseHeaders?.substring(0, 200)}...`);
-                  logger.info(`[API] 响应内容前200字符: ${response2.responseText.substring(0, 200)}...`);
-                  const contentType = response2.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
-                  if (contentType && contentType.includes("application/json")) {
-                    resolve2(response2.responseText);
-                  } else {
-                    const text2 = response2.responseText.trim();
-                    if (text2.startsWith("{") || text2.startsWith("[")) {
-                      resolve2(response2.responseText);
-                    } else {
-                      reject(new Error(`[API] 返回的不是 JSON 数据，而是: ${text2.substring(0, 100)}...`));
-                    }
-                  }
-                } else {
-                  reject(new Error(`[API] HTTP ${response2.status}: ${response2.statusText}`));
-                }
-              },
-              onerror: function(error) {
-                clearTimeout(timeout);
-                reject(error);
-              },
-              ontimeout: function() {
-                clearTimeout(timeout);
-                reject(new Error("[API] 请求超时"));
-              }
-            });
-          });
-          let data2;
-          try {
-            data2 = JSON.parse(response);
-          } catch (parseError) {
-            const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
-            logger.error(`[API] JSON 解析失败，响应内容: ${response.substring(0, 200)}...`);
-            throw new Error(`[API] 返回的数据格式错误，无法解析为 JSON: ${errorMessage}`);
+          const response = await fetch(boothManageUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
+          const data2 = await response.json();
           if (data2 && data2.items && Array.isArray(data2.items)) {
             data2.items.forEach((item, index2) => {
               try {
@@ -16288,9 +16248,9 @@
             hasMorePages = false;
           }
         }
-        logger.info(`[API] API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+        logger.info(`[API] 数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
       } catch (error) {
-        logger.error("[API] API数据加载失败:", error);
+        logger.error("[API] 数据加载失败:", error);
         throw error;
       }
     }
@@ -16304,7 +16264,7 @@
         const boothManageUrl = "https://manage.booth.pm/items";
         const response = await new Promise((resolve2, reject) => {
           const timeout = setTimeout(() => {
-            reject(new Error("[HTML] 请求超时"));
+            reject(new Error("请求超时"));
           }, 1e4);
           const headers = {
             Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -16387,11 +16347,11 @@
             const itemNameElement = $item.find(".cell.item-name-with-stock .wrapper.row .cell.item-label span a");
             let itemName = itemNameElement.text().trim();
             if (!itemName) {
-              logger.warn(`[HTML] 商品名称为空 (索引 ${index2}), 尝试备用选择器`);
+              logger.warn(`商品名称为空 (索引 ${index2}), 尝试备用选择器`);
               const backupNameElement = $item.find(".cell.item-label span a");
               const backupName = backupNameElement.text().trim();
               if (!backupName) {
-                logger.warn(`[HTML] 跳过商品 (索引 ${index2}): 无法获取商品名称`);
+                logger.warn(`跳过商品 (索引 ${index2}): 无法获取商品名称`);
                 return;
               }
               itemName = backupName;
@@ -16424,7 +16384,7 @@
                 };
                 variants.push(variant);
               } catch (variantError) {
-                logger.warn(`[HTML] 解析变体失败 (商品索引 ${index2}, 变体索引 ${variantIndex}):`, variantError);
+                logger.warn(`解析变体失败 (商品索引 ${index2}, 变体索引 ${variantIndex}):`, variantError);
               }
             });
             const item = {
@@ -16435,11 +16395,11 @@
             };
             items.push(item);
           } catch (error) {
-            logger.warn(`[HTML] 解析商品元素失败 (索引 ${index2}):`, error);
+            logger.warn(`解析商品元素失败 (索引 ${index2}):`, error);
           }
         });
       } catch (error) {
-        logger.error("[HTML] 从HTML元素解析商品数据失败:", error);
+        logger.error("从HTML元素解析商品数据失败:", error);
       }
       return items;
     }
@@ -16454,11 +16414,11 @@
             const name = item.name.trim();
             this.htmlItemsMap.set(itemId, item);
           } catch (error) {
-            logger.warn(`[HTML] 处理HTML商品数据失败 (索引 ${index2}):`, error);
+            logger.warn(`处理HTML商品数据失败 (索引 ${index2}):`, error);
           }
         });
       } catch (error) {
-        logger.error("[HTML] 处理HTML元素商品数据时出错:", error);
+        logger.error("处理HTML元素商品数据时出错:", error);
       }
     }
     /**
@@ -16470,7 +16430,7 @@
         const price = parseFloat(cleanPrice);
         return isNaN(price) ? 0 : price;
       } catch (error) {
-        logger.warn(`[HTML] 解析价格失败: ${priceText}`, error);
+        logger.warn(`解析价格失败: ${priceText}`, error);
         return 0;
       }
     }
@@ -16528,7 +16488,7 @@
     getItemIcon(id) {
       const item = this.getItem(id);
       if (!item) {
-        logger.warn(`[ItemManager] 未找到商品ID: ${id}`);
+        logger.warn(`未找到商品ID: ${id}`);
         return this.getDefaultIcon();
       }
       return item.iconUrl || this.getDefaultIcon();
