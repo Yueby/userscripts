@@ -38,17 +38,16 @@ export class SessionManager {
             return this.sessionInfo._plaza_session_nktz7u;
         }
 
-        try {
-            const newSession = await this.fetchSession();
-            if (newSession) {
-                this.sessionInfo = newSession;
-                return newSession._plaza_session_nktz7u;
-            }
-        } catch (error) {
-            logger.warn('获取 Session 失败:', error);
+        logger.info('尝试获取新的 Session...');
+        const newSession = await this.fetchSession();
+        if (newSession) {
+            this.sessionInfo = newSession;
+            logger.info('成功获取并缓存 Session');
+            return newSession._plaza_session_nktz7u;
+        } else {
+            logger.warn('未能获取有效 Session');
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -58,16 +57,17 @@ export class SessionManager {
      */
     private isSessionValid(): boolean {
         if (!this.sessionInfo) return false;
-        
+
         // 如果没有过期时间，认为有效
         if (!this.sessionInfo.expires_at) return true;
-        
+
         // 检查是否过期（提前5分钟认为过期）
         const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
         const currentTime = Date.now();
         const bufferTime = 5 * 60 * 1000; // 5分钟缓冲
-        
-        return currentTime < (expiresTime - bufferTime);
+        const effectiveExpiresTime = expiresTime - bufferTime; // 实际过期时间（减去缓冲时间）
+
+        return currentTime < effectiveExpiresTime;
     }
 
     /**
@@ -80,7 +80,7 @@ export class SessionManager {
                 method: 'GET',
                 url: 'https://manage.booth.pm/orders',
                 headers: {
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                     'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8'
                 },
                 onload: (response) => {
@@ -92,8 +92,7 @@ export class SessionManager {
                             updated_at: new Date().toISOString(),
                             expires_at: cookieInfo.expires
                         };
-                        
-                        logger.info('成功获取 Session');
+
                         resolve(sessionData);
                     } else {
                         logger.warn('未找到有效的 Session');
@@ -116,10 +115,8 @@ export class SessionManager {
      * 从响应头提取 Cookie 信息
      * 查找包含 _plaza_session_nktz7u 的 Set-Cookie 头
      */
-    private extractCookieInfo(headers: string): { value: string; expires: string | null } | null {
-        const cookieHeader = headers.split('\n')
-            .find(line => line.toLowerCase().startsWith('set-cookie:') &&
-                line.includes('_plaza_session_nktz7u='));
+    private extractCookieInfo(headers: string): { value: string; expires: string | null; } | null {
+        const cookieHeader = headers.split('\n').find((line) => line.toLowerCase().startsWith('set-cookie:') && line.includes('_plaza_session_nktz7u='));
 
         if (!cookieHeader) return null;
 
@@ -138,12 +135,14 @@ export class SessionManager {
      */
     async refreshSession(): Promise<boolean> {
         try {
+            logger.info('手动刷新 Session...');
             const newSession = await this.fetchSession();
             if (newSession) {
                 this.sessionInfo = newSession;
                 logger.info('Session 刷新成功');
                 return true;
             }
+            logger.warn('Session 刷新失败');
             return false;
         } catch (error) {
             logger.error('刷新 Session 失败:', error);
@@ -155,7 +154,7 @@ export class SessionManager {
      * 获取当前 Session 状态
      * 返回 Session 的存在性、有效性和过期时间
      */
-    getSessionStatus(): { hasSession: boolean; isValid: boolean; expiresAt?: string } {
+    getSessionStatus(): { hasSession: boolean; isValid: boolean; expiresAt?: string; } {
         return {
             hasSession: !!this.sessionInfo,
             isValid: this.isSessionValid(),

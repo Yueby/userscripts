@@ -8,6 +8,7 @@ export interface UserSettings {
   targetCurrency: Currency; // 目标货币，默认CNY
   privacyMode: boolean;    // 隐私模式，默认false
   mondayAsFirstDay: boolean; // 以周一作为一周第一天，默认true
+  defaultTimeFilter: string; // 默认时间筛选选项，默认'all'
 }
 
 // 默认设置
@@ -16,7 +17,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   displayName: '中国标准时间',
   targetCurrency: 'CNY',
   privacyMode: false,
-  mondayAsFirstDay: true
+  mondayAsFirstDay: true,
+  defaultTimeFilter: 'all'
 };
 
 // 常用时区选项

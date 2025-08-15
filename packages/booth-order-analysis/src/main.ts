@@ -23,7 +23,8 @@ const currencyConverter = CurrencyManager;
 
 // 插入按钮
 function insertButton(): void {
-  const targetSelector = 'body > div.page-wrap.box-border.relative.z-\\[2\\].flex-grow.basis-auto.bg-\\[\\#f1f5f8\\].shadow-\\[1px_0_0_0_rgba\\(0\\,0\\,0\\,0\\.05\\)\\].transition-all.duration-\\[180ms\\].ease-in.min-w-\\[970px\\].mobile\\:min-w-\\[auto\\] > main > div.manage-page-body > div > div.lo-grid.manage-nav-block.items-center';
+  const targetSelector =
+    'body > div.page-wrap.box-border.relative.z-\\[2\\].flex-grow.basis-auto.bg-\\[\\#f1f5f8\\].shadow-\\[1px_0_0_0_rgba\\(0\\,0\\,0\\,0\\.05\\)\\].transition-all.duration-\\[180ms\\].ease-in.min-w-\\[970px\\].mobile\\:min-w-\\[auto\\] > main > div.manage-page-body > div > div.lo-grid.manage-nav-block.items-center';
 
   const targetElement = document.querySelector(targetSelector);
 
@@ -143,7 +144,6 @@ async function loadDataOnly(): Promise<void> {
       updateButtonState(false);
       alert(`数据加载失败: ${result.error}`);
     }
-
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
@@ -164,7 +164,6 @@ async function loadDataAndShowPanel(): Promise<void> {
       updateButtonState(false);
       alert(`数据加载失败: ${JSON.stringify(result.error)}`);
     }
-
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
@@ -209,31 +208,31 @@ async function showVuePanel(): Promise<void> {
   document.body.appendChild(panel);
 
   createApp(App).mount(content);
-  setTimeout(() => panel.style.opacity = '1', 10);
+  setTimeout(() => (panel.style.opacity = '1'), 10);
 }
 
 // 启动
 if (isBoothOrdersPage()) {
-    // 先初始化 Session，再初始化其他管理器
-    const sessionManager = SessionManager.getInstance();
-    
-    // 异步初始化
-    Promise.all([
-        sessionManager.getValidSession(), // 先获取 Session
-        currencyConverter.initializeRates(),
-        itemManager.initialize() // 现在有了 Session，可以正常访问 API
-    ]).catch(error => {
-        logger.warn('初始化失败，使用默认设置:', error);
-    });
+  // 先初始化 Session，再初始化其他管理器
+  const sessionManager = SessionManager.getInstance();
+  await sessionManager.getValidSession();
 
-    // 自动加载数据
-    setTimeout(async () => {
-        insertButton();
+  // 异步初始化
+  Promise.all([
+    currencyConverter.initializeRates(),
+    itemManager.initialize() // 现在有了 Session，可以正常访问 API
+  ]).catch((error) => {
+    logger.warn('初始化失败，使用默认设置:', error);
+  });
 
-        // 检查是否已有数据，如果没有则自动加载
-        if (!dataLoader.hasData()) {
-            updateButtonState(true);
-            await loadDataOnly();
-        }
-    }, 200);
+  // 自动加载数据
+  setTimeout(async () => {
+    insertButton();
+
+    // 检查是否已有数据，如果没有则自动加载
+    if (!dataLoader.hasData()) {
+      updateButtonState(true);
+      await loadDataOnly();
+    }
+  }, 200);
 }

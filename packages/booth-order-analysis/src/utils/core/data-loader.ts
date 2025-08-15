@@ -140,7 +140,7 @@ export class DataLoader {
 
 			return {
 				success: false,
-				error: `${errorMessage} (${error.status || 'unknown'})`
+				error: `${errorMessage}: ${JSON.stringify(error)}`
 			};
 		}
 	}
