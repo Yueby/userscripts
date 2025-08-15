@@ -4,6 +4,7 @@ import './style.css';
 import { ItemManager } from './utils/booth/item-manager';
 import { DataLoader } from './utils/core/data-loader';
 import { logger } from './utils/core/logger';
+import { SessionManager } from './utils/core/session-manager';
 import { CurrencyManager } from './utils/currency/currency-manager';
 
 // 检查是否在 Booth 订单页面
@@ -213,22 +214,26 @@ async function showVuePanel(): Promise<void> {
 
 // 启动
 if (isBoothOrdersPage()) {
-  // 异步初始化汇率和商品管理器
-  Promise.all([
-    currencyConverter.initializeRates(),
-    itemManager.initialize()
-  ]).catch(error => {
-    logger.warn('初始化失败，使用默认设置:', error);
-  });
+    // 先初始化 Session，再初始化其他管理器
+    const sessionManager = SessionManager.getInstance();
+    
+    // 异步初始化
+    Promise.all([
+        sessionManager.getValidSession(), // 先获取 Session
+        currencyConverter.initializeRates(),
+        itemManager.initialize() // 现在有了 Session，可以正常访问 API
+    ]).catch(error => {
+        logger.warn('初始化失败，使用默认设置:', error);
+    });
 
-  // 自动加载数据
-  setTimeout(async () => {
-    insertButton();
+    // 自动加载数据
+    setTimeout(async () => {
+        insertButton();
 
-    // 检查是否已有数据，如果没有则自动加载
-    if (!dataLoader.hasData()) {
-      updateButtonState(true);
-      await loadDataOnly();
-    }
-  }, 200);
+        // 检查是否已有数据，如果没有则自动加载
+        if (!dataLoader.hasData()) {
+            updateButtonState(true);
+            await loadDataOnly();
+        }
+    }, 200);
 }

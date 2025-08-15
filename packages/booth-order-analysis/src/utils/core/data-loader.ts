@@ -3,13 +3,7 @@ import type { Order } from '../../types/order';
 import { OrderManager } from '../booth/order-manager';
 import { CSVParser } from './csv-parser';
 import { logger } from './logger';
-
-// 添加 Session 信息接口
-interface SessionInfo {
-    _plaza_session_nktz7u: string;
-    updated_at: string;
-    expires_at: string | null;
-}
+import { SessionManager } from './session-manager';
 
 // 数据加载器
 export class DataLoader {
@@ -17,7 +11,6 @@ export class DataLoader {
     private orders: Order[] = [];
     private isLoading = false;
     private lastLoadTime: Date | null = null;
-    private sessionInfo: SessionInfo | null = null; // 添加 Session 存储
 
     private constructor() { }
 
@@ -87,102 +80,11 @@ export class DataLoader {
         }
     }
 
-    // 新增：获取有效的 Session
-    private async getValidSession(): Promise<string | null> {
-        // 如果已有 Session 且未过期，直接返回
-        if (this.sessionInfo && this.isSessionValid()) {
-            return this.sessionInfo._plaza_session_nktz7u;
-        }
-
-        // 尝试获取新的 Session
-        try {
-            const newSession = await this.fetchSession();
-            if (newSession) {
-                this.sessionInfo = newSession;
-                return newSession._plaza_session_nktz7u;
-            }
-        } catch (error) {
-            logger.warn('获取 Session 失败:', error);
-        }
-
-        return null;
-    }
-
-    // 新增：检查 Session 是否有效
-    private isSessionValid(): boolean {
-        if (!this.sessionInfo) return false;
-        
-        // 如果没有过期时间，认为有效
-        if (!this.sessionInfo.expires_at) return true;
-        
-        // 检查是否过期（提前5分钟认为过期）
-        const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
-        const currentTime = Date.now();
-        const bufferTime = 5 * 60 * 1000; // 5分钟缓冲
-        
-        return currentTime < (expiresTime - bufferTime);
-    }
-
-    // 新增：获取 Session 信息
-    private async fetchSession(): Promise<SessionInfo | null> {
-        return new Promise((resolve) => {
-            GM_xmlhttpRequest({
-                method: 'GET',
-                url: 'https://manage.booth.pm/orders',
-                headers: {
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8'
-                },
-                onload: (response) => {
-                    const cookieInfo = this.extractCookieInfo(response.responseHeaders);
-
-                    if (cookieInfo) {
-                        const sessionData: SessionInfo = {
-                            _plaza_session_nktz7u: cookieInfo.value,
-                            updated_at: new Date().toISOString(),
-                            expires_at: cookieInfo.expires
-                        };
-                        
-                        logger.info('成功获取 Session');
-                        resolve(sessionData);
-                    } else {
-                        logger.warn('未找到有效的 Session');
-                        resolve(null);
-                    }
-                },
-                onerror: (error) => {
-                    logger.error('获取 Session 请求失败:', error);
-                    resolve(null);
-                },
-                ontimeout: () => {
-                    logger.warn('获取 Session 请求超时');
-                    resolve(null);
-                }
-            });
-        });
-    }
-
-    // 新增：从响应头提取 Cookie 信息
-    private extractCookieInfo(headers: string): { value: string; expires: string | null } | null {
-        const cookieHeader = headers.split('\n')
-            .find(line => line.toLowerCase().startsWith('set-cookie:') &&
-                line.includes('_plaza_session_nktz7u='));
-
-        if (!cookieHeader) return null;
-
-        const value = cookieHeader.split(';')[0].split('=').slice(1).join('=').trim();
-        const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
-
-        return {
-            value,
-            expires: expires ? new Date(expires).toISOString() : null
-        };
-    }
-
     // 改进：下载 CSV 文件，自动添加 Session
     private async downloadCSV(): Promise<{ success: boolean; data?: string; error?: string; }> {
-        // 尝试获取有效的 Session
-        const sessionValue = await this.getValidSession();
+        // 使用 SessionManager 获取有效的 Session
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
         
         return new Promise((resolve) => {
             const headers: Record<string, string> = {
@@ -208,7 +110,7 @@ export class DataLoader {
                     } else if (response.status === 401) {
                         // 如果使用 Session 仍然 401，清除 Session 并提示
                         if (sessionValue) {
-                            this.sessionInfo = null;
+                            sessionManager.clearSession();
                             logger.warn('Session 已失效，已清除');
                         }
                         
@@ -245,36 +147,22 @@ export class DataLoader {
         });
     }
 
-    // 新增：手动刷新 Session
-    public async refreshSession(): Promise<boolean> {
-        try {
-            const newSession = await this.fetchSession();
-            if (newSession) {
-                this.sessionInfo = newSession;
-                logger.info('Session 刷新成功');
-                return true;
-            }
-            return false;
-        } catch (error) {
-            logger.error('刷新 Session 失败:', error);
-            return false;
-        }
+    // 获取当前 Session 状态（代理到 SessionManager）
+    public getSessionStatus() {
+        const sessionManager = SessionManager.getInstance();
+        return sessionManager.getSessionStatus();
     }
 
-    // 新增：获取当前 Session 状态
-    public getSessionStatus(): { hasSession: boolean; isValid: boolean; expiresAt?: string } {
-        return {
-            hasSession: !!this.sessionInfo,
-            isValid: this.isSessionValid(),
-            expiresAt: this.sessionInfo?.expires_at || undefined
-        };
+    // 手动刷新 Session（代理到 SessionManager）
+    public async refreshSession(): Promise<boolean> {
+        const sessionManager = SessionManager.getInstance();
+        return await sessionManager.refreshSession();
     }
 
     // 清除数据
     clearData(): void {
         this.orders = [];
         this.lastLoadTime = null;
-        this.sessionInfo = null; // 同时清除 Session
     }
 
     // 获取数据统计信息

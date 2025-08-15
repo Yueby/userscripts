@@ -16007,6 +16007,163 @@
     }
   }
   const logger = Logger.getInstance();
+  class SessionManager {
+    static instance;
+    sessionInfo = null;
+    constructor() {
+    }
+    /**
+     * 获取单例实例
+     */
+    static getInstance() {
+      if (!SessionManager.instance) {
+        SessionManager.instance = new SessionManager();
+      }
+      return SessionManager.instance;
+    }
+    /**
+     * 获取有效的 Session
+     * 如果已有 Session 且未过期，直接返回
+     * 否则尝试获取新的 Session
+     */
+    async getValidSession() {
+      if (this.sessionInfo && this.isSessionValid()) {
+        return this.sessionInfo._plaza_session_nktz7u;
+      }
+      try {
+        const newSession = await this.fetchSession();
+        if (newSession) {
+          this.sessionInfo = newSession;
+          return newSession._plaza_session_nktz7u;
+        }
+      } catch (error) {
+        logger.warn("获取 Session 失败:", error);
+      }
+      return null;
+    }
+    /**
+     * 检查 Session 是否有效
+     * 如果没有过期时间，认为有效
+     * 提前5分钟认为过期，避免边界情况
+     */
+    isSessionValid() {
+      if (!this.sessionInfo) return false;
+      if (!this.sessionInfo.expires_at) return true;
+      const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
+      const currentTime = Date.now();
+      const bufferTime = 5 * 60 * 1e3;
+      return currentTime < expiresTime - bufferTime;
+    }
+    /**
+     * 获取 Session 信息
+     * 通过访问 Booth 订单页面获取认证 Cookie
+     */
+    async fetchSession() {
+      return new Promise((resolve2) => {
+        _GM_xmlhttpRequest({
+          method: "GET",
+          url: "https://manage.booth.pm/orders",
+          headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
+          },
+          onload: (response) => {
+            const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+            if (cookieInfo) {
+              const sessionData = {
+                _plaza_session_nktz7u: cookieInfo.value,
+                updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+                expires_at: cookieInfo.expires
+              };
+              logger.info("成功获取 Session");
+              resolve2(sessionData);
+            } else {
+              logger.warn("未找到有效的 Session");
+              resolve2(null);
+            }
+          },
+          onerror: (error) => {
+            logger.error("获取 Session 请求失败:", error);
+            resolve2(null);
+          },
+          ontimeout: () => {
+            logger.warn("获取 Session 请求超时");
+            resolve2(null);
+          }
+        });
+      });
+    }
+    /**
+     * 从响应头提取 Cookie 信息
+     * 查找包含 _plaza_session_nktz7u 的 Set-Cookie 头
+     */
+    extractCookieInfo(headers) {
+      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+      if (!cookieHeader) return null;
+      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+      const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
+      return {
+        value,
+        expires: expires ? new Date(expires).toISOString() : null
+      };
+    }
+    /**
+     * 手动刷新 Session
+     * 强制获取新的 Session 信息
+     */
+    async refreshSession() {
+      try {
+        const newSession = await this.fetchSession();
+        if (newSession) {
+          this.sessionInfo = newSession;
+          logger.info("Session 刷新成功");
+          return true;
+        }
+        return false;
+      } catch (error) {
+        logger.error("刷新 Session 失败:", error);
+        return false;
+      }
+    }
+    /**
+     * 获取当前 Session 状态
+     * 返回 Session 的存在性、有效性和过期时间
+     */
+    getSessionStatus() {
+      return {
+        hasSession: !!this.sessionInfo,
+        isValid: this.isSessionValid(),
+        expiresAt: this.sessionInfo?.expires_at || void 0
+      };
+    }
+    /**
+     * 清除 Session
+     * 用于登出或 Session 失效时
+     */
+    clearSession() {
+      this.sessionInfo = null;
+      logger.info("Session 已清除");
+    }
+    /**
+     * 检查是否需要重新认证
+     * 基于 Session 状态判断
+     */
+    needsReauthentication() {
+      return !this.sessionInfo || !this.isSessionValid();
+    }
+    /**
+     * 获取 Session 的最后更新时间
+     */
+    getLastUpdateTime() {
+      return this.sessionInfo?.updated_at || null;
+    }
+    /**
+     * 获取 Session 的过期时间
+     */
+    getExpirationTime() {
+      return this.sessionInfo?.expires_at || null;
+    }
+  }
   class ItemManager {
     static instance;
     itemsMap = /* @__PURE__ */ new Map();
@@ -16050,6 +16207,8 @@
      */
     async loadItemsFromApi() {
       try {
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
         let page = 1;
         let hasMorePages = true;
         while (hasMorePages) {
@@ -16058,15 +16217,27 @@
             const timeout = setTimeout(() => {
               reject(new Error("请求超时"));
             }, 1e4);
+            const headers = {
+              Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            };
+            if (sessionValue) {
+              headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
+              logger.debug(`使用 Session 访问第 ${page} 页商品数据`);
+            } else {
+              logger.warn("未找到有效 Session，将尝试无认证请求");
+            }
             _GM_xmlhttpRequest({
               method: "GET",
               url: boothManageUrl,
               timeout: 1e4,
+              headers,
               // 不设置请求头，返回JSON数据
               onload: function(response2) {
                 clearTimeout(timeout);
                 if (response2.status === 200) {
                   resolve2(response2.responseText);
+                } else if (response2.status === 401) {
+                  reject(new Error(`认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
                 } else {
                   reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
                 }
@@ -16131,27 +16302,38 @@
      */
     async loadItemsFromHTML() {
       try {
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
         const boothManageUrl = "https://manage.booth.pm/items";
         const response = await new Promise((resolve2, reject) => {
           const timeout = setTimeout(() => {
             reject(new Error("请求超时"));
           }, 1e4);
+          const headers = {
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Cache-Control": "max-age=0",
+            "User-Agent": navigator.userAgent,
+            Referer: window.location.origin
+          };
+          if (sessionValue) {
+            headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
+            logger.debug("使用 Session 访问 HTML 商品数据");
+          } else {
+            logger.warn("未找到有效 Session，将尝试无认证请求");
+          }
           _GM_xmlhttpRequest({
             method: "GET",
             url: boothManageUrl,
             timeout: 1e4,
-            headers: {
-              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-              "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5",
-              "Accept-Encoding": "gzip, deflate, br, zstd",
-              "Cache-Control": "max-age=0",
-              "User-Agent": navigator.userAgent,
-              "Referer": window.location.origin
-            },
+            headers,
             onload: function(response2) {
               clearTimeout(timeout);
               if (response2.status === 200) {
                 resolve2(response2.responseText);
+              } else if (response2.status === 401) {
+                reject(new Error(`认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`));
               } else {
                 reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
               }
@@ -17980,8 +18162,6 @@
     orders = [];
     isLoading = false;
     lastLoadTime = null;
-    sessionInfo = null;
-    // 添加 Session 存储
     constructor() {
     }
     static getInstance() {
@@ -18034,81 +18214,10 @@
         return { success: false, error: `加载失败: ${error}` };
       }
     }
-    // 新增：获取有效的 Session
-    async getValidSession() {
-      if (this.sessionInfo && this.isSessionValid()) {
-        return this.sessionInfo._plaza_session_nktz7u;
-      }
-      try {
-        const newSession = await this.fetchSession();
-        if (newSession) {
-          this.sessionInfo = newSession;
-          return newSession._plaza_session_nktz7u;
-        }
-      } catch (error) {
-        logger.warn("获取 Session 失败:", error);
-      }
-      return null;
-    }
-    // 新增：检查 Session 是否有效
-    isSessionValid() {
-      if (!this.sessionInfo) return false;
-      if (!this.sessionInfo.expires_at) return true;
-      const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
-      const currentTime = Date.now();
-      const bufferTime = 5 * 60 * 1e3;
-      return currentTime < expiresTime - bufferTime;
-    }
-    // 新增：获取 Session 信息
-    async fetchSession() {
-      return new Promise((resolve2) => {
-        _GM_xmlhttpRequest({
-          method: "GET",
-          url: "https://manage.booth.pm/orders",
-          headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
-          },
-          onload: (response) => {
-            const cookieInfo = this.extractCookieInfo(response.responseHeaders);
-            if (cookieInfo) {
-              const sessionData = {
-                _plaza_session_nktz7u: cookieInfo.value,
-                updated_at: (/* @__PURE__ */ new Date()).toISOString(),
-                expires_at: cookieInfo.expires
-              };
-              logger.info("成功获取 Session");
-              resolve2(sessionData);
-            } else {
-              logger.warn("未找到有效的 Session");
-              resolve2(null);
-            }
-          },
-          onerror: (error) => {
-            logger.error("获取 Session 请求失败:", error);
-            resolve2(null);
-          },
-          ontimeout: () => {
-            logger.warn("获取 Session 请求超时");
-            resolve2(null);
-          }
-        });
-      });
-    }
-    // 新增：从响应头提取 Cookie 信息
-    extractCookieInfo(headers) {
-      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
-      if (!cookieHeader) return null;
-      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
-      const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
-      return {
-        value,
-        expires: expires ? new Date(expires).toISOString() : null
-      };
-    }
     // 改进：下载 CSV 文件，自动添加 Session
     async downloadCSV() {
-      const sessionValue = await this.getValidSession();
+      const sessionManager = SessionManager.getInstance();
+      const sessionValue = await sessionManager.getValidSession();
       return new Promise((resolve2) => {
         const headers = {
           "Accept": "text/csv,application/csv,text/plain",
@@ -18129,7 +18238,7 @@
               resolve2({ success: true, data: response.responseText });
             } else if (response.status === 401) {
               if (sessionValue) {
-                this.sessionInfo = null;
+                sessionManager.clearSession();
                 logger.warn("Session 已失效，已清除");
               }
               resolve2({
@@ -18163,34 +18272,20 @@
         });
       });
     }
-    // 新增：手动刷新 Session
-    async refreshSession() {
-      try {
-        const newSession = await this.fetchSession();
-        if (newSession) {
-          this.sessionInfo = newSession;
-          logger.info("Session 刷新成功");
-          return true;
-        }
-        return false;
-      } catch (error) {
-        logger.error("刷新 Session 失败:", error);
-        return false;
-      }
-    }
-    // 新增：获取当前 Session 状态
+    // 获取当前 Session 状态（代理到 SessionManager）
     getSessionStatus() {
-      return {
-        hasSession: !!this.sessionInfo,
-        isValid: this.isSessionValid(),
-        expiresAt: this.sessionInfo?.expires_at || void 0
-      };
+      const sessionManager = SessionManager.getInstance();
+      return sessionManager.getSessionStatus();
+    }
+    // 手动刷新 Session（代理到 SessionManager）
+    async refreshSession() {
+      const sessionManager = SessionManager.getInstance();
+      return await sessionManager.refreshSession();
     }
     // 清除数据
     clearData() {
       this.orders = [];
       this.lastLoadTime = null;
-      this.sessionInfo = null;
     }
     // 获取数据统计信息
     getDataStats() {
@@ -36051,9 +36146,13 @@
     setTimeout(() => panel.style.opacity = "1", 10);
   }
   if (isBoothOrdersPage()) {
+    const sessionManager = SessionManager.getInstance();
     Promise.all([
+      sessionManager.getValidSession(),
+      // 先获取 Session
       currencyConverter.initializeRates(),
       itemManager.initialize()
+      // 现在有了 Session，可以正常访问 API
     ]).catch((error) => {
       logger.warn("初始化失败，使用默认设置:", error);
     });
