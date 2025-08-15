@@ -18153,9 +18153,9 @@
     }
     // 改进：下载 CSV 文件，自动添加 Session
     async downloadCSV() {
-      const sessionManager = SessionManager.getInstance();
-      const sessionValue = await sessionManager.getValidSession();
-      return new Promise((resolve2) => {
+      try {
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
         const headers = {
           "Accept": "text/csv,application/csv,text/plain",
           "Content-Type": "text/csv; charset=utf-8"
@@ -18166,48 +18166,42 @@
         } else {
           logger.warn("未找到有效 Session，将尝试无认证请求");
         }
-        _GM_xmlhttpRequest({
+        const response = await fetch("https://manage.booth.pm/orders/csv", {
           method: "GET",
-          url: "https://manage.booth.pm/orders/csv",
-          headers,
-          onload: (response) => {
-            if (response.status === 200) {
-              resolve2({ success: true, data: response.responseText });
-            } else if (response.status === 401) {
-              if (sessionValue) {
-                sessionManager.clearSession();
-                logger.warn("Session 已失效，已清除");
-              }
-              resolve2({
-                success: false,
-                error: `认证失败 (401): ${sessionValue ? "Session 已失效，请重新登录" : "请先登录 Booth 账户"}`
-              });
-            } else {
-              resolve2({
-                success: false,
-                error: `下载失败: HTTP ${response.status} - ${response.statusText}`
-              });
-            }
-          },
-          onerror: (error) => {
-            let errorMessage = "网络错误";
-            if (error.status === 401) {
-              errorMessage = "认证失败: 请先登录 Booth 账户";
-            } else if (error.status === 403) {
-              errorMessage = "访问被拒绝: 可能没有权限访问此页面";
-            } else if (error.status === 404) {
-              errorMessage = "页面不存在: 请检查 URL 是否正确";
-            }
-            resolve2({
-              success: false,
-              error: `${errorMessage} (${error.status || "unknown"})`
-            });
-          },
-          ontimeout: () => {
-            resolve2({ success: false, error: "下载超时" });
-          }
+          headers
         });
-      });
+        if (response.status === 401) {
+          if (sessionValue) {
+            sessionManager.clearSession();
+            logger.warn("Session 已失效，已清除");
+          }
+          return {
+            success: false,
+            error: `认证失败 (401): ${sessionValue ? "Session 已失效，请重新登录" : "请先登录 Booth 账户"}`
+          };
+        }
+        if (!response.ok) {
+          return {
+            success: false,
+            error: `下载失败: HTTP ${response.status} - ${response.statusText}`
+          };
+        }
+        const csvData = await response.text();
+        return { success: true, data: csvData };
+      } catch (error) {
+        let errorMessage = "网络错误";
+        if (error.status === 401) {
+          errorMessage = "认证失败: 请先登录 Booth 账户";
+        } else if (error.status === 403) {
+          errorMessage = "访问被拒绝: 可能没有权限访问此页面";
+        } else if (error.status === 404) {
+          errorMessage = "页面不存在: 请检查 URL 是否正确";
+        }
+        return {
+          success: false,
+          error: `${errorMessage} (${error.status || "unknown"})`
+        };
+      }
     }
     // 获取当前 Session 状态（代理到 SessionManager）
     getSessionStatus() {
