@@ -409,7 +409,7 @@ export class ItemManager {
             }
         });
 
-        logger.info(`初始化完成: 创建了 ${this.boothItemsMap.size} 个统一的BoothItem`);
+        // logger.info(`初始化完成: 创建了 ${this.boothItemsMap.size} 个统一的BoothItem`);
     }
 
     /**
