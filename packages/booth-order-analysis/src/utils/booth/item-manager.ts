@@ -49,9 +49,8 @@ export class ItemManager {
 
 			this.isInitialized = true;
 		} catch (error) {
-			logger.error('商品数据初始化失败:', error);
-			logger.warn('商品数据初始化失败，将使用空数据继续运行');
-			// 不抛出错误，而是标记为已初始化以避免重复尝试
+			logger.error('[ItemManager] 商品数据初始化失败:', error);
+
 			this.isInitialized = true;
 		}
 	}
@@ -69,7 +68,7 @@ export class ItemManager {
 
 				const response = await new Promise<string>((resolve, reject) => {
 					const timeout = setTimeout(() => {
-						reject(new Error('请求超时'));
+						reject(new Error('[API] 请求超时'));
 					}, 10000);
 
 					GM_xmlhttpRequest({
@@ -82,7 +81,7 @@ export class ItemManager {
 								// 记录响应头信息用于调试
 								logger.info(`[API] 响应状态: ${response.status}, 响应头: ${response.responseHeaders?.substring(0, 200)}...`);
 								logger.info(`[API] 响应内容前200字符: ${response.responseText.substring(0, 200)}...`);
-								
+
 								// 检查响应内容类型
 								const contentType = response.responseHeaders?.match(/content-type:\s*([^;]+)/i)?.[1];
 								if (contentType && contentType.includes('application/json')) {
@@ -151,7 +150,7 @@ export class ItemManager {
 								this.itemsMap.set(itemId, itemData);
 							}
 						} catch (error) {
-							logger.warn(`解析API商品数据失败 (索引 ${index}):`, error);
+							logger.warn(`[API] 解析API商品数据失败 (索引 ${index}):`, error);
 						}
 					});
 
@@ -185,7 +184,7 @@ export class ItemManager {
 
 			const response = await new Promise<string>((resolve, reject) => {
 				const timeout = setTimeout(() => {
-					reject(new Error('请求超时'));
+					reject(new Error('[HTML] 请求超时'));
 				}, 10000); // 10秒超时
 
 				const headers: Record<string, string> = {
@@ -286,12 +285,12 @@ export class ItemManager {
 
 					// 检查商品名称是否为空
 					if (!itemName) {
-						logger.warn(`商品名称为空 (索引 ${index}), 尝试备用选择器`);
+						logger.warn(`[HTML] 商品名称为空 (索引 ${index}), 尝试备用选择器`);
 						// 尝试备用选择器
 						const backupNameElement = $item.find('.cell.item-label span a');
 						const backupName = backupNameElement.text().trim();
 						if (!backupName) {
-							logger.warn(`跳过商品 (索引 ${index}): 无法获取商品名称`);
+							logger.warn(`[HTML] 跳过商品 (索引 ${index}): 无法获取商品名称`);
 							return; // 跳过这个商品
 						}
 						itemName = backupName;
@@ -341,7 +340,7 @@ export class ItemManager {
 
 							variants.push(variant);
 						} catch (variantError) {
-							logger.warn(`解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
+							logger.warn(`[HTML] 解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
 						}
 					});
 
@@ -354,11 +353,11 @@ export class ItemManager {
 
 					items.push(item);
 				} catch (error) {
-					logger.warn(`解析商品元素失败 (索引 ${index}):`, error);
+					logger.warn(`[HTML] 解析商品元素失败 (索引 ${index}):`, error);
 				}
 			});
 		} catch (error) {
-			logger.error('从HTML元素解析商品数据失败:', error);
+			logger.error('[HTML] 从HTML元素解析商品数据失败:', error);
 		}
 
 		return items;
@@ -378,11 +377,11 @@ export class ItemManager {
 					// 直接存储HTMLParsedItem格式的数据到htmlItemsMap
 					this.htmlItemsMap.set(itemId, item);
 				} catch (error) {
-					logger.warn(`处理HTML商品数据失败 (索引 ${index}):`, error);
+					logger.warn(`[HTML] 处理HTML商品数据失败 (索引 ${index}):`, error);
 				}
 			});
 		} catch (error) {
-			logger.error('处理HTML元素商品数据时出错:', error);
+			logger.error('[HTML] 处理HTML元素商品数据时出错:', error);
 		}
 	}
 
@@ -397,7 +396,7 @@ export class ItemManager {
 			const price = parseFloat(cleanPrice);
 			return isNaN(price) ? 0 : price;
 		} catch (error) {
-			logger.warn(`解析价格失败: ${priceText}`, error);
+			logger.warn(`[HTML] 解析价格失败: ${priceText}`, error);
 			return 0;
 		}
 	}
@@ -471,7 +470,7 @@ export class ItemManager {
 	getItemIcon(id: string): string {
 		const item = this.getItem(id);
 		if (!item) {
-			logger.warn(`未找到商品ID: ${id}`);
+			logger.warn(`[ItemManager] 未找到商品ID: ${id}`);
 			return this.getDefaultIcon();
 		}
 		return item.iconUrl || this.getDefaultIcon();
