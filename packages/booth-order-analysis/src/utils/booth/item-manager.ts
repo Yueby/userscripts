@@ -1,4 +1,3 @@
-import { GM_xmlhttpRequest } from '$';
 import * as cheerio from 'cheerio';
 import type { APIParsedItem, BoothItem, HTMLParsedItem, HTMLParsedVariant } from '../../types/item';
 import { logger } from '../core/logger';
@@ -68,7 +67,7 @@ export class ItemManager {
 				const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
 
 				const response = await fetch(boothManageUrl);
-				
+
 				if (!response.ok) {
 					throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 				}
@@ -137,57 +136,41 @@ export class ItemManager {
 
 			const boothManageUrl = 'https://manage.booth.pm/items';
 
-			const response = await new Promise<string>((resolve, reject) => {
-				const timeout = setTimeout(() => {
-					reject(new Error('请求超时'));
-				}, 10000); // 10秒超时
+			const headers: Record<string, string> = {
+				Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+				'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
+				'Accept-Encoding': 'gzip, deflate, br, zstd',
+				'Cache-Control': 'max-age=0',
+				'User-Agent': navigator.userAgent,
+				Referer: window.location.origin
+			};
 
-				const headers: Record<string, string> = {
-					Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-					'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
-					'Accept-Encoding': 'gzip, deflate, br, zstd',
-					'Cache-Control': 'max-age=0',
-					'User-Agent': navigator.userAgent,
-					Referer: window.location.origin
-				};
+			// 如果有 Session，添加到请求头
+			if (sessionValue) {
+				headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
+				logger.info('[HTML] 使用 Session 访问 HTML 商品数据');
+			} else {
+				logger.warn('[HTML] 未找到有效 Session，将尝试无认证请求');
+			}
 
-				// 如果有 Session，添加到请求头
-				if (sessionValue) {
-					headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-					logger.info('[HTML] 使用 Session 访问 HTML 商品数据');
-				} else {
-					logger.warn('[HTML] 未找到有效 Session，将尝试无认证请求');
-				}
-
-				GM_xmlhttpRequest({
-					method: 'GET',
-					url: boothManageUrl,
-					timeout: 10000,
-					headers,
-					onload: function (response) {
-						clearTimeout(timeout);
-						if (response.status === 200) {
-							resolve(response.responseText);
-						} else if (response.status === 401) {
-							reject(new Error(`[HTML] 认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`));
-						} else {
-							reject(new Error(`[HTML] HTTP ${response.status}: ${response.statusText}`));
-						}
-					},
-					onerror: function (error) {
-						clearTimeout(timeout);
-						reject(error);
-					},
-					ontimeout: function () {
-						clearTimeout(timeout);
-						reject(new Error('[HTML] 请求超时'));
-					}
-				});
+			const response = await fetch(boothManageUrl, {
+				method: 'GET',
+				headers
 			});
 
+			if (!response.ok) {
+				if (response.status === 401) {
+					throw new Error(`[HTML] 认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`);
+				} else {
+					throw new Error(`[HTML] HTTP ${response.status}: ${response.statusText}`);
+				}
+			}
+
+			const htmlContent = await response.text();
+
 			// 检查响应内容类型
-			if (response.includes('<html') || response.includes('<!DOCTYPE')) {
-				this.parseItemsFromHTML(response);
+			if (htmlContent.includes('<html') || htmlContent.includes('<!DOCTYPE')) {
+				this.parseItemsFromHTML(htmlContent);
 			} else {
 				logger.warn('[HTML] 响应内容不是HTML页面');
 			}
@@ -223,12 +206,10 @@ export class ItemManager {
 	 */
 	private parseItemsFromElements($: cheerio.CheerioAPI): HTMLParsedItem[] {
 		const items: HTMLParsedItem[] = [];
-		let totalElements = 0;
 
 		try {
 			// 获取所有商品li元素
 			const itemElements = $('#items > li');
-			totalElements = itemElements.length;
 
 			itemElements.each((index, itemElement) => {
 				try {
@@ -327,7 +308,6 @@ export class ItemManager {
 				try {
 					// 使用索引生成ID
 					const itemId = `html-item-${index}`;
-					const name = item.name.trim();
 
 					// 直接存储HTMLParsedItem格式的数据到htmlItemsMap
 					this.htmlItemsMap.set(itemId, item);
@@ -389,7 +369,7 @@ export class ItemManager {
 
 			if (htmlItem) {
 				// 如果匹配成功，从可用列表中移除该HTML商品
-				const matchedHtmlId = Array.from(availableHtmlItems.entries()).find(([id, item]) => item.name === apiItem.name)?.[0];
+				const matchedHtmlId = Array.from(availableHtmlItems.entries()).find(([, item]) => item.name === apiItem.name)?.[0];
 				if (matchedHtmlId) {
 					availableHtmlItems.delete(matchedHtmlId);
 				}
