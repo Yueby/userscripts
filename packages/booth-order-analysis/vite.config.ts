@@ -32,13 +32,7 @@ export default defineConfig({
 			},
 			build: {
 				externalGlobals: {
-					vue: cdn.jsdelivr('Vue', 'dist/vue.global.prod.js'),
-					'chart.js': cdn.jsdelivr('Chart', 'dist/chart.min.js'),
-					'vue-chartjs': cdn.jsdelivr('VueChartJs', 'dist/vue-chartjs.min.js'),
-					'date-fns': cdn.jsdelivr('dateFns', 'index.min.js'),
-					'date-fns-tz': cdn.jsdelivr('dateFnsTz', 'index.min.js'),
-					'currency.js': cdn.jsdelivr('currency', 'dist/currency.min.js'),
-					papaparse: cdn.jsdelivr('Papa', 'papaparse.min.js')
+					vue: cdn.jsdelivr('Vue', 'dist/vue.global.prod.js')
 				}
 			}
 		})
