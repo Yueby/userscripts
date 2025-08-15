@@ -29,7 +29,7 @@ export class ItemManager {
 
 	/**
 	 * 初始化商品数据
-	 * 从Booth管理页面获取所有商品信息
+	 * 融合 API 和 HTML 数据加载，让它们协同工作
 	 */
 	async initialize(): Promise<void> {
 		if (this.isInitialized) {
@@ -37,32 +37,35 @@ export class ItemManager {
 		}
 
 		try {
-			// 先加载API数据
-			await this.loadItemsFromApi();
+			logger.info('[ItemManager] 开始融合加载 API 和 HTML 数据');
 
-			// 再加载HTML数据
-			await this.loadItemsFromHTML();
+			// 融合加载：先通过 API 获取商品列表和页数信息，再并行加载 HTML 数据
+			await this.loadItemsFused();
 
 			// 初始化统一的BoothItem数据
 			this.initializeBoothItems();
 
 			this.isInitialized = true;
+			logger.info('[ItemManager] 商品数据初始化完成');
 		} catch (error) {
-			logger.error('商品数据初始化失败:', error);
-			logger.warn('商品数据初始化失败，将使用空数据继续运行');
+			logger.error('[ItemManager] 商品数据初始化失败:', error);
+			logger.warn('[ItemManager] 商品数据初始化失败，将使用空数据继续运行');
 			// 不抛出错误，而是标记为已初始化以避免重复尝试
 			this.isInitialized = true;
 		}
 	}
 
 	/**
-	 * 从管理页面API加载商品数据
+	 * 融合加载 API 和 HTML 数据
+	 * 先通过 API 获取商品列表和页数信息，再并行加载 HTML 数据
 	 */
-	private async loadItemsFromApi(): Promise<void> {
+	private async loadItemsFused(): Promise<void> {
 		try {
 			let page = 1;
 			let hasMorePages = true;
+			let totalPages = 1;
 
+			// 通过 API 获取商品列表和页数信息
 			while (hasMorePages) {
 				const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
 
@@ -75,6 +78,7 @@ export class ItemManager {
 				const data = await response.json();
 
 				if (data && data.items && Array.isArray(data.items)) {
+					// 处理商品数据
 					data.items.forEach((item: any, index: number) => {
 						try {
 							if (item.id && item.name) {
@@ -92,7 +96,7 @@ export class ItemManager {
 								// 创建商品数据对象
 								const itemData: APIParsedItem = {
 									id: item.id,
-									name: name, // 使用trim后的name变量
+									name: name,
 									url: item.url,
 									state: item.state,
 									state_label: item.state_label,
@@ -108,9 +112,16 @@ export class ItemManager {
 						}
 					});
 
-					// 检查是否还有更多页面
-					if (data.metadata && data.metadata.next_page) {
-						page++;
+					// 获取页数信息
+					if (data.metadata) {
+						if (data.metadata.total_pages) {
+							totalPages = data.metadata.total_pages;
+						}
+						if (data.metadata.next_page) {
+							page++;
+						} else {
+							hasMorePages = false;
+						}
 					} else {
 						hasMorePages = false;
 					}
@@ -119,63 +130,91 @@ export class ItemManager {
 				}
 			}
 
-			logger.info(`[API] 数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+			logger.info(`[API] API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
+
+			// 并行加载所有页面的 HTML 数据
+			await this.loadAllHTMLPages(totalPages);
 		} catch (error) {
-			logger.error('[API] 数据加载失败:', error);
+			logger.error('[ItemManager] 融合数据加载失败:', error);
 			throw error;
 		}
 	}
 
 	/**
-	 * 从HTML页面加载商品数据
+	 * 并行加载所有页面的 HTML 数据
 	 */
-	private async loadItemsFromHTML(): Promise<void> {
+	private async loadAllHTMLPages(totalPages: number): Promise<void> {
 		try {
 			const sessionManager = SessionManager.getInstance();
 			const sessionValue = await sessionManager.getValidSession();
 
-			const boothManageUrl = 'https://manage.booth.pm/items';
+			// 并行请求所有页面的 HTML 数据
+			const htmlPromises: Promise<{ content: string; page: number }>[] = [];
 
-			const headers: Record<string, string> = {
-				Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-				'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
-				'Accept-Encoding': 'gzip, deflate, br, zstd',
-				'Cache-Control': 'max-age=0',
-				'User-Agent': navigator.userAgent,
-				Referer: window.location.origin
-			};
+			for (let page = 1; page <= totalPages; page++) {
+				const boothManageUrl = page === 1 ? 'https://manage.booth.pm/items' : `https://manage.booth.pm/items?page=${page}`;
 
-			// 如果有 Session，添加到请求头
-			if (sessionValue) {
-				headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
-				logger.info('[HTML] 使用 Session 访问 HTML 商品数据');
-			} else {
-				logger.warn('[HTML] 未找到有效 Session，将尝试无认证请求');
+				const headers: Record<string, string> = {
+					Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+					'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
+					'Accept-Encoding': 'gzip, deflate, br, zstd',
+					'Cache-Control': 'max-age=0',
+					'User-Agent': navigator.userAgent,
+					Referer: window.location.origin
+				};
+
+				// 如果有 Session，添加到请求头
+				if (sessionValue) {
+					headers['Cookie'] = `_plaza_session_nktz7u=${sessionValue}`;
+				}
+
+				const htmlPromise = fetch(boothManageUrl, {
+					method: 'GET',
+					headers
+				}).then(async (response) => {
+					if (!response.ok) {
+						if (response.status === 401) {
+							throw new Error(`[HTML] 第 ${page} 页认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`);
+						} else {
+							throw new Error(`[HTML] 第 ${page} 页请求失败: HTTP ${response.status}: ${response.statusText}`);
+						}
+					}
+					const content = await response.text();
+					return { content, page };
+				});
+
+				htmlPromises.push(htmlPromise);
 			}
 
-			const response = await fetch(boothManageUrl, {
-				method: 'GET',
-				headers
+			// 等待所有页面加载完成
+			logger.info(`[HTML] 开始并行加载 ${totalPages} 页 HTML 数据`);
+			const htmlResults = await Promise.allSettled(htmlPromises);
+
+			// 处理结果
+			let successCount = 0;
+			let failCount = 0;
+
+			htmlResults.forEach((result) => {
+				if (result.status === 'fulfilled') {
+					const { content, page } = result.value;
+
+					// 检查响应内容类型
+					if (content.includes('<html') || content.includes('<!DOCTYPE')) {
+						this.parseItemsFromHTML(content, page);
+						successCount++;
+					} else {
+						logger.warn(`[HTML] 第 ${page} 页响应内容不是HTML页面`);
+						failCount++;
+					}
+				} else {
+					logger.error(`[HTML] HTML 页面加载失败:`, result.reason);
+					failCount++;
+				}
 			});
 
-			if (!response.ok) {
-				if (response.status === 401) {
-					throw new Error(`[HTML] 认证失败 (401): ${sessionValue ? 'Session 已失效' : '请先登录 Booth 账户'}`);
-				} else {
-					throw new Error(`[HTML] HTTP ${response.status}: ${response.statusText}`);
-				}
-			}
-
-			const htmlContent = await response.text();
-
-			// 检查响应内容类型
-			if (htmlContent.includes('<html') || htmlContent.includes('<!DOCTYPE')) {
-				this.parseItemsFromHTML(htmlContent);
-			} else {
-				logger.warn('[HTML] 响应内容不是HTML页面');
-			}
+			logger.info(`[HTML] HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
 		} catch (error) {
-			logger.error('[HTML] HTML解析加载商品数据时发生错误:', error);
+			logger.error('[HTML] HTML 数据加载失败:', error);
 			throw error;
 		}
 	}
@@ -183,7 +222,7 @@ export class ItemManager {
 	/**
 	 * 使用cheerio解析HTML页面中的商品数据
 	 */
-	private parseItemsFromHTML(htmlContent: string): void {
+	private parseItemsFromHTML(htmlContent: string, page: number): void {
 		try {
 			const $ = cheerio.load(htmlContent);
 
@@ -191,13 +230,13 @@ export class ItemManager {
 			const itemsFromElements = this.parseItemsFromElements($);
 
 			if (itemsFromElements.length > 0) {
-				this.processItemsFromElements(itemsFromElements);
-				logger.info(`[HTML] HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+				this.processItemsFromElements(itemsFromElements, page);
+				logger.info(`[HTML] HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
 			} else {
-				logger.warn('[HTML] 未从HTML元素中找到商品数据');
+				logger.warn(`[HTML] 第 ${page} 页未从HTML元素中找到商品数据`);
 			}
 		} catch (error) {
-			logger.error('[HTML] 解析HTML时出错:', error);
+			logger.error(`[HTML] 解析HTML时出错 (页码: ${page}):`, error);
 		}
 	}
 
@@ -221,12 +260,12 @@ export class ItemManager {
 
 					// 检查商品名称是否为空
 					if (!itemName) {
-						logger.warn(`商品名称为空 (索引 ${index}), 尝试备用选择器`);
+						logger.warn(`[HTML] 商品名称为空 (索引 ${index}), 尝试备用选择器`);
 						// 尝试备用选择器
 						const backupNameElement = $item.find('.cell.item-label span a');
 						const backupName = backupNameElement.text().trim();
 						if (!backupName) {
-							logger.warn(`跳过商品 (索引 ${index}): 无法获取商品名称`);
+							logger.warn(`[HTML] 跳过商品 (索引 ${index}): 无法获取商品名称`);
 							return; // 跳过这个商品
 						}
 						itemName = backupName;
@@ -276,7 +315,7 @@ export class ItemManager {
 
 							variants.push(variant);
 						} catch (variantError) {
-							logger.warn(`解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
+							logger.warn(`[HTML] 解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
 						}
 					});
 
@@ -289,11 +328,11 @@ export class ItemManager {
 
 					items.push(item);
 				} catch (error) {
-					logger.warn(`解析商品元素失败 (索引 ${index}):`, error);
+					logger.warn(`[HTML] 解析商品元素失败 (索引 ${index}):`, error);
 				}
 			});
 		} catch (error) {
-			logger.error('从HTML元素解析商品数据失败:', error);
+			logger.error('[HTML] 从HTML元素解析商品数据失败:', error);
 		}
 
 		return items;
@@ -302,17 +341,17 @@ export class ItemManager {
 	/**
 	 * 处理从HTML元素解析的商品数据
 	 */
-	private processItemsFromElements(items: HTMLParsedItem[]): void {
+	private processItemsFromElements(items: HTMLParsedItem[], page: number): void {
 		try {
 			items.forEach((item: HTMLParsedItem, index: number) => {
 				try {
 					// 使用索引生成ID
-					const itemId = `html-item-${index}`;
+					const itemId = `html-item-${page}-${index}`;
 
 					// 直接存储HTMLParsedItem格式的数据到htmlItemsMap
 					this.htmlItemsMap.set(itemId, item);
 				} catch (error) {
-					logger.warn(`处理HTML商品数据失败 (索引 ${index}):`, error);
+					logger.warn(`处理HTML商品数据失败 (索引 ${index}, 页码: ${page}):`, error);
 				}
 			});
 		} catch (error) {
