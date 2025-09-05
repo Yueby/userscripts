@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.7
+// @version            0.1.9
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -21,9 +21,9 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const a=document.createElement("style");a.textContent=e,document.head.append(a)})(' .table-content[data-v-a9fcc20e]{max-height:600px;overflow-y:auto;overflow-x:auto;min-width:fit-content}.table-row[data-v-a9fcc20e]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px;min-width:fit-content}.table-row[data-v-a9fcc20e]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-a9fcc20e]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px;flex-shrink:0}.table-cell[data-v-a9fcc20e]:last-child{border-right:none}.table-cell[data-v-a9fcc20e]>*{width:auto}@media (max-width: 768px){.table-content[data-v-a9fcc20e]{max-height:500px}.table-cell[data-v-a9fcc20e]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-d01cfb85]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb);min-width:fit-content}.table-header-cell[data-v-d01cfb85]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb);flex-shrink:0}.table-header-cell[data-v-d01cfb85]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-d01cfb85]{padding:8px;font-size:13px}}.pagination[data-v-8cac1dac]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-8cac1dac]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-8cac1dac]{display:flex;justify-content:center;margin-top:8px}.page-info[data-v-8cac1dac]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-8cac1dac],.page-total[data-v-8cac1dac]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-8cac1dac]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-8cac1dac]{flex-wrap:wrap}}.data-table[data-v-d200fb90]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-d200fb90]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-d200fb90]{min-width:1200px}.table-container[data-v-d200fb90]:not(.table-scrollable){overflow-x:auto}.data-table[data-v-d200fb90]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-d200fb90]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-595fdcdb]{display:inline-flex}.selector-controls[data-v-595fdcdb]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d;flex-wrap:wrap;min-height:28px}@media (max-width: 768px){.selector-controls[data-v-595fdcdb]{gap:1px;padding:1px}}.item-link[data-v-deaee024]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-deaee024]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-deaee024],.no-link[data-v-deaee024]{color:#9ca3af;font-style:italic}.price-cell[data-v-deaee024]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-deaee024]{font-weight:500;color:#374151}.price-converted[data-v-deaee024]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-deaee024]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-deaee024]{display:flex;align-items:flex-start;gap:16px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.item-details[data-v-deaee024]{flex:1;display:flex;flex-direction:column;gap:8px}.item-header[data-v-deaee024]{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.item-details h4[data-v-deaee024]{margin:0;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-deaee024]{color:#6b7280;font-size:12px;font-weight:500;background:#f3f4f6;padding:2px 6px;border-radius:4px}.item-meta[data-v-deaee024]{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.meta-left[data-v-deaee024],.meta-right[data-v-deaee024]{display:flex;align-items:center;gap:8px}.item-state[data-v-deaee024]{display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;font-weight:500}.state-dot[data-v-deaee024]{width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0}.item-link[data-v-deaee024]{color:#3b82f6;text-decoration:none;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px;background:#eff6ff;border:1px solid #dbeafe;transition:all .2s}.item-link[data-v-deaee024]:hover{background:#dbeafe;color:#2563eb;text-decoration:none}.favorites-item[data-v-deaee024]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-deaee024]{width:12px;height:12px;color:#ef4444;flex-shrink:0}.favorites-cell[data-v-deaee024]{display:flex;align-items:center;gap:4px;justify-content:center}.no-favorites[data-v-deaee024]{color:#9ca3af;font-style:italic}.sales-summary[data-v-deaee024]{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.summary-item[data-v-deaee024]{display:flex;flex-direction:column;gap:4px;padding:8px;background:#fff;border-radius:6px;border:1px solid #e5e7eb}.summary-label[data-v-deaee024]{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px}.summary-value[data-v-deaee024]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-deaee024]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600;padding-bottom:6px;border-bottom:1px solid #e5e7eb}.variant-list[data-v-deaee024]{display:flex;flex-direction:column;gap:8px}.variant-item[data-v-deaee024]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-deaee024]{display:flex;align-items:center;flex:1}.variant-details[data-v-deaee024]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-deaee024]{font-size:14px;color:#374151;font-weight:500}.variant-source[data-v-deaee024]{font-size:11px;color:#059669;font-weight:500}.variant-stats[data-v-deaee024]{display:flex;flex-direction:column;gap:4px;text-align:right;min-width:100px}.variant-quantity[data-v-deaee024],.variant-revenue[data-v-deaee024]{font-size:12px;color:#6b7280;font-weight:500}.variant-summary[data-v-deaee024]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-deaee024]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-deaee024]{font-size:12px;color:#0369a1;font-weight:500}.summary-stat strong[data-v-deaee024]{color:#0c4a6e;font-weight:600}.no-variants[data-v-deaee024]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-deaee024]{width:95%;margin:20px}.variant-item[data-v-deaee024]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-deaee024]{text-align:left;width:100%}}.item-entry[data-v-bc9a52c5]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-bc9a52c5]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-bc9a52c5]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-bc9a52c5 .2s ease-out}.tooltip-header[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-bc9a52c5]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-bc9a52c5]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-bc9a52c5]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-bc9a52c5]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-bc9a52c5]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-bc9a52c5]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-bc9a52c5]:hover{color:#2563eb;text-decoration:underline}.favorites-display[data-v-bc9a52c5]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-bc9a52c5]{width:12px;height:12px;color:#ef4444}@keyframes tooltipFadeIn-bc9a52c5{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-bc9a52c5]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-bc9a52c5]{width:28px;height:28px}}.order-number[data-v-19177af7]{font-weight:500;color:#374151}.date-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-19177af7]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-19177af7]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-19177af7]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-19177af7]{font-weight:500;color:#374151}.price-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-19177af7]{align-items:center}.items[data-v-19177af7]{max-height:80px}.price-cell[data-v-19177af7],.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{padding-top:4px}}.settings-content[data-v-af501e35]{padding:24px}.setting-section[data-v-af501e35]{margin-bottom:24px}.setting-section h3[data-v-af501e35]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-af501e35]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-af501e35]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-af501e35]{font-size:14px;color:#374151;font-weight:500;flex-shrink:0}.timezone-select[data-v-af501e35],.currency-select[data-v-af501e35]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151;min-width:0;width:100%}.current-time[data-v-af501e35],.exchange-rate-info[data-v-af501e35]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-af501e35]{display:flex;gap:12px}.date-filter[data-v-2d60ca69]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-2d60ca69]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-2d60ca69]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-2d60ca69]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-2d60ca69]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-2d60ca69]{font-size:11px}.date-picker-content[data-v-2d60ca69]{padding:0}.date-input-group[data-v-2d60ca69]{margin-bottom:16px}.date-input-group label[data-v-2d60ca69]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-2d60ca69]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-2d60ca69]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}@media (max-width: 768px){.period-selector[data-v-2d60ca69]{font-size:10px}}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-fd8dd5d5]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-fd8dd5d5]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-fd8dd5d5]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-fd8dd5d5]{display:flex;align-items:center;gap:8px}.total-orders[data-v-fd8dd5d5]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-fd8dd5d5]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-fd8dd5d5]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-fd8dd5d5]{width:100%!important;height:100%!important}.legend-container[data-v-fd8dd5d5]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-fd8dd5d5]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-fd8dd5d5]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-fd8dd5d5]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-fd8dd5d5]{display:flex;align-items:center}.legend-label[data-v-fd8dd5d5]{font-size:11px;font-weight:500;color:#374151}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-b96e3217]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-b96e3217]{margin-bottom:24px}.stats-section h3[data-v-b96e3217]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-b96e3217]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-b96e3217]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-b96e3217]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-b96e3217]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-b96e3217]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-b96e3217]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-b96e3217]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-b96e3217]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.charts-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-b96e3217]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-b96e3217]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-b96e3217]{padding:16px 12px}.stat-value[data-v-b96e3217]{font-size:24px}.stat-converted[data-v-b96e3217]{font-size:11px;padding:3px 8px}.period-selector[data-v-b96e3217]{font-size:10px}.charts-grid[data-v-b96e3217]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-b96e3217]{padding:12px}.item-ranking .ranking-header h4[data-v-b96e3217]{font-size:13px}.item-ranking .ranking-item[data-v-b96e3217]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-b96e3217]{width:100%}.item-ranking .sales-data[data-v-b96e3217]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-edd46e6c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:160px;border:1px solid #e5e7eb}.status-indicator[data-v-edd46e6c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-edd46e6c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-edd46e6c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-edd46e6c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-edd46e6c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-edd46e6c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-edd46e6c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-edd46e6c]{color:#374151}.spinner[data-v-edd46e6c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-edd46e6c 1s linear infinite}@keyframes spin-edd46e6c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-5bd8cb6a]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-5bd8cb6a]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafccc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(229,231,235,.6);flex-shrink:0}.header-left[data-v-5bd8cb6a]{display:flex;align-items:center}.title[data-v-5bd8cb6a]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-5bd8cb6a]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-5bd8cb6a]{width:18px;height:18px}.refresh-icon[data-v-5bd8cb6a]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-5bd8cb6a]{animation:spin-5bd8cb6a 1s linear infinite;transform-origin:center}@keyframes spin-5bd8cb6a{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-5bd8cb6a]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-5bd8cb6a]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-5bd8cb6a]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-5bd8cb6a]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-5bd8cb6a]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-5bd8cb6a]{flex:1}@media (max-width: 768px){.header[data-v-5bd8cb6a]{padding:12px 16px}.title[data-v-5bd8cb6a]{font-size:16px}.header-right[data-v-5bd8cb6a]{gap:6px}.settings-icon[data-v-5bd8cb6a],.refresh-icon[data-v-5bd8cb6a]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-5bd8cb6a]{padding:10px 12px}.title[data-v-5bd8cb6a]{font-size:14px}.header-right[data-v-5bd8cb6a]{gap:4px}.settings-icon[data-v-5bd8cb6a],.refresh-icon[data-v-5bd8cb6a]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .table-content[data-v-a9fcc20e]{max-height:600px;overflow-y:auto;overflow-x:auto;min-width:fit-content}.table-row[data-v-a9fcc20e]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px;min-width:fit-content}.table-row[data-v-a9fcc20e]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-a9fcc20e]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px;flex-shrink:0}.table-cell[data-v-a9fcc20e]:last-child{border-right:none}.table-cell[data-v-a9fcc20e]>*{width:auto}@media (max-width: 768px){.table-content[data-v-a9fcc20e]{max-height:500px}.table-cell[data-v-a9fcc20e]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-d01cfb85]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb);min-width:fit-content}.table-header-cell[data-v-d01cfb85]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb);flex-shrink:0}.table-header-cell[data-v-d01cfb85]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-d01cfb85]{padding:8px;font-size:13px}}.pagination[data-v-8cac1dac]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-8cac1dac]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-8cac1dac]{display:flex;justify-content:center;margin-top:8px}.page-info[data-v-8cac1dac]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-8cac1dac],.page-total[data-v-8cac1dac]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-8cac1dac]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-8cac1dac]{flex-wrap:wrap}}.data-table[data-v-d200fb90]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-d200fb90]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-d200fb90]{min-width:1200px}.table-container[data-v-d200fb90]:not(.table-scrollable){overflow-x:auto}.data-table[data-v-d200fb90]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-d200fb90]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-595fdcdb]{display:inline-flex}.selector-controls[data-v-595fdcdb]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d;flex-wrap:wrap;min-height:28px}@media (max-width: 768px){.selector-controls[data-v-595fdcdb]{gap:1px;padding:1px}}.item-link[data-v-203369eb]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-203369eb]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-203369eb],.no-link[data-v-203369eb]{color:#9ca3af;font-style:italic}.price-cell[data-v-203369eb]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-203369eb]{font-weight:500;color:#374151}.price-converted[data-v-203369eb]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-203369eb]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-203369eb]{display:flex;align-items:flex-start;gap:16px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.item-details[data-v-203369eb]{flex:1;display:flex;flex-direction:column;gap:8px}.item-header[data-v-203369eb]{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.item-details h4[data-v-203369eb]{margin:0;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-203369eb]{color:#6b7280;font-size:12px;font-weight:500;background:#f3f4f6;padding:2px 6px;border-radius:4px}.item-meta[data-v-203369eb]{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.meta-left[data-v-203369eb],.meta-right[data-v-203369eb]{display:flex;align-items:center;gap:8px}.item-state[data-v-203369eb]{display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;font-weight:500}.state-dot[data-v-203369eb]{width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0}.item-link[data-v-203369eb]{color:#3b82f6;text-decoration:none;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px;background:#eff6ff;border:1px solid #dbeafe;transition:all .2s}.item-link[data-v-203369eb]:hover{background:#dbeafe;color:#2563eb;text-decoration:none}.favorites-item[data-v-203369eb]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-203369eb]{width:12px;height:12px;color:#ef4444;flex-shrink:0}.favorites-cell[data-v-203369eb]{display:flex;align-items:center;gap:4px;justify-content:center}.no-favorites[data-v-203369eb]{color:#9ca3af;font-style:italic}.sales-summary[data-v-203369eb]{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.summary-item[data-v-203369eb]{display:flex;flex-direction:column;gap:4px;padding:8px;background:#fff;border-radius:6px;border:1px solid #e5e7eb}.summary-label[data-v-203369eb]{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px}.summary-value[data-v-203369eb]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-203369eb]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600;padding-bottom:6px;border-bottom:1px solid #e5e7eb}.variant-list[data-v-203369eb]{display:flex;flex-direction:column;gap:8px}.variant-item[data-v-203369eb]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-203369eb]{display:flex;align-items:center;flex:1}.variant-details[data-v-203369eb]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-203369eb]{font-size:14px;color:#374151;font-weight:500}.variant-source[data-v-203369eb]{font-size:11px;color:#059669;font-weight:500}.variant-stats[data-v-203369eb]{display:flex;flex-direction:column;gap:4px;text-align:right;min-width:100px}.variant-quantity[data-v-203369eb],.variant-revenue[data-v-203369eb]{font-size:12px;color:#6b7280;font-weight:500}.variant-summary[data-v-203369eb]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-203369eb]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-203369eb]{font-size:12px;color:#0369a1;font-weight:500}.summary-stat strong[data-v-203369eb]{color:#0c4a6e;font-weight:600}.no-variants[data-v-203369eb]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-203369eb]{width:95%;margin:20px}.variant-item[data-v-203369eb]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-203369eb]{text-align:left;width:100%}}.item-entry[data-v-bc9a52c5]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-bc9a52c5]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-bc9a52c5]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-bc9a52c5 .2s ease-out}.tooltip-header[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-bc9a52c5]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-bc9a52c5]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-bc9a52c5]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-bc9a52c5]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-bc9a52c5]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-bc9a52c5]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-bc9a52c5]:hover{color:#2563eb;text-decoration:underline}.favorites-display[data-v-bc9a52c5]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-bc9a52c5]{width:12px;height:12px;color:#ef4444}@keyframes tooltipFadeIn-bc9a52c5{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-bc9a52c5]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-bc9a52c5]{width:28px;height:28px}}.order-number[data-v-19177af7]{font-weight:500;color:#374151}.date-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-19177af7]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-19177af7]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-19177af7]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-19177af7]{font-weight:500;color:#374151}.price-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-19177af7]{align-items:center}.items[data-v-19177af7]{max-height:80px}.price-cell[data-v-19177af7],.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{padding-top:4px}}.settings-content[data-v-afcda58d]{padding:24px}.setting-section[data-v-afcda58d]{margin-bottom:24px}.setting-section h3[data-v-afcda58d]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-afcda58d]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-afcda58d]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-afcda58d]{font-size:14px;color:#374151;font-weight:500;flex-shrink:0}.timezone-select[data-v-afcda58d],.currency-select[data-v-afcda58d],.time-filter-select[data-v-afcda58d]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151;min-width:0;width:100%}.current-time[data-v-afcda58d],.exchange-rate-info[data-v-afcda58d]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-afcda58d]{display:flex;gap:12px}.date-filter[data-v-b0951009]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-b0951009]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-b0951009]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-b0951009]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-b0951009]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-b0951009]{font-size:11px}.date-picker-content[data-v-b0951009]{padding:0}.date-input-group[data-v-b0951009]{margin-bottom:16px}.date-input-group label[data-v-b0951009]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-b0951009]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-b0951009]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}@media (max-width: 768px){.period-selector[data-v-b0951009]{font-size:10px}}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-fd8dd5d5]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-fd8dd5d5]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-fd8dd5d5]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-fd8dd5d5]{display:flex;align-items:center;gap:8px}.total-orders[data-v-fd8dd5d5]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-fd8dd5d5]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-fd8dd5d5]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-fd8dd5d5]{width:100%!important;height:100%!important}.legend-container[data-v-fd8dd5d5]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-fd8dd5d5]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-fd8dd5d5]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-fd8dd5d5]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-fd8dd5d5]{display:flex;align-items:center}.legend-label[data-v-fd8dd5d5]{font-size:11px;font-weight:500;color:#374151}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-b96e3217]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-b96e3217]{margin-bottom:24px}.stats-section h3[data-v-b96e3217]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-b96e3217]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-b96e3217]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-b96e3217]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-b96e3217]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-b96e3217]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-b96e3217]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-b96e3217]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-b96e3217]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.charts-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-b96e3217]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-b96e3217]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-b96e3217]{padding:16px 12px}.stat-value[data-v-b96e3217]{font-size:24px}.stat-converted[data-v-b96e3217]{font-size:11px;padding:3px 8px}.period-selector[data-v-b96e3217]{font-size:10px}.charts-grid[data-v-b96e3217]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-b96e3217]{padding:12px}.item-ranking .ranking-header h4[data-v-b96e3217]{font-size:13px}.item-ranking .ranking-item[data-v-b96e3217]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-b96e3217]{width:100%}.item-ranking .sales-data[data-v-b96e3217]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-edd46e6c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:160px;border:1px solid #e5e7eb}.status-indicator[data-v-edd46e6c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-edd46e6c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-edd46e6c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-edd46e6c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-edd46e6c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-edd46e6c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-edd46e6c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-edd46e6c]{color:#374151}.spinner[data-v-edd46e6c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-edd46e6c 1s linear infinite}@keyframes spin-edd46e6c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-44f36af5]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-44f36af5]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafccc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(229,231,235,.6);flex-shrink:0}.header-left[data-v-44f36af5]{display:flex;align-items:center}.title[data-v-44f36af5]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-44f36af5]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-44f36af5]{width:18px;height:18px}.refresh-icon[data-v-44f36af5]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-44f36af5]{animation:spin-44f36af5 1s linear infinite;transform-origin:center}@keyframes spin-44f36af5{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-44f36af5]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-44f36af5]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-44f36af5]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-44f36af5]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-44f36af5]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-44f36af5]{flex:1}@media (max-width: 768px){.header[data-v-44f36af5]{padding:12px 16px}.title[data-v-44f36af5]{font-size:16px}.header-right[data-v-44f36af5]{gap:6px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-44f36af5]{padding:10px 12px}.title[data-v-44f36af5]{font-size:14px}.header-right[data-v-44f36af5]{gap:4px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
 
-(function (vue) {
+(async function (vue) {
   'use strict';
 
   const formatDistanceLocale = {
@@ -2366,9 +2366,6 @@
     const netAmount = calculateNetAmount(price, orderDateStr);
     return `¥${netAmount.toLocaleString()}`;
   }
-  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
-  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
-  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var ElementType;
   (function(ElementType2) {
     ElementType2["Root"] = "root";
@@ -3487,11 +3484,11 @@
         if (href2) {
           entry.link = href2;
         }
-        const description = fetch("summary", children2) || fetch("content", children2);
+        const description = fetch$1("summary", children2) || fetch$1("content", children2);
         if (description) {
           entry.description = description;
         }
-        const pubDate = fetch("updated", children2);
+        const pubDate = fetch$1("updated", children2);
         if (pubDate) {
           entry.pubDate = new Date(pubDate);
         }
@@ -3505,7 +3502,7 @@
       feed.link = href;
     }
     addConditionally(feed, "description", "subtitle", childs);
-    const updated = fetch("updated", childs);
+    const updated = fetch$1("updated", childs);
     if (updated) {
       feed.updated = new Date(updated);
     }
@@ -3525,7 +3522,7 @@
         addConditionally(entry, "title", "title", children2);
         addConditionally(entry, "link", "link", children2);
         addConditionally(entry, "description", "description", children2);
-        const pubDate = fetch("pubDate", children2) || fetch("dc:date", children2);
+        const pubDate = fetch$1("pubDate", children2) || fetch$1("dc:date", children2);
         if (pubDate)
           entry.pubDate = new Date(pubDate);
         return entry;
@@ -3534,7 +3531,7 @@
     addConditionally(feed, "title", "title", childs);
     addConditionally(feed, "link", "link", childs);
     addConditionally(feed, "description", "description", childs);
-    const updated = fetch("lastBuildDate", childs);
+    const updated = fetch$1("lastBuildDate", childs);
     if (updated) {
       feed.updated = new Date(updated);
     }
@@ -3578,11 +3575,11 @@
   function getOneElement(tagName, node) {
     return getElementsByTagName(tagName, node, true, 1)[0];
   }
-  function fetch(tagName, where, recurse = false) {
+  function fetch$1(tagName, where, recurse = false) {
     return textContent(getElementsByTagName(tagName, where, recurse, 1)).trim();
   }
   function addConditionally(obj, prop2, tagName, where, recurse = false) {
-    const val2 = fetch(tagName, where, recurse);
+    const val2 = fetch$1(tagName, where, recurse);
     if (val2)
       obj[prop2] = val2;
   }
@@ -15982,12 +15979,6 @@
       }
     }
     /**
-     * Debug日志
-     */
-    debug(message2, ...args) {
-      this.log(0, "DEBUG", message2, ...args);
-    }
-    /**
      * Info日志
      */
     info(message2, ...args) {
@@ -16007,6 +15998,168 @@
     }
   }
   const logger = Logger.getInstance();
+  var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+  var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+  var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  class SessionManager {
+    static instance;
+    sessionInfo = null;
+    constructor() {
+    }
+    /**
+     * 获取单例实例
+     */
+    static getInstance() {
+      if (!SessionManager.instance) {
+        SessionManager.instance = new SessionManager();
+      }
+      return SessionManager.instance;
+    }
+    /**
+     * 获取有效的 Session
+     * 如果已有 Session 且未过期，直接返回
+     * 否则尝试获取新的 Session
+     */
+    async getValidSession() {
+      if (this.sessionInfo && this.isSessionValid()) {
+        return this.sessionInfo._plaza_session_nktz7u;
+      }
+      logger.info("尝试获取新的 Session...");
+      const newSession = await this.fetchSession();
+      if (newSession) {
+        this.sessionInfo = newSession;
+        logger.info("成功获取并缓存 Session");
+        return newSession._plaza_session_nktz7u;
+      } else {
+        logger.warn("未能获取有效 Session");
+        return null;
+      }
+    }
+    /**
+     * 检查 Session 是否有效
+     * 如果没有过期时间，认为有效
+     * 提前5分钟认为过期，避免边界情况
+     */
+    isSessionValid() {
+      if (!this.sessionInfo) return false;
+      if (!this.sessionInfo.expires_at) return true;
+      const expiresTime = new Date(this.sessionInfo.expires_at).getTime();
+      const currentTime = Date.now();
+      const bufferTime = 5 * 60 * 1e3;
+      const effectiveExpiresTime = expiresTime - bufferTime;
+      return currentTime < effectiveExpiresTime;
+    }
+    /**
+     * 获取 Session 信息
+     * 通过访问 Booth 订单页面获取认证 Cookie
+     */
+    async fetchSession() {
+      return new Promise((resolve2) => {
+        _GM_xmlhttpRequest({
+          method: "GET",
+          url: "https://manage.booth.pm/orders",
+          headers: {
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
+          },
+          onload: (response) => {
+            const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+            if (cookieInfo) {
+              const sessionData = {
+                _plaza_session_nktz7u: cookieInfo.value,
+                updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+                expires_at: cookieInfo.expires
+              };
+              resolve2(sessionData);
+            } else {
+              logger.warn("未找到有效的 Session");
+              resolve2(null);
+            }
+          },
+          onerror: (error) => {
+            logger.error("获取 Session 请求失败:", error);
+            resolve2(null);
+          },
+          ontimeout: () => {
+            logger.warn("获取 Session 请求超时");
+            resolve2(null);
+          }
+        });
+      });
+    }
+    /**
+     * 从响应头提取 Cookie 信息
+     * 查找包含 _plaza_session_nktz7u 的 Set-Cookie 头
+     */
+    extractCookieInfo(headers) {
+      const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+      if (!cookieHeader) return null;
+      const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+      const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
+      return {
+        value,
+        expires: expires ? new Date(expires).toISOString() : null
+      };
+    }
+    /**
+     * 手动刷新 Session
+     * 强制获取新的 Session 信息
+     */
+    async refreshSession() {
+      try {
+        logger.info("手动刷新 Session...");
+        const newSession = await this.fetchSession();
+        if (newSession) {
+          this.sessionInfo = newSession;
+          logger.info("Session 刷新成功");
+          return true;
+        }
+        logger.warn("Session 刷新失败");
+        return false;
+      } catch (error) {
+        logger.error("刷新 Session 失败:", error);
+        return false;
+      }
+    }
+    /**
+     * 获取当前 Session 状态
+     * 返回 Session 的存在性、有效性和过期时间
+     */
+    getSessionStatus() {
+      return {
+        hasSession: !!this.sessionInfo,
+        isValid: this.isSessionValid(),
+        expiresAt: this.sessionInfo?.expires_at || void 0
+      };
+    }
+    /**
+     * 清除 Session
+     * 用于登出或 Session 失效时
+     */
+    clearSession() {
+      this.sessionInfo = null;
+      logger.info("Session 已清除");
+    }
+    /**
+     * 检查是否需要重新认证
+     * 基于 Session 状态判断
+     */
+    needsReauthentication() {
+      return !this.sessionInfo || !this.isSessionValid();
+    }
+    /**
+     * 获取 Session 的最后更新时间
+     */
+    getLastUpdateTime() {
+      return this.sessionInfo?.updated_at || null;
+    }
+    /**
+     * 获取 Session 的过期时间
+     */
+    getExpirationTime() {
+      return this.sessionInfo?.expires_at || null;
+    }
+  }
   class ItemManager {
     static instance;
     itemsMap = /* @__PURE__ */ new Map();
@@ -16028,17 +16181,18 @@
     }
     /**
      * 初始化商品数据
-     * 从Booth管理页面获取所有商品信息
+     * 融合 API 和 HTML 数据加载，让它们协同工作
      */
     async initialize() {
       if (this.isInitialized) {
         return;
       }
       try {
-        await this.loadItemsFromApi();
-        await this.loadItemsFromHTML();
+        logger.info("开始融合加载 API 和 HTML 数据");
+        await this.loadItemsFused();
         this.initializeBoothItems();
         this.isInitialized = true;
+        logger.info("商品数据初始化完成");
       } catch (error) {
         logger.error("商品数据初始化失败:", error);
         logger.warn("商品数据初始化失败，将使用空数据继续运行");
@@ -16046,42 +16200,21 @@
       }
     }
     /**
-     * 从管理页面API加载商品数据
+     * 融合加载 API 和 HTML 数据
+     * 先通过 API 获取商品列表和页数信息，再并行加载 HTML 数据
      */
-    async loadItemsFromApi() {
+    async loadItemsFused() {
       try {
         let page = 1;
         let hasMorePages = true;
+        let totalPages = 1;
         while (hasMorePages) {
           const boothManageUrl = `https://manage.booth.pm/items?page=${page}`;
-          const response = await new Promise((resolve2, reject) => {
-            const timeout = setTimeout(() => {
-              reject(new Error("请求超时"));
-            }, 2e4);
-            _GM_xmlhttpRequest({
-              method: "GET",
-              url: boothManageUrl,
-              timeout: 2e4,
-              // 不设置请求头，返回JSON数据
-              onload: function(response2) {
-                clearTimeout(timeout);
-                if (response2.status === 200) {
-                  resolve2(response2.responseText);
-                } else {
-                  reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
-                }
-              },
-              onerror: function(error) {
-                clearTimeout(timeout);
-                reject(error);
-              },
-              ontimeout: function() {
-                clearTimeout(timeout);
-                reject(new Error("请求超时"));
-              }
-            });
-          });
-          const data2 = JSON.parse(response);
+          const response = await fetch(boothManageUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          const data2 = await response.json();
           if (data2 && data2.items && Array.isArray(data2.items)) {
             data2.items.forEach((item, index2) => {
               try {
@@ -16097,7 +16230,6 @@
                   const itemData = {
                     id: item.id,
                     name,
-                    // 使用trim后的name变量
                     url: item.url,
                     state: item.state,
                     state_label: item.state_label,
@@ -16111,8 +16243,15 @@
                 logger.warn(`解析API商品数据失败 (索引 ${index2}):`, error);
               }
             });
-            if (data2.metadata && data2.metadata.next_page) {
-              page++;
+            if (data2.metadata) {
+              if (data2.metadata.total_pages) {
+                totalPages = data2.metadata.total_pages;
+              }
+              if (data2.metadata.next_page) {
+                page++;
+              } else {
+                hasMorePages = false;
+              }
             } else {
               hasMorePages = false;
             }
@@ -16120,90 +16259,90 @@
             hasMorePages = false;
           }
         }
-        logger.debug(`API数据加载完成，共获取 ${this.itemsMap.size} 个商品`);
+        logger.info(`API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
+        await this.loadAllHTMLPages(totalPages);
       } catch (error) {
-        logger.error("API数据加载失败:", error);
+        logger.error("融合数据加载失败:", error);
         throw error;
       }
     }
     /**
-     * 从HTML页面加载商品数据
+     * 并行加载所有页面的 HTML 数据
      */
-    async loadItemsFromHTML() {
-      const maxRetries = 2;
-      let retryCount = 0;
-      while (retryCount <= maxRetries) {
-        try {
-          const boothManageUrl = "https://manage.booth.pm/items";
-          const response = await new Promise((resolve2, reject) => {
-            const timeout = setTimeout(() => {
-              reject(new Error("请求超时"));
-            }, 3e4);
-            _GM_xmlhttpRequest({
-              method: "GET",
-              url: boothManageUrl,
-              timeout: 3e4,
-              headers: {
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br, zstd",
-                "Cache-Control": "max-age=0",
-                "User-Agent": navigator.userAgent,
-                "Referer": window.location.origin
-              },
-              onload: function(response2) {
-                clearTimeout(timeout);
-                if (response2.status === 200) {
-                  resolve2(response2.responseText);
-                } else {
-                  reject(new Error(`HTTP ${response2.status}: ${response2.statusText}`));
-                }
-              },
-              onerror: function(error) {
-                clearTimeout(timeout);
-                reject(error);
-              },
-              ontimeout: function() {
-                clearTimeout(timeout);
-                reject(new Error("请求超时"));
+    async loadAllHTMLPages(totalPages) {
+      try {
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
+        const htmlPromises = [];
+        for (let page = 1; page <= totalPages; page++) {
+          const boothManageUrl = page === 1 ? "https://manage.booth.pm/items" : `https://manage.booth.pm/items?page=${page}`;
+          const headers = {
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Cache-Control": "max-age=0",
+            "User-Agent": navigator.userAgent,
+            Referer: window.location.origin
+          };
+          if (sessionValue) {
+            headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
+          }
+          const htmlPromise = fetch(boothManageUrl, {
+            method: "GET",
+            headers
+          }).then(async (response) => {
+            if (!response.ok) {
+              if (response.status === 401) {
+                throw new Error(`[HTML] 第 ${page} 页认证失败 (401): ${sessionValue ? "Session 已失效" : "请先登录 Booth 账户"}`);
+              } else {
+                throw new Error(`[HTML] 第 ${page} 页请求失败: HTTP ${response.status}: ${response.statusText}`);
               }
-            });
+            }
+            const content = await response.text();
+            return { content, page };
           });
-          if (response.includes("<html") || response.includes("<!DOCTYPE")) {
-            this.parseItemsFromHTML(response);
-            return;
-          } else {
-            logger.warn("响应内容不是HTML页面");
-            return;
-          }
-        } catch (error) {
-          retryCount++;
-          if (retryCount <= maxRetries) {
-            logger.warn(`HTML数据加载失败，正在重试 (${retryCount}/${maxRetries}):`, error);
-            await new Promise((resolve2) => setTimeout(resolve2, 2e3));
-          } else {
-            logger.error("HTML解析加载商品数据时发生错误:", error);
-            logger.warn("HTML数据加载失败，将使用API数据继续运行");
-            return;
-          }
+          htmlPromises.push(htmlPromise);
         }
+        logger.info(`开始并行加载 ${totalPages} 页 HTML 数据`);
+        const htmlResults = await Promise.allSettled(htmlPromises);
+        let successCount = 0;
+        let failCount = 0;
+        htmlResults.forEach((result) => {
+          if (result.status === "fulfilled") {
+            const { content, page } = result.value;
+            if (content.includes("<html") || content.includes("<!DOCTYPE")) {
+              this.parseItemsFromHTML(content, page);
+              successCount++;
+            } else {
+              logger.warn(`第 ${page} 页响应内容不是HTML页面`);
+              failCount++;
+            }
+          } else {
+            logger.error(`HTML 页面加载失败:`, result.reason);
+            failCount++;
+          }
+        });
+        logger.info(`HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
+      } catch (error) {
+        logger.error("HTML 数据加载失败:", error);
+        throw error;
       }
     }
     /**
      * 使用cheerio解析HTML页面中的商品数据
      */
-    parseItemsFromHTML(htmlContent) {
+    parseItemsFromHTML(htmlContent, page) {
       try {
         const $2 = load(htmlContent);
         const itemsFromElements = this.parseItemsFromElements($2);
         if (itemsFromElements.length > 0) {
-          this.processItemsFromElements(itemsFromElements);
-          logger.debug(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品`);
+          this.processItemsFromElements(itemsFromElements, page);
+          logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
         } else {
-          logger.warn("未从HTML元素中找到商品数据");
+          logger.warn(`第 ${page} 页未从HTML元素中找到商品数据`);
         }
       } catch (error) {
-        logger.error("解析HTML时出错:", error);
+        logger.error(`解析HTML时出错 (页码: ${page}):`, error);
       }
     }
     /**
@@ -16211,10 +16350,8 @@
      */
     parseItemsFromElements($2) {
       const items = [];
-      let totalElements = 0;
       try {
         const itemElements = $2("#items > li");
-        totalElements = itemElements.length;
         itemElements.each((index2, itemElement) => {
           try {
             const $item = $2(itemElement);
@@ -16280,15 +16417,14 @@
     /**
      * 处理从HTML元素解析的商品数据
      */
-    processItemsFromElements(items) {
+    processItemsFromElements(items, page) {
       try {
         items.forEach((item, index2) => {
           try {
-            const itemId = `html-item-${index2}`;
-            const name = item.name.trim();
+            const itemId = `html-item-${page}-${index2}`;
             this.htmlItemsMap.set(itemId, item);
           } catch (error) {
-            logger.warn(`处理HTML商品数据失败 (索引 ${index2}):`, error);
+            logger.warn(`处理HTML商品数据失败 (索引 ${index2}, 页码: ${page}):`, error);
           }
         });
       } catch (error) {
@@ -16331,13 +16467,12 @@
         };
         this.boothItemsMap.set(itemId, boothItem);
         if (htmlItem) {
-          const matchedHtmlId = Array.from(availableHtmlItems.entries()).find(([id, item]) => item.name === apiItem.name)?.[0];
+          const matchedHtmlId = Array.from(availableHtmlItems.entries()).find(([, item]) => item.name === apiItem.name)?.[0];
           if (matchedHtmlId) {
             availableHtmlItems.delete(matchedHtmlId);
           }
         }
       });
-      logger.info(`初始化完成: 创建了 ${this.boothItemsMap.size} 个统一的BoothItem`);
     }
     /**
      * 通过商品名称查找HTML解析的商品数据
@@ -17116,7 +17251,7 @@
       this.variantCache.clear();
       const allVariantsMap = /* @__PURE__ */ new Map();
       const allItems = this.itemManager.getAllBoothItems();
-      logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
+      logger.info(`开始预处理 ${allItems.size} 个商品的变体数据`);
       let processedCount = 0;
       let totalVariants = 0;
       allItems.forEach((boothItem, itemId) => {
@@ -17128,7 +17263,7 @@
           totalVariants += variantStats.length;
         }
       });
-      logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
+      logger.info(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
       return allVariantsMap;
     }
     /**
@@ -17143,7 +17278,7 @@
       }
       const allSalesStats = this.getAllItemSalesStats(orders);
       if (this.shouldReprocessOrders(orders)) {
-        logger.debug(`需要重新处理订单数据，开始预处理变体`);
+        logger.info(`需要重新处理订单数据，开始预处理变体`);
         this.preprocessAllItemVariants(orders);
         this.lastProcessedOrders = [...orders];
       }
@@ -18034,6 +18169,7 @@
         if (parseResult.success && parseResult.data) {
           this.orders = parseResult.data;
           this.lastLoadTime = /* @__PURE__ */ new Date();
+          logger.info(`加载 ${this.orders.length} 条订单数据`);
           this.preprocessAllItemVariants();
           this.isLoading = false;
           return { success: true, data: this.orders };
@@ -18046,61 +18182,86 @@
         return { success: false, error: `加载失败: ${error}` };
       }
     }
-    // 下载CSV文件
-    downloadCSV() {
-      return new Promise((resolve2) => {
-        _GM_xmlhttpRequest({
+    // 改进：下载 CSV 文件，自动添加 Session
+    async downloadCSV() {
+      try {
+        const sessionManager = SessionManager.getInstance();
+        const sessionValue = await sessionManager.getValidSession();
+        const headers = {
+          Accept: "text/csv,application/csv,text/plain",
+          "Content-Type": "text/csv; charset=utf-8"
+        };
+        if (sessionValue) {
+          headers["Cookie"] = `_plaza_session_nktz7u=${sessionValue}`;
+        } else {
+          logger.warn("未找到有效 Session，将尝试无认证请求");
+        }
+        const response = await fetch("https://manage.booth.pm/orders/csv", {
           method: "GET",
-          url: "https://manage.booth.pm/orders/csv",
-          headers: {
-            "Accept": "text/csv,application/csv,text/plain",
-            "Content-Type": "text/csv; charset=utf-8"
-          },
-          onload: (response) => {
-            if (response.status === 200) {
-              resolve2({ success: true, data: response.responseText });
-            } else {
-              resolve2({
-                success: false,
-                error: `下载失败: HTTP ${response.status} - ${response.statusText}`
-              });
-            }
-          },
-          onerror: (error) => {
-            resolve2({ success: false, error: "网络请求失败" });
-          },
-          ontimeout: () => {
-            resolve2({ success: false, error: "下载超时" });
-          }
+          headers
         });
-      });
+        if (response.status === 401) {
+          if (sessionValue) {
+            sessionManager.clearSession();
+            logger.warn("Session 已失效，已清除");
+          }
+          return {
+            success: false,
+            error: `认证失败 (401): ${sessionValue ? "Session 已失效，请重新登录" : "请先登录 Booth 账户"}`
+          };
+        }
+        if (!response.ok) {
+          return {
+            success: false,
+            error: `下载失败: HTTP ${response.status} - ${response.statusText}`
+          };
+        }
+        const csvData = await response.text();
+        return { success: true, data: csvData };
+      } catch (error) {
+        let errorMessage = "网络错误";
+        if (error.status === 401) {
+          errorMessage = "认证失败: 请先登录 Booth 账户";
+        } else if (error.status === 403) {
+          errorMessage = "访问被拒绝: 可能没有权限访问此页面";
+        } else if (error.status === 404) {
+          errorMessage = "页面不存在: 请检查 URL 是否正确";
+        }
+        return {
+          success: false,
+          error: `${errorMessage}: ${JSON.stringify(error)}`
+        };
+      }
+    }
+    // 获取当前 Session 状态（代理到 SessionManager）
+    getSessionStatus() {
+      const sessionManager = SessionManager.getInstance();
+      return sessionManager.getSessionStatus();
+    }
+    // 手动刷新 Session（代理到 SessionManager）
+    async refreshSession() {
+      const sessionManager = SessionManager.getInstance();
+      return await sessionManager.refreshSession();
     }
     // 清除数据
     clearData() {
       this.orders = [];
       this.lastLoadTime = null;
     }
-    // 获取数据统计
+    // 获取数据统计信息
     getDataStats() {
       return {
         totalOrders: this.orders.length,
-        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toLocaleString() : null
+        lastLoadTime: this.lastLoadTime ? this.lastLoadTime.toISOString() : null
       };
     }
-    /**
-     * 预处理所有商品的变体数据
-     * 在数据加载完成后统一处理，避免后续使用时重复计算
-     */
+    // 预处理所有商品的变体数据
     preprocessAllItemVariants() {
-      if (this.orders.length === 0) {
-        logger.warn("没有订单数据，跳过变体数据预处理");
-        return;
-      }
       try {
         const orderManager = OrderManager.getInstance();
         orderManager.preprocessAllItemVariants(this.orders);
       } catch (error) {
-        logger.error("变体数据预处理失败:", error);
+        logger.warn("预处理商品变体数据失败:", error);
       }
     }
   }
@@ -19088,8 +19249,8 @@
   const _hoisted_17$3 = { class: "item-info" };
   const _hoisted_18$2 = { class: "item-icon" };
   const _hoisted_19$2 = { class: "item-details" };
-  const _hoisted_20 = { class: "item-header" };
-  const _hoisted_21 = { class: "item-id" };
+  const _hoisted_20$1 = { class: "item-header" };
+  const _hoisted_21$1 = { class: "item-id" };
   const _hoisted_22 = { class: "item-meta" };
   const _hoisted_23 = { class: "meta-left" };
   const _hoisted_24 = {
@@ -19348,7 +19509,7 @@
                 class: "booth-btn booth-btn-primary booth-btn-sm",
                 disabled: props.userSettings?.privacyMode || false,
                 onClick: ($event) => showSalesDetails(item)
-              }, " 查看销量 ", 8, _hoisted_15$5)) : vue.createCommentVNode("", true)
+              }, " 查看详情 ", 8, _hoisted_15$5)) : vue.createCommentVNode("", true)
             ]),
             _: 1
           }, 8, ["data", "config"]),
@@ -19369,9 +19530,9 @@
                     }, null, 8, ["item-id", "privacy-mode"])
                   ]),
                   vue.createElementVNode("div", _hoisted_19$2, [
-                    vue.createElementVNode("div", _hoisted_20, [
+                    vue.createElementVNode("div", _hoisted_20$1, [
                       vue.createElementVNode("h4", null, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "商品" : selectedItem.value.item.name), 1),
-                      vue.createElementVNode("span", _hoisted_21, "ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
+                      vue.createElementVNode("span", _hoisted_21$1, "ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
                     ]),
                     vue.createElementVNode("div", _hoisted_22, [
                       vue.createElementVNode("div", _hoisted_23, [
@@ -19509,7 +19670,7 @@
       };
     }
   });
-  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-deaee024"]]);
+  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-203369eb"]]);
   const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
     try {
       const jstDate = parseISO(jstDateTime + "+09:00");
@@ -19921,7 +20082,8 @@
     displayName: "中国标准时间",
     targetCurrency: "CNY",
     privacyMode: false,
-    mondayAsFirstDay: true
+    mondayAsFirstDay: true,
+    defaultTimeFilter: "all"
   };
   const TIMEZONE_OPTIONS = [
     { value: "Asia/Shanghai", label: "中国标准时间 (UTC+8)" },
@@ -20004,9 +20166,11 @@
   const _hoisted_14$2 = { class: "setting-section" };
   const _hoisted_15$2 = { class: "setting-item" };
   const _hoisted_16$1 = { class: "booth-toggle" };
-  const _hoisted_17 = { class: "setting-section" };
-  const _hoisted_18 = { class: "setting-actions" };
-  const _hoisted_19 = ["disabled"];
+  const _hoisted_17 = { class: "setting-item" };
+  const _hoisted_18 = ["value"];
+  const _hoisted_19 = { class: "setting-section" };
+  const _hoisted_20 = { class: "setting-actions" };
+  const _hoisted_21 = ["disabled"];
   const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
@@ -20020,7 +20184,8 @@
         displayName: "中国标准时间",
         targetCurrency: "CNY",
         privacyMode: false,
-        mondayAsFirstDay: true
+        mondayAsFirstDay: true,
+        defaultTimeFilter: "thisWeek"
       });
       const isSaving = vue.ref(false);
       const loadSettings = () => {
@@ -20078,6 +20243,9 @@
       const handleMondayAsFirstDayChange = () => {
         emit("settings-changed", settings.value);
       };
+      const handleDefaultTimeFilterChange = () => {
+        emit("settings-changed", settings.value);
+      };
       const closeSettings = () => {
         emit("close");
       };
@@ -20094,10 +20262,10 @@
           default: vue.withCtx(() => [
             vue.createElementVNode("div", _hoisted_1$7, [
               vue.createElementVNode("div", _hoisted_2$7, [
-                _cache[5] || (_cache[5] = vue.createElementVNode("h3", null, "时区设置", -1)),
-                _cache[6] || (_cache[6] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
+                _cache[6] || (_cache[6] = vue.createElementVNode("h3", null, "时区设置", -1)),
+                _cache[7] || (_cache[7] = vue.createElementVNode("p", { class: "setting-description" }, " 选择您的时区，系统会将Booth的JST时间转换为您的本地时间显示。 ", -1)),
                 vue.createElementVNode("div", _hoisted_3$7, [
-                  _cache[4] || (_cache[4] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
+                  _cache[5] || (_cache[5] = vue.createElementVNode("label", { for: "timezone-select" }, "时区：", -1)),
                   vue.withDirectives(vue.createElementVNode("select", {
                     id: "timezone-select",
                     "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => settings.value.timezone = $event),
@@ -20119,10 +20287,10 @@
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_6$6, [
-                _cache[8] || (_cache[8] = vue.createElementVNode("h3", null, "货币设置", -1)),
-                _cache[9] || (_cache[9] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
+                _cache[9] || (_cache[9] = vue.createElementVNode("h3", null, "货币设置", -1)),
+                _cache[10] || (_cache[10] = vue.createElementVNode("p", { class: "setting-description" }, " 选择目标货币，系统会将日元金额转换为您选择的货币显示。 ", -1)),
                 vue.createElementVNode("div", _hoisted_7$6, [
-                  _cache[7] || (_cache[7] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
+                  _cache[8] || (_cache[8] = vue.createElementVNode("label", { for: "currency-select" }, "目标货币：", -1)),
                   vue.withDirectives(vue.createElementVNode("select", {
                     id: "currency-select",
                     "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => settings.value.targetCurrency = $event),
@@ -20145,8 +20313,8 @@
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_11$2, [
-                _cache[12] || (_cache[12] = vue.createElementVNode("h3", null, "隐私设置", -1)),
-                _cache[13] || (_cache[13] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
+                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "隐私设置", -1)),
+                _cache[14] || (_cache[14] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
                 vue.createElementVNode("div", _hoisted_12$2, [
                   vue.createElementVNode("label", _hoisted_13$2, [
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -20156,14 +20324,14 @@
                     }, null, 544), [
                       [vue.vModelCheckbox, settings.value.privacyMode]
                     ]),
-                    _cache[10] || (_cache[10] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[11] || (_cache[11] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
+                    _cache[11] || (_cache[11] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[12] || (_cache[12] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
                   ])
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_14$2, [
-                _cache[16] || (_cache[16] = vue.createElementVNode("h3", null, "时间设置", -1)),
-                _cache[17] || (_cache[17] = vue.createElementVNode("p", { class: "setting-description" }, ' 选择一周的第一天，影响"本周"和"上周"的时间范围计算。 ', -1)),
+                _cache[18] || (_cache[18] = vue.createElementVNode("h3", null, "时间设置", -1)),
+                _cache[19] || (_cache[19] = vue.createElementVNode("p", { class: "setting-description" }, ' 选择一周的第一天，影响"本周"和"上周"的时间范围计算。 ', -1)),
                 vue.createElementVNode("div", _hoisted_15$2, [
                   vue.createElementVNode("label", _hoisted_16$1, [
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -20173,19 +20341,38 @@
                     }, null, 544), [
                       [vue.vModelCheckbox, settings.value.mondayAsFirstDay]
                     ]),
-                    _cache[14] || (_cache[14] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "toggle-label" }, "以周一起始", -1))
+                    _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[16] || (_cache[16] = vue.createElementVNode("span", { class: "toggle-label" }, "以周一起始", -1))
                   ])
-                ])
+                ]),
+                vue.createElementVNode("div", _hoisted_17, [
+                  _cache[17] || (_cache[17] = vue.createElementVNode("label", { for: "default-time-filter" }, "默认时间筛选：", -1)),
+                  vue.withDirectives(vue.createElementVNode("select", {
+                    id: "default-time-filter",
+                    "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => settings.value.defaultTimeFilter = $event),
+                    onChange: handleDefaultTimeFilterChange,
+                    class: "time-filter-select"
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(DataAnalyzer).getAvailablePeriods().filter((p) => p.value !== "custom"), (period) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: period.value,
+                        value: period.value
+                      }, vue.toDisplayString(period.label), 9, _hoisted_18);
+                    }), 128))
+                  ], 544), [
+                    [vue.vModelSelect, settings.value.defaultTimeFilter]
+                  ])
+                ]),
+                _cache[20] || (_cache[20] = vue.createElementVNode("p", { class: "setting-description" }, " 设置打开页面时默认显示的时间筛选选项。 ", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_17, [
-                _cache[18] || (_cache[18] = vue.createElementVNode("h3", null, "数据管理", -1)),
-                vue.createElementVNode("div", _hoisted_18, [
+              vue.createElementVNode("div", _hoisted_19, [
+                _cache[21] || (_cache[21] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                vue.createElementVNode("div", _hoisted_20, [
                   vue.createElementVNode("button", {
                     onClick: saveSettings,
                     disabled: isSaving.value,
                     class: "booth-btn booth-btn-success booth-btn-md"
-                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_19),
+                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_21),
                   vue.createElementVNode("button", {
                     onClick: resetSettings,
                     class: "booth-btn booth-btn-secondary booth-btn-md"
@@ -20199,7 +20386,7 @@
       };
     }
   });
-  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-af501e35"]]);
+  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-afcda58d"]]);
   const _hoisted_1$6 = { class: "date-filter" };
   const _hoisted_2$6 = { class: "filter-header" };
   const _hoisted_3$6 = { class: "current-period" };
@@ -20219,7 +20406,7 @@
     setup(__props, { emit: __emit }) {
       const props = __props;
       const emit = __emit;
-      const selectedPeriod = vue.ref(props.modelValue || "all");
+      const selectedPeriod = vue.ref(props.modelValue || "thisWeek");
       const showCustomRange = vue.ref(false);
       const showDatePicker = vue.ref(false);
       const customStartDate = vue.ref("");
@@ -20245,6 +20432,11 @@
           showDatePicker.value = false;
         }
       });
+      vue.watch(() => props.userSettings?.defaultTimeFilter, (newDefaultFilter) => {
+        if (newDefaultFilter && newDefaultFilter !== selectedPeriod.value) {
+          selectedPeriod.value = newDefaultFilter;
+        }
+      }, { immediate: true });
       const closeDatePicker = () => {
         showDatePicker.value = false;
         if (!customStartDate.value || !customEndDate.value) {
@@ -20330,7 +20522,7 @@
       };
     }
   });
-  const DateFilter = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-2d60ca69"]]);
+  const DateFilter = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-b0951009"]]);
   const _hoisted_1$5 = { class: "item-ranking" };
   const _hoisted_2$5 = { class: "ranking-header" };
   const _hoisted_3$5 = { class: "ranking-controls" };
@@ -35614,7 +35806,8 @@
         displayName: "中国标准时间",
         targetCurrency: "CNY",
         privacyMode: false,
-        mondayAsFirstDay: true
+        mondayAsFirstDay: true,
+        defaultTimeFilter: "all"
       });
       const selectedPeriod = vue.ref("all");
       const customRange = vue.ref();
@@ -35778,7 +35971,7 @@
       };
     }
   });
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-5bd8cb6a"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-44f36af5"]]);
   function isBoothOrdersPage() {
     return window.location.href.includes("manage.booth.pm/orders");
   }
@@ -35887,10 +36080,12 @@
       } else {
         logger.error("数据加载失败:", result.error);
         updateButtonState(false);
+        alert(`数据加载失败: ${result.error}`);
       }
     } catch (error) {
       logger.error("加载过程出错:", error);
       updateButtonState(false);
+      alert(`加载失败: ${error}`);
     }
   }
   async function loadDataAndShowPanel() {
@@ -35902,10 +36097,12 @@
       } else {
         logger.error("数据加载失败:", result.error);
         updateButtonState(false);
+        alert(`数据加载失败: ${JSON.stringify(result.error)}`);
       }
     } catch (error) {
       logger.error("加载过程出错:", error);
       updateButtonState(false);
+      alert(`加载失败: ${error}`);
     }
   }
   async function showVuePanel() {
@@ -35942,9 +36139,12 @@
     setTimeout(() => panel.style.opacity = "1", 10);
   }
   if (isBoothOrdersPage()) {
+    const sessionManager = SessionManager.getInstance();
+    await( sessionManager.getValidSession());
     Promise.all([
       currencyConverter.initializeRates(),
       itemManager.initialize()
+      // 现在有了 Session，可以正常访问 API
     ]).catch((error) => {
       logger.warn("初始化失败，使用默认设置:", error);
     });

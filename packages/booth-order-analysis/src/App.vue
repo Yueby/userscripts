@@ -17,7 +17,8 @@ const userSettings = ref<SettingsType>({
   displayName: '中国标准时间',
   targetCurrency: 'CNY',
   privacyMode: false,
-  mondayAsFirstDay: true
+  mondayAsFirstDay: true,
+  defaultTimeFilter: 'all'
 });
 
 // 过滤器状态
