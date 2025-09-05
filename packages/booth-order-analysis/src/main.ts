@@ -140,13 +140,13 @@ async function loadDataOnly(): Promise<void> {
     } else {
       logger.error('数据加载失败:', result.error);
       updateButtonState(false);
-      alert(`数据加载失败: ${result.error}`);
+
     }
 
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
-    alert(`加载失败: ${error}`);
+
   }
 }
 
@@ -161,13 +161,11 @@ async function loadDataAndShowPanel(): Promise<void> {
     } else {
       logger.error('数据加载失败:', result.error);
       updateButtonState(false);
-      alert(`数据加载失败: ${result.error}`);
     }
 
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
-    alert(`加载失败: ${error}`);
   }
 }
 
@@ -220,8 +218,6 @@ if (isBoothOrdersPage()) {
   ]).catch(error => {
     logger.warn('初始化失败，使用默认设置:', error);
   });
-
-
 
   // 自动加载数据
   setTimeout(async () => {

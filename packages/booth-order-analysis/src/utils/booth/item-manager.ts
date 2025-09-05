@@ -69,12 +69,12 @@ export class ItemManager {
                 const response = await new Promise<string>((resolve, reject) => {
                     const timeout = setTimeout(() => {
                         reject(new Error('请求超时'));
-                    }, 10000);
+                    }, 20000); // 20秒超时
 
                     GM_xmlhttpRequest({
                         method: 'GET',
                         url: boothManageUrl,
-                        timeout: 10000,
+                        timeout: 20000,
                         // 不设置请求头，返回JSON数据
                         onload: function (response) {
                             clearTimeout(timeout);
@@ -154,54 +154,70 @@ export class ItemManager {
      * 从HTML页面加载商品数据
      */
     private async loadItemsFromHTML(): Promise<void> {
-        try {
-            const boothManageUrl = 'https://manage.booth.pm/items';
+        const maxRetries = 2;
+        let retryCount = 0;
 
-            const response = await new Promise<string>((resolve, reject) => {
-                const timeout = setTimeout(() => {
-                    reject(new Error('请求超时'));
-                }, 10000); // 10秒超时
+        while (retryCount <= maxRetries) {
+            try {
+                const boothManageUrl = 'https://manage.booth.pm/items';
 
-                GM_xmlhttpRequest({
-                    method: 'GET',
-                    url: boothManageUrl,
-                    timeout: 10000,
-                    headers: {
-                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
-                        'Accept-Encoding': 'gzip, deflate, br, zstd',
-                        'Cache-Control': 'max-age=0',
-                        'User-Agent': navigator.userAgent,
-                        'Referer': window.location.origin
-                    },
-                    onload: function (response) {
-                        clearTimeout(timeout);
-                        if (response.status === 200) {
-                            resolve(response.responseText);
-                        } else {
-                            reject(new Error(`HTTP ${response.status}: ${response.statusText}`));
-                        }
-                    },
-                    onerror: function (error) {
-                        clearTimeout(timeout);
-                        reject(error);
-                    },
-                    ontimeout: function () {
-                        clearTimeout(timeout);
+                const response = await new Promise<string>((resolve, reject) => {
+                    const timeout = setTimeout(() => {
                         reject(new Error('请求超时'));
-                    }
-                });
-            });
+                    }, 30000); // 30秒超时
 
-            // 检查响应内容类型
-            if (response.includes('<html') || response.includes('<!DOCTYPE')) {
-                this.parseItemsFromHTML(response);
-            } else {
-                logger.warn('响应内容不是HTML页面');
+                    GM_xmlhttpRequest({
+                        method: 'GET',
+                        url: boothManageUrl,
+                        timeout: 30000,
+                        headers: {
+                            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ru;q=0.5',
+                            'Accept-Encoding': 'gzip, deflate, br, zstd',
+                            'Cache-Control': 'max-age=0',
+                            'User-Agent': navigator.userAgent,
+                            'Referer': window.location.origin
+                        },
+                        onload: function (response) {
+                            clearTimeout(timeout);
+                            if (response.status === 200) {
+                                resolve(response.responseText);
+                            } else {
+                                reject(new Error(`HTTP ${response.status}: ${response.statusText}`));
+                            }
+                        },
+                        onerror: function (error) {
+                            clearTimeout(timeout);
+                            reject(error);
+                        },
+                        ontimeout: function () {
+                            clearTimeout(timeout);
+                            reject(new Error('请求超时'));
+                        }
+                    });
+                });
+
+                // 检查响应内容类型
+                if (response.includes('<html') || response.includes('<!DOCTYPE')) {
+                    this.parseItemsFromHTML(response);
+                    return; // 成功，退出重试循环
+                } else {
+                    logger.warn('响应内容不是HTML页面');
+                    return; // 不是HTML，不需要重试
+                }
+            } catch (error) {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    logger.warn(`HTML数据加载失败，正在重试 (${retryCount}/${maxRetries}):`, error);
+                    // 等待2秒后重试
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                } else {
+                    logger.error('HTML解析加载商品数据时发生错误:', error);
+                    // 不抛出错误，让程序继续运行
+                    logger.warn('HTML数据加载失败，将使用API数据继续运行');
+                    return;
+                }
             }
-        } catch (error) {
-            logger.error('HTML解析加载商品数据时发生错误:', error);
-            throw error;
         }
     }
 

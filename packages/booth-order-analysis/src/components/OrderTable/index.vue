@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import type { Order } from '../../types/order';
 import type { Currency, UserSettings } from '../../types/settings';
-import { formatBoothFee, formatNetAmount } from '../../utils/booth/booth-fee-calculator';
+import { calculateBoothFee, calculateNetAmount, formatBoothFee, formatNetAmount } from '../../utils/booth/booth-fee-calculator';
 import { formatConvertedDateTime, formatOriginalDateTime } from '../../utils/core/date-formatter';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
 import DataTable from '../common/DataTable/index.vue';
@@ -136,8 +136,8 @@ const displayConfig = {
               :masked="props.userSettings?.privacyMode || false" 
             />
           </div>
-          <div v-if="!(props.userSettings?.privacyMode || false) && item.totalPrice && targetCurrency && CurrencyManager.formatConverted(item.totalPrice, targetCurrency as any)" class="price-converted">
-            {{ CurrencyManager.formatConverted(item.totalPrice, targetCurrency as any) }}
+          <div v-if="!(props.userSettings?.privacyMode || false) && item.totalPrice && targetCurrency" class="price-converted">
+            {{ CurrencyManager.formatConverted(calculateBoothFee(item.totalPrice, item.createdAt), targetCurrency as any) }}
           </div>
         </div>
       </template>
@@ -151,8 +151,8 @@ const displayConfig = {
               :masked="props.userSettings?.privacyMode || false" 
             />
           </div>
-          <div v-if="!(props.userSettings?.privacyMode || false) && item.totalPrice && targetCurrency && CurrencyManager.formatConverted(item.totalPrice, targetCurrency as any)" class="price-converted">
-            {{ CurrencyManager.formatConverted(item.totalPrice, targetCurrency as any) }}
+          <div v-if="!(props.userSettings?.privacyMode || false) && item.totalPrice && targetCurrency" class="price-converted">
+            {{ CurrencyManager.formatConverted(calculateNetAmount(item.totalPrice, item.createdAt), targetCurrency as any) }}
           </div>
         </div>
       </template>
