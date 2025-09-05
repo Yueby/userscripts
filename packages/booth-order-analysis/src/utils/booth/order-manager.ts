@@ -358,7 +358,7 @@ export class OrderManager {
     const allVariantsMap = new Map<string, VariantSalesStats[]>();
     const allItems = this.itemManager.getAllBoothItems();
 
-    logger.debug(`开始预处理 ${allItems.size} 个商品的变体数据`);
+    logger.info(`开始预处理 ${allItems.size} 个商品的变体数据`);
 
     let processedCount = 0;
     let totalVariants = 0;
@@ -374,7 +374,7 @@ export class OrderManager {
       }
     });
 
-    logger.debug(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
+    logger.info(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
     return allVariantsMap;
   }
 
@@ -408,7 +408,7 @@ export class OrderManager {
 
     // 预处理所有商品的变体数据（一次性处理，避免重复计算）
     if (this.shouldReprocessOrders(orders)) {
-      logger.debug(`需要重新处理订单数据，开始预处理变体`);
+      logger.info(`需要重新处理订单数据，开始预处理变体`);
       this.preprocessAllItemVariants(orders);
       this.lastProcessedOrders = [...orders];
     }

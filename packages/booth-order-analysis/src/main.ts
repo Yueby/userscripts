@@ -4,6 +4,7 @@ import './style.css';
 import { ItemManager } from './utils/booth/item-manager';
 import { DataLoader } from './utils/core/data-loader';
 import { logger } from './utils/core/logger';
+import { SessionManager } from './utils/core/session-manager';
 import { CurrencyManager } from './utils/currency/currency-manager';
 
 // 检查是否在 Booth 订单页面
@@ -22,7 +23,8 @@ const currencyConverter = CurrencyManager;
 
 // 插入按钮
 function insertButton(): void {
-  const targetSelector = 'body > div.page-wrap.box-border.relative.z-\\[2\\].flex-grow.basis-auto.bg-\\[\\#f1f5f8\\].shadow-\\[1px_0_0_0_rgba\\(0\\,0\\,0\\,0\\.05\\)\\].transition-all.duration-\\[180ms\\].ease-in.min-w-\\[970px\\].mobile\\:min-w-\\[auto\\] > main > div.manage-page-body > div > div.lo-grid.manage-nav-block.items-center';
+  const targetSelector =
+    'body > div.page-wrap.box-border.relative.z-\\[2\\].flex-grow.basis-auto.bg-\\[\\#f1f5f8\\].shadow-\\[1px_0_0_0_rgba\\(0\\,0\\,0\\,0\\.05\\)\\].transition-all.duration-\\[180ms\\].ease-in.min-w-\\[970px\\].mobile\\:min-w-\\[auto\\] > main > div.manage-page-body > div > div.lo-grid.manage-nav-block.items-center';
 
   const targetElement = document.querySelector(targetSelector);
 
@@ -140,13 +142,12 @@ async function loadDataOnly(): Promise<void> {
     } else {
       logger.error('数据加载失败:', result.error);
       updateButtonState(false);
-
+      alert(`数据加载失败: ${result.error}`);
     }
-
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
-
+    alert(`加载失败: ${error}`);
   }
 }
 
@@ -161,11 +162,12 @@ async function loadDataAndShowPanel(): Promise<void> {
     } else {
       logger.error('数据加载失败:', result.error);
       updateButtonState(false);
+      alert(`数据加载失败: ${JSON.stringify(result.error)}`);
     }
-
   } catch (error) {
     logger.error('加载过程出错:', error);
     updateButtonState(false);
+    alert(`加载失败: ${error}`);
   }
 }
 
@@ -206,16 +208,20 @@ async function showVuePanel(): Promise<void> {
   document.body.appendChild(panel);
 
   createApp(App).mount(content);
-  setTimeout(() => panel.style.opacity = '1', 10);
+  setTimeout(() => (panel.style.opacity = '1'), 10);
 }
 
 // 启动
 if (isBoothOrdersPage()) {
-  // 异步初始化汇率和商品管理器
+  // 先初始化 Session，再初始化其他管理器
+  const sessionManager = SessionManager.getInstance();
+  await sessionManager.getValidSession();
+
+  // 异步初始化
   Promise.all([
     currencyConverter.initializeRates(),
-    itemManager.initialize()
-  ]).catch(error => {
+    itemManager.initialize() // 现在有了 Session，可以正常访问 API
+  ]).catch((error) => {
     logger.warn('初始化失败，使用默认设置:', error);
   });
 

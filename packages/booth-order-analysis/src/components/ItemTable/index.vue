@@ -102,7 +102,7 @@
             <template v-else-if="column.key === 'action'">
                 <button class="booth-btn booth-btn-primary booth-btn-sm"
                     :disabled="props.userSettings?.privacyMode || false" @click="showSalesDetails(item)">
-                    查看销量
+                    查看详情
                 </button>
             </template>
         </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { CURRENCY_OPTIONS, TIMEZONE_OPTIONS, type UserSettings } from '../../types/settings';
+import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
 import { SettingsManager } from '../../utils/settings/settings-manager';
 import Modal from '../common/Modal/index.vue';
@@ -22,7 +23,8 @@ const settings = ref<UserSettings>({
   displayName: '中国标准时间',
   targetCurrency: 'CNY',
   privacyMode: false,
-  mondayAsFirstDay: true
+  mondayAsFirstDay: true,
+  defaultTimeFilter: 'thisWeek'
 });
 
 const isSaving = ref(false);
@@ -66,7 +68,7 @@ const onTimezoneChange = (event: Event) => {
     settings.value.timezone = selectedOption.value;
     settings.value.displayName = selectedOption.label.split(' ')[0];
   }
-  
+
   // 实时触发设置变化事件
   emit('settings-changed', settings.value);
 };
@@ -110,6 +112,12 @@ const handleMondayAsFirstDayChange = () => {
   emit('settings-changed', settings.value);
 };
 
+// 处理默认时间筛选变化
+const handleDefaultTimeFilterChange = () => {
+  // 实时触发设置变化事件
+  emit('settings-changed', settings.value);
+};
+
 // 关闭设置页面
 const closeSettings = () => {
   emit('close');
@@ -121,12 +129,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Modal 
-    :visible="visible" 
-    title="设置" 
-    size="medium"
-    @close="closeSettings"
-  >
+  <Modal :visible="visible" title="设置" size="medium" @close="closeSettings">
     <div class="settings-content">
       <div class="setting-section">
         <h3>时区设置</h3>
@@ -156,7 +159,8 @@ onMounted(() => {
 
         <div class="setting-item">
           <label for="currency-select">目标货币：</label>
-          <select id="currency-select" v-model="settings.targetCurrency" @change="handleCurrencyChange" class="currency-select">
+          <select id="currency-select" v-model="settings.targetCurrency" @change="handleCurrencyChange"
+            class="currency-select">
             <option v-for="option in CURRENCY_OPTIONS" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
@@ -177,11 +181,7 @@ onMounted(() => {
 
         <div class="setting-item">
           <label class="booth-toggle">
-            <input 
-              type="checkbox" 
-              v-model="settings.privacyMode" 
-              @change="handlePrivacyModeChange"
-            />
+            <input type="checkbox" v-model="settings.privacyMode" @change="handlePrivacyModeChange" />
             <span class="toggle-slider"></span>
             <span class="toggle-label">隐私模式</span>
           </label>
@@ -196,15 +196,26 @@ onMounted(() => {
 
         <div class="setting-item">
           <label class="booth-toggle">
-            <input 
-              type="checkbox" 
-              v-model="settings.mondayAsFirstDay" 
-              @change="handleMondayAsFirstDayChange"
-            />
+            <input type="checkbox" v-model="settings.mondayAsFirstDay" @change="handleMondayAsFirstDayChange" />
             <span class="toggle-slider"></span>
             <span class="toggle-label">以周一起始</span>
           </label>
         </div>
+
+        <div class="setting-item">
+          <label for="default-time-filter">默认时间筛选：</label>
+          <select id="default-time-filter" v-model="settings.defaultTimeFilter" @change="handleDefaultTimeFilterChange"
+            class="time-filter-select">
+            <option v-for="period in DataAnalyzer.getAvailablePeriods().filter(p => p.value !== 'custom')"
+              :key="period.value" :value="period.value">
+              {{ period.label }}
+            </option>
+          </select>
+        </div>
+
+        <p class="setting-description">
+          设置打开页面时默认显示的时间筛选选项。
+        </p>
       </div>
 
       <div class="setting-section">
@@ -221,7 +232,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 .settings-content {
   padding: 24px;
 }
@@ -271,6 +281,18 @@ onMounted(() => {
   width: 100%;
 }
 
+.time-filter-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  min-width: 0;
+  width: 100%;
+}
+
 .current-time,
 .exchange-rate-info {
   font-size: 12px;
@@ -284,5 +306,4 @@ onMounted(() => {
   display: flex;
   gap: 12px;
 }
-
 </style>

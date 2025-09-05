@@ -21,7 +21,7 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const selectedPeriod = ref<TimePeriod>(props.modelValue || 'all');
+const selectedPeriod = ref<TimePeriod>(props.modelValue || 'thisWeek');
 const showCustomRange = ref(false);
 const showDatePicker = ref(false);
 const customStartDate = ref('');
@@ -56,6 +56,14 @@ watch(selectedPeriod, (newValue) => {
     showDatePicker.value = false;
   }
 });
+
+// 监听用户设置的默认时间筛选变化
+watch(() => props.userSettings?.defaultTimeFilter, (newDefaultFilter) => {
+  if (newDefaultFilter && newDefaultFilter !== selectedPeriod.value) {
+    // 如果设置了新的默认时间筛选，且与当前选择不同，则自动切换
+    selectedPeriod.value = newDefaultFilter as TimePeriod;
+  }
+}, { immediate: true });
 
 // 关闭日期选择器
 const closeDatePicker = () => {
@@ -95,21 +103,12 @@ const getCurrentDisplayName = () => {
     </div>
 
     <div class="filter-controls">
-      <Selector
-        :options="periodOptions"
-        :model-value="selectedPeriod"
-        @update:model-value="handlePeriodChange"
-        class="period-selector"
-      />
+      <Selector :options="periodOptions" :model-value="selectedPeriod" @update:model-value="handlePeriodChange"
+        class="period-selector" />
 
       <!-- 日期选择器弹窗 -->
-      <Modal
-        :visible="showDatePicker"
-        title="选择日期范围"
-        size="small"
-        @close="closeDatePicker"
-        @update:visible="showDatePicker = $event"
-      >
+      <Modal :visible="showDatePicker" title="选择日期范围" size="small" @close="closeDatePicker"
+        @update:visible="showDatePicker = $event">
         <div class="date-picker-content">
           <div class="date-input-group">
             <label>开始日期：</label>
@@ -120,10 +119,11 @@ const getCurrentDisplayName = () => {
             <input v-model="customEndDate" type="date" class="date-input" />
           </div>
         </div>
-        
+
         <template #footer>
           <button @click="closeDatePicker" class="booth-btn booth-btn-secondary booth-btn-md">取消</button>
-          <button @click="applyCustomRange" class="booth-btn booth-btn-success booth-btn-md" :disabled="!customStartDate || !customEndDate">
+          <button @click="applyCustomRange" class="booth-btn booth-btn-success booth-btn-md"
+            :disabled="!customStartDate || !customEndDate">
             应用
           </button>
         </template>
@@ -209,4 +209,4 @@ const getCurrentDisplayName = () => {
     font-size: 10px;
   }
 }
-</style> 
+</style>
