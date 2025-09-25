@@ -2,7 +2,7 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.10
+// @version            0.1.11
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
@@ -36080,12 +36080,10 @@
       } else {
         logger.error("数据加载失败:", result.error);
         updateButtonState(false);
-        alert(`数据加载失败: ${result.error}`);
       }
     } catch (error) {
       logger.error("加载过程出错:", error);
       updateButtonState(false);
-      alert(`加载失败: ${error}`);
     }
   }
   async function loadDataAndShowPanel() {
@@ -36097,12 +36095,10 @@
       } else {
         logger.error("数据加载失败:", result.error);
         updateButtonState(false);
-        alert(`数据加载失败: ${JSON.stringify(result.error)}`);
       }
     } catch (error) {
       logger.error("加载过程出错:", error);
       updateButtonState(false);
-      alert(`加载失败: ${error}`);
     }
   }
   async function showVuePanel() {
