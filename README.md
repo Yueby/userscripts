@@ -12,6 +12,7 @@
 
 | 脚本 | 描述 | 安装 |
 |------|------|------|
+| **AboutCG 视频自动播放** | • 自动播放当前视频<br>• 播放完成后自动播放下一集<br>• 跨章节自动播放 | [![](https://img.shields.io/badge/Install-Userscript-blue)](https://github.com/Yueby/userscripts/raw/refs/heads/main/dist/about-cg-auto-video.user.js) |
 | **Booth 商品页面增强** | • 变体序号标识<br>• 标签管理(复制/粘贴/清空)<br>• 商品快速删除<br>• Session管理<br>• 销量统计(总销量/总收益，支持过滤) | [![](https://img.shields.io/badge/Install-Userscript-blue)](https://github.com/Yueby/userscripts/raw/refs/heads/main/dist/booth-enhancer.user.js) |
 | **Booth 订单分析** | • CSV订单数据解析<br>• 数据可视化图表<br>• 汇率转换功能<br>• 商品管理<br>• 统计分析<br>• 时区处理 | [![](https://img.shields.io/badge/Install-Userscript-blue)](https://github.com/Yueby/userscripts/raw/refs/heads/main/dist/booth-order-analysis.user.js) |
 
