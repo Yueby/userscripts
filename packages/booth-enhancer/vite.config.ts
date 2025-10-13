@@ -6,7 +6,7 @@ import monkey from 'vite-plugin-monkey';
 export default defineConfig({
   build: {
     outDir: resolve(__dirname, '../../dist'),
-    emptyOutDir: true
+    emptyOutDir: false
   },
   plugins: [
     monkey({
