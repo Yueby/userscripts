@@ -24,7 +24,7 @@ export default defineConfig({
           'zh-CN': '网页字符替换脚本'
         },
         author: 'Yueby',
-        version: '0.1.1',
+        version: '0.1.0',
         grant: ['GM_registerMenuCommand']
       }
     }),
