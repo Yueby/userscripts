@@ -2,7 +2,7 @@
 // @name               Character Replace
 // @name:zh-CN         字符替换
 // @namespace          yueby.character-replace
-// @version            0.1.1
+// @version            0.1.0
 // @author             Yueby
 // @description        A userscript for replacing characters on web pages
 // @description:zh-CN  网页字符替换脚本

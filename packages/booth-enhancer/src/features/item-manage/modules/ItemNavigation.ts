@@ -298,8 +298,10 @@ export class ItemNavigation {
         items.forEach((item, index) => {
             const itemId = item.getAttribute('data-id');
             const itemName = this.getItemName(item);
+            const thumbnail = this.getItemThumbnail(item);
             const variationCount = item.querySelectorAll('.dashboard-items-variation .row').length;
             const salesCount = this.getTotalSales(item);
+            const favoritesCount = this.getFavoritesCount(item);
 
             const navItem = document.createElement('div');
             navItem.className = 'navigation-item';
@@ -314,18 +316,47 @@ export class ItemNavigation {
                 background: #fff;
                 border: 1px solid transparent;
                 width: max-content;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
             `;
+
+            // 创建封面图
+            const thumbnailContainer = document.createElement('div');
+            thumbnailContainer.style.cssText = `
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            if (thumbnail) {
+                const img = document.createElement('img');
+                img.src = thumbnail;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                img.onerror = () => {
+                    thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+                };
+                thumbnailContainer.appendChild(img);
+            } else {
+                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+            }
 
             // 创建商品信息
             const itemInfo = document.createElement('div');
-            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px;';
+            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;';
 
             const nameRow = document.createElement('div');
             nameRow.style.cssText = 'display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;';
 
             const nameSpan = document.createElement('span');
             nameSpan.textContent = itemName;
-            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word;';
+            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word; min-width: 0;';
 
             const countSpan = document.createElement('span');
             countSpan.textContent = `${variationCount}变体`;
@@ -334,23 +365,34 @@ export class ItemNavigation {
             nameRow.appendChild(nameSpan);
             nameRow.appendChild(countSpan);
 
-            // 添加销量信息
-            const salesRow = document.createElement('div');
-            salesRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
+            // 添加销量和点赞信息
+            const statsRow = document.createElement('div');
+            statsRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
+            
+            const statsLeft = document.createElement('div');
+            statsLeft.style.cssText = 'display: flex; gap: 8px; align-items: center;';
             
             const salesSpan = document.createElement('span');
             salesSpan.textContent = `销量: ${salesCount}`;
             salesSpan.style.cssText = salesCount > 0 ? 'color: #28a745; font-weight: 500;' : 'color: #999; font-weight: 500;';
 
+            const favsSpan = document.createElement('span');
+            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
+            favsSpan.style.cssText = favoritesCount > 0 ? 'color: #f48fb1; font-weight: 500;' : 'color: #999; font-weight: 500;';
+
+            statsLeft.appendChild(salesSpan);
+            statsLeft.appendChild(favsSpan);
+
             const indexSpan = document.createElement('span');
             indexSpan.textContent = `#${index + 1}`;
             indexSpan.style.cssText = 'color: #999; font-size: 9px;';
 
-            salesRow.appendChild(salesSpan);
-            salesRow.appendChild(indexSpan);
-            itemInfo.appendChild(salesRow);
+            statsRow.appendChild(statsLeft);
+            statsRow.appendChild(indexSpan);
+            itemInfo.appendChild(statsRow);
 
             itemInfo.appendChild(nameRow);
+            navItem.appendChild(thumbnailContainer);
             navItem.appendChild(itemInfo);
             itemsContainer.appendChild(navItem);
             tempItems.push(navItem);
@@ -414,8 +456,10 @@ export class ItemNavigation {
         itemsToShow.forEach((item, index) => {
             const itemId = item.getAttribute('data-id');
             const itemName = this.getItemName(item);
+            const thumbnail = this.getItemThumbnail(item);
             const variationCount = item.querySelectorAll('.dashboard-items-variation .row').length;
             const salesCount = this.getTotalSales(item);
+            const favoritesCount = this.getFavoritesCount(item);
 
             const navItem = document.createElement('div');
             navItem.className = 'navigation-item';
@@ -429,18 +473,47 @@ export class ItemNavigation {
                 border-left: 2px solid transparent;
                 background: #fff;
                 border: 1px solid transparent;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
             `;
+
+            // 创建封面图
+            const thumbnailContainer = document.createElement('div');
+            thumbnailContainer.style.cssText = `
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            if (thumbnail) {
+                const img = document.createElement('img');
+                img.src = thumbnail;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                img.onerror = () => {
+                    thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+                };
+                thumbnailContainer.appendChild(img);
+            } else {
+                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+            }
 
             // 创建商品信息
             const itemInfo = document.createElement('div');
-            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px;';
+            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;';
 
             const nameRow = document.createElement('div');
             nameRow.style.cssText = 'display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;';
 
             const nameSpan = document.createElement('span');
             nameSpan.textContent = itemName;
-            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word;';
+            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word; min-width: 0;';
 
             const countSpan = document.createElement('span');
             countSpan.textContent = `${variationCount}变体`;
@@ -449,23 +522,34 @@ export class ItemNavigation {
             nameRow.appendChild(nameSpan);
             nameRow.appendChild(countSpan);
 
-            // 添加销量信息（始终显示，包括0销量）
-            const salesRow = document.createElement('div');
-            salesRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
+            // 添加销量和点赞信息（始终显示，包括0销量）
+            const statsRow = document.createElement('div');
+            statsRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
+            
+            const statsLeft = document.createElement('div');
+            statsLeft.style.cssText = 'display: flex; gap: 8px; align-items: center;';
             
             const salesSpan = document.createElement('span');
             salesSpan.textContent = `销量: ${salesCount}`;
             salesSpan.style.cssText = salesCount > 0 ? 'color: #28a745; font-weight: 500;' : 'color: #999; font-weight: 500;';
 
+            const favsSpan = document.createElement('span');
+            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
+            favsSpan.style.cssText = favoritesCount > 0 ? 'color: #f48fb1; font-weight: 500;' : 'color: #999; font-weight: 500;';
+
+            statsLeft.appendChild(salesSpan);
+            statsLeft.appendChild(favsSpan);
+
             const indexSpan = document.createElement('span');
             indexSpan.textContent = `#${index + 1}`;
             indexSpan.style.cssText = 'color: #999; font-size: 9px;';
 
-            salesRow.appendChild(salesSpan);
-            salesRow.appendChild(indexSpan);
-            itemInfo.appendChild(salesRow);
+            statsRow.appendChild(statsLeft);
+            statsRow.appendChild(indexSpan);
+            itemInfo.appendChild(statsRow);
 
             itemInfo.appendChild(nameRow);
+            navItem.appendChild(thumbnailContainer);
             navItem.appendChild(itemInfo);
 
             // 添加点击事件
@@ -501,6 +585,14 @@ export class ItemNavigation {
     }
 
     /**
+     * 获取商品封面图URL
+     */
+    private getItemThumbnail(item: HTMLElement): string | null {
+        const imgElement = item.querySelector('.thumbnail img') as HTMLImageElement;
+        return imgElement?.src || null;
+    }
+
+    /**
      * 获取商品总销量
      */
     private getTotalSales(item: HTMLElement): number {
@@ -512,6 +604,17 @@ export class ItemNavigation {
             }
         });
         return totalSales;
+    }
+
+    /**
+     * 获取商品点赞数量
+     */
+    private getFavoritesCount(item: HTMLElement): number {
+        const favElement = item.querySelector('.item-stat.favs .count');
+        if (favElement) {
+            return parseInt(favElement.textContent || '0', 10) || 0;
+        }
+        return 0;
     }
 
     /**
