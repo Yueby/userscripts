@@ -453,102 +453,24 @@
       });
     }
   }
-  class ItemManageFeature extends Feature {
-    constructor(context) {
-      super(context);
-      __publicField(this, "itemObserver");
-      this.itemObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const item = entry.target;
-              this.processItem(item);
-              this.itemObserver.unobserve(item);
-            }
-          });
-        },
-        { threshold: 0.1 }
-        // 当元素10%可见时触发
-      );
-    }
-    shouldExecute() {
-      return this.path === "/items" || this.path === "/items/";
-    }
-    async execute() {
-      await super.execute();
-      this.setupItemsObserver();
-    }
-    // 处理单个商品卡片
-    processItem(item) {
+  class ItemActions {
+    /**
+     * 为商品添加操作按钮
+     * @param item 商品元素
+     */
+    addToItem(item) {
       try {
-        this.addButtonToItem(item);
-        this.addVariationNumbersToItem(item);
-        this.addTotalStats(item);
-        item.setAttribute("data-processed", "true");
+        if (item.querySelector(".tag-copy-btn") || item.querySelector(".item-delete-btn")) return;
+        this.addDeleteButton(item);
+        this.addCopyTagsButton(item);
       } catch (error) {
         handleError(error);
       }
     }
-    // 为单个商品添加变体序号
-    addVariationNumbersToItem(item) {
-      const variationList = item.querySelector(".dashboard-items-variation");
-      if (!variationList) return;
-      const variations = variationList.querySelectorAll(".row");
-      variations.forEach((variation, index) => {
-        const labelArea = variation.querySelector(".dashboard-items-variation-label");
-        if (!labelArea) return;
-        let numberSpan = variation.querySelector(".variation-number");
-        if (!numberSpan) {
-          numberSpan = document.createElement("span");
-          numberSpan.className = "variation-number";
-          numberSpan.style.cssText = "margin-right: 8px; color: #666;";
-          labelArea.insertBefore(numberSpan, labelArea.firstChild);
-        }
-        numberSpan.textContent = `#${index + 1}`;
-      });
-      const observer = new MutationObserver(Utils.throttle((_mutations, _observer) => {
-        const needsUpdate = Array.from(variations).some((variation, index) => {
-          const numberSpan = variation.querySelector(".variation-number");
-          return !numberSpan || numberSpan.textContent !== `#${index + 1}`;
-        });
-        if (needsUpdate) {
-          requestAnimationFrame(() => this.addVariationNumbersToItem(item));
-        }
-      }, Config.throttleDelay));
-      observer.observe(variationList, {
-        childList: true,
-        subtree: false
-      });
-      item.variationObserver = observer;
-    }
-    setupItemsObserver() {
-      const pageObserver = new MutationObserver(Utils.throttle((_mutations, _observer) => {
-        _mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === 1) {
-              const items = node.matches(".item-wrapper") ? [node] : Array.from(node.querySelectorAll(".item-wrapper"));
-              items.forEach((item) => {
-                if (!item.hasAttribute("data-processed")) {
-                  this.itemObserver.observe(item);
-                }
-              });
-            }
-          });
-        });
-      }, Config.throttleDelay));
-      pageObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-      this.context.observers.set("page", pageObserver);
-      document.querySelectorAll(".item-wrapper").forEach((item) => {
-        if (!item.hasAttribute("data-processed")) {
-          this.itemObserver.observe(item);
-        }
-      });
-    }
-    addButtonToItem(item) {
-      if (item.querySelector(".tag-copy-btn") || item.querySelector(".item-delete-btn")) return;
+    /**
+     * 添加删除按钮
+     */
+    addDeleteButton(item) {
       const itemId = item.getAttribute("data-id");
       if (!itemId) return;
       const deleteBtn = document.createElement("a");
@@ -556,49 +478,18 @@
       deleteBtn.style.cssText = "position: absolute; top: 20px; right: 20px; z-index: 10;";
       deleteBtn.innerHTML = "删除";
       deleteBtn.onclick = async (e) => {
-        var _a, _b, _c;
         e.preventDefault();
-        if (!confirm("确定要删除这个商品吗？此操作不可恢复。")) return;
-        const itemName = ((_b = (_a = item.querySelector(".nav")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "未知商品";
-        if (!confirm(`再次确认删除商品：
-${itemName}
-ID: ${itemId}`)) return;
-        try {
-          const csrfToken = (_c = document.querySelector('meta[name="csrf-token"]')) == null ? void 0 : _c.getAttribute("content");
-          if (!csrfToken) {
-            throw new Error("无法获取CSRF token");
-          }
-          const response = await fetch(`https://manage.booth.pm/items/${itemId}`, {
-            method: "DELETE",
-            headers: {
-              "accept": "application/json, text/javascript, */*; q=0.01",
-              "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
-              "x-requested-with": "XMLHttpRequest",
-              "x-csrf-token": csrfToken
-            },
-            referrer: window.location.href,
-            referrerPolicy: "strict-origin-when-cross-origin",
-            mode: "cors",
-            credentials: "include"
-          });
-          if (response.ok) {
-            item.remove();
-          } else {
-            const errorText = await response.text();
-            console.log("删除失败响应:", errorText);
-            throw new Error(`删除失败: ${response.status}
-${errorText}`);
-          }
-        } catch (error) {
-          handleError(error, () => {
-            alert("删除商品失败，请刷新页面重试");
-          });
-        }
+        await this.handleDeleteItem(item, itemId);
       };
       if (getComputedStyle(item).position === "static") {
         item.style.position = "relative";
       }
       item.appendChild(deleteBtn);
+    }
+    /**
+     * 添加复制标签按钮
+     */
+    addCopyTagsButton(item) {
       const tagList = item.querySelector(".dashboard-items-tags");
       const footerActions = item.querySelector(".dashboard-item-footer-actions");
       if (tagList && footerActions) {
@@ -607,12 +498,57 @@ ${errorText}`);
         copyBtn.innerHTML = "复制标签";
         copyBtn.onclick = (e) => {
           e.preventDefault();
-          this.copyItemManageTags(tagList);
+          this.copyItemTags(tagList);
         };
         footerActions.insertBefore(copyBtn, footerActions.firstChild);
       }
     }
-    copyItemManageTags(tagList) {
+    /**
+     * 处理删除商品
+     */
+    async handleDeleteItem(item, itemId) {
+      var _a, _b, _c;
+      try {
+        if (!confirm("确定要删除这个商品吗？此操作不可恢复。")) return;
+        const itemName = ((_b = (_a = item.querySelector(".nav")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "未知商品";
+        if (!confirm(`再次确认删除商品：
+${itemName}
+ID: ${itemId}`)) return;
+        const csrfToken = (_c = document.querySelector('meta[name="csrf-token"]')) == null ? void 0 : _c.getAttribute("content");
+        if (!csrfToken) {
+          throw new Error("无法获取CSRF token");
+        }
+        const response = await fetch(`https://manage.booth.pm/items/${itemId}`, {
+          method: "DELETE",
+          headers: {
+            "accept": "application/json, text/javascript, */*; q=0.01",
+            "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "x-requested-with": "XMLHttpRequest",
+            "x-csrf-token": csrfToken
+          },
+          referrer: window.location.href,
+          referrerPolicy: "strict-origin-when-cross-origin",
+          mode: "cors",
+          credentials: "include"
+        });
+        if (response.ok) {
+          item.remove();
+        } else {
+          const errorText = await response.text();
+          console.log("删除失败响应:", errorText);
+          throw new Error(`删除失败: ${response.status}
+${errorText}`);
+        }
+      } catch (error) {
+        handleError(error, () => {
+          alert("删除商品失败，请刷新页面重试");
+        });
+      }
+    }
+    /**
+     * 复制商品标签
+     */
+    copyItemTags(tagList) {
       try {
         const tags = Array.from(tagList.querySelectorAll(".tag-text")).map((tag) => tag.textContent).filter(Boolean);
         if (tags.length === 0) {
@@ -630,10 +566,749 @@ ${errorText}`);
         handleError(error);
       }
     }
-    // 新增方法：添加总销量和总收益统计
-    addTotalStats(item) {
-      const variations = item.querySelectorAll(".dashboard-items-variation .row");
-      if (!variations.length) return;
+    /**
+     * 清理操作按钮
+     */
+    cleanup() {
+      document.querySelectorAll(".tag-copy-btn, .item-delete-btn").forEach((el) => el.remove());
+    }
+  }
+  class ItemNavigation {
+    constructor() {
+      __publicField(this, "navigationContainer", null);
+      __publicField(this, "items", []);
+      __publicField(this, "isExpanded", false);
+      __publicField(this, "searchInput", null);
+      __publicField(this, "filteredItems", []);
+      __publicField(this, "isScrolling", false);
+      __publicField(this, "scrollTimeout", null);
+    }
+    /**
+     * 创建商品导航栏
+     */
+    createNavigation() {
+      try {
+        if (document.querySelector(".item-navigation")) return;
+        this.collectItems();
+        if (this.items.length === 0) return;
+        this.createNavigationContainer();
+        this.createNavigationItems();
+        this.setupScrollListener();
+      } catch (error) {
+        handleError(error);
+      }
+    }
+    /**
+     * 收集所有商品元素
+     */
+    collectItems() {
+      this.items = Array.from(document.querySelectorAll(".item-wrapper"));
+    }
+    /**
+     * 创建导航栏容器
+     */
+    createNavigationContainer() {
+      this.navigationContainer = document.createElement("div");
+      this.navigationContainer.className = "item-navigation";
+      this.navigationContainer.style.cssText = `
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 80vh;
+            max-height: 80vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            transform: translateY(-50%) translateX(400px);
+        `;
+      this.createHoverArea();
+      this.createContentContainer();
+      document.body.appendChild(this.navigationContainer);
+    }
+    /**
+     * 创建左侧按钮区域
+     */
+    createHoverArea() {
+      const buttonArea = document.createElement("div");
+      buttonArea.className = "navigation-button-area";
+      buttonArea.style.cssText = `
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            background: transparent;
+            cursor: pointer;
+            z-index: 1001;
+        `;
+      const toggleButton = document.createElement("div");
+      toggleButton.innerHTML = "◀";
+      toggleButton.style.cssText = `
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e0e0e0;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            width: 16px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        `;
+      toggleButton.onmouseenter = () => {
+        toggleButton.style.backgroundColor = "#f8f9fa";
+        toggleButton.style.boxShadow = "-2px 0 6px rgba(0, 0, 0, 0.15)";
+      };
+      toggleButton.onmouseleave = () => {
+        toggleButton.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
+        toggleButton.style.boxShadow = "-2px 0 4px rgba(0, 0, 0, 0.1)";
+      };
+      buttonArea.appendChild(toggleButton);
+      buttonArea.onclick = () => this.toggleNavigation();
+      this.navigationContainer.appendChild(buttonArea);
+    }
+    /**
+     * 创建内容容器
+     */
+    createContentContainer() {
+      const contentContainer = document.createElement("div");
+      contentContainer.className = "navigation-content";
+      contentContainer.style.cssText = `
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        `;
+      const header = document.createElement("div");
+      header.className = "navigation-header";
+      header.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            flex-shrink: 0;
+        `;
+      const title = document.createElement("div");
+      title.textContent = `商品导航 (${this.items.length})`;
+      title.style.cssText = `
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        `;
+      header.appendChild(title);
+      const searchContainer = document.createElement("div");
+      searchContainer.className = "navigation-search";
+      searchContainer.style.cssText = `
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+            flex-shrink: 0;
+        `;
+      this.searchInput = document.createElement("input");
+      this.searchInput.type = "text";
+      this.searchInput.placeholder = "搜索商品...";
+      this.searchInput.style.cssText = `
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        `;
+      this.searchInput.onfocus = () => this.searchInput.style.borderColor = "#2196f3";
+      this.searchInput.onblur = () => this.searchInput.style.borderColor = "#ddd";
+      this.searchInput.oninput = () => this.filterItems();
+      searchContainer.appendChild(this.searchInput);
+      const itemsContainer = document.createElement("div");
+      itemsContainer.className = "navigation-items-container";
+      itemsContainer.style.cssText = `
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px;
+            min-height: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f5f5f5;
+        `;
+      if (!document.querySelector("#navigation-scrollbar-style")) {
+        const style = document.createElement("style");
+        style.id = "navigation-scrollbar-style";
+        style.textContent = `
+                .navigation-items-container::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .navigation-items-container::-webkit-scrollbar-track {
+                    background: #f5f5f5;
+                    border-radius: 3px;
+                }
+                .navigation-items-container::-webkit-scrollbar-thumb {
+                    background: #ccc;
+                    border-radius: 3px;
+                }
+                .navigation-items-container::-webkit-scrollbar-thumb:hover {
+                    background: #999;
+                }
+            `;
+        document.head.appendChild(style);
+      }
+      contentContainer.appendChild(header);
+      contentContainer.appendChild(searchContainer);
+      contentContainer.appendChild(itemsContainer);
+      this.navigationContainer.appendChild(contentContainer);
+    }
+    /**
+     * 切换导航栏状态
+     */
+    toggleNavigation() {
+      if (!this.navigationContainer) return;
+      this.isExpanded = !this.isExpanded;
+      if (this.isExpanded) {
+        this.expandNavigation();
+      } else {
+        this.collapseNavigation();
+      }
+      this.updateButtonIcon();
+    }
+    /**
+     * 展开导航栏
+     */
+    expandNavigation() {
+      if (!this.navigationContainer) return;
+      this.navigationContainer.style.transform = "translateY(-50%) translateX(0)";
+    }
+    /**
+     * 收缩导航栏
+     */
+    collapseNavigation() {
+      if (!this.navigationContainer) return;
+      const currentWidth = this.navigationContainer.offsetWidth;
+      this.navigationContainer.style.transform = `translateY(-50%) translateX(${currentWidth}px)`;
+    }
+    /**
+     * 更新按钮图标
+     */
+    updateButtonIcon() {
+      if (!this.navigationContainer) return;
+      const toggleButton = this.navigationContainer.querySelector(".navigation-button-area div");
+      if (toggleButton) {
+        toggleButton.innerHTML = this.isExpanded ? "▶" : "◀";
+      }
+    }
+    /**
+     * 动态调整导航栏宽度
+     */
+    adjustNavigationWidth(items) {
+      if (!this.navigationContainer || items.length === 0) return;
+      const itemsContainer = this.navigationContainer.querySelector(".navigation-items-container");
+      if (!itemsContainer) return;
+      const originalTransform = this.navigationContainer.style.transform;
+      this.navigationContainer.style.transform = "translateY(-50%) translateX(0)";
+      this.navigationContainer.style.width = "auto";
+      const tempItems = [];
+      items.forEach((item, index) => {
+        const itemId = item.getAttribute("data-id");
+        const itemName = this.getItemName(item);
+        const variationCount = item.querySelectorAll(".dashboard-items-variation .row").length;
+        const salesCount = this.getTotalSales(item);
+        const navItem = document.createElement("div");
+        navItem.className = "navigation-item";
+        navItem.setAttribute("data-item-id", itemId || "");
+        navItem.style.cssText = `
+                padding: 6px 8px;
+                margin-bottom: 1px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 2px solid transparent;
+                background: #fff;
+                border: 1px solid transparent;
+                width: max-content;
+            `;
+        const itemInfo = document.createElement("div");
+        itemInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px;";
+        const nameRow = document.createElement("div");
+        nameRow.style.cssText = "display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = itemName;
+        nameSpan.style.cssText = "flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word;";
+        const countSpan = document.createElement("span");
+        countSpan.textContent = `${variationCount}变体`;
+        countSpan.style.cssText = "color: #666; font-size: 9px; flex-shrink: 0; background: #f0f0f0; padding: 1px 4px; border-radius: 8px;";
+        nameRow.appendChild(nameSpan);
+        nameRow.appendChild(countSpan);
+        const salesRow = document.createElement("div");
+        salesRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;";
+        const salesSpan = document.createElement("span");
+        salesSpan.textContent = `销量: ${salesCount}`;
+        salesSpan.style.cssText = salesCount > 0 ? "color: #28a745; font-weight: 500;" : "color: #999; font-weight: 500;";
+        const indexSpan = document.createElement("span");
+        indexSpan.textContent = `#${index + 1}`;
+        indexSpan.style.cssText = "color: #999; font-size: 9px;";
+        salesRow.appendChild(salesSpan);
+        salesRow.appendChild(indexSpan);
+        itemInfo.appendChild(salesRow);
+        itemInfo.appendChild(nameRow);
+        navItem.appendChild(itemInfo);
+        itemsContainer.appendChild(navItem);
+        tempItems.push(navItem);
+      });
+      let maxWidth = 0;
+      tempItems.forEach((navItem) => {
+        const width = navItem.offsetWidth;
+        maxWidth = Math.max(maxWidth, width);
+      });
+      tempItems.forEach((navItem) => navItem.remove());
+      this.navigationContainer.style.transform = originalTransform;
+      const searchWidth = 32;
+      const padding = 16;
+      const finalWidth = Math.min(Math.max(maxWidth + searchWidth + padding, 300), 500);
+      this.navigationContainer.style.width = `${finalWidth}px`;
+      this.navigationContainer.style.transform = this.isExpanded ? "translateY(-50%) translateX(0)" : `translateY(-50%) translateX(${finalWidth}px)`;
+    }
+    /**
+     * 创建导航项
+     */
+    createNavigationItems() {
+      var _a;
+      if (!this.navigationContainer) return;
+      const itemsContainer = this.navigationContainer.querySelector(".navigation-items-container");
+      if (!itemsContainer) return;
+      itemsContainer.innerHTML = "";
+      const itemsToShow = this.filteredItems.length > 0 ? this.filteredItems : this.items;
+      this.adjustNavigationWidth(itemsToShow);
+      if (itemsToShow.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.textContent = ((_a = this.searchInput) == null ? void 0 : _a.value) ? "未找到匹配的商品" : "暂无商品";
+        emptyState.style.cssText = `
+                text-align: center;
+                color: #666;
+                padding: 20px;
+                font-style: italic;
+            `;
+        itemsContainer.appendChild(emptyState);
+        return;
+      }
+      itemsToShow.forEach((item, index) => {
+        const itemId = item.getAttribute("data-id");
+        const itemName = this.getItemName(item);
+        const variationCount = item.querySelectorAll(".dashboard-items-variation .row").length;
+        const salesCount = this.getTotalSales(item);
+        const navItem = document.createElement("div");
+        navItem.className = "navigation-item";
+        navItem.setAttribute("data-item-id", itemId || "");
+        navItem.style.cssText = `
+                padding: 6px 8px;
+                margin-bottom: 1px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 2px solid transparent;
+                background: #fff;
+                border: 1px solid transparent;
+            `;
+        const itemInfo = document.createElement("div");
+        itemInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px;";
+        const nameRow = document.createElement("div");
+        nameRow.style.cssText = "display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = itemName;
+        nameSpan.style.cssText = "flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word;";
+        const countSpan = document.createElement("span");
+        countSpan.textContent = `${variationCount}变体`;
+        countSpan.style.cssText = "color: #666; font-size: 9px; flex-shrink: 0; background: #f0f0f0; padding: 1px 4px; border-radius: 8px;";
+        nameRow.appendChild(nameSpan);
+        nameRow.appendChild(countSpan);
+        const salesRow = document.createElement("div");
+        salesRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;";
+        const salesSpan = document.createElement("span");
+        salesSpan.textContent = `销量: ${salesCount}`;
+        salesSpan.style.cssText = salesCount > 0 ? "color: #28a745; font-weight: 500;" : "color: #999; font-weight: 500;";
+        const indexSpan = document.createElement("span");
+        indexSpan.textContent = `#${index + 1}`;
+        indexSpan.style.cssText = "color: #999; font-size: 9px;";
+        salesRow.appendChild(salesSpan);
+        salesRow.appendChild(indexSpan);
+        itemInfo.appendChild(salesRow);
+        itemInfo.appendChild(nameRow);
+        navItem.appendChild(itemInfo);
+        navItem.onclick = () => this.scrollToItem(item, navItem);
+        navItem.onmouseenter = () => {
+          if (!navItem.classList.contains("active")) {
+            navItem.style.backgroundColor = "#f8f9fa";
+            navItem.style.borderColor = "#e9ecef";
+          }
+        };
+        navItem.onmouseleave = () => {
+          if (!navItem.classList.contains("active")) {
+            navItem.style.backgroundColor = "#fff";
+            navItem.style.borderColor = "transparent";
+          }
+        };
+        itemsContainer.appendChild(navItem);
+      });
+    }
+    /**
+     * 获取商品名称
+     */
+    getItemName(item) {
+      var _a;
+      const nameElement = item.querySelector(".nav");
+      if (nameElement) {
+        return ((_a = nameElement.textContent) == null ? void 0 : _a.trim()) || `商品 #${item.getAttribute("data-id")}`;
+      }
+      return `商品 #${item.getAttribute("data-id")}`;
+    }
+    /**
+     * 获取商品总销量
+     */
+    getTotalSales(item) {
+      let totalSales = 0;
+      item.querySelectorAll(".dashboard-items-variation .row").forEach((variation) => {
+        var _a;
+        const salesCount = (_a = variation.querySelector(".sales_quantity .count")) == null ? void 0 : _a.textContent;
+        if (salesCount) {
+          totalSales += parseInt(salesCount, 10) || 0;
+        }
+      });
+      return totalSales;
+    }
+    /**
+     * 过滤商品
+     */
+    filterItems() {
+      if (!this.searchInput) return;
+      const searchTerm = this.searchInput.value.toLowerCase().trim();
+      if (searchTerm === "") {
+        this.filteredItems = [];
+      } else {
+        this.filteredItems = this.items.filter((item) => {
+          const itemName = this.getItemName(item).toLowerCase();
+          const itemId = item.getAttribute("data-id") || "";
+          return itemName.includes(searchTerm) || itemId.includes(searchTerm);
+        });
+      }
+      this.createNavigationItems();
+    }
+    /**
+     * 滚动到指定商品
+     */
+    scrollToItem(item, navItem) {
+      try {
+        if (this.scrollTimeout) {
+          clearTimeout(this.scrollTimeout);
+        }
+        this.setActiveItem(navItem);
+        this.isScrolling = true;
+        if (!this.isExpanded) {
+          this.expandNavigation();
+          this.isExpanded = true;
+          this.updateButtonIcon();
+        }
+        item.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        this.scrollTimeout = window.setTimeout(() => {
+          this.highlightItem(item);
+          this.setActiveItem(navItem);
+          this.isScrolling = false;
+          this.scrollTimeout = null;
+        }, 800);
+      } catch (error) {
+        handleError(error);
+      }
+    }
+    /**
+     * 设置活跃商品
+     */
+    setActiveItem(activeNavItem) {
+      var _a;
+      (_a = this.navigationContainer) == null ? void 0 : _a.querySelectorAll(".navigation-item").forEach((el) => {
+        el.classList.remove("active");
+        el.style.backgroundColor = "#fff";
+        el.style.borderLeftColor = "transparent";
+        el.style.borderColor = "transparent";
+      });
+      activeNavItem.classList.add("active");
+      activeNavItem.style.backgroundColor = "#e3f2fd";
+      activeNavItem.style.borderLeftColor = "#2196f3";
+      activeNavItem.style.borderColor = "#bbdefb";
+    }
+    /**
+     * 高亮商品
+     */
+    highlightItem(item) {
+      item.style.outline = "2px solid #2196f3";
+      item.style.outlineOffset = "2px";
+      item.style.transition = "outline 0.3s ease";
+      setTimeout(() => {
+        item.style.outline = "";
+        item.style.outlineOffset = "";
+      }, 3e3);
+    }
+    /**
+     * 设置滚动监听
+     */
+    setupScrollListener() {
+      let ticking = false;
+      const updateActiveItem = () => {
+        if (!this.navigationContainer || this.isScrolling) return;
+        const windowHeight = window.innerHeight;
+        let activeItem = null;
+        let minDistance = Infinity;
+        const currentItems = Array.from(document.querySelectorAll(".item-wrapper"));
+        currentItems.forEach((item) => {
+          const rect = item.getBoundingClientRect();
+          if (rect.top < windowHeight && rect.bottom > 0) {
+            const itemCenter = rect.top + rect.height / 2;
+            const screenCenter = windowHeight / 2;
+            const distance = Math.abs(itemCenter - screenCenter);
+            if (distance < minDistance) {
+              minDistance = distance;
+              activeItem = item;
+            }
+          }
+        });
+        if (activeItem) {
+          const itemId = activeItem.getAttribute("data-id");
+          if (itemId) {
+            const activeNavItem = this.navigationContainer.querySelector(`[data-item-id="${itemId}"]`);
+            if (activeNavItem instanceof HTMLElement) {
+              this.setActiveItem(activeNavItem);
+            }
+          }
+        }
+        ticking = false;
+      };
+      const onScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(updateActiveItem);
+          ticking = true;
+        }
+      };
+      window.addEventListener("scroll", onScroll);
+      this.setupKeyboardShortcuts();
+      this.scrollListener = onScroll;
+    }
+    /**
+     * 设置键盘快捷键
+     */
+    setupKeyboardShortcuts() {
+      const onKeyDown = (e) => {
+        var _a, _b;
+        if (!this.navigationContainer || this.navigationContainer.style.display === "none") return;
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          (_a = this.searchInput) == null ? void 0 : _a.focus();
+          return;
+        }
+        if (e.key === "Escape") {
+          this.collapseNavigation();
+          return;
+        }
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          e.preventDefault();
+          this.navigateWithKeyboard(e.key === "ArrowUp" ? -1 : 1);
+        }
+        if (e.key === "Enter") {
+          const activeNavItem = (_b = this.navigationContainer) == null ? void 0 : _b.querySelector(".navigation-item.active");
+          if (activeNavItem) {
+            const itemId = activeNavItem.getAttribute("data-item-id");
+            const item = this.items.find((item2) => item2.getAttribute("data-id") === itemId);
+            if (item) {
+              this.scrollToItem(item, activeNavItem);
+            }
+          }
+        }
+      };
+      document.addEventListener("keydown", onKeyDown);
+      this.keyboardListener = onKeyDown;
+    }
+    /**
+     * 键盘导航
+     */
+    navigateWithKeyboard(direction) {
+      var _a;
+      const navItems = Array.from(((_a = this.navigationContainer) == null ? void 0 : _a.querySelectorAll(".navigation-item")) || []);
+      const currentIndex = navItems.findIndex((item) => item.classList.contains("active"));
+      let newIndex = currentIndex + direction;
+      if (newIndex < 0) newIndex = navItems.length - 1;
+      if (newIndex >= navItems.length) newIndex = 0;
+      const newActiveItem = navItems[newIndex];
+      if (newActiveItem) {
+        this.setActiveItem(newActiveItem);
+        newActiveItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+    /**
+     * 隐藏导航栏
+     */
+    hideNavigation() {
+      if (this.navigationContainer) {
+        this.navigationContainer.style.display = "none";
+      }
+    }
+    /**
+     * 显示导航栏
+     */
+    showNavigation() {
+      if (this.navigationContainer) {
+        this.navigationContainer.style.display = "block";
+      }
+    }
+    /**
+     * 更新导航栏（当商品列表变化时）
+     */
+    updateNavigation() {
+      this.cleanup();
+      this.createNavigation();
+    }
+    /**
+     * 清理导航栏
+     */
+    cleanup() {
+      if (this.navigationContainer) {
+        this.navigationContainer.remove();
+        this.navigationContainer = null;
+      }
+      const scrollListener = this.scrollListener;
+      if (scrollListener) {
+        window.removeEventListener("scroll", scrollListener);
+        delete this.scrollListener;
+      }
+      const keyboardListener = this.keyboardListener;
+      if (keyboardListener) {
+        document.removeEventListener("keydown", keyboardListener);
+        delete this.keyboardListener;
+      }
+      if (this.scrollTimeout) {
+        clearTimeout(this.scrollTimeout);
+        this.scrollTimeout = null;
+      }
+      this.items = [];
+      this.filteredItems = [];
+      this.searchInput = null;
+      this.isExpanded = false;
+      this.isScrolling = false;
+    }
+  }
+  class ItemObserver {
+    constructor(context) {
+      __publicField(this, "context");
+      __publicField(this, "itemObserver");
+      __publicField(this, "pageObserver", null);
+      this.context = context;
+      this.itemObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const item = entry.target;
+              this.onItemIntersect(item);
+              this.itemObserver.unobserve(item);
+            }
+          });
+        },
+        { threshold: 0.1 }
+        // 当元素10%可见时触发
+      );
+    }
+    /**
+     * 设置页面观察器
+     * @param onItemProcess 处理商品元素的回调函数
+     */
+    setupPageObserver(onItemProcess) {
+      this.pageObserver = new MutationObserver(Utils.throttle((_mutations, _observer) => {
+        _mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) {
+              const items = node.matches(".item-wrapper") ? [node] : Array.from(node.querySelectorAll(".item-wrapper"));
+              items.forEach((item) => {
+                if (!item.hasAttribute("data-processed")) {
+                  this.itemObserver.observe(item);
+                }
+              });
+            }
+          });
+        });
+      }, Config.throttleDelay));
+      this.pageObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      this.context.observers.set("page", this.pageObserver);
+      document.querySelectorAll(".item-wrapper").forEach((item) => {
+        if (!item.hasAttribute("data-processed")) {
+          this.itemObserver.observe(item);
+        }
+      });
+      this.onItemProcess = onItemProcess;
+    }
+    /**
+     * 商品元素进入视口时的处理
+     */
+    onItemIntersect(item) {
+      const onItemProcess = this.onItemProcess;
+      if (onItemProcess) {
+        onItemProcess(item);
+      }
+    }
+    /**
+     * 清理观察器
+     */
+    cleanup() {
+      if (this.pageObserver) {
+        this.pageObserver.disconnect();
+        this.context.observers.delete("page");
+        this.pageObserver = null;
+      }
+      if (this.itemObserver) {
+        this.itemObserver.disconnect();
+      }
+      document.querySelectorAll(".item-wrapper").forEach((item) => {
+        const variationObserver = item.variationObserver;
+        if (variationObserver instanceof MutationObserver) {
+          variationObserver.disconnect();
+          delete item.variationObserver;
+        }
+      });
+    }
+  }
+  class ItemStats {
+    /**
+     * 为商品添加统计功能
+     * @param item 商品元素
+     */
+    addToItem(item) {
+      try {
+        const variations = item.querySelectorAll(".dashboard-items-variation .row");
+        if (!variations.length) return;
+        this.addVariationCheckboxes(item, variations);
+        this.createStatsElement(item);
+        this.updateStats(item);
+      } catch (error) {
+        handleError(error);
+      }
+    }
+    /**
+     * 为变体添加复选框
+     */
+    addVariationCheckboxes(item, variations) {
       variations.forEach((variation) => {
         const labelArea = variation.querySelector(".dashboard-items-variation-label");
         if (!labelArea || labelArea.querySelector(".variation-checkbox")) return;
@@ -649,75 +1324,98 @@ ${errorText}`);
         checkbox.onchange = () => this.updateStats(item);
         labelArea.insertBefore(checkbox, labelArea.firstChild);
       });
+    }
+    /**
+     * 创建统计信息元素
+     */
+    createStatsElement(item) {
       const itemLabel = item.querySelector(".cell.item-label");
       if (!itemLabel) return;
       let statsElement = item.querySelector(".total-stats");
-      if (!statsElement) {
-        statsElement = document.createElement("div");
-        statsElement.className = "total-stats";
-        statsElement.style.cssText = `
-                position: absolute;
-                bottom: 8px;
-                right: 8px;
-                padding: 2px 6px;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 12px;
-                color: #666;
-                z-index: 2;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            `;
-        const toggleContainer = document.createElement("div");
-        toggleContainer.className = "stats-toggle-container";
-        toggleContainer.style.cssText = `
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-            `;
-        const toggle = document.createElement("input");
-        toggle.type = "checkbox";
-        toggle.className = "stats-toggle";
-        toggle.style.cssText = `
-                margin: 0;
-                cursor: pointer;
-                vertical-align: middle;
-            `;
-        const label = document.createElement("label");
-        label.textContent = "过滤模式";
-        label.style.cssText = `
-                cursor: pointer;
-                font-size: 12px;
-                color: #666;
-                user-select: none;
-                vertical-align: middle;
-            `;
-        toggleContainer.appendChild(toggle);
-        toggleContainer.appendChild(label);
-        const statsInfo = document.createElement("div");
-        statsInfo.className = "stats-info";
-        statsElement.appendChild(toggleContainer);
-        statsElement.appendChild(statsInfo);
-        if (itemLabel) {
-          itemLabel.style.position = "relative";
-          itemLabel.appendChild(statsElement);
-        }
-        toggle.onchange = () => {
-          const checkboxes = item.querySelectorAll(".variation-checkbox");
-          checkboxes.forEach((checkbox) => {
-            checkbox.style.display = toggle.checked ? "inline-block" : "none";
-            if (!toggle.checked) {
-              checkbox.checked = true;
-            }
-          });
-          this.updateStats(item);
-        };
-      }
-      this.updateStats(item);
+      if (statsElement) return;
+      statsElement = document.createElement("div");
+      statsElement.className = "total-stats";
+      statsElement.style.cssText = `
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        `;
+      this.createToggleContainer(statsElement);
+      this.createStatsInfo(statsElement);
+      this.setupToggleEvents(item, statsElement);
+      itemLabel.style.position = "relative";
+      itemLabel.appendChild(statsElement);
     }
-    // 更新统计信息
+    /**
+     * 创建开关容器
+     */
+    createToggleContainer(statsElement) {
+      const toggleContainer = document.createElement("div");
+      toggleContainer.className = "stats-toggle-container";
+      toggleContainer.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        `;
+      const toggle = document.createElement("input");
+      toggle.type = "checkbox";
+      toggle.className = "stats-toggle";
+      toggle.style.cssText = `
+            margin: 0;
+            cursor: pointer;
+            vertical-align: middle;
+        `;
+      const label = document.createElement("label");
+      label.textContent = "过滤模式";
+      label.style.cssText = `
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            user-select: none;
+            vertical-align: middle;
+        `;
+      toggleContainer.appendChild(toggle);
+      toggleContainer.appendChild(label);
+      statsElement.appendChild(toggleContainer);
+    }
+    /**
+     * 创建统计信息容器
+     */
+    createStatsInfo(statsElement) {
+      const statsInfo = document.createElement("div");
+      statsInfo.className = "stats-info";
+      statsElement.appendChild(statsInfo);
+    }
+    /**
+     * 设置开关事件
+     */
+    setupToggleEvents(item, statsElement) {
+      const toggle = statsElement.querySelector(".stats-toggle");
+      if (!toggle) return;
+      toggle.onchange = () => {
+        const checkboxes = item.querySelectorAll(".variation-checkbox");
+        checkboxes.forEach((checkbox) => {
+          checkbox.style.display = toggle.checked ? "inline-block" : "none";
+          if (!toggle.checked) {
+            checkbox.checked = true;
+          }
+        });
+        this.updateStats(item);
+      };
+    }
+    /**
+     * 更新统计信息
+     */
     updateStats(item) {
       let totalSales = 0;
       let totalRevenue = 0;
@@ -743,23 +1441,114 @@ ${errorText}`);
             `;
       }
     }
+    /**
+     * 清理统计功能
+     */
     cleanup() {
-      const observer = this.context.observers.get("page");
-      if (observer instanceof MutationObserver) {
-        observer.disconnect();
-        this.context.observers.delete("page");
+      document.querySelectorAll(".variation-checkbox, .total-stats, .stats-toggle-container").forEach((el) => el.remove());
+    }
+  }
+  class VariationNumbers {
+    /**
+     * 为商品添加变体序号
+     * @param item 商品元素
+     */
+    addToItem(item) {
+      try {
+        const variationList = item.querySelector(".dashboard-items-variation");
+        if (!variationList) return;
+        this.addNumbersToVariations(variationList);
+        this.setupVariationObserver(item, variationList);
+      } catch (error) {
+        handleError(error);
       }
-      if (this.itemObserver) {
-        this.itemObserver.disconnect();
-      }
-      document.querySelectorAll(".item-wrapper").forEach((item) => {
-        const variationObserver = item.variationObserver;
-        if (variationObserver instanceof MutationObserver) {
-          variationObserver.disconnect();
-          delete item.variationObserver;
+    }
+    /**
+     * 为变体添加序号
+     */
+    addNumbersToVariations(variationList) {
+      const variations = variationList.querySelectorAll(".row");
+      variations.forEach((variation, index) => {
+        const labelArea = variation.querySelector(".dashboard-items-variation-label");
+        if (!labelArea) return;
+        let numberSpan = variation.querySelector(".variation-number");
+        if (!numberSpan) {
+          numberSpan = document.createElement("span");
+          numberSpan.className = "variation-number";
+          numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+          labelArea.insertBefore(numberSpan, labelArea.firstChild);
         }
+        numberSpan.textContent = `#${index + 1}`;
       });
-      document.querySelectorAll(".tag-copy-btn, .variation-number, .variation-checkbox, .total-stats, .stats-toggle-container").forEach((el) => el.remove());
+    }
+    /**
+     * 设置变体列表观察器
+     */
+    setupVariationObserver(item, variationList) {
+      const variations = variationList.querySelectorAll(".row");
+      const observer = new MutationObserver(Utils.throttle((_mutations, _observer) => {
+        const needsUpdate = Array.from(variations).some((variation, index) => {
+          const numberSpan = variation.querySelector(".variation-number");
+          return !numberSpan || numberSpan.textContent !== `#${index + 1}`;
+        });
+        if (needsUpdate) {
+          requestAnimationFrame(() => this.addNumbersToVariations(variationList));
+        }
+      }, Config.throttleDelay));
+      observer.observe(variationList, {
+        childList: true,
+        subtree: false
+      });
+      item.variationObserver = observer;
+    }
+    /**
+     * 清理变体序号功能
+     */
+    cleanup() {
+      document.querySelectorAll(".variation-number").forEach((el) => el.remove());
+    }
+  }
+  class ItemManageFeature extends Feature {
+    constructor(context) {
+      super(context);
+      __publicField(this, "variationNumbers");
+      __publicField(this, "itemActions");
+      __publicField(this, "itemStats");
+      __publicField(this, "itemNavigation");
+      __publicField(this, "itemObserver");
+      this.variationNumbers = new VariationNumbers();
+      this.itemActions = new ItemActions();
+      this.itemStats = new ItemStats();
+      this.itemNavigation = new ItemNavigation();
+      this.itemObserver = new ItemObserver(context);
+    }
+    shouldExecute() {
+      return this.path === "/items" || this.path === "/items/";
+    }
+    async execute() {
+      await super.execute();
+      this.itemObserver.setupPageObserver((item) => this.processItem(item));
+      setTimeout(() => {
+        this.itemNavigation.createNavigation();
+      }, 1e3);
+    }
+    // 处理单个商品卡片
+    processItem(item) {
+      try {
+        this.variationNumbers.addToItem(item);
+        this.itemActions.addToItem(item);
+        this.itemStats.addToItem(item);
+        item.setAttribute("data-processed", "true");
+      } catch (error) {
+        handleError(error);
+      }
+    }
+    cleanup() {
+      this.variationNumbers.cleanup();
+      this.itemActions.cleanup();
+      this.itemStats.cleanup();
+      this.itemNavigation.cleanup();
+      this.itemObserver.cleanup();
     }
   }
   var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
