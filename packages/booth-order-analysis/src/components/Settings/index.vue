@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { CURRENCY_OPTIONS, TIMEZONE_OPTIONS, type UserSettings } from '../../types/settings';
 import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
+import { getFeeDescription } from '../../utils/booth/booth-fee-calculator';
 import { CurrencyManager } from '../../utils/currency/currency-manager';
 import { SettingsManager } from '../../utils/settings/settings-manager';
 import Modal from '../common/Modal/index.vue';
@@ -174,6 +175,19 @@ onMounted(() => {
       </div>
 
       <div class="setting-section">
+        <h3>手续费说明</h3>
+        <p class="setting-description">
+          Booth平台手续费计算公式：{{ getFeeDescription() }}
+        </p>
+        <div class="fee-info">
+          <p>系统将根据订单日期自动选择适用的费率计算手续费和净收入。</p>
+          <p>计算公式：手续费 = ⌈订单金额 × 5.6%⌉ + 固定金额</p>
+          <p>改定前（2025-10-28之前）：固定金额 ¥22</p>
+          <p>改定后（2025-10-28之后）：固定金额 ¥45</p>
+        </div>
+      </div>
+
+      <div class="setting-section">
         <h3>隐私设置</h3>
         <p class="setting-description">
           开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。
@@ -300,6 +314,25 @@ onMounted(() => {
   background: #f3f4f6;
   padding: 8px 12px;
   border-radius: 4px;
+}
+
+.fee-info {
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.fee-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #1e40af;
+  line-height: 1.6;
+}
+
+.fee-info p:not(:last-child) {
+  margin-bottom: 8px;
 }
 
 .setting-actions {

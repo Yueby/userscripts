@@ -10,7 +10,7 @@
       <div class="modal-body">
         <slot></slot>
       </div>
-      <div v-if="$slots.footer" class="modal-footer">
+      <div v-if="slots.footer" class="modal-footer">
         <slot name="footer"></slot>
       </div>
     </div>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
 interface Props {
   visible: boolean;
@@ -39,6 +39,8 @@ const emit = defineEmits<{
   close: [];
   'update:visible': [value: boolean];
 }>();
+
+const slots = useSlots();
 
 const handleClose = () => {
   emit('close');

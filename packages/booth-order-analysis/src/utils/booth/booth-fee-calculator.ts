@@ -68,7 +68,10 @@ export function formatNetAmount(price: number, orderDateStr: string): string {
  * @param orderDateStr 订单日期字符串
  * @returns 手续费说明文本
  */
-export function getFeeDescription(orderDateStr: string): string {
+export function getFeeDescription(orderDateStr?: string): string {
+  if (!orderDateStr) {
+    return `5.6% + ¥${FEE_FIXED_AMOUNT_BEFORE} (改定前) / ¥${FEE_FIXED_AMOUNT_AFTER} (2025年10月28日改定后)`;
+  }
   const orderDate = new Date(orderDateStr + '+09:00');
   const isAfterChange = orderDate >= FEE_CHANGE_DATE;
   const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;

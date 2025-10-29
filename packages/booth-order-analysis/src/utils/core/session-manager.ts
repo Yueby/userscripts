@@ -38,14 +38,11 @@ export class SessionManager {
             return this.sessionInfo._plaza_session_nktz7u;
         }
 
-        logger.info('尝试获取新的 Session...');
         const newSession = await this.fetchSession();
         if (newSession) {
             this.sessionInfo = newSession;
-            logger.info('成功获取并缓存 Session');
             return newSession._plaza_session_nktz7u;
         } else {
-            logger.warn('未能获取有效 Session');
             return null;
         }
     }
@@ -95,7 +92,6 @@ export class SessionManager {
 
                         resolve(sessionData);
                     } else {
-                        logger.warn('未找到有效的 Session');
                         resolve(null);
                     }
                 },
@@ -104,7 +100,6 @@ export class SessionManager {
                     resolve(null);
                 },
                 ontimeout: () => {
-                    logger.warn('获取 Session 请求超时');
                     resolve(null);
                 }
             });
@@ -135,14 +130,11 @@ export class SessionManager {
      */
     async refreshSession(): Promise<boolean> {
         try {
-            logger.info('手动刷新 Session...');
             const newSession = await this.fetchSession();
             if (newSession) {
                 this.sessionInfo = newSession;
-                logger.info('Session 刷新成功');
                 return true;
             }
-            logger.warn('Session 刷新失败');
             return false;
         } catch (error) {
             logger.error('刷新 Session 失败:', error);
@@ -168,7 +160,6 @@ export class SessionManager {
      */
     clearSession(): void {
         this.sessionInfo = null;
-        logger.info('Session 已清除');
     }
 
     /**

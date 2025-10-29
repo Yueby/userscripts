@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { PaymentMethodData } from '../../utils/analysis/data-analyzer';
 import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 
@@ -48,7 +48,7 @@ const generateFakeData = (originalData: PaymentMethodData[]): PaymentMethodData[
 
   // 生成虚假的支付方式数据，确保总订单数至少1万
   const fakeMethods = ['魔法水晶支付', '时空传送支付', '意念转账', '彩虹币支付'];
-  const fakeData: PaymentMethodData[] = fakeMethods.map((method, index) => {
+  const fakeData: PaymentMethodData[] = fakeMethods.map((method) => {
     // 生成10000-50000之间的随机数，确保总订单数至少1万
     const count = Math.floor(Math.random() * 40000) + 10000;
     return {
@@ -170,7 +170,9 @@ watch([() => props.paymentData, () => props.privacyMode], () => {
 }, { deep: true });
 
 onMounted(() => {
-  initChart();
+  nextTick(() => {
+    initChart();
+  });
 });
 
 onUnmounted(() => {

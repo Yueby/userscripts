@@ -172,9 +172,9 @@
                 </div>
             </div>
 
-            <div class="variant-sales">
+            <div class="variant-sales" v-if="selectedItem.item.variants && selectedItem.item.variants.length > 1">
                 <h5>变体销量详情</h5>
-                <div v-if="selectedItem.item.variants && selectedItem.item.variants.length > 0" class="variant-summary">
+                <div class="variant-summary">
                     <div class="summary-stats">
                         <span class="summary-stat">
                             变体数量: <strong>
@@ -222,9 +222,6 @@
                             </span>
                         </div>
                     </div>
-                </div>
-                <div v-if="!selectedItem.item.variants || selectedItem.item.variants.length === 0" class="no-variants">
-                    <p>暂无变体商品</p>
                 </div>
             </div>
         </div>

@@ -154,13 +154,10 @@ export class CurrencyManager {
    */
   static async initializeRates(): Promise<void> {
     try {
-      logger.info('开始初始化汇率...');
       const rates = await this.fetchExchangeRates();
       this.updateExchangeRates(rates);
-      logger.info('汇率初始化成功 (实时数据):', rates);
     } catch (error) {
       logger.error('初始化汇率失败:', error);
-      logger.info('汇率初始化完成 (使用默认数据)');
     }
   }
 
@@ -210,7 +207,6 @@ export class CurrencyManager {
       return rates;
     } catch (error) {
       logger.error('获取汇率失败:', error);
-      logger.warn('使用默认汇率数据作为备用');
       // 返回默认汇率
       return {
         JPY: 1,

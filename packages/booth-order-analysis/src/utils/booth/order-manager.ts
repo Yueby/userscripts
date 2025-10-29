@@ -1,6 +1,6 @@
 import type { BoothItem } from '../../types/item';
 import type { Order, OrderItem, VariantSalesStats } from '../../types/order';
-import { logger } from '../core/logger';
+import { calculateBoothFee } from './booth-fee-calculator';
 import { ItemManager } from './item-manager';
 
 /**
@@ -72,7 +72,8 @@ export class OrderManager {
           const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
           if (totalItemsInOrder > 0) {
             const itemValue = (quantity / totalItemsInOrder) * order.totalPrice;
-            const itemBoothFee = (quantity / totalItemsInOrder) * (order.totalPrice * 0.1);
+            const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
+            const itemBoothFee = (quantity / totalItemsInOrder) * orderBoothFee;
             totalRevenue += itemValue;
             totalBoothFee += itemBoothFee;
           }
@@ -117,7 +118,7 @@ export class OrderManager {
 
     // 初始化所有商品的统计
     const allItems = this.itemManager.getAllBoothItems();
-    allItems.forEach((item, itemId) => {
+    allItems.forEach((_item, itemId) => {
       stats.set(itemId, {
         totalQuantity: 0,
         totalRevenue: 0,
@@ -140,7 +141,8 @@ export class OrderManager {
           const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
           if (totalItemsInOrder > 0) {
             const itemValue = (quantity / totalItemsInOrder) * order.totalPrice;
-            const itemBoothFee = (quantity / totalItemsInOrder) * (order.totalPrice * 0.1);
+            const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
+            const itemBoothFee = (quantity / totalItemsInOrder) * orderBoothFee;
 
             currentStats.totalQuantity += quantity;
             currentStats.totalRevenue += itemValue;
@@ -182,7 +184,6 @@ export class OrderManager {
     // 如果缓存中没有，则实时分析（这种情况应该很少发生）
     const currentItem = this.itemManager.getBoothItem(itemId);
     if (!currentItem) {
-      logger.warn(`未找到商品: ${itemId}`);
       return [];
     }
 
@@ -297,7 +298,8 @@ export class OrderManager {
             const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
             if (totalItemsInOrder > 0) {
               const itemValue = (quantity / totalItemsInOrder) * order.totalPrice;
-              const itemBoothFee = (quantity / totalItemsInOrder) * (order.totalPrice * 0.1);
+              const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
+              const itemBoothFee = (quantity / totalItemsInOrder) * orderBoothFee;
               totalRevenue += itemValue;
               totalBoothFee += itemBoothFee;
             }
@@ -358,23 +360,14 @@ export class OrderManager {
     const allVariantsMap = new Map<string, VariantSalesStats[]>();
     const allItems = this.itemManager.getAllBoothItems();
 
-    logger.info(`开始预处理 ${allItems.size} 个商品的变体数据`);
-
-    let processedCount = 0;
-    let totalVariants = 0;
-
     allItems.forEach((boothItem, itemId) => {
       const variantStats = this.analyzeVariantsFromOrders(itemId, boothItem.name, orders);
       if (variantStats.length > 0) {
         allVariantsMap.set(itemId, variantStats);
         // 同时更新缓存
         this.variantCache.set(itemId, variantStats);
-        processedCount++;
-        totalVariants += variantStats.length;
       }
     });
-
-    logger.info(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
     return allVariantsMap;
   }
 
@@ -408,7 +401,6 @@ export class OrderManager {
 
     // 预处理所有商品的变体数据（一次性处理，避免重复计算）
     if (this.shouldReprocessOrders(orders)) {
-      logger.info(`需要重新处理订单数据，开始预处理变体`);
       this.preprocessAllItemVariants(orders);
       this.lastProcessedOrders = [...orders];
     }
@@ -504,7 +496,8 @@ export class OrderManager {
 
     orders.forEach(order => {
       totalRevenue += order.totalPrice;
-      totalNetRevenue += order.totalPrice * 0.9; // 假设10%手续费
+      const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
+      totalNetRevenue += order.totalPrice - orderBoothFee;
 
       order.items?.forEach((item: OrderItem) => {
         uniqueItems.add(item.itemId);

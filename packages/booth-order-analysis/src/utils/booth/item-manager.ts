@@ -37,8 +37,6 @@ export class ItemManager {
 		}
 
 		try {
-			logger.info('开始融合加载 API 和 HTML 数据');
-
 			// 融合加载：先通过 API 获取商品列表和页数信息，再并行加载 HTML 数据
 			await this.loadItemsFused();
 
@@ -46,7 +44,6 @@ export class ItemManager {
 			this.initializeBoothItems();
 
 			this.isInitialized = true;
-			logger.info('商品数据初始化完成');
 		} catch (error) {
 			logger.error('商品数据初始化失败:', error);
 			logger.warn('商品数据初始化失败，将使用空数据继续运行');
@@ -79,36 +76,32 @@ export class ItemManager {
 
 				if (data && data.items && Array.isArray(data.items)) {
 					// 处理商品数据
-					data.items.forEach((item: any, index: number) => {
-						try {
-							if (item.id && item.name) {
-								const itemId = item.id.toString();
-								const name = item.name.trim();
+					data.items.forEach((item: any) => {
+						if (item.id && item.name) {
+							const itemId = item.id.toString();
+							const name = item.name.trim();
 
-								// 提取图标URL - 优先使用 base_resized 图片
-								let iconUrl = '';
-								if (item.primary_image?.base_resized?.url) {
-									iconUrl = item.primary_image.base_resized.url;
-								} else if (item.primary_image?.url) {
-									iconUrl = item.primary_image.url;
-								}
-
-								// 创建商品数据对象
-								const itemData: APIParsedItem = {
-									id: item.id,
-									name: name,
-									url: item.url,
-									state: item.state,
-									state_label: item.state_label,
-									primary_image: item.primary_image,
-									variants: item.variants || [],
-									iconUrl: iconUrl
-								};
-
-								this.itemsMap.set(itemId, itemData);
+							// 提取图标URL - 优先使用 base_resized 图片
+							let iconUrl = '';
+							if (item.primary_image?.base_resized?.url) {
+								iconUrl = item.primary_image.base_resized.url;
+							} else if (item.primary_image?.url) {
+								iconUrl = item.primary_image.url;
 							}
-						} catch (error) {
-							logger.warn(`解析API商品数据失败 (索引 ${index}):`, error);
+
+							// 创建商品数据对象
+							const itemData: APIParsedItem = {
+								id: item.id,
+								name: name,
+								url: item.url,
+								state: item.state,
+								state_label: item.state_label,
+								primary_image: item.primary_image,
+								variants: item.variants || [],
+								iconUrl: iconUrl
+							};
+
+							this.itemsMap.set(itemId, itemData);
 						}
 					});
 
@@ -129,8 +122,6 @@ export class ItemManager {
 					hasMorePages = false;
 				}
 			}
-
-			logger.info(`API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
 
 			// 并行加载所有页面的 HTML 数据
 			await this.loadAllHTMLPages(totalPages);
@@ -187,7 +178,6 @@ export class ItemManager {
 			}
 
 			// 等待所有页面加载完成
-			logger.info(`开始并行加载 ${totalPages} 页 HTML 数据`);
 			const htmlResults = await Promise.allSettled(htmlPromises);
 
 			// 处理结果
@@ -212,7 +202,6 @@ export class ItemManager {
 				}
 			});
 
-			logger.info(`HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
 		} catch (error) {
 			logger.error('HTML 数据加载失败:', error);
 			throw error;
@@ -231,7 +220,6 @@ export class ItemManager {
 
 			if (itemsFromElements.length > 0) {
 				this.processItemsFromElements(itemsFromElements, page);
-				logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
 			} else {
 				logger.warn(`第 ${page} 页未从HTML元素中找到商品数据`);
 			}
@@ -250,7 +238,7 @@ export class ItemManager {
 			// 获取所有商品li元素
 			const itemElements = $('#items > li');
 
-			itemElements.each((index, itemElement) => {
+			itemElements.each((_index, itemElement) => {
 				try {
 					const $item = $(itemElement);
 
@@ -260,12 +248,10 @@ export class ItemManager {
 
 					// 检查商品名称是否为空
 					if (!itemName) {
-						logger.warn(`商品名称为空 (索引 ${index}), 尝试备用选择器`);
 						// 尝试备用选择器
 						const backupNameElement = $item.find('.cell.item-label span a');
 						const backupName = backupNameElement.text().trim();
 						if (!backupName) {
-							logger.warn(`跳过商品 (索引 ${index}): 无法获取商品名称`);
 							return; // 跳过这个商品
 						}
 						itemName = backupName;
@@ -291,7 +277,7 @@ export class ItemManager {
 					const variants: HTMLParsedVariant[] = [];
 					const variantElements = $item.find('.dashboard-items-variation > li');
 
-					variantElements.each((variantIndex, variantElement) => {
+					variantElements.each((_variantIndex, variantElement) => {
 						try {
 							const $variant = $(variantElement);
 
@@ -314,8 +300,8 @@ export class ItemManager {
 							};
 
 							variants.push(variant);
-						} catch (variantError) {
-							logger.warn(`解析变体失败 (商品索引 ${index}, 变体索引 ${variantIndex}):`, variantError);
+						} catch {
+							// 忽略变体解析失败
 						}
 					});
 
@@ -327,8 +313,8 @@ export class ItemManager {
 					};
 
 					items.push(item);
-				} catch (error) {
-					logger.warn(`解析商品元素失败 (索引 ${index}):`, error);
+				} catch {
+					// 忽略单个商品解析失败
 				}
 			});
 		} catch (error) {
@@ -343,16 +329,12 @@ export class ItemManager {
 	 */
 	private processItemsFromElements(items: HTMLParsedItem[], page: number): void {
 		try {
-			items.forEach((item: HTMLParsedItem, index: number) => {
-				try {
-					// 使用索引生成ID
-					const itemId = `html-item-${page}-${index}`;
+			items.forEach((item: HTMLParsedItem, itemIndex: number) => {
+				// 使用索引生成ID
+				const itemId = `html-item-${page}-${itemIndex}`;
 
-					// 直接存储HTMLParsedItem格式的数据到htmlItemsMap
-					this.htmlItemsMap.set(itemId, item);
-				} catch (error) {
-					logger.warn(`处理HTML商品数据失败 (索引 ${index}, 页码: ${page}):`, error);
-				}
+				// 直接存储HTMLParsedItem格式的数据到htmlItemsMap
+				this.htmlItemsMap.set(itemId, item);
 			});
 		} catch (error) {
 			logger.error('处理HTML元素商品数据时出错:', error);
@@ -363,16 +345,11 @@ export class ItemManager {
 	 * 解析价格字符串为数字
 	 */
 	private parsePrice(priceText: string): number {
-		try {
-			// 处理 "1,000 JPY" 格式的价格
-			// 移除货币符号(JPY)和空格，只保留数字和逗号
-			const cleanPrice = priceText.replace(/[^\d,]/g, '').replace(',', '');
-			const price = parseFloat(cleanPrice);
-			return isNaN(price) ? 0 : price;
-		} catch (error) {
-			logger.warn(`解析价格失败: ${priceText}`, error);
-			return 0;
-		}
+		// 处理 "1,000 JPY" 格式的价格
+		// 移除货币符号(JPY)和空格，只保留数字和逗号
+		const cleanPrice = priceText.replace(/[^\d,]/g, '').replace(',', '');
+		const price = parseFloat(cleanPrice);
+		return isNaN(price) ? 0 : price;
 	}
 
 	/**
@@ -444,7 +421,6 @@ export class ItemManager {
 	getItemIcon(id: string): string {
 		const item = this.getItem(id);
 		if (!item) {
-			logger.warn(`未找到商品ID: ${id}`);
 			return this.getDefaultIcon();
 		}
 		return item.iconUrl || this.getDefaultIcon();
@@ -453,9 +429,9 @@ export class ItemManager {
 	/**
 	 * 根据商品ID获取指定尺寸的图片URL
 	 * @param id 商品ID
-	 * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
+	 * @param _size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
 	 */
-	getItemImageUrl(id: string, size: '72x72' | '150x150' | '300x300' | '620x620' | 'original' = '72x72'): string {
+	getItemImageUrl(id: string, _size: '72x72' | '150x150' | '300x300' | '620x620' | 'original' = '72x72'): string {
 		const item = this.getItem(id);
 		if (!item) {
 			return this.getDefaultIcon();

@@ -13,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { ChartDataPoint } from '../../utils/analysis/data-analyzer';
 import { DataAnalyzer } from '../../utils/analysis/data-analyzer';
 
@@ -228,7 +228,9 @@ watch([() => props.dataPoints, () => props.privacyMode], () => {
 }, { deep: true });
 
 onMounted(() => {
-    initChart();
+    nextTick(() => {
+        initChart();
+    });
 });
 
 onUnmounted(() => {
