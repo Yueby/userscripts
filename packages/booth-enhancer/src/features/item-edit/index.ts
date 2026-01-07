@@ -37,9 +37,4 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
 
         console.log(this.api?.data);
     }
-
-    cleanup(): void {
-        // 模块无需清理，页面跳转会自动重置
-        this.modules = [];
-    }
 }

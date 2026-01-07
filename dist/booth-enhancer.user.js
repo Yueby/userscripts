@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.12
+// @version            0.1.13
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -982,9 +982,6 @@
       }
       console.log((_a = this.api) == null ? void 0 : _a.data);
     }
-    cleanup() {
-      this.modules = [];
-    }
   }
   class ItemManageParser {
     /**
@@ -1369,8 +1366,14 @@ ${errorText}`);
   class ItemCollapse extends PageModule {
     constructor(api) {
       super(api);
-      __publicField(this, "processedItems", /* @__PURE__ */ new Set());
+      __publicField(this, "_processedItems");
       __publicField(this, "stylesInjected", false);
+    }
+    get processedItems() {
+      if (!this._processedItems) {
+        this._processedItems = /* @__PURE__ */ new Set();
+      }
+      return this._processedItems;
     }
     initialize(api) {
       this.injectStyles();
@@ -2372,9 +2375,6 @@ ${errorText}`);
         );
       }
     }
-    cleanup() {
-      this.modules = [];
-    }
   }
   var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
   var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -2499,8 +2499,6 @@ ${errorText}`);
           timeout: 3e3
         });
       }
-    }
-    cleanup() {
     }
   }
   class BoothEnhancer {

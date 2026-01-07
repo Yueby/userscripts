@@ -39,9 +39,4 @@ export class ItemManageFeature extends PageFeature<ItemManageAPI> {
             );
         }
     }
-
-    cleanup(): void {
-        // 模块无需清理，页面跳转会自动重置
-        this.modules = [];
-    }
 }

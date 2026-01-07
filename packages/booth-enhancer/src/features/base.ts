@@ -27,11 +27,4 @@ export abstract class Feature {
     async execute(): Promise<void> {
         // console.log(`${this.constructor.name} executed`);
     }
-
-    /**
-     * 清理资源
-     */
-    cleanup(): void {
-        // 子类实现具体清理逻辑
-    }
 } 

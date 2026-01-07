@@ -8,8 +8,15 @@ import { PageModule } from "../../PageModule";
  * 提供变体列表和标签列表的折叠/展开功能
  */
 export class ItemCollapse extends PageModule<ItemManageAPI> {
-    private processedItems = new Set<HTMLElement>();
+    private _processedItems?: Set<HTMLElement>;
     private stylesInjected = false;
+
+    private get processedItems(): Set<HTMLElement> {
+        if (!this._processedItems) {
+            this._processedItems = new Set<HTMLElement>();
+        }
+        return this._processedItems;
+    }
 
     constructor(api: ItemManageAPI) {
         super(api);

@@ -53,8 +53,4 @@ export class SessionFeature extends PageFeature<SessionAPI> {
             });
         }
     }
-
-    cleanup(): void {
-        // Session 功能无需清理
-    }
 } 

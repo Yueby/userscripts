@@ -57,10 +57,5 @@ export abstract class PageFeature<TApi extends BaseAPI = BaseAPI> {
     protected getAPI(): TApi | undefined {
         return this.api;
     }
-
-    /**
-     * 清理资源
-     */
-    abstract cleanup(): void;
 }
 
