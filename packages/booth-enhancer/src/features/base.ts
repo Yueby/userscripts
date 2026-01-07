@@ -1,8 +1,9 @@
 import { FeatureContext } from "../types";
 
 /**
- * 页面基类
+ * 页面基类（向后兼容）
  * 所有页面功能继承自此类
+ * @deprecated 请使用 PageFeature 代替
  */
 export abstract class Feature {
     protected context: FeatureContext;

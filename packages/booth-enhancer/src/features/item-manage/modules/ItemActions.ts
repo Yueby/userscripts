@@ -1,11 +1,25 @@
+import { ItemManageAPI } from "../../../api/item-manage";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
+import { PageModule } from "../../PageModule";
 
 /**
  * 商品操作功能模块
  * 提供删除商品、复制标签等操作功能
  */
-export class ItemActions {
+export class ItemActions extends PageModule<ItemManageAPI> {
+
+    constructor(api: ItemManageAPI) {
+        super(api);
+    }
+
+    protected initialize(api: ItemManageAPI): void {
+        // 为所有商品添加操作按钮
+        const items = api.getItems();
+        items.forEach(item => {
+            this.addToItem(item.element);
+        });
+    }
 
     /**
      * 为商品添加操作按钮
@@ -14,7 +28,7 @@ export class ItemActions {
     addToItem(item: HTMLElement): void {
         try {
             // 检查是否已经添加过按钮
-            if (item.querySelector('.tag-copy-btn') || item.querySelector('.item-delete-btn')) return;
+            if (item.querySelector('.tag-copy-btn') || item.querySelector('.item-delete-btn-x')) return;
 
             this.addDeleteButton(item);
             this.addCopyTagsButton(item);
@@ -30,10 +44,14 @@ export class ItemActions {
         const itemId = item.getAttribute('data-id');
         if (!itemId) return;
 
-        const deleteBtn = document.createElement('a');
-        deleteBtn.className = 'btn danger small item-delete-btn';
-        deleteBtn.style.cssText = 'position: absolute; top: 20px; right: 20px; z-index: 10;';
-        deleteBtn.innerHTML = '删除';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'item-delete-btn-x';
+        deleteBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        deleteBtn.title = '删除商品';
         deleteBtn.onclick = async (e) => {
             e.preventDefault();
             await this.handleDeleteItem(item, itemId);
@@ -43,7 +61,60 @@ export class ItemActions {
         if (getComputedStyle(item).position === 'static') {
             item.style.position = 'relative';
         }
+        
+        // 注入样式（只需要注入一次）
+        this.injectDeleteButtonStyles();
+        
         item.appendChild(deleteBtn);
+    }
+
+    /**
+     * 注入删除按钮样式
+     */
+    private injectDeleteButtonStyles(): void {
+        if (document.getElementById('item-delete-btn-styles')) return;
+
+        const style = document.createElement('style');
+        style.id = 'item-delete-btn-styles';
+        style.textContent = `
+            .item-delete-btn-x {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                z-index: 10;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                border: none;
+                border-radius: 50%;
+                background-color: #fff;
+                color: #666;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: all 0.2s ease;
+            }
+
+            .item-delete-btn-x svg {
+                width: 16px;
+                height: 16px;
+                display: block;
+            }
+
+            .item-delete-btn-x:hover {
+                background-color: #ff5252;
+                color: #fff;
+                box-shadow: 0 4px 8px rgba(255, 82, 82, 0.3);
+                transform: scale(1.1);
+            }
+
+            .item-delete-btn-x:active {
+                transform: scale(0.95);
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     /**
@@ -52,13 +123,18 @@ export class ItemActions {
     private addCopyTagsButton(item: HTMLElement): void {
         const tagList = item.querySelector('.dashboard-items-tags');
         const footerActions = item.querySelector('.dashboard-item-footer-actions');
-        if (tagList && footerActions) {
+        const itemId = item.getAttribute('data-id');
+        
+        if (tagList && footerActions && itemId) {
             const copyBtn = document.createElement('a');
             copyBtn.className = 'btn calm small tag-copy-btn mr-8';
             copyBtn.innerHTML = '复制标签';
-            copyBtn.onclick = (e) => {
+            copyBtn.onclick = async (e) => {
                 e.preventDefault();
-                this.copyItemTags(tagList);
+                const success = await this.api.copyItemTags(itemId);
+                if (success) {
+                    Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
+                }
             };
 
             footerActions.insertBefore(copyBtn, footerActions.firstChild);
@@ -111,35 +187,4 @@ export class ItemActions {
         }
     }
 
-    /**
-     * 复制商品标签
-     */
-    private copyItemTags(tagList: Element): void {
-        try {
-            const tags = Array.from(tagList.querySelectorAll('.tag-text'))
-                .map(tag => tag.textContent)
-                .filter(Boolean);
-
-            if (tags.length === 0) {
-                alert('没有找到标签');
-                return;
-            }
-
-            navigator.clipboard.writeText(JSON.stringify(tags)).then(() => {
-                const copyBtn = tagList.closest('.item-wrapper')?.querySelector('.tag-copy-btn');
-                if (copyBtn instanceof HTMLElement) {
-                    Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
-                }
-            });
-        } catch (error) {
-            handleError(error);
-        }
-    }
-
-    /**
-     * 清理操作按钮
-     */
-    cleanup(): void {
-        document.querySelectorAll('.tag-copy-btn, .item-delete-btn').forEach(el => el.remove());
-    }
 }

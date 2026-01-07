@@ -1,6 +1,5 @@
 export { ItemActions } from './ItemActions';
+export { ItemCollapse } from './ItemCollapse';
 export { ItemNavigation } from './ItemNavigation';
-export { ItemObserver } from './ItemObserver';
-export { ItemStats } from './ItemStats';
 export { VariationNumbers } from './VariationNumbers';
 

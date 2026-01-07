@@ -1,7 +1,6 @@
 import { ItemEditFeature, ItemManageFeature, SessionFeature } from './features';
 import { FeatureContext } from './types';
 import { handleError } from './utils/error';
-import { Utils } from './utils/utils';
 
 class BoothEnhancer {
 	private context: FeatureContext = {
@@ -17,8 +16,6 @@ class BoothEnhancer {
 
 	async init() {
 		try {
-			await Utils.waitForDOMReady();
-
 			for (const feature of this.features) {
 				try {
 					if (feature.shouldExecute()) {
@@ -34,16 +31,6 @@ class BoothEnhancer {
 			handleError(error, () => {
 				console.error('Booth Enhancer 启动失败');
 			});
-		}
-	}
-
-	destroy() {
-		try {
-			this.features.forEach((feature) => feature.cleanup());
-			this.context.observers.clear();
-			this.context.cachedElements.clear();
-		} catch (error) {
-			handleError(error);
 		}
 	}
 }

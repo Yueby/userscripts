@@ -1,23 +1,3 @@
-// 翻译相关
-export interface TranslationRule {
-    selector: string;
-    prepend?: string;
-    append?: string;
-}
-
-export interface TranslationConfig {
-    translations: Record<string, string>;
-    specialRules: TranslationRule[];
-    selectors: {
-        static: string[];
-        dynamic: string[];
-        exclude: string[];
-        attributes: {
-            translate: string[];
-            observe: string[];
-        };
-    };
-}
 
 // Session相关
 export interface CookieInfo {

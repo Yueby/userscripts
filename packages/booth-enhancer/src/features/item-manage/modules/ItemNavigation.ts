@@ -1,17 +1,39 @@
+import { ItemManageAPI } from "../../../api/item-manage";
+import { ItemElement } from "../../../api/item-manage/types";
 import { handleError } from "../../../utils/error";
+import { PageModule } from "../../PageModule";
 
 /**
  * 商品导航栏模块
  * 在页面右侧提供商品导航功能
  */
-export class ItemNavigation {
+export class ItemNavigation extends PageModule<ItemManageAPI> {
     private navigationContainer: HTMLElement | null = null;
-    private items: HTMLElement[] = [];
+    private toggleButton: HTMLElement | null = null;
+    private items: ItemElement[] = [];
     private isExpanded = false;
     private searchInput: HTMLInputElement | null = null;
-    private filteredItems: HTMLElement[] = [];
+    private filteredItems: ItemElement[] = [];
     private isScrolling = false;
     private scrollTimeout: number | null = null;
+    private hoverTimeout: number | null = null;
+
+    constructor(api: ItemManageAPI) {
+        super(api);
+    }
+
+    protected initialize(api: ItemManageAPI): void {
+        // 从 API 获取商品数据
+        this.items = api.getItems();
+        
+        // 注入样式
+        this.injectStyles();
+        
+        // 延迟创建导航栏，确保DOM稳定
+        setTimeout(() => {
+            this.createNavigation();
+        }, 1000);
+    }
 
     /**
      * 创建商品导航栏
@@ -21,9 +43,10 @@ export class ItemNavigation {
             // 检查是否已经创建过导航栏
             if (document.querySelector('.item-navigation')) return;
 
-            this.collectItems();
             if (this.items.length === 0) return;
 
+            this.injectStyles();
+            this.createToggleButton();
             this.createNavigationContainer();
             this.createNavigationItems();
             this.setupScrollListener();
@@ -33,101 +56,62 @@ export class ItemNavigation {
     }
 
     /**
-     * 收集所有商品元素
+     * 注入样式表
      */
-    private collectItems(): void {
-        this.items = Array.from(document.querySelectorAll('.item-wrapper')) as HTMLElement[];
-    }
+    private injectStyles(): void {
+        if (document.querySelector('#booth-navigation-styles')) return;
 
-    /**
-     * 创建导航栏容器
-     */
-    private createNavigationContainer(): void {
-        // 创建主容器
-        this.navigationContainer = document.createElement('div');
-        this.navigationContainer.className = 'item-navigation';
-        this.navigationContainer.style.cssText = `
+        const style = document.createElement('style');
+        style.id = 'booth-navigation-styles';
+        style.textContent = `
+            .navigation-toggle-button {
             position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            width: 400px;
-            height: 80vh;
-            max-height: 80vh;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            transform: translateY(-50%) translateX(400px);
-        `;
-
-        // 创建左侧悬停区域
-        this.createHoverArea();
-        this.createContentContainer();
-        document.body.appendChild(this.navigationContainer);
-    }
-
-    /**
-     * 创建左侧按钮区域
-     */
-    private createHoverArea(): void {
-        const buttonArea = document.createElement('div');
-        buttonArea.className = 'navigation-button-area';
-        buttonArea.style.cssText = `
-            position: absolute;
-            left: -30px;
-            top: 0;
-            width: 30px;
-            height: 100%;
-            background: transparent;
-            cursor: pointer;
-            z-index: 1001;
-        `;
-        
-        // 创建切换按钮
-        const toggleButton = document.createElement('div');
-        toggleButton.innerHTML = '◀';
-        toggleButton.style.cssText = `
-            position: absolute;
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 10px;
-            color: #666;
+                width: 30px;
+                height: 60px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #e0e0e0;
             border-right: none;
             border-radius: 8px 0 0 8px;
-            width: 16px;
-            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: all 0.2s ease;
-        `;
-        
-        // 添加悬停效果
-        toggleButton.onmouseenter = () => {
-            toggleButton.style.backgroundColor = '#f8f9fa';
-            toggleButton.style.boxShadow = '-2px 0 6px rgba(0, 0, 0, 0.15)';
-        };
-        toggleButton.onmouseleave = () => {
-            toggleButton.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-            toggleButton.style.boxShadow = '-2px 0 4px rgba(0, 0, 0, 0.1)';
-        };
-        
-        buttonArea.appendChild(toggleButton);
-        buttonArea.onclick = () => this.toggleNavigation();
-        this.navigationContainer!.appendChild(buttonArea);
-    }
+                z-index: 999;
+                font-size: 12px;
+                color: #666;
+            }
 
-    /**
-     * 创建内容容器
-     */
-    private createContentContainer(): void {
-        const contentContainer = document.createElement('div');
-        contentContainer.className = 'navigation-content';
-        contentContainer.style.cssText = `
+            .navigation-toggle-button:hover {
+                background: #f8f9fa;
+                box-shadow: -2px 0 6px rgba(0, 0, 0, 0.15);
+            }
+
+            .item-navigation {
+                position: fixed;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%) translateX(100%);
+                width: 400px;
+                min-width: 300px;
+                max-width: 500px;
+                height: 80vh;
+                max-height: 80vh;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+                pointer-events: none;
+                box-sizing: border-box;
+            }
+
+            .item-navigation.expanded {
+                transform: translateY(-50%) translateX(0);
+            }
+
+            .navigation-content {
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.98);
@@ -137,12 +121,76 @@ export class ItemNavigation {
             display: flex;
             flex-direction: column;
             overflow: hidden;
-        `;
+                pointer-events: auto;
+            }
 
-        // 创建头部
-        const header = document.createElement('div');
-        header.className = 'navigation-header';
-        header.style.cssText = `
+            /* 导航项样式 */
+            .navigation-item {
+                padding: 6px 8px;
+                margin-bottom: 1px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 2px solid transparent;
+                background: #fff;
+                border: 1px solid transparent;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            /* 导航项hover效果 */
+            .navigation-item:hover:not(.active) {
+                background-color: #f8f9fa;
+                border-color: #e9ecef;
+            }
+
+            /* 导航项active状态 */
+            .navigation-item.active {
+                background-color: #e3f2fd !important;
+                border-left-color: #2196f3 !important;
+                border-color: #bbdefb !important;
+            }
+
+            /* PC端：hover显示（通过JavaScript处理，这里只处理样式） */
+            @media (hover: hover) and (pointer: fine) {
+                .item-navigation:hover {
+                    pointer-events: auto;
+                }
+            }
+
+            /* 移动端：点击切换 */
+            @media (max-width: 768px) {
+                .item-navigation {
+                    width: 100%;
+                    max-width: 400px;
+                    height: 70vh;
+                    max-height: 70vh;
+                }
+
+                .navigation-toggle-button {
+                    width: 40px;
+                    height: 60px;
+                }
+            }
+
+            /* 小屏幕移动端 */
+            @media (max-width: 480px) {
+                .item-navigation {
+                    width: 100%;
+                    height: 85vh;
+                    max-height: 85vh;
+                    top: 50%;
+                    transform: translateY(-50%) translateX(100%);
+                }
+
+                .item-navigation.expanded {
+                    transform: translateY(-50%) translateX(0);
+                }
+            }
+
+            /* 头部样式 */
+            .navigation-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -150,55 +198,312 @@ export class ItemNavigation {
             border-bottom: 1px solid #e0e0e0;
             background: #f8f9fa;
             flex-shrink: 0;
-        `;
+                pointer-events: auto;
+            }
 
-        const title = document.createElement('div');
-        title.textContent = `商品导航 (${this.items.length})`;
-        title.style.cssText = `
+            .navigation-header-title {
             font-weight: 600;
             color: #333;
             font-size: 14px;
-        `;
-        header.appendChild(title);
+            }
 
-        // 创建搜索栏
-        const searchContainer = document.createElement('div');
-        searchContainer.className = 'navigation-search';
-        searchContainer.style.cssText = `
+            /* 关闭按钮样式 */
+            .navigation-close-button {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: #666;
+                font-size: 20px;
+                line-height: 1;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+
+            .navigation-close-button:hover {
+                background-color: #e0e0e0;
+                color: #333;
+            }
+
+            /* 搜索容器样式 */
+            .navigation-search {
             padding: 12px 16px;
             border-bottom: 1px solid #e0e0e0;
             background: #fff;
             flex-shrink: 0;
-        `;
-
-        this.searchInput = document.createElement('input');
-        this.searchInput.type = 'text';
-        this.searchInput.placeholder = '搜索商品...';
-        this.searchInput.style.cssText = `
             width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+                display: block;
+            }
+
+            /* 搜索输入框样式 */
+            .navigation-search-input {
+                width: 100% !important;
+                height: 32px;
             padding: 8px 12px;
+                margin: 0;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 12px;
             outline: none;
             transition: border-color 0.2s;
-        `;
-        this.searchInput.onfocus = () => this.searchInput!.style.borderColor = '#2196f3';
-        this.searchInput.onblur = () => this.searchInput!.style.borderColor = '#ddd';
-        this.searchInput.oninput = () => this.filterItems();
-        searchContainer.appendChild(this.searchInput);
+                box-sizing: border-box;
+                line-height: 1;
+                display: block;
+                max-width: none;
+                min-width: 0;
+            }
 
-        // 创建商品列表容器
-        const itemsContainer = document.createElement('div');
-        itemsContainer.className = 'navigation-items-container';
-        itemsContainer.style.cssText = `
+            .navigation-search-input:focus {
+                border-color: #2196f3;
+            }
+
+            /* 列表容器样式 */
+            .navigation-items-container {
             flex: 1;
             overflow-y: auto;
             padding: 4px;
             min-height: 0;
             scrollbar-width: thin;
             scrollbar-color: #ccc #f5f5f5;
+            }
+
+            /* 空状态样式 */
+            .navigation-empty-state {
+                text-align: center;
+                color: #666;
+                padding: 20px;
+                font-style: italic;
+            }
+
+            /* 缩略图容器样式 */
+            .navigation-thumbnail {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .navigation-thumbnail img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 商品信息容器样式 */
+            .navigation-item-info {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .navigation-item-name-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .navigation-item-name {
+                flex: 1;
+                margin-right: 6px;
+                font-weight: 500;
+                font-size: 11px;
+                line-height: 1.3;
+                word-wrap: break-word;
+                min-width: 0;
+            }
+
+            .navigation-item-variant-count {
+                color: #666;
+                font-size: 9px;
+                flex-shrink: 0;
+                background: #f0f0f0;
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
+
+            .navigation-item-stats-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 10px;
+                color: #666;
+            }
+
+            .navigation-item-stats-left {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .navigation-item-sales {
+                font-weight: 500;
+            }
+
+            .navigation-item-sales.has-sales {
+                color: #28a745;
+            }
+
+            .navigation-item-sales.no-sales {
+                color: #999;
+            }
+
+            .navigation-item-favorites {
+                font-weight: 500;
+            }
+
+            .navigation-item-favorites.has-favorites {
+                color: #f48fb1;
+            }
+
+            .navigation-item-favorites.no-favorites {
+                color: #999;
+            }
+
+            .navigation-item-index {
+                color: #999;
+                font-size: 9px;
+            }
         `;
+        document.head.appendChild(style);
+    }
+
+    /**
+     * 创建独立的切换按钮
+     */
+    private createToggleButton(): void {
+        // 检查是否已存在
+        if (document.querySelector('.navigation-toggle-button')) return;
+
+        this.toggleButton = document.createElement('div');
+        this.toggleButton.className = 'navigation-toggle-button';
+        this.toggleButton.innerHTML = '◀';
+
+        // 移动端：点击切换
+        this.toggleButton.onclick = (e) => {
+            e.stopPropagation();
+            this.toggleNavigation();
+        };
+
+        // PC端：hover显示，离开隐藏（通过CSS处理）
+        this.toggleButton.onmouseenter = () => {
+            if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                this.showNavigation();
+            }
+        };
+
+        document.body.appendChild(this.toggleButton);
+    }
+
+    /**
+     * 创建导航栏容器
+     */
+    private createNavigationContainer(): void {
+        // 创建主容器
+        this.navigationContainer = document.createElement('div');
+        this.navigationContainer.className = 'item-navigation';
+
+        this.createContentContainer();
+        document.body.appendChild(this.navigationContainer);
+
+        // PC端：鼠标离开主面板时隐藏
+        this.setupPCHoverBehavior();
+    }
+
+    /**
+     * 设置PC端hover行为
+     */
+    private setupPCHoverBehavior(): void {
+        if (!this.navigationContainer || !this.toggleButton) return;
+
+        // 只在支持hover的设备上设置
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            return;
+        }
+
+        // 鼠标进入主面板时保持显示
+        this.navigationContainer.onmouseenter = () => {
+            if (this.hoverTimeout) {
+                clearTimeout(this.hoverTimeout);
+                this.hoverTimeout = null;
+            }
+        };
+
+        // 鼠标离开主面板时隐藏
+        this.navigationContainer.onmouseleave = () => {
+            if (this.hoverTimeout) {
+                clearTimeout(this.hoverTimeout);
+            }
+            this.hoverTimeout = window.setTimeout(() => {
+                // 检查鼠标是否在按钮上
+                const buttonRect = this.toggleButton!.getBoundingClientRect();
+                const mouseX = (window as any).lastMouseX || 0;
+                const mouseY = (window as any).lastMouseY || 0;
+                
+                if (!(mouseX >= buttonRect.left && mouseX <= buttonRect.right &&
+                      mouseY >= buttonRect.top && mouseY <= buttonRect.bottom)) {
+                    this.hideNavigation();
+                }
+            }, 200); // 200ms延迟，避免快速移动时闪烁
+        };
+
+        // 跟踪鼠标位置
+        document.addEventListener('mousemove', (e) => {
+            (window as any).lastMouseX = e.clientX;
+            (window as any).lastMouseY = e.clientY;
+        });
+    }
+
+    /**
+     * 创建内容容器
+     */
+    private createContentContainer(): void {
+        const contentContainer = document.createElement('div');
+        contentContainer.className = 'navigation-content';
+
+        // 创建头部
+        const header = document.createElement('div');
+        header.className = 'navigation-header';
+
+        const title = document.createElement('div');
+        title.className = 'navigation-header-title';
+        title.textContent = `商品导航 (${this.items.length})`;
+        header.appendChild(title);
+
+        // 创建关闭按钮
+        const closeButton = document.createElement('div');
+        closeButton.className = 'navigation-close-button';
+        closeButton.innerHTML = '×';
+        closeButton.onclick = () => {
+            this.hideNavigation();
+        };
+        header.appendChild(closeButton);
+
+        // 创建搜索栏
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'navigation-search';
+
+        this.searchInput = document.createElement('input');
+        this.searchInput.type = 'text';
+        this.searchInput.className = 'navigation-search-input';
+        this.searchInput.placeholder = '搜索商品...';
+        this.searchInput.oninput = () => this.filterItems();
+        searchContainer.appendChild(this.searchInput);
+
+        // 创建商品列表容器
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = 'navigation-items-container';
         
         // 添加自定义滚动条样式（避免重复添加）
         if (!document.querySelector('#navigation-scrollbar-style')) {
@@ -232,7 +537,7 @@ export class ItemNavigation {
     }
 
     /**
-     * 切换导航栏状态
+     * 切换导航栏状态（移动端使用）
      */
     private toggleNavigation(): void {
         if (!this.navigationContainer) return;
@@ -240,191 +545,38 @@ export class ItemNavigation {
         this.isExpanded = !this.isExpanded;
         
         if (this.isExpanded) {
-            this.expandNavigation();
+            this.showNavigation();
         } else {
-            this.collapseNavigation();
-        }
-        
-        // 更新按钮图标
-        this.updateButtonIcon();
-    }
-
-    /**
-     * 展开导航栏
-     */
-    private expandNavigation(): void {
-        if (!this.navigationContainer) return;
-        this.navigationContainer.style.transform = 'translateY(-50%) translateX(0)';
-    }
-
-    /**
-     * 收缩导航栏
-     */
-    private collapseNavigation(): void {
-        if (!this.navigationContainer) return;
-        const currentWidth = this.navigationContainer.offsetWidth;
-        this.navigationContainer.style.transform = `translateY(-50%) translateX(${currentWidth}px)`;
-    }
-
-    /**
-     * 更新按钮图标
-     */
-    private updateButtonIcon(): void {
-        if (!this.navigationContainer) return;
-        
-        const toggleButton = this.navigationContainer.querySelector('.navigation-button-area div');
-        if (toggleButton) {
-            toggleButton.innerHTML = this.isExpanded ? '▶' : '◀';
+            this.hideNavigation();
         }
     }
 
     /**
-     * 动态调整导航栏宽度
+     * 显示导航栏
      */
-    private adjustNavigationWidth(items: HTMLElement[]): void {
-        if (!this.navigationContainer || items.length === 0) return;
-
-        // 先创建导航项，然后测量实际宽度
-        const itemsContainer = this.navigationContainer.querySelector('.navigation-items-container');
-        if (!itemsContainer) return;
-
-        // 临时显示导航栏以便测量
-        const originalTransform = this.navigationContainer.style.transform;
-        this.navigationContainer.style.transform = 'translateY(-50%) translateX(0)';
-        this.navigationContainer.style.width = 'auto';
-
-        // 创建临时导航项进行测量
-        const tempItems: HTMLElement[] = [];
-        items.forEach((item, index) => {
-            const itemId = item.getAttribute('data-id');
-            const itemName = this.getItemName(item);
-            const thumbnail = this.getItemThumbnail(item);
-            const variationCount = item.querySelectorAll('.dashboard-items-variation .row').length;
-            const salesCount = this.getTotalSales(item);
-            const favoritesCount = this.getFavoritesCount(item);
-
-            const navItem = document.createElement('div');
-            navItem.className = 'navigation-item';
-            navItem.setAttribute('data-item-id', itemId || '');
-            navItem.style.cssText = `
-                padding: 6px 8px;
-                margin-bottom: 1px;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                border-left: 2px solid transparent;
-                background: #fff;
-                border: 1px solid transparent;
-                width: max-content;
-                display: flex;
-                align-items: flex-start;
-                gap: 8px;
-            `;
-
-            // 创建封面图
-            const thumbnailContainer = document.createElement('div');
-            thumbnailContainer.style.cssText = `
-                width: 40px;
-                height: 40px;
-                flex-shrink: 0;
-                border-radius: 4px;
-                overflow: hidden;
-                background: #f5f5f5;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            `;
-
-            if (thumbnail) {
-                const img = document.createElement('img');
-                img.src = thumbnail;
-                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
-                img.onerror = () => {
-                    thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-                };
-                thumbnailContainer.appendChild(img);
-            } else {
-                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-            }
-
-            // 创建商品信息
-            const itemInfo = document.createElement('div');
-            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;';
-
-            const nameRow = document.createElement('div');
-            nameRow.style.cssText = 'display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;';
-
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = itemName;
-            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word; min-width: 0;';
-
-            const countSpan = document.createElement('span');
-            countSpan.textContent = `${variationCount}变体`;
-            countSpan.style.cssText = 'color: #666; font-size: 9px; flex-shrink: 0; background: #f0f0f0; padding: 1px 4px; border-radius: 8px;';
-
-            nameRow.appendChild(nameSpan);
-            nameRow.appendChild(countSpan);
-
-            // 添加销量和点赞信息
-            const statsRow = document.createElement('div');
-            statsRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
-            
-            const statsLeft = document.createElement('div');
-            statsLeft.style.cssText = 'display: flex; gap: 8px; align-items: center;';
-            
-            const salesSpan = document.createElement('span');
-            salesSpan.textContent = `销量: ${salesCount}`;
-            salesSpan.style.cssText = salesCount > 0 ? 'color: #28a745; font-weight: 500;' : 'color: #999; font-weight: 500;';
-
-            const favsSpan = document.createElement('span');
-            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
-            favsSpan.style.cssText = favoritesCount > 0 ? 'color: #f48fb1; font-weight: 500;' : 'color: #999; font-weight: 500;';
-
-            statsLeft.appendChild(salesSpan);
-            statsLeft.appendChild(favsSpan);
-
-            const indexSpan = document.createElement('span');
-            indexSpan.textContent = `#${index + 1}`;
-            indexSpan.style.cssText = 'color: #999; font-size: 9px;';
-
-            statsRow.appendChild(statsLeft);
-            statsRow.appendChild(indexSpan);
-            itemInfo.appendChild(statsRow);
-
-            itemInfo.appendChild(nameRow);
-            navItem.appendChild(thumbnailContainer);
-            navItem.appendChild(itemInfo);
-            itemsContainer.appendChild(navItem);
-            tempItems.push(navItem);
-        });
-
-        // 测量所有导航项的最大宽度
-        let maxWidth = 0;
-        tempItems.forEach(navItem => {
-            const width = navItem.offsetWidth;
-            maxWidth = Math.max(maxWidth, width);
-        });
-
-        // 清理临时元素
-        tempItems.forEach(navItem => navItem.remove());
-
-        // 恢复原始状态
-        this.navigationContainer.style.transform = originalTransform;
-
-        // 计算最终宽度：最大商品宽度 + 搜索框宽度 + 边距
-        const searchWidth = 32; // 搜索框和头部区域额外宽度
-        const padding = 16; // 左右边距
-        const finalWidth = Math.min(Math.max(maxWidth + searchWidth + padding, 300), 500);
-
-        // 更新导航栏宽度
-        this.navigationContainer.style.width = `${finalWidth}px`;
-        this.navigationContainer.style.transform = this.isExpanded 
-            ? 'translateY(-50%) translateX(0)' 
-            : `translateY(-50%) translateX(${finalWidth}px)`;
+    private showNavigation(): void {
+        if (!this.navigationContainer) return;
+        this.navigationContainer.classList.add('expanded');
+        this.isExpanded = true;
+        if (this.toggleButton) {
+            this.toggleButton.innerHTML = '▶';
+        }
     }
 
     /**
-     * 创建导航项
+     * 隐藏导航栏
+     */
+    private hideNavigation(): void {
+        if (!this.navigationContainer) return;
+        this.navigationContainer.classList.remove('expanded');
+        this.isExpanded = false;
+        if (this.toggleButton) {
+            this.toggleButton.innerHTML = '◀';
+        }
+    }
+
+    /**
+     * 创建导航项（使用 API 数据）
      */
     private createNavigationItems(): void {
         if (!this.navigationContainer) return;
@@ -437,65 +589,31 @@ export class ItemNavigation {
 
         const itemsToShow = this.filteredItems.length > 0 ? this.filteredItems : this.items;
 
-        // 动态调整导航栏宽度
-        this.adjustNavigationWidth(itemsToShow);
-
         if (itemsToShow.length === 0) {
             const emptyState = document.createElement('div');
+            emptyState.className = 'navigation-empty-state';
             emptyState.textContent = this.searchInput?.value ? '未找到匹配的商品' : '暂无商品';
-            emptyState.style.cssText = `
-                text-align: center;
-                color: #666;
-                padding: 20px;
-                font-style: italic;
-            `;
             itemsContainer.appendChild(emptyState);
             return;
         }
 
-        itemsToShow.forEach((item, index) => {
-            const itemId = item.getAttribute('data-id');
-            const itemName = this.getItemName(item);
-            const thumbnail = this.getItemThumbnail(item);
-            const variationCount = item.querySelectorAll('.dashboard-items-variation .row').length;
-            const salesCount = this.getTotalSales(item);
-            const favoritesCount = this.getFavoritesCount(item);
+        itemsToShow.forEach((itemElement, index) => {
+            const { data, element, variations } = itemElement;
+            const variationCount = variations.length;
+            const salesCount = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
+            const favoritesCount = data.favoritesCount;
 
             const navItem = document.createElement('div');
             navItem.className = 'navigation-item';
-            navItem.setAttribute('data-item-id', itemId || '');
-            navItem.style.cssText = `
-                padding: 6px 8px;
-                margin-bottom: 1px;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                border-left: 2px solid transparent;
-                background: #fff;
-                border: 1px solid transparent;
-                display: flex;
-                align-items: flex-start;
-                gap: 8px;
-            `;
+            navItem.setAttribute('data-item-id', data.id);
 
             // 创建封面图
             const thumbnailContainer = document.createElement('div');
-            thumbnailContainer.style.cssText = `
-                width: 40px;
-                height: 40px;
-                flex-shrink: 0;
-                border-radius: 4px;
-                overflow: hidden;
-                background: #f5f5f5;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            `;
+            thumbnailContainer.className = 'navigation-thumbnail';
 
-            if (thumbnail) {
+            if (data.thumbnail) {
                 const img = document.createElement('img');
-                img.src = thumbnail;
-                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                img.src = data.thumbnail;
                 img.onerror = () => {
                     thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
                 };
@@ -506,43 +624,43 @@ export class ItemNavigation {
 
             // 创建商品信息
             const itemInfo = document.createElement('div');
-            itemInfo.style.cssText = 'display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;';
+            itemInfo.className = 'navigation-item-info';
 
             const nameRow = document.createElement('div');
-            nameRow.style.cssText = 'display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;';
+            nameRow.className = 'navigation-item-name-row';
 
             const nameSpan = document.createElement('span');
-            nameSpan.textContent = itemName;
-            nameSpan.style.cssText = 'flex: 1; margin-right: 6px; font-weight: 500; font-size: 11px; line-height: 1.3; word-wrap: break-word; min-width: 0;';
+            nameSpan.className = 'navigation-item-name';
+            nameSpan.textContent = data.name;
 
             const countSpan = document.createElement('span');
+            countSpan.className = 'navigation-item-variant-count';
             countSpan.textContent = `${variationCount}变体`;
-            countSpan.style.cssText = 'color: #666; font-size: 9px; flex-shrink: 0; background: #f0f0f0; padding: 1px 4px; border-radius: 8px;';
 
             nameRow.appendChild(nameSpan);
             nameRow.appendChild(countSpan);
 
             // 添加销量和点赞信息（始终显示，包括0销量）
             const statsRow = document.createElement('div');
-            statsRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;';
+            statsRow.className = 'navigation-item-stats-row';
             
             const statsLeft = document.createElement('div');
-            statsLeft.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+            statsLeft.className = 'navigation-item-stats-left';
             
             const salesSpan = document.createElement('span');
+            salesSpan.className = `navigation-item-sales ${salesCount > 0 ? 'has-sales' : 'no-sales'}`;
             salesSpan.textContent = `销量: ${salesCount}`;
-            salesSpan.style.cssText = salesCount > 0 ? 'color: #28a745; font-weight: 500;' : 'color: #999; font-weight: 500;';
 
             const favsSpan = document.createElement('span');
+            favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? 'has-favorites' : 'no-favorites'}`;
             favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
-            favsSpan.style.cssText = favoritesCount > 0 ? 'color: #f48fb1; font-weight: 500;' : 'color: #999; font-weight: 500;';
 
             statsLeft.appendChild(salesSpan);
             statsLeft.appendChild(favsSpan);
 
             const indexSpan = document.createElement('span');
+            indexSpan.className = 'navigation-item-index';
             indexSpan.textContent = `#${index + 1}`;
-            indexSpan.style.cssText = 'color: #999; font-size: 9px;';
 
             statsRow.appendChild(statsLeft);
             statsRow.appendChild(indexSpan);
@@ -553,72 +671,14 @@ export class ItemNavigation {
             navItem.appendChild(itemInfo);
 
             // 添加点击事件
-            navItem.onclick = () => this.scrollToItem(item, navItem);
-
-            // 添加悬停效果
-            navItem.onmouseenter = () => {
-                if (!navItem.classList.contains('active')) {
-                    navItem.style.backgroundColor = '#f8f9fa';
-                    navItem.style.borderColor = '#e9ecef';
-                }
-            };
-            navItem.onmouseleave = () => {
-                if (!navItem.classList.contains('active')) {
-                    navItem.style.backgroundColor = '#fff';
-                    navItem.style.borderColor = 'transparent';
-                }
-            };
+            navItem.onclick = () => this.scrollToItem(element, navItem);
 
             itemsContainer.appendChild(navItem);
         });
     }
 
     /**
-     * 获取商品名称
-     */
-    private getItemName(item: HTMLElement): string {
-        const nameElement = item.querySelector('.nav');
-        if (nameElement) {
-            return nameElement.textContent?.trim() || `商品 #${item.getAttribute('data-id')}`;
-        }
-        return `商品 #${item.getAttribute('data-id')}`;
-    }
-
-    /**
-     * 获取商品封面图URL
-     */
-    private getItemThumbnail(item: HTMLElement): string | null {
-        const imgElement = item.querySelector('.thumbnail img') as HTMLImageElement;
-        return imgElement?.src || null;
-    }
-
-    /**
-     * 获取商品总销量
-     */
-    private getTotalSales(item: HTMLElement): number {
-        let totalSales = 0;
-        item.querySelectorAll('.dashboard-items-variation .row').forEach(variation => {
-            const salesCount = variation.querySelector('.sales_quantity .count')?.textContent;
-            if (salesCount) {
-                totalSales += parseInt(salesCount, 10) || 0;
-            }
-        });
-        return totalSales;
-    }
-
-    /**
-     * 获取商品点赞数量
-     */
-    private getFavoritesCount(item: HTMLElement): number {
-        const favElement = item.querySelector('.item-stat.favs .count');
-        if (favElement) {
-            return parseInt(favElement.textContent || '0', 10) || 0;
-        }
-        return 0;
-    }
-
-    /**
-     * 过滤商品
+     * 过滤商品（使用 API 数据）
      */
     private filterItems(): void {
         if (!this.searchInput) return;
@@ -628,10 +688,10 @@ export class ItemNavigation {
         if (searchTerm === '') {
             this.filteredItems = [];
         } else {
-            this.filteredItems = this.items.filter(item => {
-                const itemName = this.getItemName(item).toLowerCase();
-                const itemId = item.getAttribute('data-id') || '';
-                return itemName.includes(searchTerm) || itemId.includes(searchTerm);
+            this.filteredItems = this.items.filter(itemElement => {
+                const { data } = itemElement;
+                return data.name.toLowerCase().includes(searchTerm) || 
+                       data.id.includes(searchTerm);
             });
         }
 
@@ -651,11 +711,9 @@ export class ItemNavigation {
             this.setActiveItem(navItem);
             this.isScrolling = true; // 标记正在滚动
 
-            // 如果导航栏是收缩状态，点击后自动展开
-            if (!this.isExpanded) {
-                this.expandNavigation();
-                this.isExpanded = true;
-                this.updateButtonIcon();
+            // 移动端：如果导航栏是收缩状态，点击后自动展开
+            if (window.matchMedia('(max-width: 768px)').matches && !this.isExpanded) {
+                this.showNavigation();
             }
 
             // 滚动到商品位置（居中显示）
@@ -684,16 +742,10 @@ export class ItemNavigation {
         // 移除其他活跃状态
         this.navigationContainer?.querySelectorAll('.navigation-item').forEach(el => {
             el.classList.remove('active');
-            (el as HTMLElement).style.backgroundColor = '#fff';
-            (el as HTMLElement).style.borderLeftColor = 'transparent';
-            (el as HTMLElement).style.borderColor = 'transparent';
         });
 
         // 设置当前活跃状态
         activeNavItem.classList.add('active');
-        activeNavItem.style.backgroundColor = '#e3f2fd';
-        activeNavItem.style.borderLeftColor = '#2196f3';
-        activeNavItem.style.borderColor = '#bbdefb';
     }
 
     /**
@@ -769,134 +821,9 @@ export class ItemNavigation {
         };
 
         window.addEventListener('scroll', onScroll);
-        this.setupKeyboardShortcuts();
         
         // 保存监听器以便清理
         (this as any).scrollListener = onScroll;
     }
 
-    /**
-     * 设置键盘快捷键
-     */
-    private setupKeyboardShortcuts(): void {
-        const onKeyDown = (e: KeyboardEvent) => {
-            // 只在导航栏可见时响应快捷键
-            if (!this.navigationContainer || this.navigationContainer.style.display === 'none') return;
-
-            // Ctrl/Cmd + K: 聚焦搜索框
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                this.searchInput?.focus();
-                return;
-            }
-
-            // Escape: 收缩导航栏
-            if (e.key === 'Escape') {
-                this.collapseNavigation();
-                return;
-            }
-
-            // 上下箭头: 导航商品
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                e.preventDefault();
-                this.navigateWithKeyboard(e.key === 'ArrowUp' ? -1 : 1);
-            }
-
-            // Enter: 跳转到当前活跃商品
-            if (e.key === 'Enter') {
-                const activeNavItem = this.navigationContainer?.querySelector('.navigation-item.active');
-                if (activeNavItem) {
-                    const itemId = activeNavItem.getAttribute('data-item-id');
-                    const item = this.items.find(item => item.getAttribute('data-id') === itemId);
-                    if (item) {
-                        this.scrollToItem(item, activeNavItem as HTMLElement);
-                    }
-                }
-            }
-        };
-
-        document.addEventListener('keydown', onKeyDown);
-        (this as any).keyboardListener = onKeyDown;
-    }
-
-    /**
-     * 键盘导航
-     */
-    private navigateWithKeyboard(direction: number): void {
-        const navItems = Array.from(this.navigationContainer?.querySelectorAll('.navigation-item') || []);
-        const currentIndex = navItems.findIndex(item => item.classList.contains('active'));
-        
-        let newIndex = currentIndex + direction;
-        if (newIndex < 0) newIndex = navItems.length - 1;
-        if (newIndex >= navItems.length) newIndex = 0;
-
-        const newActiveItem = navItems[newIndex] as HTMLElement;
-        if (newActiveItem) {
-            this.setActiveItem(newActiveItem);
-            // 滚动到可见区域
-            newActiveItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
-
-    /**
-     * 隐藏导航栏
-     */
-    hideNavigation(): void {
-        if (this.navigationContainer) {
-            this.navigationContainer.style.display = 'none';
-        }
-    }
-
-    /**
-     * 显示导航栏
-     */
-    showNavigation(): void {
-        if (this.navigationContainer) {
-            this.navigationContainer.style.display = 'block';
-        }
-    }
-
-    /**
-     * 更新导航栏（当商品列表变化时）
-     */
-    updateNavigation(): void {
-        this.cleanup();
-        this.createNavigation();
-    }
-
-    /**
-     * 清理导航栏
-     */
-    cleanup(): void {
-        if (this.navigationContainer) {
-            this.navigationContainer.remove();
-            this.navigationContainer = null;
-        }
-
-        // 清理滚动监听器
-        const scrollListener = (this as any).scrollListener;
-        if (scrollListener) {
-            window.removeEventListener('scroll', scrollListener);
-            delete (this as any).scrollListener;
-        }
-
-        // 清理键盘监听器
-        const keyboardListener = (this as any).keyboardListener;
-        if (keyboardListener) {
-            document.removeEventListener('keydown', keyboardListener);
-            delete (this as any).keyboardListener;
-        }
-
-        // 清理滚动超时
-        if (this.scrollTimeout) {
-            clearTimeout(this.scrollTimeout);
-            this.scrollTimeout = null;
-        }
-
-        this.items = [];
-        this.filteredItems = [];
-        this.searchInput = null;
-        this.isExpanded = false;
-        this.isScrolling = false;
-    }
 }

@@ -1,39 +1,53 @@
+import { ItemManageAPI } from "../../../api/item-manage";
+import { ItemElement } from "../../../api/item-manage/types";
 import { Config } from "../../../utils/config";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
+import { PageModule } from "../../PageModule";
 
 /**
  * 变体序号功能模块
  * 为变体列表添加序号显示
  */
-export class VariationNumbers {
+export class VariationNumbers extends PageModule<ItemManageAPI> {
+
+    constructor(api: ItemManageAPI) {
+        super(api);
+    }
+
+    protected initialize(api: ItemManageAPI): void {
+        // 为所有商品添加变体序号
+        const items = api.getItems();
+        items.forEach(itemElement => {
+            this.addToItem(itemElement);
+        });
+    }
 
     /**
-     * 为商品添加变体序号
-     * @param item 商品元素
+     * 为商品添加变体序号（使用 API 数据）
+     * @param itemElement API 提供的商品元素
      */
-    addToItem(item: Element): void {
+    addToItem(itemElement: ItemElement): void {
         try {
-            const variationList = item.querySelector('.dashboard-items-variation');
-            if (!variationList) return;
+            const { element, variationsUl, variations } = itemElement;
+            if (!variationsUl || !variations.length) return;
 
-            this.addNumbersToVariations(variationList);
-            this.setupVariationObserver(item, variationList);
+            this.addNumbersToVariations(variations);
+            this.setupVariationObserver(element, variationsUl, variations);
         } catch (error) {
             handleError(error);
         }
     }
 
     /**
-     * 为变体添加序号
+     * 为变体添加序号（使用 API 的 variations）
      */
-    private addNumbersToVariations(variationList: Element): void {
-        const variations = variationList.querySelectorAll('.row');
-        variations.forEach((variation, index) => {
-            const labelArea = variation.querySelector('.dashboard-items-variation-label');
+    private addNumbersToVariations(variations: ItemElement['variations']): void {
+        variations.forEach((variationElement, index) => {
+            const labelArea = variationElement.element.querySelector('.dashboard-items-variation-label');
             if (!labelArea) return;
 
-            let numberSpan = variation.querySelector('.variation-number');
+            let numberSpan = variationElement.element.querySelector('.variation-number');
             if (!numberSpan) {
                 numberSpan = document.createElement('span');
                 numberSpan.className = 'variation-number';
@@ -45,20 +59,18 @@ export class VariationNumbers {
     }
 
     /**
-     * 设置变体列表观察器
+     * 设置变体列表观察器（使用 API 的 variations）
      */
-    private setupVariationObserver(item: Element, variationList: Element): void {
-        const variations = variationList.querySelectorAll('.row');
-        
+    private setupVariationObserver(item: Element, variationList: HTMLElement, variations: ItemElement['variations']): void {
         // 监听变体列表的变化
         const observer = new MutationObserver(Utils.throttle((_mutations: MutationRecord[], _observer: MutationObserver) => {
-            const needsUpdate = Array.from(variations).some((variation, index) => {
-                const numberSpan = variation.querySelector('.variation-number');
+            const needsUpdate = variations.some((variationElement, index) => {
+                const numberSpan = variationElement.element.querySelector('.variation-number');
                 return !numberSpan || numberSpan.textContent !== `#${index + 1}`;
             });
 
             if (needsUpdate) {
-                requestAnimationFrame(() => this.addNumbersToVariations(variationList));
+                requestAnimationFrame(() => this.addNumbersToVariations(variations));
             }
         }, Config.throttleDelay));
 
@@ -71,10 +83,4 @@ export class VariationNumbers {
         (item as any).variationObserver = observer;
     }
 
-    /**
-     * 清理变体序号功能
-     */
-    cleanup(): void {
-        document.querySelectorAll('.variation-number').forEach(el => el.remove());
-    }
 }

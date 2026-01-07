@@ -43,4 +43,17 @@ export class Simulate {
     static pressEnter(element: HTMLElement): void {
         this.keyDown(element, 13);
     }
+
+    /**
+     * 模拟鼠标点击事件
+     * @param element 目标元素
+     */
+    static click(element: HTMLElement): void {
+        const mouseEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        element.dispatchEvent(mouseEvent);
+    }
 } 

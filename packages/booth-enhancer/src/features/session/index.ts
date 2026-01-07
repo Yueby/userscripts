@@ -1,78 +1,60 @@
-import { GM_notification, GM_registerMenuCommand, GM_setClipboard, GM_xmlhttpRequest } from '$';
-import { Feature } from "../base";
+import { GM_notification, GM_registerMenuCommand, GM_setClipboard } from '$';
+import { SessionAPI } from "../../api/session";
+import { FeatureContext } from "../../types";
+import { PageFeature } from "../PageFeature";
 
 /**
- * Booth网站会话管理页面
+ * Booth网站会话管理功能
  * 提供获取和管理会话信息的功能
  */
-export class SessionFeature extends Feature {
+export class SessionFeature extends PageFeature<SessionAPI> {
+
+    constructor(context: FeatureContext) {
+        super(context);
+    }
+
     shouldExecute(): boolean {
         return true;
     }
 
-    async execute(): Promise<void> {
-        await super.execute();
-        GM_registerMenuCommand("获取Booth Session", () => this.getSession());
+    protected createAPI(): SessionAPI | undefined {
+        return new SessionAPI();
     }
 
-    private extractCookieInfo(headers: string) {
-        const cookieHeader = headers.split('\n')
-            .find(line => line.toLowerCase().startsWith('set-cookie:') &&
-                line.includes('_plaza_session_nktz7u='));
-
-        if (!cookieHeader) return null;
-
-        const value = cookieHeader.split(';')[0].split('=').slice(1).join('=').trim();
-        const expires = cookieHeader.match(/expires=([^;]+)/i)?.[1]?.trim();
-
-        return {
-            value,
-            expires: expires ? new Date(expires).toISOString() : null
-        };
+    protected async initialize(): Promise<void> {
+        GM_registerMenuCommand("获取Booth Session", () => this.getSessionAndCopy());
     }
 
-    private getSession() {
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url: 'https://manage.booth.pm/orders',
-            headers: {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8'
-            },
-            onload: (response) => {
-                const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+    /**
+     * 获取 Session 并复制到剪贴板
+     */
+    private async getSessionAndCopy(): Promise<void> {
+        const api = this.getAPI();
+        if (!api) return;
 
-                if (cookieInfo) {
-                    const cookieData = {
-                        _plaza_session_nktz7u: cookieInfo.value,
-                        updated_at: new Date().toISOString(),
-                        expires_at: cookieInfo.expires
-                    };
+        const result = await api.getSession();
 
-                    GM_setClipboard(JSON.stringify(cookieData, null, 2), 'Booth Session');
+        if (result.success && result.data) {
+            const jsonData = JSON.stringify(result.data, null, 2);
+            GM_setClipboard(jsonData, 'Booth Session');
 
-                    GM_notification({
-                        text: cookieInfo.expires
-                            ? `Session已复制\n过期时间: ${new Date(cookieInfo.expires).toLocaleString()}`
-                            : 'Session已复制到剪贴板',
-                        title: '获取成功',
-                        timeout: 3000
-                    });
-                } else {
-                    GM_notification({
-                        text: '未找到有效的 Session',
-                        title: '获取失败',
-                        timeout: 3000
-                    });
-                }
-            },
-            onerror: () => {
-                GM_notification({
-                    text: '请求出错，请检查网络连接',
-                    title: '错误',
-                    timeout: 3000
-                });
-            }
-        });
+            GM_notification({
+                text: result.data.expires_at
+                    ? `Session已复制\n过期时间: ${new Date(result.data.expires_at).toLocaleString()}`
+                    : 'Session已复制到剪贴板',
+                title: '获取成功',
+                timeout: 3000
+            });
+        } else {
+            GM_notification({
+                text: result.error || '未找到有效的 Session',
+                title: '获取失败',
+                timeout: 3000
+            });
+        }
+    }
+
+    cleanup(): void {
+        // Session 功能无需清理
     }
 } 
