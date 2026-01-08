@@ -2,12 +2,12 @@
 // @name               Booth Order Analysis
 // @name:zh-CN         Booth 订单分析
 // @namespace          yueby.booth
-// @version            0.1.14
+// @version            0.1.11
 // @author             Yueby
 // @description        A userscript for analyzing Booth orders and sales data
 // @description:zh-CN  Booth 订单和销售数据分析工具，提供数据可视化和管理功能
 // @icon               ./src/assets/icon.svg
-// @match              https://manage.booth.pm/orders*
+// @match              https://*.booth.pm/*
 // @require            https://cdn.jsdelivr.net/npm/vue@3.5.18/dist/vue.global.prod.js
 // @connect            raw.githubusercontent.com
 // @connect            api.exchangerate-api.com
@@ -21,9 +21,9 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .table-content[data-v-a9fcc20e]{max-height:600px;overflow-y:auto;overflow-x:auto;min-width:fit-content}.table-row[data-v-a9fcc20e]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px;min-width:fit-content}.table-row[data-v-a9fcc20e]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-a9fcc20e]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px;flex-shrink:0}.table-cell[data-v-a9fcc20e]:last-child{border-right:none}.table-cell[data-v-a9fcc20e]>*{width:auto}@media (max-width: 768px){.table-content[data-v-a9fcc20e]{max-height:500px}.table-cell[data-v-a9fcc20e]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-d01cfb85]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb);min-width:fit-content}.table-header-cell[data-v-d01cfb85]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb);flex-shrink:0}.table-header-cell[data-v-d01cfb85]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-d01cfb85]{padding:8px;font-size:13px}}.pagination[data-v-8cac1dac]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-8cac1dac]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-8cac1dac]{display:flex;justify-content:center;margin-top:8px}.page-info[data-v-8cac1dac]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-8cac1dac],.page-total[data-v-8cac1dac]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-8cac1dac]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-8cac1dac]{flex-wrap:wrap}}.data-table[data-v-d200fb90]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-d200fb90]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-d200fb90]{min-width:1200px}.table-container[data-v-d200fb90]:not(.table-scrollable){overflow-x:auto}.data-table[data-v-d200fb90]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-d200fb90]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-45c66fea]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-45c66fea]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-45c66fea]{width:400px;max-width:90vw}.modal-medium[data-v-45c66fea]{width:600px;max-width:90vw}.modal-large[data-v-45c66fea]{width:800px;max-width:95vw}.modal-full[data-v-45c66fea]{width:95vw;height:95vh}.modal-header[data-v-45c66fea]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-45c66fea]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-45c66fea]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-45c66fea]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-45c66fea]{animation:fadeIn-45c66fea .2s ease-out}.modal-content[data-v-45c66fea]{animation:slideIn-45c66fea .2s ease-out}@keyframes fadeIn-45c66fea{0%{opacity:0}to{opacity:1}}@keyframes slideIn-45c66fea{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-45c66fea]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-45c66fea],.modal-body[data-v-45c66fea]{padding:16px}.modal-footer[data-v-45c66fea]{padding:12px 16px}}.selector-container[data-v-595fdcdb]{display:inline-flex}.selector-controls[data-v-595fdcdb]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d;flex-wrap:wrap;min-height:28px}@media (max-width: 768px){.selector-controls[data-v-595fdcdb]{gap:1px;padding:1px}}.item-link[data-v-e9d2de24]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-e9d2de24]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-e9d2de24],.no-link[data-v-e9d2de24]{color:#9ca3af;font-style:italic}.price-cell[data-v-e9d2de24]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-e9d2de24]{font-weight:500;color:#374151}.price-converted[data-v-e9d2de24]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-e9d2de24]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-e9d2de24]{display:flex;align-items:flex-start;gap:16px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.item-details[data-v-e9d2de24]{flex:1;display:flex;flex-direction:column;gap:8px}.item-header[data-v-e9d2de24]{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.item-details h4[data-v-e9d2de24]{margin:0;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-e9d2de24]{color:#6b7280;font-size:12px;font-weight:500;background:#f3f4f6;padding:2px 6px;border-radius:4px}.item-meta[data-v-e9d2de24]{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.meta-left[data-v-e9d2de24],.meta-right[data-v-e9d2de24]{display:flex;align-items:center;gap:8px}.item-state[data-v-e9d2de24]{display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;font-weight:500}.state-dot[data-v-e9d2de24]{width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0}.item-link[data-v-e9d2de24]{color:#3b82f6;text-decoration:none;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px;background:#eff6ff;border:1px solid #dbeafe;transition:all .2s}.item-link[data-v-e9d2de24]:hover{background:#dbeafe;color:#2563eb;text-decoration:none}.favorites-item[data-v-e9d2de24]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-e9d2de24]{width:12px;height:12px;color:#ef4444;flex-shrink:0}.favorites-cell[data-v-e9d2de24]{display:flex;align-items:center;gap:4px;justify-content:center}.no-favorites[data-v-e9d2de24]{color:#9ca3af;font-style:italic}.sales-summary[data-v-e9d2de24]{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.summary-item[data-v-e9d2de24]{display:flex;flex-direction:column;gap:4px;padding:8px;background:#fff;border-radius:6px;border:1px solid #e5e7eb}.summary-label[data-v-e9d2de24]{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px}.summary-value[data-v-e9d2de24]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-e9d2de24]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600;padding-bottom:6px;border-bottom:1px solid #e5e7eb}.variant-list[data-v-e9d2de24]{display:flex;flex-direction:column;gap:8px}.variant-item[data-v-e9d2de24]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-e9d2de24]{display:flex;align-items:center;flex:1}.variant-details[data-v-e9d2de24]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-e9d2de24]{font-size:14px;color:#374151;font-weight:500}.variant-source[data-v-e9d2de24]{font-size:11px;color:#059669;font-weight:500}.variant-stats[data-v-e9d2de24]{display:flex;flex-direction:column;gap:4px;text-align:right;min-width:100px}.variant-quantity[data-v-e9d2de24],.variant-revenue[data-v-e9d2de24]{font-size:12px;color:#6b7280;font-weight:500}.variant-summary[data-v-e9d2de24]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-e9d2de24]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-e9d2de24]{font-size:12px;color:#0369a1;font-weight:500}.summary-stat strong[data-v-e9d2de24]{color:#0c4a6e;font-weight:600}.no-variants[data-v-e9d2de24]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-e9d2de24]{width:95%;margin:20px}.variant-item[data-v-e9d2de24]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-e9d2de24]{text-align:left;width:100%}}.item-entry[data-v-bc9a52c5]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-bc9a52c5]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-bc9a52c5]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-bc9a52c5 .2s ease-out}.tooltip-header[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-bc9a52c5]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-bc9a52c5]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-bc9a52c5]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-bc9a52c5]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-bc9a52c5]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-bc9a52c5]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-bc9a52c5]:hover{color:#2563eb;text-decoration:underline}.favorites-display[data-v-bc9a52c5]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-bc9a52c5]{width:12px;height:12px;color:#ef4444}@keyframes tooltipFadeIn-bc9a52c5{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-bc9a52c5]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-bc9a52c5]{width:28px;height:28px}}.order-number[data-v-19177af7]{font-weight:500;color:#374151}.date-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-19177af7]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-19177af7]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-19177af7]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-19177af7]{font-weight:500;color:#374151}.price-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-19177af7]{align-items:center}.items[data-v-19177af7]{max-height:80px}.price-cell[data-v-19177af7],.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{padding-top:4px}}.settings-content[data-v-7495013f]{padding:24px}.setting-section[data-v-7495013f]{margin-bottom:24px}.setting-section h3[data-v-7495013f]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-7495013f]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-7495013f]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-7495013f]{font-size:14px;color:#374151;font-weight:500;flex-shrink:0}.timezone-select[data-v-7495013f],.currency-select[data-v-7495013f],.time-filter-select[data-v-7495013f]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151;min-width:0;width:100%}.current-time[data-v-7495013f],.exchange-rate-info[data-v-7495013f]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.fee-info[data-v-7495013f]{background:#f0f9ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px;margin-top:8px}.fee-info p[data-v-7495013f]{margin:0;font-size:13px;color:#1e40af;line-height:1.6}.fee-info p[data-v-7495013f]:not(:last-child){margin-bottom:8px}.setting-actions[data-v-7495013f]{display:flex;gap:12px}.date-filter[data-v-b0951009]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-b0951009]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-b0951009]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-b0951009]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-b0951009]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-b0951009]{font-size:11px}.date-picker-content[data-v-b0951009]{padding:0}.date-input-group[data-v-b0951009]{margin-bottom:16px}.date-input-group label[data-v-b0951009]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-b0951009]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-b0951009]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}@media (max-width: 768px){.period-selector[data-v-b0951009]{font-size:10px}}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-93af1781]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-93af1781]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-93af1781]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-93af1781]{display:flex;align-items:center;gap:8px}.total-orders[data-v-93af1781]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-93af1781]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-93af1781]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-93af1781]{width:100%!important;height:100%!important}.legend-container[data-v-93af1781]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-93af1781]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-93af1781]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-93af1781]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-93af1781]{display:flex;align-items:center}.legend-label[data-v-93af1781]{font-size:11px;font-weight:500;color:#374151}.chart-container[data-v-a06a6628]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-a06a6628]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-a06a6628]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-a06a6628]{display:flex;align-items:center;gap:8px}.data-points[data-v-a06a6628]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-a06a6628]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-a06a6628]{width:100%!important;height:100%!important}.statistics-panel[data-v-b96e3217]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-b96e3217]{margin-bottom:24px}.stats-section h3[data-v-b96e3217]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-b96e3217]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-b96e3217]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-b96e3217]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-b96e3217]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-b96e3217]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-b96e3217]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-b96e3217]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-b96e3217]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.charts-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-b96e3217]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-b96e3217]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-b96e3217]{padding:16px 12px}.stat-value[data-v-b96e3217]{font-size:24px}.stat-converted[data-v-b96e3217]{font-size:11px;padding:3px 8px}.period-selector[data-v-b96e3217]{font-size:10px}.charts-grid[data-v-b96e3217]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-b96e3217]{padding:12px}.item-ranking .ranking-header h4[data-v-b96e3217]{font-size:13px}.item-ranking .ranking-item[data-v-b96e3217]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-b96e3217]{width:100%}.item-ranking .sales-data[data-v-b96e3217]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-edd46e6c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:160px;border:1px solid #e5e7eb}.status-indicator[data-v-edd46e6c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-edd46e6c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-edd46e6c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-edd46e6c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-edd46e6c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-edd46e6c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-edd46e6c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-edd46e6c]{color:#374151}.spinner[data-v-edd46e6c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-edd46e6c 1s linear infinite}@keyframes spin-edd46e6c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-44f36af5]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-44f36af5]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafccc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(229,231,235,.6);flex-shrink:0}.header-left[data-v-44f36af5]{display:flex;align-items:center}.title[data-v-44f36af5]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-44f36af5]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-44f36af5]{width:18px;height:18px}.refresh-icon[data-v-44f36af5]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-44f36af5]{animation:spin-44f36af5 1s linear infinite;transform-origin:center}@keyframes spin-44f36af5{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-44f36af5]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-44f36af5]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-44f36af5]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-44f36af5]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-44f36af5]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-44f36af5]{flex:1}@media (max-width: 768px){.header[data-v-44f36af5]{padding:12px 16px}.title[data-v-44f36af5]{font-size:16px}.header-right[data-v-44f36af5]{gap:6px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-44f36af5]{padding:10px 12px}.title[data-v-44f36af5]{font-size:14px}.header-right[data-v-44f36af5]{gap:4px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}#booth-analysis-button{position:relative;overflow:hidden}#booth-analysis-button .button-text{transition:opacity .3s ease}#booth-analysis-button.loading .button-text{opacity:1;margin-left:24px}#booth-analysis-button .loading-spinner{position:absolute;top:50%;left:12px;transform:translateY(-50%)}#booth-analysis-button .spinner{width:16px;height:16px;border:2px solid rgba(59,130,246,.3);border-top:2px solid #3b82f6;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .table-content[data-v-a9fcc20e]{max-height:600px;overflow-y:auto;overflow-x:auto;min-width:fit-content}.table-row[data-v-a9fcc20e]{display:flex;border-bottom:1px solid #f3f4f6;transition:background .2s;min-height:36px;min-width:fit-content}.table-row[data-v-a9fcc20e]:hover{background:var(--table-row-hover, #f9fafb)}.table-cell[data-v-a9fcc20e]{padding:8px 12px;font-size:14px;color:var(--table-text-secondary, #6b7280);border-right:1px solid #f3f4f6;display:flex;align-items:center;justify-content:flex-start;min-height:36px;flex-shrink:0}.table-cell[data-v-a9fcc20e]:last-child{border-right:none}.table-cell[data-v-a9fcc20e]>*{width:auto}@media (max-width: 768px){.table-content[data-v-a9fcc20e]{max-height:500px}.table-cell[data-v-a9fcc20e]{padding:8px;font-size:13px}}.empty-state[data-v-09fe5d20]{padding:60px 20px;text-align:center;color:var(--table-text-muted, #9ca3af)}.empty-icon[data-v-09fe5d20]{font-size:48px;margin-bottom:16px}.empty-text[data-v-09fe5d20]{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--table-text-secondary, #6b7280)}.empty-hint[data-v-09fe5d20]{font-size:14px;color:var(--table-text-muted, #9ca3af)}.table-header[data-v-2985fc97]{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--table-border-color, #e5e7eb)}.table-header h3[data-v-2985fc97]{margin:0;color:var(--table-text-primary, #1f2937);font-size:16px;font-weight:700;letter-spacing:-.025em}.table-info[data-v-2985fc97]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-count[data-v-2985fc97]{font-size:13px;color:var(--table-text-secondary, #6b7280);background:#f3f4f6;padding:4px 10px;border-radius:6px;font-weight:500}@media (max-width: 768px){.table-header[data-v-2985fc97]{flex-direction:column;align-items:flex-start;gap:8px}}.table-header-row[data-v-d01cfb85]{display:flex;background:var(--table-header-bg, #f8fafc);border-bottom:1px solid var(--table-border-color, #e5e7eb);min-width:fit-content}.table-header-cell[data-v-d01cfb85]{padding:12px;font-weight:600;color:var(--table-text-primary, #374151);font-size:14px;border-right:1px solid var(--table-border-color, #e5e7eb);flex-shrink:0}.table-header-cell[data-v-d01cfb85]:last-child{border-right:none}@media (max-width: 768px){.table-header-cell[data-v-d01cfb85]{padding:8px;font-size:13px}}.pagination[data-v-8cac1dac]{position:relative;margin-top:16px;padding-top:16px;border-top:1px solid var(--table-border-color, #e5e7eb)}.pagination-controls[data-v-8cac1dac]{display:flex;justify-content:center;align-items:center;gap:8px}.pagination-info[data-v-8cac1dac]{display:flex;justify-content:center;margin-top:8px}.page-info[data-v-8cac1dac]{font-size:12px;color:var(--table-text-secondary, #6b7280);font-weight:500;padding:4px 8px;background:#f8fafc;border-radius:4px;border:1px solid #e5e7eb}.page-current[data-v-8cac1dac],.page-total[data-v-8cac1dac]{color:var(--table-text-primary, #374151);font-weight:600}.page-numbers[data-v-8cac1dac]{display:flex;gap:2px}@media (max-width: 768px){.pagination[data-v-8cac1dac]{flex-wrap:wrap}}.data-table[data-v-d200fb90]{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px #0000001a}.table-container[data-v-d200fb90]{border:1px solid var(--table-border-color, #e5e7eb);border-radius:6px;overflow:hidden}.table-container.table-scrollable[data-v-d200fb90]{min-width:1200px}.table-container[data-v-d200fb90]:not(.table-scrollable){overflow-x:auto}.data-table[data-v-d200fb90]{--table-border-color: #e5e7eb;--table-header-bg: #f8fafc;--table-row-hover: #f9fafb;--table-text-primary: #374151;--table-text-secondary: #6b7280;--table-text-muted: #9ca3af}@media (max-width: 768px){.data-table[data-v-d200fb90]{padding:16px}}.item-icon-container[data-v-d70e735f]{display:inline-flex;align-items:center;justify-content:center;width:var(--4fe4d4ec);height:var(--4fe4d4ec);border-radius:4px;overflow:hidden;background:#f3f4f6;flex-shrink:0;flex-grow:0;min-width:var(--4fe4d4ec);min-height:var(--4fe4d4ec);max-width:var(--4fe4d4ec);max-height:var(--4fe4d4ec)}.item-icon[data-v-d70e735f]{width:100%;height:100%;object-fit:cover;border-radius:4px}.privacy-icon[data-v-d70e735f]{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#f3f4f6;color:#9ca3af}.modal-overlay[data-v-fe927469]{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-content[data-v-fe927469]{background:#fff;border-radius:8px;box-shadow:0 10px 25px #0003;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-small[data-v-fe927469]{width:400px;max-width:90vw}.modal-medium[data-v-fe927469]{width:600px;max-width:90vw}.modal-large[data-v-fe927469]{width:800px;max-width:95vw}.modal-full[data-v-fe927469]{width:95vw;height:95vh}.modal-header[data-v-fe927469]{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #e5e7eb;background:#f8fafc}.modal-title[data-v-fe927469]{margin:0;color:#374151;font-size:18px;font-weight:600}.modal-body[data-v-fe927469]{padding:20px;overflow-y:auto;flex:1}.modal-footer[data-v-fe927469]{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px}.modal-overlay[data-v-fe927469]{animation:fadeIn-fe927469 .2s ease-out}.modal-content[data-v-fe927469]{animation:slideIn-fe927469 .2s ease-out}@keyframes fadeIn-fe927469{0%{opacity:0}to{opacity:1}}@keyframes slideIn-fe927469{0%{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}@media (max-width: 768px){.modal-content[data-v-fe927469]{margin:20px;width:calc(100vw - 40px);max-height:calc(100vh - 40px)}.modal-header[data-v-fe927469],.modal-body[data-v-fe927469]{padding:16px}.modal-footer[data-v-fe927469]{padding:12px 16px}}.selector-container[data-v-595fdcdb]{display:inline-flex}.selector-controls[data-v-595fdcdb]{display:flex;align-items:center;gap:2px;padding:1px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 1px 2px #0000000d;flex-wrap:wrap;min-height:28px}@media (max-width: 768px){.selector-controls[data-v-595fdcdb]{gap:1px;padding:1px}}.item-link[data-v-203369eb]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.item-link[data-v-203369eb]:hover{color:#2563eb;text-decoration:underline}.item-link-masked[data-v-203369eb],.no-link[data-v-203369eb]{color:#9ca3af;font-style:italic}.price-cell[data-v-203369eb]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px}.price-main[data-v-203369eb]{font-weight:500;color:#374151}.price-converted[data-v-203369eb]{font-size:12px;color:#6b7280;margin-top:2px}.sales-details[data-v-203369eb]{display:flex;flex-direction:column;gap:20px}.item-info[data-v-203369eb]{display:flex;align-items:flex-start;gap:16px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.item-details[data-v-203369eb]{flex:1;display:flex;flex-direction:column;gap:8px}.item-header[data-v-203369eb]{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.item-details h4[data-v-203369eb]{margin:0;color:#374151;font-size:16px;font-weight:600}.item-id[data-v-203369eb]{color:#6b7280;font-size:12px;font-weight:500;background:#f3f4f6;padding:2px 6px;border-radius:4px}.item-meta[data-v-203369eb]{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.meta-left[data-v-203369eb],.meta-right[data-v-203369eb]{display:flex;align-items:center;gap:8px}.item-state[data-v-203369eb]{display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;font-weight:500}.state-dot[data-v-203369eb]{width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0}.item-link[data-v-203369eb]{color:#3b82f6;text-decoration:none;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px;background:#eff6ff;border:1px solid #dbeafe;transition:all .2s}.item-link[data-v-203369eb]:hover{background:#dbeafe;color:#2563eb;text-decoration:none}.favorites-item[data-v-203369eb]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-203369eb]{width:12px;height:12px;color:#ef4444;flex-shrink:0}.favorites-cell[data-v-203369eb]{display:flex;align-items:center;gap:4px;justify-content:center}.no-favorites[data-v-203369eb]{color:#9ca3af;font-style:italic}.sales-summary[data-v-203369eb]{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb}.summary-item[data-v-203369eb]{display:flex;flex-direction:column;gap:4px;padding:8px;background:#fff;border-radius:6px;border:1px solid #e5e7eb}.summary-label[data-v-203369eb]{font-size:11px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px}.summary-value[data-v-203369eb]{font-size:16px;color:#374151;font-weight:600}.variant-sales h5[data-v-203369eb]{margin:0 0 12px;color:#374151;font-size:14px;font-weight:600;padding-bottom:6px;border-bottom:1px solid #e5e7eb}.variant-list[data-v-203369eb]{display:flex;flex-direction:column;gap:8px}.variant-item[data-v-203369eb]{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb}.variant-info[data-v-203369eb]{display:flex;align-items:center;flex:1}.variant-details[data-v-203369eb]{display:flex;flex-direction:column;gap:2px}.variant-name[data-v-203369eb]{font-size:14px;color:#374151;font-weight:500}.variant-source[data-v-203369eb]{font-size:11px;color:#059669;font-weight:500}.variant-stats[data-v-203369eb]{display:flex;flex-direction:column;gap:4px;text-align:right;min-width:100px}.variant-quantity[data-v-203369eb],.variant-revenue[data-v-203369eb]{font-size:12px;color:#6b7280;font-weight:500}.variant-summary[data-v-203369eb]{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:12px;margin-bottom:16px}.summary-stats[data-v-203369eb]{display:flex;gap:16px;flex-wrap:wrap}.summary-stat[data-v-203369eb]{font-size:12px;color:#0369a1;font-weight:500}.summary-stat strong[data-v-203369eb]{color:#0c4a6e;font-weight:600}.no-variants[data-v-203369eb]{text-align:center;padding:20px;color:#9ca3af;font-style:italic}@media (max-width: 768px){.modal-content[data-v-203369eb]{width:95%;margin:20px}.variant-item[data-v-203369eb]{flex-direction:column;align-items:flex-start;gap:8px}.variant-stats[data-v-203369eb]{text-align:left;width:100%}}.item-entry[data-v-bc9a52c5]{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:2px 0;position:relative}.item-name[data-v-bc9a52c5]{font-size:13px;color:#374151;word-wrap:break-word;word-break:break-word;line-height:1.4;flex:1;min-width:0}.tooltip[data-v-bc9a52c5]{position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 25px #00000026;padding:12px;min-width:280px;max-width:350px;font-size:13px;animation:tooltipFadeIn-bc9a52c5 .2s ease-out}.tooltip-header[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}.tooltip-icon[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0}.tooltip-icon-placeholder[data-v-bc9a52c5]{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6}.tooltip-title[data-v-bc9a52c5]{font-weight:600;color:#1f2937;line-height:1.3;word-wrap:break-word}.tooltip-content[data-v-bc9a52c5]{display:flex;flex-direction:column;gap:6px}.tooltip-row[data-v-bc9a52c5]{display:flex;align-items:center;gap:8px}.tooltip-label[data-v-bc9a52c5]{color:#6b7280;font-size:12px;min-width:50px;flex-shrink:0}.tooltip-value[data-v-bc9a52c5]{color:#374151;font-weight:500;word-break:break-all}.sales-highlight[data-v-bc9a52c5]{color:#059669;font-weight:600;background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:12px}.tooltip-link[data-v-bc9a52c5]{color:#3b82f6;text-decoration:none;font-weight:500;transition:color .2s}.tooltip-link[data-v-bc9a52c5]:hover{color:#2563eb;text-decoration:underline}.favorites-display[data-v-bc9a52c5]{display:flex;align-items:center;gap:4px}.heart-icon[data-v-bc9a52c5]{width:12px;height:12px;color:#ef4444}@keyframes tooltipFadeIn-bc9a52c5{0%{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media (max-width: 768px){.tooltip[data-v-bc9a52c5]{min-width:250px;max-width:300px;font-size:12px}.tooltip-icon[data-v-bc9a52c5]{width:28px;height:28px}}.order-number[data-v-19177af7]{font-weight:500;color:#374151}.date-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}.date-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.date-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-style:italic;font-weight:400;line-height:1.2}.items[data-v-19177af7]{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}.item-list[data-v-19177af7]{display:flex;flex-direction:column;gap:4px}.no-items[data-v-19177af7]{color:#9ca3af;font-style:italic;font-size:12px}.payment-method[data-v-19177af7]{font-weight:500;color:#374151}.price-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}.price-main[data-v-19177af7]{font-weight:600;color:#374151;font-size:14px;line-height:1.2}.price-converted[data-v-19177af7]{font-size:12px;color:#6b7280;font-weight:400;line-height:1.2}.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px;gap:3px;width:100%}@media (max-width: 768px){.date-cell[data-v-19177af7]{align-items:center}.items[data-v-19177af7]{max-height:80px}.price-cell[data-v-19177af7],.booth-fee-cell[data-v-19177af7],.net-amount-cell[data-v-19177af7]{padding-top:4px}}.settings-content[data-v-afcda58d]{padding:24px}.setting-section[data-v-afcda58d]{margin-bottom:24px}.setting-section h3[data-v-afcda58d]{margin:0 0 8px;color:#374151;font-size:16px;font-weight:600}.setting-description[data-v-afcda58d]{margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.5}.setting-item[data-v-afcda58d]{display:flex;align-items:center;gap:12px;margin-bottom:16px}.setting-item label[data-v-afcda58d]{font-size:14px;color:#374151;font-weight:500;flex-shrink:0}.timezone-select[data-v-afcda58d],.currency-select[data-v-afcda58d],.time-filter-select[data-v-afcda58d]{flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151;min-width:0;width:100%}.current-time[data-v-afcda58d],.exchange-rate-info[data-v-afcda58d]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:8px 12px;border-radius:4px}.setting-actions[data-v-afcda58d]{display:flex;gap:12px}.date-filter[data-v-b0951009]{border-top:1px solid #e5e7eb;padding-top:16px}.filter-header[data-v-b0951009]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.filter-header h4[data-v-b0951009]{margin:0;color:#374151;font-size:13px;font-weight:600}.current-period[data-v-b0951009]{font-size:11px;color:#6b7280;background:#f3f4f6;padding:3px 6px;border-radius:3px}.filter-controls[data-v-b0951009]{display:flex;flex-direction:column;gap:12px}.period-selector[data-v-b0951009]{font-size:11px}.date-picker-content[data-v-b0951009]{padding:0}.date-input-group[data-v-b0951009]{margin-bottom:16px}.date-input-group label[data-v-b0951009]{display:block;font-size:14px;color:#374151;font-weight:500;margin-bottom:6px}.date-input[data-v-b0951009]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#374151}.date-input[data-v-b0951009]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}@media (max-width: 768px){.period-selector[data-v-b0951009]{font-size:10px}}.item-ranking[data-v-86224ee7]{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 4px #0000000d;border:1px solid #f1f5f9;height:300px;display:flex;flex-direction:column;min-height:300px;max-height:300px}.ranking-header[data-v-86224ee7]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}.ranking-header h4[data-v-86224ee7]{margin:0;color:#1f2937;font-size:14px;font-weight:600}.ranking-controls[data-v-86224ee7]{display:flex;align-items:center}.sort-selector[data-v-86224ee7]{font-size:10px}.ranking-list[data-v-86224ee7]{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;overflow-x:hidden;padding-right:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar{width:4px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}.ranking-list[data-v-86224ee7]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.ranking-item[data-v-86224ee7]{display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb;transition:all .2s ease;flex-shrink:0}.ranking-item[data-v-86224ee7]:hover{background:#f1f5f9;border-color:#d1d5db;transform:translateY(-1px)}.rank-badge[data-v-86224ee7]{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}.rank-1[data-v-86224ee7]{background:linear-gradient(135deg,#fbbf24,#f59e0b)}.rank-2[data-v-86224ee7]{background:linear-gradient(135deg,#9ca3af,#6b7280)}.rank-3[data-v-86224ee7]{background:linear-gradient(135deg,#cd7f32,#b8860b)}.rank-4[data-v-86224ee7],.rank-5[data-v-86224ee7],.rank-6[data-v-86224ee7],.rank-7[data-v-86224ee7],.rank-8[data-v-86224ee7],.rank-9[data-v-86224ee7],.rank-10[data-v-86224ee7]{background:linear-gradient(135deg,#e5e7eb,#d1d5db);color:#6b7280}.product-info[data-v-86224ee7]{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.product-icon[data-v-86224ee7]{width:28px;height:28px;border-radius:4px;overflow:hidden;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center}.product-icon[data-v-86224ee7]{display:flex;align-items:center;justify-content:center}.product-details[data-v-86224ee7]{flex:1;min-width:0}.product-name[data-v-86224ee7]{margin-bottom:0}.product-link[data-v-86224ee7]{color:#1f2937;text-decoration:none;font-weight:500;font-size:11px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}.product-link[data-v-86224ee7]:hover{color:#3b82f6;text-decoration:underline}.sales-data[data-v-86224ee7]{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}.quantity[data-v-86224ee7]{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.quantity-label[data-v-86224ee7]{font-size:9px;color:#6b7280;font-weight:500}.quantity-value[data-v-86224ee7]{font-size:12px;font-weight:700;color:#1f2937}.empty-state[data-v-86224ee7]{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#6b7280;flex:1}.empty-icon[data-v-86224ee7]{font-size:24px;margin-bottom:8px}.empty-text[data-v-86224ee7]{font-size:12px;font-weight:500}@media (max-width: 768px){.item-ranking[data-v-86224ee7]{padding:12px}.ranking-header h4[data-v-86224ee7]{font-size:13px}.ranking-item[data-v-86224ee7]{padding:5px;gap:6px}.product-icon[data-v-86224ee7]{width:24px;height:24px}.product-link[data-v-86224ee7]{font-size:10px}.quantity-value[data-v-86224ee7]{font-size:11px}.quantity-label[data-v-86224ee7]{font-size:8px}.rank-badge[data-v-86224ee7]{width:20px;height:20px;font-size:10px}}.chart-container[data-v-fd8dd5d5]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-fd8dd5d5]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-fd8dd5d5]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-fd8dd5d5]{display:flex;align-items:center;gap:8px}.total-orders[data-v-fd8dd5d5]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-content[data-v-fd8dd5d5]{display:flex;gap:16px;flex:1;align-items:flex-start}.chart-wrapper[data-v-fd8dd5d5]{position:relative;height:180px;width:65%;flex-shrink:0}canvas[data-v-fd8dd5d5]{width:100%!important;height:100%!important}.legend-container[data-v-fd8dd5d5]{display:flex;flex-direction:column;gap:4px;width:35%;flex-shrink:0;align-items:flex-end;justify-content:flex-start;padding:8px;box-sizing:border-box;overflow-y:auto;max-height:100%}.legend-item[data-v-fd8dd5d5]{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;background:#f9fafb;transition:background .2s;border:1px solid #e5e7eb;font-size:10px;white-space:nowrap}.legend-item[data-v-fd8dd5d5]:hover{background:#f3f4f6;border-color:#d1d5db}.legend-color[data-v-fd8dd5d5]{width:10px;height:10px;border-radius:50%;flex-shrink:0}.legend-text[data-v-fd8dd5d5]{display:flex;align-items:center}.legend-label[data-v-fd8dd5d5]{font-size:11px;font-weight:500;color:#374151}.chart-container[data-v-f5146599]{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px #0000001a;margin-bottom:0;height:100%;display:flex;flex-direction:column}.chart-header[data-v-f5146599]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chart-header h4[data-v-f5146599]{margin:0;color:#374151;font-size:16px;font-weight:600}.chart-info[data-v-f5146599]{display:flex;align-items:center;gap:8px}.data-points[data-v-f5146599]{font-size:12px;color:#6b7280;background:#f3f4f6;padding:2px 6px;border-radius:4px}.chart-wrapper[data-v-f5146599]{position:relative;height:250px;width:100%;flex:1}canvas[data-v-f5146599]{width:100%!important;height:100%!important}.statistics-panel[data-v-b96e3217]{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 6px #0000000d;border:1px solid #f1f5f9}.stats-section[data-v-b96e3217]{margin-bottom:24px}.stats-section h3[data-v-b96e3217]{margin:0 0 20px;color:#1f2937;font-size:18px;font-weight:700;letter-spacing:-.5px}.stats-grid[data-v-b96e3217]{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}.stat-card[data-v-b96e3217]{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid #e5e7eb;border-radius:12px;padding:20px 16px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}.stat-content[data-v-b96e3217]{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}.stat-card[data-v-b96e3217]:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981)}.orders-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}.revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#10b981,#059669)}.net-revenue-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#f59e0b,#d97706)}.pending-card[data-v-b96e3217]:before{background:linear-gradient(90deg,#ef4444,#dc2626)}.stat-card[data-v-b96e3217]:hover{transform:translateY(-2px);box-shadow:0 8px 25px #0000001a;border-color:#d1d5db}.stat-value[data-v-b96e3217]{font-size:28px;font-weight:800;color:#1f2937;margin-bottom:4px;line-height:1.2;letter-spacing:-.5px}.stat-converted[data-v-b96e3217]{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;background:#6b72801a;padding:4px 10px;border-radius:16px;display:inline-block;border:1px solid rgba(107,114,128,.2);width:fit-content;min-width:min-content}.stat-label[data-v-b96e3217]{font-size:13px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-top:auto}.charts-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}.charts-grid[data-v-b96e3217]>*{height:300px;min-height:300px;max-height:300px}.ranking-section[data-v-b96e3217]{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px}.charts-grid[data-v-b96e3217]:has(.chart-container:only-child){grid-template-columns:1fr}@media (max-width: 768px){.stats-grid[data-v-b96e3217]{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.stat-card[data-v-b96e3217]{padding:16px 12px}.stat-value[data-v-b96e3217]{font-size:24px}.stat-converted[data-v-b96e3217]{font-size:11px;padding:3px 8px}.period-selector[data-v-b96e3217]{font-size:10px}.charts-grid[data-v-b96e3217]{grid-template-columns:1fr;gap:16px}.item-ranking[data-v-b96e3217]{padding:12px}.item-ranking .ranking-header h4[data-v-b96e3217]{font-size:13px}.item-ranking .ranking-item[data-v-b96e3217]{flex-direction:column;align-items:flex-start;gap:6px}.item-ranking .product-info[data-v-b96e3217]{width:100%}.item-ranking .sales-data[data-v-b96e3217]{width:100%;flex-direction:row;justify-content:space-between;align-items:center}}.exchange-rate-status[data-v-edd46e6c]{display:flex;align-items:center;gap:8px;padding:3px 6px;background:#f8fafc;border-radius:4px;font-size:11px;min-width:160px;border:1px solid #e5e7eb}.status-indicator[data-v-edd46e6c]{width:6px;height:6px;border-radius:50%;flex-shrink:0}.status-info[data-v-edd46e6c]{display:flex;flex-direction:row;align-items:center;gap:4px;flex:1;min-width:0}.status-text[data-v-edd46e6c]{font-weight:600;color:#374151;font-size:12px}.age-text[data-v-edd46e6c]{color:#6b7280;font-size:11px;white-space:nowrap}.rate-info[data-v-edd46e6c]{color:#059669;font-size:12px;font-weight:600;white-space:nowrap}.update-time[data-v-edd46e6c]{color:#6b7280;font-size:10px;white-space:nowrap}.refresh-icon[data-v-edd46e6c]{width:12px;height:12px;color:#6b7280;transition:color .2s}.refresh-btn:hover:not(:disabled) .refresh-icon[data-v-edd46e6c]{color:#374151}.spinner[data-v-edd46e6c]{width:12px;height:12px;border:2px solid #d1d5db;border-top:2px solid #6b7280;border-radius:50%;animation:spin-edd46e6c 1s linear infinite}@keyframes spin-edd46e6c{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.analysis-content[data-v-44f36af5]{width:100%;height:100%;display:flex;flex-direction:column}.header[data-v-44f36af5]{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#f8fafccc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(229,231,235,.6);flex-shrink:0}.header-left[data-v-44f36af5]{display:flex;align-items:center}.title[data-v-44f36af5]{margin:0;font-size:18px;font-weight:600;color:#374151}.header-right[data-v-44f36af5]{display:flex;gap:8px;align-items:center}.settings-icon[data-v-44f36af5]{width:18px;height:18px}.refresh-icon[data-v-44f36af5]{width:18px;height:18px;flex-shrink:0}.refresh-icon.loading[data-v-44f36af5]{animation:spin-44f36af5 1s linear infinite;transform-origin:center}@keyframes spin-44f36af5{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.content[data-v-44f36af5]{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}.tab-navigation[data-v-44f36af5]{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #e5e7eb}.tab-navigation .booth-btn[data-v-44f36af5]{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:none;color:#6b7280}.tab-navigation .booth-btn[data-v-44f36af5]:hover{color:#374151;background:#f9fafb;border-bottom-color:#d1d5db}.tab-navigation .booth-btn.booth-btn-primary[data-v-44f36af5]{color:#3b82f6;border-bottom-color:#3b82f6;background:#eff6ff}.tab-content[data-v-44f36af5]{flex:1}@media (max-width: 768px){.header[data-v-44f36af5]{padding:12px 16px}.title[data-v-44f36af5]{font-size:16px}.header-right[data-v-44f36af5]{gap:6px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:16px;height:16px;flex-shrink:0}}@media (max-width: 480px){.header[data-v-44f36af5]{padding:10px 12px}.title[data-v-44f36af5]{font-size:14px}.header-right[data-v-44f36af5]{gap:4px}.settings-icon[data-v-44f36af5],.refresh-icon[data-v-44f36af5]{width:14px;height:14px;flex-shrink:0}}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.booth-btn{transition:all .15s ease}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)} ');
 
-(function (vue) {
+(async function (vue) {
   'use strict';
 
   const formatDistanceLocale = {
@@ -2365,19 +2365,6 @@
   function formatNetAmount(price, orderDateStr) {
     const netAmount = calculateNetAmount(price, orderDateStr);
     return `¥${netAmount.toLocaleString()}`;
-  }
-  function getFeeDescription(orderDateStr) {
-    if (!orderDateStr) {
-      return `5.6% + ¥${FEE_FIXED_AMOUNT_BEFORE} (改定前) / ¥${FEE_FIXED_AMOUNT_AFTER} (2025年10月28日改定后)`;
-    }
-    const orderDate = /* @__PURE__ */ new Date(orderDateStr + "+09:00");
-    const isAfterChange = orderDate >= FEE_CHANGE_DATE;
-    const fixedAmount = isAfterChange ? FEE_FIXED_AMOUNT_AFTER : FEE_FIXED_AMOUNT_BEFORE;
-    if (isAfterChange) {
-      return `5.6% + ¥${fixedAmount} (2025年10月28日改定后)`;
-    } else {
-      return `5.6% + ¥${fixedAmount} (改定前)`;
-    }
   }
   var ElementType;
   (function(ElementType2) {
@@ -16037,11 +16024,14 @@
       if (this.sessionInfo && this.isSessionValid()) {
         return this.sessionInfo._plaza_session_nktz7u;
       }
+      logger.info("尝试获取新的 Session...");
       const newSession = await this.fetchSession();
       if (newSession) {
         this.sessionInfo = newSession;
+        logger.info("成功获取并缓存 Session");
         return newSession._plaza_session_nktz7u;
       } else {
+        logger.warn("未能获取有效 Session");
         return null;
       }
     }
@@ -16082,6 +16072,7 @@
               };
               resolve2(sessionData);
             } else {
+              logger.warn("未找到有效的 Session");
               resolve2(null);
             }
           },
@@ -16090,6 +16081,7 @@
             resolve2(null);
           },
           ontimeout: () => {
+            logger.warn("获取 Session 请求超时");
             resolve2(null);
           }
         });
@@ -16115,11 +16107,14 @@
      */
     async refreshSession() {
       try {
+        logger.info("手动刷新 Session...");
         const newSession = await this.fetchSession();
         if (newSession) {
           this.sessionInfo = newSession;
+          logger.info("Session 刷新成功");
           return true;
         }
+        logger.warn("Session 刷新失败");
         return false;
       } catch (error) {
         logger.error("刷新 Session 失败:", error);
@@ -16143,6 +16138,7 @@
      */
     clearSession() {
       this.sessionInfo = null;
+      logger.info("Session 已清除");
     }
     /**
      * 检查是否需要重新认证
@@ -16192,9 +16188,11 @@
         return;
       }
       try {
+        logger.info("开始融合加载 API 和 HTML 数据");
         await this.loadItemsFused();
         this.initializeBoothItems();
         this.isInitialized = true;
+        logger.info("商品数据初始化完成");
       } catch (error) {
         logger.error("商品数据初始化失败:", error);
         logger.warn("商品数据初始化失败，将使用空数据继续运行");
@@ -16218,27 +16216,31 @@
           }
           const data2 = await response.json();
           if (data2 && data2.items && Array.isArray(data2.items)) {
-            data2.items.forEach((item) => {
-              if (item.id && item.name) {
-                const itemId = item.id.toString();
-                const name = item.name.trim();
-                let iconUrl = "";
-                if (item.primary_image?.base_resized?.url) {
-                  iconUrl = item.primary_image.base_resized.url;
-                } else if (item.primary_image?.url) {
-                  iconUrl = item.primary_image.url;
+            data2.items.forEach((item, index2) => {
+              try {
+                if (item.id && item.name) {
+                  const itemId = item.id.toString();
+                  const name = item.name.trim();
+                  let iconUrl = "";
+                  if (item.primary_image?.base_resized?.url) {
+                    iconUrl = item.primary_image.base_resized.url;
+                  } else if (item.primary_image?.url) {
+                    iconUrl = item.primary_image.url;
+                  }
+                  const itemData = {
+                    id: item.id,
+                    name,
+                    url: item.url,
+                    state: item.state,
+                    state_label: item.state_label,
+                    primary_image: item.primary_image,
+                    variants: item.variants || [],
+                    iconUrl
+                  };
+                  this.itemsMap.set(itemId, itemData);
                 }
-                const itemData = {
-                  id: item.id,
-                  name,
-                  url: item.url,
-                  state: item.state,
-                  state_label: item.state_label,
-                  primary_image: item.primary_image,
-                  variants: item.variants || [],
-                  iconUrl
-                };
-                this.itemsMap.set(itemId, itemData);
+              } catch (error) {
+                logger.warn(`解析API商品数据失败 (索引 ${index2}):`, error);
               }
             });
             if (data2.metadata) {
@@ -16257,6 +16259,7 @@
             hasMorePages = false;
           }
         }
+        logger.info(`API 数据加载完成，共获取 ${this.itemsMap.size} 个商品，总页数: ${totalPages}`);
         await this.loadAllHTMLPages(totalPages);
       } catch (error) {
         logger.error("融合数据加载失败:", error);
@@ -16300,6 +16303,7 @@
           });
           htmlPromises.push(htmlPromise);
         }
+        logger.info(`开始并行加载 ${totalPages} 页 HTML 数据`);
         const htmlResults = await Promise.allSettled(htmlPromises);
         let successCount = 0;
         let failCount = 0;
@@ -16318,6 +16322,7 @@
             failCount++;
           }
         });
+        logger.info(`HTML 数据加载完成，成功: ${successCount} 页，失败: ${failCount} 页，共获取 ${this.htmlItemsMap.size} 个商品`);
       } catch (error) {
         logger.error("HTML 数据加载失败:", error);
         throw error;
@@ -16332,6 +16337,7 @@
         const itemsFromElements = this.parseItemsFromElements($2);
         if (itemsFromElements.length > 0) {
           this.processItemsFromElements(itemsFromElements, page);
+          logger.info(`HTML解析完成，共获取 ${this.htmlItemsMap.size} 个商品 (页码: ${page})`);
         } else {
           logger.warn(`第 ${page} 页未从HTML元素中找到商品数据`);
         }
@@ -16346,15 +16352,17 @@
       const items = [];
       try {
         const itemElements = $2("#items > li");
-        itemElements.each((_index, itemElement) => {
+        itemElements.each((index2, itemElement) => {
           try {
             const $item = $2(itemElement);
             const itemNameElement = $item.find(".cell.item-name-with-stock .wrapper.row .cell.item-label span a");
             let itemName = itemNameElement.text().trim();
             if (!itemName) {
+              logger.warn(`商品名称为空 (索引 ${index2}), 尝试备用选择器`);
               const backupNameElement = $item.find(".cell.item-label span a");
               const backupName = backupNameElement.text().trim();
               if (!backupName) {
+                logger.warn(`跳过商品 (索引 ${index2}): 无法获取商品名称`);
                 return;
               }
               itemName = backupName;
@@ -16370,7 +16378,7 @@
             const favorites = parseInt(favoritesText) || 0;
             const variants = [];
             const variantElements = $item.find(".dashboard-items-variation > li");
-            variantElements.each((_variantIndex, variantElement) => {
+            variantElements.each((variantIndex, variantElement) => {
               try {
                 const $variant = $2(variantElement);
                 const variantNameElement = $variant.find("div").first();
@@ -16386,7 +16394,8 @@
                   price: variantPrice
                 };
                 variants.push(variant);
-              } catch {
+              } catch (variantError) {
+                logger.warn(`解析变体失败 (商品索引 ${index2}, 变体索引 ${variantIndex}):`, variantError);
               }
             });
             const item = {
@@ -16396,7 +16405,8 @@
               variants
             };
             items.push(item);
-          } catch {
+          } catch (error) {
+            logger.warn(`解析商品元素失败 (索引 ${index2}):`, error);
           }
         });
       } catch (error) {
@@ -16409,9 +16419,13 @@
      */
     processItemsFromElements(items, page) {
       try {
-        items.forEach((item, itemIndex) => {
-          const itemId = `html-item-${page}-${itemIndex}`;
-          this.htmlItemsMap.set(itemId, item);
+        items.forEach((item, index2) => {
+          try {
+            const itemId = `html-item-${page}-${index2}`;
+            this.htmlItemsMap.set(itemId, item);
+          } catch (error) {
+            logger.warn(`处理HTML商品数据失败 (索引 ${index2}, 页码: ${page}):`, error);
+          }
         });
       } catch (error) {
         logger.error("处理HTML元素商品数据时出错:", error);
@@ -16421,9 +16435,14 @@
      * 解析价格字符串为数字
      */
     parsePrice(priceText) {
-      const cleanPrice = priceText.replace(/[^\d,]/g, "").replace(",", "");
-      const price = parseFloat(cleanPrice);
-      return isNaN(price) ? 0 : price;
+      try {
+        const cleanPrice = priceText.replace(/[^\d,]/g, "").replace(",", "");
+        const price = parseFloat(cleanPrice);
+        return isNaN(price) ? 0 : price;
+      } catch (error) {
+        logger.warn(`解析价格失败: ${priceText}`, error);
+        return 0;
+      }
     }
     /**
      * 初始化统一的BoothItem数据
@@ -16479,6 +16498,7 @@
     getItemIcon(id) {
       const item = this.getItem(id);
       if (!item) {
+        logger.warn(`未找到商品ID: ${id}`);
         return this.getDefaultIcon();
       }
       return item.iconUrl || this.getDefaultIcon();
@@ -16486,9 +16506,9 @@
     /**
      * 根据商品ID获取指定尺寸的图片URL
      * @param id 商品ID
-     * @param _size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
+     * @param size 图片尺寸 ('72x72', '150x150', '300x300', '620x620', 'original')
      */
-    getItemImageUrl(id, _size = "72x72") {
+    getItemImageUrl(id, size = "72x72") {
       const item = this.getItem(id);
       if (!item) {
         return this.getDefaultIcon();
@@ -17035,8 +17055,7 @@
             const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
             if (totalItemsInOrder > 0) {
               const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-              const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
-              const itemBoothFee = quantity / totalItemsInOrder * orderBoothFee;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
               totalRevenue += itemValue;
               totalBoothFee += itemBoothFee;
             }
@@ -17062,7 +17081,7 @@
       }
       const stats = /* @__PURE__ */ new Map();
       const allItems = this.itemManager.getAllBoothItems();
-      allItems.forEach((_item, itemId) => {
+      allItems.forEach((item, itemId) => {
         stats.set(itemId, {
           totalQuantity: 0,
           totalRevenue: 0,
@@ -17080,8 +17099,7 @@
             const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
             if (totalItemsInOrder > 0) {
               const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-              const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
-              const itemBoothFee = quantity / totalItemsInOrder * orderBoothFee;
+              const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
               currentStats.totalQuantity += quantity;
               currentStats.totalRevenue += itemValue;
               currentStats.totalBoothFee += itemBoothFee;
@@ -17111,6 +17129,7 @@
       }
       const currentItem = this.itemManager.getBoothItem(itemId);
       if (!currentItem) {
+        logger.warn(`未找到商品: ${itemId}`);
         return [];
       }
       const variantStats = this.analyzeVariantsFromOrders(itemId, currentItem.name, orders);
@@ -17190,8 +17209,7 @@
               const totalItemsInOrder = order.items.reduce((sum, orderItem) => sum + (orderItem.quantity || 0), 0);
               if (totalItemsInOrder > 0) {
                 const itemValue = quantity / totalItemsInOrder * order.totalPrice;
-                const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
-                const itemBoothFee = quantity / totalItemsInOrder * orderBoothFee;
+                const itemBoothFee = quantity / totalItemsInOrder * (order.totalPrice * 0.1);
                 totalRevenue += itemValue;
                 totalBoothFee += itemBoothFee;
               }
@@ -17233,13 +17251,19 @@
       this.variantCache.clear();
       const allVariantsMap = /* @__PURE__ */ new Map();
       const allItems = this.itemManager.getAllBoothItems();
+      logger.info(`开始预处理 ${allItems.size} 个商品的变体数据`);
+      let processedCount = 0;
+      let totalVariants = 0;
       allItems.forEach((boothItem, itemId) => {
         const variantStats = this.analyzeVariantsFromOrders(itemId, boothItem.name, orders);
         if (variantStats.length > 0) {
           allVariantsMap.set(itemId, variantStats);
           this.variantCache.set(itemId, variantStats);
+          processedCount++;
+          totalVariants += variantStats.length;
         }
       });
+      logger.info(`变体数据预处理完成，共处理 ${processedCount} 个商品，总计 ${totalVariants} 个变体`);
       return allVariantsMap;
     }
     /**
@@ -17254,6 +17278,7 @@
       }
       const allSalesStats = this.getAllItemSalesStats(orders);
       if (this.shouldReprocessOrders(orders)) {
+        logger.info(`需要重新处理订单数据，开始预处理变体`);
         this.preprocessAllItemVariants(orders);
         this.lastProcessedOrders = [...orders];
       }
@@ -17313,8 +17338,7 @@
       let totalNetRevenue = 0;
       orders.forEach((order) => {
         totalRevenue += order.totalPrice;
-        const orderBoothFee = calculateBoothFee(order.totalPrice, order.createdAt);
-        totalNetRevenue += order.totalPrice - orderBoothFee;
+        totalNetRevenue += order.totalPrice * 0.9;
         order.items?.forEach((item) => {
           uniqueItems.add(item.itemId);
           totalItems += item.quantity || 0;
@@ -18145,6 +18169,7 @@
         if (parseResult.success && parseResult.data) {
           this.orders = parseResult.data;
           this.lastLoadTime = /* @__PURE__ */ new Date();
+          logger.info(`加载 ${this.orders.length} 条订单数据`);
           this.preprocessAllItemVariants();
           this.isLoading = false;
           return { success: true, data: this.orders };
@@ -18364,10 +18389,13 @@
      */
     static async initializeRates() {
       try {
+        logger.info("开始初始化汇率...");
         const rates = await this.fetchExchangeRates();
         this.updateExchangeRates(rates);
+        logger.info("汇率初始化成功 (实时数据):", rates);
       } catch (error) {
         logger.error("初始化汇率失败:", error);
+        logger.info("汇率初始化完成 (使用默认数据)");
       }
     }
     /**
@@ -18414,6 +18442,7 @@
         return rates;
       } catch (error) {
         logger.error("获取汇率失败:", error);
+        logger.warn("使用默认汇率数据作为备用");
         return {
           JPY: 1,
           CNY: 0.048,
@@ -19054,7 +19083,6 @@
     setup(__props, { emit: __emit }) {
       const props = __props;
       const emit = __emit;
-      const slots = vue.useSlots();
       const handleClose = () => {
         emit("close");
         emit("update:visible", false);
@@ -19089,7 +19117,7 @@
             vue.createElementVNode("div", _hoisted_4$b, [
               vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
             ]),
-            vue.unref(slots).footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$b, [
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$b, [
               vue.renderSlot(_ctx.$slots, "footer", {}, void 0, true)
             ])) : vue.createCommentVNode("", true)
           ], 2)
@@ -19097,7 +19125,7 @@
       };
     }
   });
-  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-45c66fea"]]);
+  const Modal = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-fe927469"]]);
   const _hoisted_1$b = { class: "selector-container" };
   const _hoisted_2$b = { class: "selector-controls" };
   const _hoisted_3$b = ["disabled", "onClick"];
@@ -19223,8 +19251,8 @@
   const _hoisted_19$2 = { class: "item-details" };
   const _hoisted_20$1 = { class: "item-header" };
   const _hoisted_21$1 = { class: "item-id" };
-  const _hoisted_22$1 = { class: "item-meta" };
-  const _hoisted_23$1 = { class: "meta-left" };
+  const _hoisted_22 = { class: "item-meta" };
+  const _hoisted_23 = { class: "meta-left" };
   const _hoisted_24 = {
     key: 0,
     class: "item-state"
@@ -19242,11 +19270,11 @@
   const _hoisted_32 = { class: "summary-value" };
   const _hoisted_33 = { class: "summary-item" };
   const _hoisted_34 = { class: "summary-value" };
-  const _hoisted_35 = {
+  const _hoisted_35 = { class: "variant-sales" };
+  const _hoisted_36 = {
     key: 0,
-    class: "variant-sales"
+    class: "variant-summary"
   };
-  const _hoisted_36 = { class: "variant-summary" };
   const _hoisted_37 = { class: "summary-stats" };
   const _hoisted_38 = { class: "summary-stat" };
   const _hoisted_39 = { class: "summary-stat" };
@@ -19262,6 +19290,10 @@
   const _hoisted_46 = { class: "variant-stats" };
   const _hoisted_47 = { class: "variant-quantity" };
   const _hoisted_48 = { class: "variant-revenue" };
+  const _hoisted_49 = {
+    key: 1,
+    class: "no-variants"
+  };
   const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
@@ -19502,8 +19534,8 @@
                       vue.createElementVNode("h4", null, vue.toDisplayString(_ctx.userSettings?.privacyMode ? "商品" : selectedItem.value.item.name), 1),
                       vue.createElementVNode("span", _hoisted_21$1, "ID: " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.itemId), 1)
                     ]),
-                    vue.createElementVNode("div", _hoisted_22$1, [
-                      vue.createElementVNode("div", _hoisted_23$1, [
+                    vue.createElementVNode("div", _hoisted_22, [
+                      vue.createElementVNode("div", _hoisted_23, [
                         selectedItem.value.item.state ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_24, [
                           _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "state-dot" }, null, -1)),
                           vue.createTextVNode(" " + vue.toDisplayString(_ctx.userSettings?.privacyMode ? "****" : selectedItem.value.item.state), 1)
@@ -19562,9 +19594,9 @@
                     ])
                   ])
                 ]),
-                selectedItem.value.item.variants && selectedItem.value.item.variants.length > 1 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_35, [
-                  _cache[12] || (_cache[12] = vue.createElementVNode("h5", null, "变体销量详情", -1)),
-                  vue.createElementVNode("div", _hoisted_36, [
+                vue.createElementVNode("div", _hoisted_35, [
+                  _cache[13] || (_cache[13] = vue.createElementVNode("h5", null, "变体销量详情", -1)),
+                  selectedItem.value.item.variants && selectedItem.value.item.variants.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_36, [
                     vue.createElementVNode("div", _hoisted_37, [
                       vue.createElementVNode("span", _hoisted_38, [
                         _cache[7] || (_cache[7] = vue.createTextVNode(" 变体数量: ", -1)),
@@ -19594,7 +19626,7 @@
                         ])
                       ])
                     ])
-                  ]),
+                  ])) : vue.createCommentVNode("", true),
                   vue.createElementVNode("div", _hoisted_41, [
                     (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(selectedItem.value.item.variants, (htmlVariant) => {
                       return vue.openBlock(), vue.createElementBlock("div", {
@@ -19625,8 +19657,11 @@
                         ])
                       ]);
                     }), 128))
-                  ])
-                ])) : vue.createCommentVNode("", true)
+                  ]),
+                  !selectedItem.value.item.variants || selectedItem.value.item.variants.length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_49, _cache[12] || (_cache[12] = [
+                    vue.createElementVNode("p", null, "暂无变体商品", -1)
+                  ]))) : vue.createCommentVNode("", true)
+                ])
               ])) : vue.createCommentVNode("", true)
             ]),
             _: 1
@@ -19635,7 +19670,7 @@
       };
     }
   });
-  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-e9d2de24"]]);
+  const ItemTable = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-203369eb"]]);
   const convertJSTToTargetTimezone = (jstDateTime, targetTimezone) => {
     try {
       const jstDate = parseISO(jstDateTime + "+09:00");
@@ -20126,18 +20161,16 @@
   const _hoisted_9$4 = { class: "exchange-rate-info" };
   const _hoisted_10$2 = { class: "update-time" };
   const _hoisted_11$2 = { class: "setting-section" };
-  const _hoisted_12$2 = { class: "setting-description" };
-  const _hoisted_13$2 = { class: "setting-section" };
-  const _hoisted_14$2 = { class: "setting-item" };
-  const _hoisted_15$2 = { class: "booth-toggle" };
-  const _hoisted_16$1 = { class: "setting-section" };
+  const _hoisted_12$2 = { class: "setting-item" };
+  const _hoisted_13$2 = { class: "booth-toggle" };
+  const _hoisted_14$2 = { class: "setting-section" };
+  const _hoisted_15$2 = { class: "setting-item" };
+  const _hoisted_16$1 = { class: "booth-toggle" };
   const _hoisted_17 = { class: "setting-item" };
-  const _hoisted_18 = { class: "booth-toggle" };
-  const _hoisted_19 = { class: "setting-item" };
-  const _hoisted_20 = ["value"];
-  const _hoisted_21 = { class: "setting-section" };
-  const _hoisted_22 = { class: "setting-actions" };
-  const _hoisted_23 = ["disabled"];
+  const _hoisted_18 = ["value"];
+  const _hoisted_19 = { class: "setting-section" };
+  const _hoisted_20 = { class: "setting-actions" };
+  const _hoisted_21 = ["disabled"];
   const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     props: {
@@ -20280,20 +20313,10 @@
                 ])
               ]),
               vue.createElementVNode("div", _hoisted_11$2, [
-                _cache[11] || (_cache[11] = vue.createElementVNode("h3", null, "手续费说明", -1)),
-                vue.createElementVNode("p", _hoisted_12$2, " Booth平台手续费计算公式：" + vue.toDisplayString(vue.unref(getFeeDescription)()), 1),
-                _cache[12] || (_cache[12] = vue.createElementVNode("div", { class: "fee-info" }, [
-                  vue.createElementVNode("p", null, "系统将根据订单日期自动选择适用的费率计算手续费和净收入。"),
-                  vue.createElementVNode("p", null, "计算公式：手续费 = ⌈订单金额 × 5.6%⌉ + 固定金额"),
-                  vue.createElementVNode("p", null, "改定前（2025-10-28之前）：固定金额 ¥22"),
-                  vue.createElementVNode("p", null, "改定后（2025-10-28之后）：固定金额 ¥45")
-                ], -1))
-              ]),
-              vue.createElementVNode("div", _hoisted_13$2, [
-                _cache[15] || (_cache[15] = vue.createElementVNode("h3", null, "隐私设置", -1)),
-                _cache[16] || (_cache[16] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
-                vue.createElementVNode("div", _hoisted_14$2, [
-                  vue.createElementVNode("label", _hoisted_15$2, [
+                _cache[13] || (_cache[13] = vue.createElementVNode("h3", null, "隐私设置", -1)),
+                _cache[14] || (_cache[14] = vue.createElementVNode("p", { class: "setting-description" }, ' 开启隐私模式后，所有敏感信息（订单数量、订单编号、金额）将显示为 "*"。 ', -1)),
+                vue.createElementVNode("div", _hoisted_12$2, [
+                  vue.createElementVNode("label", _hoisted_13$2, [
                     vue.withDirectives(vue.createElementVNode("input", {
                       type: "checkbox",
                       "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => settings.value.privacyMode = $event),
@@ -20301,16 +20324,16 @@
                     }, null, 544), [
                       [vue.vModelCheckbox, settings.value.privacyMode]
                     ]),
-                    _cache[13] || (_cache[13] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[14] || (_cache[14] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
+                    _cache[11] || (_cache[11] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[12] || (_cache[12] = vue.createElementVNode("span", { class: "toggle-label" }, "隐私模式", -1))
                   ])
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_16$1, [
-                _cache[20] || (_cache[20] = vue.createElementVNode("h3", null, "时间设置", -1)),
-                _cache[21] || (_cache[21] = vue.createElementVNode("p", { class: "setting-description" }, ' 选择一周的第一天，影响"本周"和"上周"的时间范围计算。 ', -1)),
-                vue.createElementVNode("div", _hoisted_17, [
-                  vue.createElementVNode("label", _hoisted_18, [
+              vue.createElementVNode("div", _hoisted_14$2, [
+                _cache[18] || (_cache[18] = vue.createElementVNode("h3", null, "时间设置", -1)),
+                _cache[19] || (_cache[19] = vue.createElementVNode("p", { class: "setting-description" }, ' 选择一周的第一天，影响"本周"和"上周"的时间范围计算。 ', -1)),
+                vue.createElementVNode("div", _hoisted_15$2, [
+                  vue.createElementVNode("label", _hoisted_16$1, [
                     vue.withDirectives(vue.createElementVNode("input", {
                       type: "checkbox",
                       "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => settings.value.mondayAsFirstDay = $event),
@@ -20318,12 +20341,12 @@
                     }, null, 544), [
                       [vue.vModelCheckbox, settings.value.mondayAsFirstDay]
                     ]),
-                    _cache[17] || (_cache[17] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                    _cache[18] || (_cache[18] = vue.createElementVNode("span", { class: "toggle-label" }, "以周一起始", -1))
+                    _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                    _cache[16] || (_cache[16] = vue.createElementVNode("span", { class: "toggle-label" }, "以周一起始", -1))
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_19, [
-                  _cache[19] || (_cache[19] = vue.createElementVNode("label", { for: "default-time-filter" }, "默认时间筛选：", -1)),
+                vue.createElementVNode("div", _hoisted_17, [
+                  _cache[17] || (_cache[17] = vue.createElementVNode("label", { for: "default-time-filter" }, "默认时间筛选：", -1)),
                   vue.withDirectives(vue.createElementVNode("select", {
                     id: "default-time-filter",
                     "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => settings.value.defaultTimeFilter = $event),
@@ -20334,22 +20357,22 @@
                       return vue.openBlock(), vue.createElementBlock("option", {
                         key: period.value,
                         value: period.value
-                      }, vue.toDisplayString(period.label), 9, _hoisted_20);
+                      }, vue.toDisplayString(period.label), 9, _hoisted_18);
                     }), 128))
                   ], 544), [
                     [vue.vModelSelect, settings.value.defaultTimeFilter]
                   ])
                 ]),
-                _cache[22] || (_cache[22] = vue.createElementVNode("p", { class: "setting-description" }, " 设置打开页面时默认显示的时间筛选选项。 ", -1))
+                _cache[20] || (_cache[20] = vue.createElementVNode("p", { class: "setting-description" }, " 设置打开页面时默认显示的时间筛选选项。 ", -1))
               ]),
-              vue.createElementVNode("div", _hoisted_21, [
-                _cache[23] || (_cache[23] = vue.createElementVNode("h3", null, "数据管理", -1)),
-                vue.createElementVNode("div", _hoisted_22, [
+              vue.createElementVNode("div", _hoisted_19, [
+                _cache[21] || (_cache[21] = vue.createElementVNode("h3", null, "数据管理", -1)),
+                vue.createElementVNode("div", _hoisted_20, [
                   vue.createElementVNode("button", {
                     onClick: saveSettings,
                     disabled: isSaving.value,
                     class: "booth-btn booth-btn-success booth-btn-md"
-                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_23),
+                  }, vue.toDisplayString(isSaving.value ? "保存中..." : "保存设置"), 9, _hoisted_21),
                   vue.createElementVNode("button", {
                     onClick: resetSettings,
                     class: "booth-btn booth-btn-secondary booth-btn-md"
@@ -20363,7 +20386,7 @@
       };
     }
   });
-  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-7495013f"]]);
+  const Settings = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-afcda58d"]]);
   const _hoisted_1$6 = { class: "date-filter" };
   const _hoisted_2$6 = { class: "filter-header" };
   const _hoisted_3$6 = { class: "current-period" };
@@ -35119,7 +35142,7 @@
           return originalData;
         }
         const fakeMethods = ["魔法水晶支付", "时空传送支付", "意念转账", "彩虹币支付"];
-        const fakeData = fakeMethods.map((method) => {
+        const fakeData = fakeMethods.map((method, index2) => {
           const count = Math.floor(Math.random() * 4e4) + 1e4;
           return {
             method,
@@ -35217,9 +35240,7 @@
         }
       }, { deep: true });
       vue.onMounted(() => {
-        vue.nextTick(() => {
-          initChart();
-        });
+        initChart();
       });
       vue.onUnmounted(() => {
         destroyChart();
@@ -35260,7 +35281,7 @@
       };
     }
   });
-  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-93af1781"]]);
+  const PaymentMethodChart = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-fd8dd5d5"]]);
   const _hoisted_1$3 = { class: "chart-container" };
   const _hoisted_2$3 = { class: "chart-header" };
   const _hoisted_3$3 = { class: "chart-info" };
@@ -35453,9 +35474,7 @@
         }
       }, { deep: true });
       vue.onMounted(() => {
-        vue.nextTick(() => {
-          initChart();
-        });
+        initChart();
       });
       vue.onUnmounted(() => {
         destroyChart();
@@ -35478,7 +35497,7 @@
       };
     }
   });
-  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-a06a6628"]]);
+  const RevenueTrendChart = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-f5146599"]]);
   const _hoisted_1$2 = { class: "statistics-panel" };
   const _hoisted_2$2 = { class: "stats-section" };
   const _hoisted_3$2 = { class: "stats-grid" };
@@ -35953,6 +35972,9 @@
     }
   });
   const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-44f36af5"]]);
+  function isBoothOrdersPage() {
+    return window.location.href.includes("manage.booth.pm/orders");
+  }
   const dataLoader = DataLoader.getInstance();
   const itemManager = ItemManager.getInstance();
   const currencyConverter = CurrencyManager;
@@ -35977,6 +35999,44 @@
       align-items: center;
       justify-content: center;
     `;
+      const style = document.createElement("style");
+      style.textContent = `
+      #booth-analysis-button {
+        position: relative;
+        overflow: hidden;
+      }
+      
+      #booth-analysis-button .button-text {
+        transition: opacity 0.3s ease;
+      }
+      
+      #booth-analysis-button.loading .button-text {
+        opacity: 1;
+        margin-left: 24px;
+      }
+      
+      #booth-analysis-button .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+      }
+      
+      #booth-analysis-button .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-top: 2px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+      document.head.appendChild(style);
       button.addEventListener("click", handleButtonClick);
       targetElement.appendChild(button);
     }
@@ -36074,9 +36134,9 @@
     vue.createApp(App).mount(content);
     setTimeout(() => panel.style.opacity = "1", 10);
   }
-  (async () => {
+  if (isBoothOrdersPage()) {
     const sessionManager = SessionManager.getInstance();
-    await sessionManager.getValidSession();
+    await( sessionManager.getValidSession());
     Promise.all([
       currencyConverter.initializeRates(),
       itemManager.initialize()
@@ -36091,6 +36151,6 @@
         await loadDataOnly();
       }
     }, 200);
-  })();
+  }
 
 })(Vue);

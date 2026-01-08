@@ -1,0 +1,336 @@
+/**
+ * 组件基础样式 - booth-order-analysis 风格
+ * 统一的表单、输入框、按钮等组件样式
+ */
+
+/* 全局重置 */
+.booth-enhancer-sidebar * {
+  box-sizing: border-box;
+}
+
+.booth-enhancer-sidebar input,
+.booth-enhancer-sidebar textarea,
+.booth-enhancer-sidebar select,
+.booth-enhancer-sidebar button {
+  font-family: inherit;
+}
+
+/* 统一按钮系统 - booth-btn */
+.booth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  font-family: inherit;
+}
+
+.booth-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.booth-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.booth-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 按钮尺寸 */
+.booth-btn-sm {
+  padding: 4px 8px;
+  font-size: 11px;
+  min-height: 24px;
+}
+
+.booth-btn-md {
+  padding: 6px 12px;
+  font-size: 12px;
+  min-height: 32px;
+}
+
+.booth-btn-lg {
+  padding: 8px 16px;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+/* 按钮颜色变体 */
+.booth-btn-primary {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+}
+
+.booth-btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+}
+
+.booth-btn-primary:active:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.booth-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.booth-btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.booth-btn-secondary:active:not(:disabled) {
+  background: #d1d5db;
+}
+
+.booth-btn-success {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}
+
+.booth-btn-success:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);
+}
+
+.booth-btn-danger {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3);
+}
+
+.booth-btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+}
+
+.booth-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+}
+
+.booth-btn-ghost:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+/* 图标按钮 */
+.booth-btn-icon {
+  padding: 6px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.booth-btn-icon.booth-btn-sm {
+  padding: 4px;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.booth-btn-icon.booth-btn-lg {
+  padding: 8px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+/* Focus 状态 */
+.booth-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.booth-btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+/* 输入框基础样式 */
+.booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]),
+.booth-enhancer-sidebar textarea,
+.booth-enhancer-sidebar select {
+  width: 100%;
+  padding: 6px 12px;
+  margin: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.booth-enhancer-sidebar input:hover,
+.booth-enhancer-sidebar textarea:hover,
+.booth-enhancer-sidebar select:hover {
+  border-color: #9ca3af;
+}
+
+.booth-enhancer-sidebar input:focus,
+.booth-enhancer-sidebar textarea:focus,
+.booth-enhancer-sidebar select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.booth-enhancer-sidebar input::placeholder,
+.booth-enhancer-sidebar textarea::placeholder {
+  color: #9ca3af;
+}
+
+.booth-enhancer-sidebar textarea {
+  min-height: 5em;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Modal 内容样式 */
+.modal-content p {
+  margin: 0;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.modal-input:hover {
+  border-color: #9ca3af;
+}
+
+.modal-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modal-input::placeholder {
+  color: #9ca3af;
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group .required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+  border-color: #9ca3af;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+  min-height: 5em;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* 滚动条美化 */
+.booth-enhancer-sidebar ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .booth-btn-md {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-height: 28px;
+  }
+
+  .booth-btn-lg {
+    padding: 7px 14px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+}

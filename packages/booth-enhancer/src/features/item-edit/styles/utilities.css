@@ -1,0 +1,123 @@
+/**
+ * 工具类样式
+ * 常用的间距、布局、文本样式
+ */
+
+/* 间距工具类 */
+.be-m-0 { margin: 0 !important; }
+.be-mt-0 { margin-top: 0 !important; }
+.be-mr-0 { margin-right: 0 !important; }
+.be-mb-0 { margin-bottom: 0 !important; }
+.be-ml-0 { margin-left: 0 !important; }
+
+.be-m-xs { margin: var(--be-space-xs) !important; }
+.be-m-sm { margin: var(--be-space-sm) !important; }
+.be-m-md { margin: var(--be-space-md) !important; }
+.be-m-lg { margin: var(--be-space-lg) !important; }
+
+.be-p-0 { padding: 0 !important; }
+.be-pt-0 { padding-top: 0 !important; }
+.be-pr-0 { padding-right: 0 !important; }
+.be-pb-0 { padding-bottom: 0 !important; }
+.be-pl-0 { padding-left: 0 !important; }
+
+.be-p-xs { padding: var(--be-space-xs) !important; }
+.be-p-sm { padding: var(--be-space-sm) !important; }
+.be-p-md { padding: var(--be-space-md) !important; }
+.be-p-lg { padding: var(--be-space-lg) !important; }
+
+/* Flexbox 工具类 */
+.be-flex { display: flex !important; }
+.be-flex-column { flex-direction: column !important; }
+.be-flex-row { flex-direction: row !important; }
+
+.be-justify-start { justify-content: flex-start !important; }
+.be-justify-center { justify-content: center !important; }
+.be-justify-end { justify-content: flex-end !important; }
+.be-justify-between { justify-content: space-between !important; }
+
+.be-align-start { align-items: flex-start !important; }
+.be-align-center { align-items: center !important; }
+.be-align-end { align-items: flex-end !important; }
+
+.be-flex-1 { flex: 1 !important; }
+.be-flex-grow { flex-grow: 1 !important; }
+.be-flex-shrink-0 { flex-shrink: 0 !important; }
+
+.be-gap-xs { gap: var(--be-space-xs) !important; }
+.be-gap-sm { gap: var(--be-space-sm) !important; }
+.be-gap-md { gap: var(--be-space-md) !important; }
+.be-gap-lg { gap: var(--be-space-lg) !important; }
+
+/* 文本工具类 */
+.be-text-left { text-align: left !important; }
+.be-text-center { text-align: center !important; }
+.be-text-right { text-align: right !important; }
+
+.be-text-xs { font-size: var(--be-font-size-xs) !important; }
+.be-text-sm { font-size: var(--be-font-size-sm) !important; }
+.be-text-md { font-size: var(--be-font-size-md) !important; }
+.be-text-lg { font-size: var(--be-font-size-lg) !important; }
+
+.be-font-normal { font-weight: 400 !important; }
+.be-font-medium { font-weight: 500 !important; }
+.be-font-bold { font-weight: 600 !important; }
+
+.be-text-primary { color: var(--be-color-text) !important; }
+.be-text-secondary { color: var(--be-color-text-secondary) !important; }
+.be-text-muted { color: var(--be-color-text-muted) !important; }
+.be-text-danger { color: var(--be-color-danger) !important; }
+.be-text-success { color: var(--be-color-success) !important; }
+
+/* 显示工具类 */
+.be-hidden { display: none !important; }
+.be-visible { visibility: visible !important; }
+.be-invisible { visibility: hidden !important; }
+
+.be-block { display: block !important; }
+.be-inline { display: inline !important; }
+.be-inline-block { display: inline-block !important; }
+
+/* 宽度工具类 */
+.be-w-full { width: 100% !important; }
+.be-h-full { height: 100% !important; }
+
+/* 边框工具类 */
+.be-border { border: 1px solid var(--be-color-border) !important; }
+.be-border-0 { border: none !important; }
+.be-border-t { border-top: 1px solid var(--be-color-border) !important; }
+.be-border-r { border-right: 1px solid var(--be-color-border) !important; }
+.be-border-b { border-bottom: 1px solid var(--be-color-border) !important; }
+.be-border-l { border-left: 1px solid var(--be-color-border) !important; }
+
+.be-rounded-sm { border-radius: var(--be-radius-sm) !important; }
+.be-rounded-md { border-radius: var(--be-radius-md) !important; }
+.be-rounded-lg { border-radius: var(--be-radius-lg) !important; }
+.be-rounded-full { border-radius: 9999px !important; }
+
+/* 阴影工具类 */
+.be-shadow-sm { box-shadow: var(--be-shadow-sm) !important; }
+.be-shadow-md { box-shadow: var(--be-shadow-md) !important; }
+.be-shadow-lg { box-shadow: var(--be-shadow-lg) !important; }
+.be-shadow-none { box-shadow: none !important; }
+
+/* 光标工具类 */
+.be-cursor-pointer { cursor: pointer !important; }
+.be-cursor-default { cursor: default !important; }
+.be-cursor-not-allowed { cursor: not-allowed !important; }
+
+/* 溢出工具类 */
+.be-overflow-hidden { overflow: hidden !important; }
+.be-overflow-auto { overflow: auto !important; }
+.be-overflow-scroll { overflow: scroll !important; }
+
+/* 位置工具类 */
+.be-relative { position: relative !important; }
+.be-absolute { position: absolute !important; }
+.be-fixed { position: fixed !important; }
+.be-sticky { position: sticky !important; }
+
+/* 过渡工具类 */
+.be-transition { transition: all var(--be-transition-normal) !important; }
+.be-transition-fast { transition: all var(--be-transition-fast) !important; }
+.be-transition-slow { transition: all var(--be-transition-slow) !important; }

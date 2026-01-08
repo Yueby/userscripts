@@ -8,10 +8,21 @@ export class Simulate {
      * @param text 要输入的文本
      */
     static input(element: HTMLElement, text: string): void {
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+        let nativeInputValueSetter;
+
+        if (element instanceof HTMLInputElement) {
+            nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+        } else if (element instanceof HTMLTextAreaElement) {
+            nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+        }
+
         if (nativeInputValueSetter) {
             nativeInputValueSetter.call(element, text);
+        } else {
+            // Fallback for other elements or if setter not found
+            (element as any).value = text;
         }
+
         const ev2 = new Event('input', { bubbles: true });
         element.dispatchEvent(ev2);
     }

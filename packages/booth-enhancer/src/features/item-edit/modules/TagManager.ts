@@ -3,6 +3,7 @@ import { handleError } from "../../../utils/error";
 import { Simulate } from "../../../utils/simulate";
 import { Utils } from "../../../utils/utils";
 import { PageModule } from "../../PageModule";
+import { toast } from "../components/ui";
 
 interface ProgressTip {
     container: HTMLDivElement;
@@ -104,7 +105,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
             const tags = this.api.getTagTexts();
 
             if (tags.length === 0) {
-                alert('没有找到标签');
+                toast.warning('没有找到标签');
                 return;
             }
 
@@ -143,7 +144,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
             const tagsToAdd = newTags.filter(tag => !existingTags.includes(tag));
 
             if (tagsToAdd.length === 0) {
-                alert('所有标签都已存在，无需添加');
+                toast.info('所有标签都已存在，无需添加');
                 return;
             }
 
@@ -175,7 +176,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
             }
         } catch (error) {
             handleError(error, () => {
-                alert('粘贴标签失败：' + (error instanceof Error ? error.message : String(error)));
+                toast.error('粘贴标签失败：' + (error instanceof Error ? error.message : String(error)));
             });
         }
     }
@@ -185,14 +186,15 @@ export class TagManager extends PageModule<ItemEditAPI> {
      */
     private async clearTags(): Promise<void> {
         try {
-            if (!confirm('确定要清空所有标签吗？')) return;
+            const confirmed = window.confirm('确定要清空所有标签吗？');
+            if (!confirmed) return;
 
             const tagElements = this.api.tagElements;
             if (!tagElements) throw new Error('找不到标签容器');
 
             const deleteButtons = this.api.getTagDeleteButtons();
             if (deleteButtons.length === 0) {
-                alert('没有找到需要清空的标签');
+                toast.warning('没有找到需要清空的标签');
                 return;
             }
 

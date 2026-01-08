@@ -1,11 +1,11 @@
 import { Simulate } from "../../utils/simulate";
 import { BaseAPI } from "../BaseAPI";
 import {
-    ItemEditData,
-    ItemEditSectionElement,
-    ItemEditVariationElement,
-    TagData,
-    TagElements,
+  ItemEditData,
+  ItemEditSectionElement,
+  ItemEditVariationElement,
+  TagData,
+  TagElements,
 } from "./types";
 
 /**
@@ -389,16 +389,6 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   }
 
   /**
-   * 刷新数据
-   */
-  refresh(): void {
-    this.loadName();
-    this.loadDescription();
-    this.loadSectionsAndVariations();
-    this.loadTagElements();
-  }
-
-  /**
    * 获取/设置商品名
    */
   get name(): string {
@@ -429,14 +419,147 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
     Simulate.input(this._data.descriptionTextarea, value);
   }
+
+  /**
+   * 设置商品名（别名）
+   */
+  setName(value: string): void {
+    this.name = value;
+  }
+
+  /**
+   * 设置商品描述（别名）
+   */
+  setDescription(value: string): void {
+    this.description = value;
+  }
+
+  /**
+   * 更新指定 Section
+   */
+  updateSection(index: number, data: { headline?: string; body?: string }): void {
+    const section = this._data.sections[index];
+    if (!section) return;
+
+    if (data.headline !== undefined && section.headlineInput) {
+      Simulate.input(section.headlineInput, data.headline);
+    }
+    if (data.body !== undefined && section.bodyTextarea) {
+      Simulate.input(section.bodyTextarea, data.body);
+    }
+  }
+
+  /**
+   * 更新指定 Variation
+   */
+  updateVariation(index: number, data: { name?: string; price?: string }): void {
+    const variation = this._data.variations[index];
+    if (!variation) return;
+
+    if (data.name !== undefined && variation.nameInput) {
+      Simulate.input(variation.nameInput, data.name);
+    }
+    if (data.price !== undefined && variation.priceInput) {
+      Simulate.input(variation.priceInput, data.price);
+    }
+  }
+
+  /**
+   * 批量添加 Tags
+   */
+  async addTags(tags: string[]): Promise<void> {
+    if (!this._data.tagElements) return;
+
+    const { input, inputContainer } = this._data.tagElements;
+
+    for (const tag of tags) {
+      if (this.hasTag(tag)) continue;
+
+      // 模拟输入
+      Simulate.input(input, tag);
+
+      // 模拟回车
+      const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        bubbles: true,
+        cancelable: true
+      });
+      input.dispatchEvent(enterEvent);
+
+      // 等待一点时间，避免太快
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  /**
+   * 监听商品名变化
+   */
+  onNameChange(callback: (value: string) => void): void {
+    this._nameChangeCallback = callback;
+    if (this._data.nameInput) {
+      this._data.nameInput.addEventListener('input', (e) => {
+        callback((e.target as HTMLInputElement).value);
+      });
+    }
+  }
+
+  /**
+   * 监听描述变化
+   */
+  onDescriptionChange(callback: (value: string) => void): void {
+    this._descriptionChangeCallback = callback;
+    if (this._data.descriptionTextarea) {
+      this._data.descriptionTextarea.addEventListener('input', (e) => {
+        callback((e.target as HTMLTextAreaElement).value);
+      });
+    }
+  }
+
+  /**
+   * 监听 Section 列表变化
+   */
+  onSectionsChange(callback: () => void): void {
+    this._sectionsChangeCallback = callback;
+    this._data.sections.forEach(section => {
+      section.headlineInput?.addEventListener('input', () => callback());
+      section.bodyTextarea?.addEventListener('input', () => callback());
+    });
+    const originalCallback = this._newSectionCallback;
+    this._newSectionCallback = (section) => {
+      section.headlineInput?.addEventListener('input', () => callback());
+      section.bodyTextarea?.addEventListener('input', () => callback());
+      originalCallback?.(section);
+      callback();
+    };
+  }
+
+  /**
+   * 监听 Variation 列表变化
+   */
+  onVariationsChange(callback: () => void): void {
+    this._variationsChangeCallback = callback;
+    this._data.variations.forEach(variation => {
+      variation.nameInput?.addEventListener('input', () => callback());
+      variation.priceInput?.addEventListener('input', () => callback());
+    });
+    const originalCallback = this._newVariationCallback;
+    this._newVariationCallback = (variation) => {
+      variation.nameInput?.addEventListener('input', () => callback());
+      variation.priceInput?.addEventListener('input', () => callback());
+      originalCallback?.(variation);
+      callback();
+    };
+  }
 }
 
 // 导出类型
 export type {
-    ItemEditData,
-    ItemEditSectionElement,
-    ItemEditVariationElement,
-    TagData,
-    TagElements
+  ItemEditData,
+  ItemEditSectionElement,
+  ItemEditVariationElement,
+  TagData,
+  TagElements
 } from "./types";
 
