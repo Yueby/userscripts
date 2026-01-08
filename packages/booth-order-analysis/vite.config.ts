@@ -16,7 +16,7 @@ export default defineConfig({
 			userscript: {
 				icon: './src/assets/icon.svg',
 				namespace: 'yueby.booth',
-				match: ['https://*.booth.pm/*'],
+				match: ['https://manage.booth.pm/orders*'],
 				name: {
 					'': 'Booth Order Analysis',
 					'zh-CN': 'Booth 订单分析'
@@ -26,7 +26,7 @@ export default defineConfig({
 					'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
 				},
 				author: 'Yueby',
-				version: '0.1.12',
+				version: '0.1.13',
 				connect: ['raw.githubusercontent.com', 'api.exchangerate-api.com', 'manage.booth.pm'],
 				grant: ['GM_xmlhttpRequest', 'GM_setClipboard', 'GM_notification', 'GM_registerMenuCommand', 'GM_getValue', 'GM_setValue']
 			},

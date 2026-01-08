@@ -7,11 +7,6 @@ import { logger } from './utils/core/logger';
 import { SessionManager } from './utils/core/session-manager';
 import { CurrencyManager } from './utils/currency/currency-manager';
 
-// 检查是否在 Booth 订单页面
-function isBoothOrdersPage(): boolean {
-  return window.location.href.includes('manage.booth.pm/orders');
-}
-
 // 数据加载器实例
 const dataLoader = DataLoader.getInstance();
 
@@ -207,8 +202,8 @@ async function showVuePanel(): Promise<void> {
   setTimeout(() => (panel.style.opacity = '1'), 10);
 }
 
-// 启动
-if (isBoothOrdersPage()) {
+// 启动 - 由于 vite.config 中已精确匹配订单页面，这里无需再检查
+(async () => {
   // 先初始化 Session，再初始化其他管理器
   const sessionManager = SessionManager.getInstance();
   await sessionManager.getValidSession();
@@ -231,4 +226,4 @@ if (isBoothOrdersPage()) {
       await loadDataOnly();
     }
   }, 200);
-}
+})();
