@@ -42,46 +42,6 @@ function insertButton(): void {
       justify-content: center;
     `;
 
-    // 添加CSS样式
-    const style = document.createElement('style');
-    style.textContent = `
-      #booth-analysis-button {
-        position: relative;
-        overflow: hidden;
-      }
-      
-      #booth-analysis-button .button-text {
-        transition: opacity 0.3s ease;
-      }
-      
-      #booth-analysis-button.loading .button-text {
-        opacity: 1;
-        margin-left: 24px;
-      }
-      
-      #booth-analysis-button .loading-spinner {
-        position: absolute;
-        top: 50%;
-        left: 12px;
-        transform: translateY(-50%);
-      }
-      
-      #booth-analysis-button .spinner {
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(59, 130, 246, 0.3);
-        border-top: 2px solid #3b82f6;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
-
     button.addEventListener('click', handleButtonClick);
     targetElement.appendChild(button);
   }
