@@ -157,9 +157,9 @@ export class TagManager extends PageModule<ItemEditAPI> {
 
                     input.focus();
                     Simulate.input(input, tagsToAdd[i]);
-                    await Utils.sleep(10);
+                    await Utils.sleep(1);
                     Simulate.pressEnter(input);
-                    await Utils.sleep(10);
+                    await Utils.sleep(1);
                 }
 
                 progress.complete(

@@ -22,12 +22,12 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const a=document.createElement("style");a.textContent=e,document.head.append(a)})(' .icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-b90a005d]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-b90a005d]{position:absolute;z-index:2000}.modal-container[data-v-b90a005d]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}.modal-header[data-v-b90a005d]{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-b90a005d]{margin:0;font-size:16px;font-weight:600;color:#374151}.modal-header .booth-btn[data-v-b90a005d] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-b90a005d]{padding:20px;overflow-y:auto;flex:1;min-height:0;font-size:13px;color:#374151}.modal-footer[data-v-b90a005d]{padding:16px 20px;border-top:1px solid #e5e7eb;display:flex;gap:12px;justify-content:flex-end;flex-shrink:0;background:#f8fafc}.modal-footer .booth-btn[data-v-b90a005d]{flex:1;min-width:80px}.modal-enter-active[data-v-b90a005d],.modal-leave-active[data-v-b90a005d]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-b90a005d],.modal-leave-active .modal-container[data-v-b90a005d]{transition:transform .3s ease}.modal-enter-from[data-v-b90a005d],.modal-leave-to[data-v-b90a005d]{opacity:0}.modal-enter-from .modal-container[data-v-b90a005d],.modal-leave-to .modal-container[data-v-b90a005d]{transform:translateY(100%)}.modal-body[data-v-b90a005d]::-webkit-scrollbar{width:6px}.modal-body[data-v-b90a005d]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-b90a005d]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-b90a005d]::-webkit-scrollbar-thumb:hover{background:#999}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.tree-item[data-v-4d1147ae]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-4d1147ae]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-4d1147ae]{cursor:move}.tree-node-wrapper[data-v-4d1147ae]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-4d1147ae]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-4d1147ae]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-4d1147ae 1s ease-in-out infinite}@keyframes pulse-4d1147ae{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-4d1147ae]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-4d1147ae]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-4d1147ae]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-4d1147ae]{border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease}.node-item[data-v-4d1147ae]:not(.is-editing):hover{background:#f3f4f6}.tree-node-content[data-v-4d1147ae]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:pointer}.node-item.has-custom-content .tree-node-content[data-v-4d1147ae]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-4d1147ae],.tree-node-content.has-children[data-v-4d1147ae]{cursor:default}.expand-icon[data-v-4d1147ae]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease;cursor:pointer}.expand-icon.placeholder[data-v-4d1147ae]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-4d1147ae]{cursor:default;opacity:.5}.expand-icon[data-v-4d1147ae] svg{width:12px;height:12px}.icon[data-v-4d1147ae]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0}.icon[data-v-4d1147ae] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-4d1147ae]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-item.is-editing .node-custom-content[data-v-4d1147ae]{opacity:.6;pointer-events:none}.node-name-input[data-v-4d1147ae]{flex:1;padding:2px 6px;border:1px solid #3b82f6;border-radius:3px;font-size:13px;font-family:inherit;outline:none;background:#fff;box-shadow:0 0 0 2px #3b82f61a;line-height:1.4}.node-name-input[data-v-4d1147ae]:focus{border-color:#2563eb}.name[data-v-4d1147ae]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-4d1147ae]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-4d1147ae]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-c4c782fd]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-c4c782fd]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.search-icon[data-v-c4c782fd]{display:flex;align-items:center;color:#9ca3af}.search-icon[data-v-c4c782fd] svg{width:14px;height:14px}.search-input[data-v-c4c782fd]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.search-input[data-v-c4c782fd]::placeholder{color:#9ca3af}.search-results[data-v-c4c782fd]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-c4c782fd]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.node-tree[data-v-c4c782fd]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-c4c782fd]{position:relative;z-index:1}.empty-state[data-v-c4c782fd]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.context-menu[data-v-c4c782fd]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0}.menu-item[data-v-c4c782fd]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center}.menu-item[data-v-c4c782fd]:hover{background:#f3f4f6}.menu-item-danger[data-v-c4c782fd]{color:#ef4444}.menu-item-danger[data-v-c4c782fd]:hover{background:#fef2f2;color:#dc2626}.menu-separator[data-v-c4c782fd]{height:1px;min-height:1px;max-height:1px;background:#e5e7eb;margin:4px 0;font-size:0;line-height:0}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;font-family:inherit}.booth-btn:hover:not(:disabled){transform:translateY(-1px)}.booth-btn:active:not(:disabled){transform:translateY(1px)}.booth-btn:disabled{cursor:not-allowed;opacity:.6}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar input:hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:5em;resize:vertical;line-height:1.5}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.modal-input{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.modal-input:hover{border-color:#9ca3af}.modal-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.modal-input::placeholder{color:#9ca3af}.form-group{margin-bottom:12px}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:6px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:5em;resize:vertical;line-height:1.5}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-h-full{height:100%!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}.booth-enhancer-sidebar[data-v-0a957ae2]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-0a957ae2]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0}.tag-preset-tab[data-v-9e62ff02]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-9e62ff02]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-9e62ff02]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-9e62ff02]::-webkit-scrollbar{width:6px}.tree-container[data-v-9e62ff02]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-9e62ff02]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-9e62ff02]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-9e62ff02]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-9e62ff02]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-9e62ff02]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-9e62ff02]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-9e62ff02]{width:100%}.tag-badges-wrapper[data-v-9e62ff02]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-9e62ff02]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-9e62ff02]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-9e62ff02]{flex-shrink:0}.tag-delete-btn[data-v-9e62ff02]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;font-size:14px;line-height:1;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-9e62ff02]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.item-data-tab[data-v-d8aa8a2f]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-d8aa8a2f]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-d8aa8a2f]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-d8aa8a2f]::-webkit-scrollbar{width:6px}.tree-container[data-v-d8aa8a2f]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-d8aa8a2f]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-d8aa8a2f]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-d8aa8a2f]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-d8aa8a2f]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-d8aa8a2f]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-d8aa8a2f]{font-size:12px;color:#94a3b8;margin-left:4px}.item-custom-content[data-v-d8aa8a2f]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-d8aa8a2f]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-d8aa8a2f]{flex-shrink:0}.template-section[data-v-d8aa8a2f]{display:flex;flex-direction:column;gap:12px}.section-title[data-v-d8aa8a2f]{margin:0;font-size:13px;font-weight:600;color:#374151}.template-preview[data-v-d8aa8a2f]{padding:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;color:#374151;white-space:pre-wrap;word-break:break-word;font-family:Consolas,Monaco,monospace;margin-bottom:8px}.template-hint[data-v-d8aa8a2f]{margin:0;font-size:11px;color:#6b7280;font-style:italic}.item-form[data-v-d8aa8a2f]{display:flex;flex-direction:column;gap:1em}.template-tab[data-v-addebd0f]{height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden}.active-badge[data-v-addebd0f]{padding:2px 6px;background:#3b82f6;color:#fff;font-size:10px;border-radius:3px;font-weight:500;line-height:1.2}.template-preview[data-v-addebd0f]{padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px}.template-preview pre[data-v-addebd0f]{margin:0;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.5;color:#334155;white-space:pre-wrap;word-break:break-all}.modal-input[data-v-addebd0f]{width:100%;padding:10px 12px;font-size:13px;border:1px solid #d1d5db;border-radius:6px;transition:all .2s;background:#fff;color:#1f2937;line-height:1.5}.modal-input[data-v-addebd0f]:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.modal-input[data-v-addebd0f]::placeholder{color:#9ca3af}textarea.modal-input[data-v-addebd0f]{resize:vertical;min-height:80px} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-546fb7a1]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-546fb7a1]{position:absolute;z-index:2000}.modal-container[data-v-546fb7a1]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}.modal-header[data-v-546fb7a1]{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-546fb7a1]{margin:0;font-size:16px;font-weight:600;color:#374151}.modal-header .booth-btn[data-v-546fb7a1] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-546fb7a1]{padding:10px;overflow-y:auto;flex:1;min-height:0;font-size:13px;color:#374151}.modal-footer[data-v-546fb7a1]{padding:16px 20px;border-top:1px solid #e5e7eb;display:flex;gap:12px;justify-content:flex-end;flex-shrink:0;background:#f8fafc}.modal-footer .booth-btn[data-v-546fb7a1]{flex:1;min-width:80px}.modal-enter-active[data-v-546fb7a1],.modal-leave-active[data-v-546fb7a1]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-546fb7a1],.modal-leave-active .modal-container[data-v-546fb7a1]{transition:transform .3s ease}.modal-enter-from[data-v-546fb7a1],.modal-leave-to[data-v-546fb7a1]{opacity:0}.modal-enter-from .modal-container[data-v-546fb7a1],.modal-leave-to .modal-container[data-v-546fb7a1]{transform:translateY(100%)}.modal-body[data-v-546fb7a1]::-webkit-scrollbar{width:6px}.modal-body[data-v-546fb7a1]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-546fb7a1]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-546fb7a1]::-webkit-scrollbar-thumb:hover{background:#999}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.menu-fade-enter-active[data-v-d6382fda]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-d6382fda]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-d6382fda]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-d6382fda]{opacity:0;transform:scale(.95)}.context-menu[data-v-d6382fda]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-d6382fda]{transition:none!important}.menu-item[data-v-d6382fda]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-d6382fda]:hover{background:#f3f4f6}.menu-item-danger[data-v-d6382fda]{color:#ef4444}.menu-item-danger[data-v-d6382fda]:hover{background:#fef2f2}.menu-icon[data-v-d6382fda]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-d6382fda]{color:#ef4444}.menu-icon[data-v-d6382fda] svg{width:14px;height:14px}.menu-label[data-v-d6382fda]{flex:1}.menu-separator[data-v-d6382fda]{height:1px;background:#e5e7eb;margin:4px 0}.tree-item[data-v-07f985ed]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-07f985ed]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-07f985ed]{cursor:move}.tree-node-wrapper[data-v-07f985ed]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-07f985ed]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-07f985ed]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-07f985ed 1s ease-in-out infinite}@keyframes pulse-07f985ed{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-07f985ed]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-07f985ed]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-07f985ed]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-07f985ed]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-07f985ed]{cursor:default}.node-item[data-v-07f985ed]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-07f985ed]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-07f985ed]{background:#bfdbfe}.tree-node-content[data-v-07f985ed]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-07f985ed]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-07f985ed]{cursor:default}.toggle-area[data-v-07f985ed]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-07f985ed]:hover{opacity:.7}.toggle-area .expand-icon[data-v-07f985ed]{margin-right:4px}.toggle-area .icon[data-v-07f985ed]{margin-right:0}.expand-icon[data-v-07f985ed]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-07f985ed]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-07f985ed]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-07f985ed]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-07f985ed] svg{width:12px;height:12px}.icon[data-v-07f985ed]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-07f985ed] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-07f985ed]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-07f985ed]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-07f985ed]{opacity:.6;pointer-events:none}.node-name-input[data-v-07f985ed]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-07f985ed]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-07f985ed]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-07f985ed]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-2358025e]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-2358025e]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-2358025e]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-2358025e]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-2358025e]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-2358025e]::placeholder{color:#9ca3af}.search-results[data-v-2358025e]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-2358025e]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-2358025e]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-2358025e]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-2358025e]{position:relative;z-index:1}.empty-state[data-v-2358025e]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:5em;resize:vertical}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.modal-input{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.modal-input:hover{border-color:#9ca3af}.modal-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.modal-input::placeholder{color:#9ca3af}.form-group{margin-bottom:12px}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:6px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:5em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-h-full{height:100%!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-6fde86e8]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-6fde86e8]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0}.tag-preset-tab[data-v-865a3a00]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-865a3a00]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-865a3a00]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-865a3a00]::-webkit-scrollbar{width:6px}.tree-container[data-v-865a3a00]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-865a3a00]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-865a3a00]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-865a3a00]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-865a3a00]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-865a3a00]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-865a3a00]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-865a3a00]{width:100%}.tag-badges-wrapper[data-v-865a3a00]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-865a3a00]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-865a3a00]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-865a3a00]{flex-shrink:0}.tag-delete-btn[data-v-865a3a00]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;font-size:16px;line-height:0;cursor:pointer;transition:all .15s ease;opacity:.7;font-family:Arial,sans-serif}.tag-delete-btn[data-v-865a3a00]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-865a3a00]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-865a3a00]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-865a3a00]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-865a3a00]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-865a3a00]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-446aec3d]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-446aec3d]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-446aec3d]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-446aec3d]::-webkit-scrollbar{width:6px}.tree-container[data-v-446aec3d]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-446aec3d]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-446aec3d]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-446aec3d]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-446aec3d]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-446aec3d]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-446aec3d]{font-size:12px;color:#94a3b8;margin-left:4px}.item-custom-content[data-v-446aec3d]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-446aec3d]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-446aec3d]{flex-shrink:0}.template-section[data-v-446aec3d]{display:flex;flex-direction:column;gap:12px}.section-title[data-v-446aec3d]{margin:0;font-size:13px;font-weight:600;color:#374151}.template-preview[data-v-446aec3d]{padding:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;color:#374151;white-space:pre-wrap;word-break:break-word;font-family:Consolas,Monaco,monospace;margin-bottom:8px}.template-hint[data-v-446aec3d]{margin:0;font-size:11px;color:#6b7280;font-style:italic}.modal-message[data-v-446aec3d]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-446aec3d]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-446aec3d]{font-family:Consolas,Monaco,monospace;line-height:1.5}.action-icon[data-v-446aec3d]{display:flex;align-items:center;justify-content:center;width:24px;height:24px;color:#64748b;cursor:pointer;border-radius:6px;transition:all .15s ease;opacity:0;border:1px solid transparent}[data-v-446aec3d] .node-item:hover .action-icon,[data-v-446aec3d] .node-item.selected .action-icon,[data-v-446aec3d] .node-item.multi-selected .action-icon{opacity:1}.action-icon[data-v-446aec3d]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.action-icon[data-v-446aec3d]:active{transform:translateY(1px)}.template-manager-btn[data-v-446aec3d]{display:flex;align-items:center;gap:6px;padding:6px 12px;height:32px;font-size:12px;font-weight:500;color:#475569;background:#fff;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;transition:all .15s ease;white-space:nowrap;box-shadow:0 1px 2px #0000000d}.template-manager-btn[data-v-446aec3d] svg{width:16px;height:16px;flex-shrink:0}.template-manager-btn[data-v-446aec3d]:hover{background:#f1f5f9;color:#475569;border-color:#cbd5e1;transform:translateY(-1px)}.template-manager-btn[data-v-446aec3d]:active{transform:translateY(1px)}.template-manager[data-v-446aec3d]{min-height:400px;max-height:600px}.template-list[data-v-446aec3d]{flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden}.template-list-header[data-v-446aec3d]{flex-shrink:0}.btn-create[data-v-446aec3d]{width:100%;gap:6px}.template-items[data-v-446aec3d]{flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding-right:4px}.template-item[data-v-446aec3d]{border:1px solid #e5e7eb;border-radius:6px;padding:12px;transition:all .15s ease;background:#fff}.template-item[data-v-446aec3d]:hover{border-color:#cbd5e1;box-shadow:0 2px 4px #0000000d}.template-item.is-active[data-v-446aec3d]{border-color:#3b82f6;background:#3b82f605}.template-item-header[data-v-446aec3d]{display:flex;align-items:center;gap:8px;margin-bottom:8px}.template-name[data-v-446aec3d]{flex:1;font-size:13px;font-weight:500;color:#1f2937}.active-badge[data-v-446aec3d]{padding:2px 6px;background:#3b82f6;color:#fff;font-size:10px;border-radius:3px;font-weight:500;line-height:1.2}.template-actions[data-v-446aec3d]{display:flex;gap:4px}.template-preview-item[data-v-446aec3d]{padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px}.template-preview-item pre[data-v-446aec3d]{margin:0;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.5;color:#334155;white-space:pre-wrap;word-break:break-all}.template-textarea[data-v-446aec3d]{font-family:Consolas,Monaco,monospace;min-height:150px}.form-hint[data-v-446aec3d]{margin:0 0 6px;font-size:11px;color:#6b7280;font-style:italic} ');
 
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-CiFzQCYM.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-DB_lhVXb.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,9 +39,9 @@ System.register("./__entry.js", ['./__monkey.entry-CiFzQCYM.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-DB_lhVXb.js", ['vue'], (function (exports, module) {
   'use strict';
-  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, KeepAlive, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, toDisplayString, renderSlot;
+  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, KeepAlive, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, toDisplayString, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
     setters: [module => {
       createApp = module.createApp;
@@ -67,6 +67,10 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
       normalizeClass = module.normalizeClass;
       toDisplayString = module.toDisplayString;
       renderSlot = module.renderSlot;
+      Teleport = module.Teleport;
+      Transition = module.Transition;
+      normalizeStyle = module.normalizeStyle;
+      nextTick = module.nextTick;
     }],
     execute: (function () {
 
@@ -217,6 +221,10 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
           });
           __publicField(this, "_newSectionCallback");
           __publicField(this, "_newVariationCallback");
+          __publicField(this, "_nameChangeCallback");
+          __publicField(this, "_descriptionChangeCallback");
+          __publicField(this, "_sectionsChangeCallback");
+          __publicField(this, "_variationsChangeCallback");
         }
         /**
          * 判断是否应该在当前页面激活
@@ -578,7 +586,7 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
          */
         async addTags(tags) {
           if (!this._data.tagElements) return;
-          const { input, inputContainer } = this._data.tagElements;
+          const { input } = this._data.tagElements;
           for (const tag of tags) {
             if (this.hasTag(tag)) continue;
             Simulate.input(input, tag);
@@ -590,7 +598,30 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
               cancelable: true
             });
             input.dispatchEvent(enterEvent);
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 10));
+          }
+        }
+        /**
+         * 批量移除 Tags
+         */
+        async removeTags(tags) {
+          if (!this._data.tagElements) return;
+          const tagsToRemove = new Set(tags);
+          const currentTags = this.getTagTexts();
+          const indicesToRemove = [];
+          currentTags.forEach((tag, index) => {
+            if (tagsToRemove.has(tag)) {
+              indicesToRemove.push(index);
+            }
+          });
+          if (indicesToRemove.length === 0) return;
+          const deleteButtons = this.getTagDeleteButtons();
+          for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+            const index = indicesToRemove[i];
+            if (deleteButtons[index]) {
+              deleteButtons[index].click();
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
           }
         }
         /**
@@ -752,9 +783,9 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
           return baseModule().catch(handlePreloadError);
         });
       };
-      const _hoisted_1$2 = ["title"];
-      const _hoisted_2$1 = ["innerHTML"];
-      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+      const _hoisted_1$3 = ["title"];
+      const _hoisted_2$2 = ["innerHTML"];
+      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
         __name: "IconButton",
         props: {
           icon: {},
@@ -773,8 +804,8 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
               title: _ctx.title,
               onClick: handleClick
             }, [
-              createElementVNode("span", { innerHTML: _ctx.icon }, null, 8, _hoisted_2$1)
-            ], 10, _hoisted_1$2);
+              createElementVNode("span", { innerHTML: _ctx.icon }, null, 8, _hoisted_2$2)
+            ], 10, _hoisted_1$3);
           };
         }
       });
@@ -785,7 +816,7 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
         }
         return target;
       });
-      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-996dd7d2"]]);
+      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-996dd7d2"]]);
       const withSize = exports("w", (svg, size, strokeWidth) => {
         let result = svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
         if (strokeWidth !== void 0) {
@@ -839,15 +870,27 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
   </svg>`,
         // 文件夹
+        folderEmpty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folderFilled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
         folder: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
   </svg>`,
         folderOpen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"></path>
   </svg>`,
-        file: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        file: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
     <polyline points="13 2 13 9 20 9"></polyline>
+  </svg>`,
+        files: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 7H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12z" fill="currentColor"></path>
+    <polyline points="12 7 12 12 16 12" fill="currentColor"></polyline>
+    <path d="M17 2H10a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z" fill="white"></path>
+    <polyline points="17 2 17 7 21 7" fill="white"></polyline>
   </svg>`,
         // 搜索
         search: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -862,9 +905,13 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
         // 设置
         settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="3"></circle>
-    <path d="M12 1v6m0 6v6m5.2-12.8l4.2-4.2m-4.2 17.4l4.2 4.2M1 12h6m6 0h6M6.8 6.8l-4.2-4.2m0 0L6.8 17.2m4.2 4.2l-4.2 4.2"></path>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
   </svg>`,
         // 状态
+        eye: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>`,
         check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="20 6 9 17 4 12"></polyline>
   </svg>`,
@@ -890,16 +937,16 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
     <circle cx="5" cy="12" r="1"></circle>
   </svg>`
       });
-      const _hoisted_1$1 = { class: "tab-bar" };
-      const _hoisted_2 = { class: "tab-list" };
-      const _hoisted_3 = ["onClick"];
-      const _hoisted_4 = ["innerHTML"];
+      const _hoisted_1$2 = { class: "tab-bar" };
+      const _hoisted_2$1 = { class: "tab-list" };
+      const _hoisted_3$1 = ["onClick"];
+      const _hoisted_4$1 = ["innerHTML"];
       const _hoisted_5 = { class: "tab-label" };
       const _hoisted_6 = {
         key: 0,
         class: "tab-actions"
       };
-      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         __name: "TabBar",
         props: {
           tabs: {},
@@ -912,8 +959,8 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
             emit("update:activeTab", tabId);
           };
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$1, [
-              createElementVNode("div", _hoisted_2, [
+            return openBlock(), createElementBlock("div", _hoisted_1$2, [
+              createElementVNode("div", _hoisted_2$1, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
                   return openBlock(), createElementBlock("button", {
                     key: tab.id,
@@ -924,9 +971,9 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
                       key: 0,
                       class: "tab-icon",
                       innerHTML: tab.icon
-                    }, null, 8, _hoisted_4)) : createCommentVNode("", true),
+                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
                     createElementVNode("span", _hoisted_5, toDisplayString(tab.label), 1)
-                  ], 10, _hoisted_3);
+                  ], 10, _hoisted_3$1);
                 }), 128))
               ]),
               _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
@@ -936,7 +983,137 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ee7eccb8"]]);
+      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ee7eccb8"]]);
+      const _hoisted_1$1 = ["onClick"];
+      const _hoisted_2 = ["innerHTML"];
+      const _hoisted_3 = { class: "menu-label" };
+      const _hoisted_4 = {
+        key: 1,
+        class: "menu-separator"
+      };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "ContextMenu",
+        props: {
+          show: { type: Boolean },
+          x: {},
+          y: {},
+          items: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const menuRef = ref(null);
+          const adjustedPosition = ref({ x: 0, y: 0 });
+          const isRepositioning = ref(false);
+          const calculatePosition = async () => {
+            isRepositioning.value = true;
+            adjustedPosition.value = { x: props.x, y: props.y };
+            await nextTick();
+            await nextTick();
+            if (!menuRef.value) {
+              isRepositioning.value = false;
+              return;
+            }
+            const menu = menuRef.value;
+            const menuRect = menu.getBoundingClientRect();
+            const parent = document.querySelector(".booth-enhancer-sidebar");
+            let containerRect;
+            let containerWidth;
+            let containerHeight;
+            if (parent) {
+              containerRect = parent.getBoundingClientRect();
+              containerWidth = containerRect.width;
+              containerHeight = containerRect.height;
+            } else {
+              containerWidth = document.documentElement.clientWidth;
+              containerHeight = document.documentElement.clientHeight;
+              containerRect = new DOMRect(0, 0, containerWidth, containerHeight);
+            }
+            let finalX = props.x;
+            let finalY = props.y;
+            const padding = 8;
+            const rightBoundary = containerRect.left + containerWidth;
+            if (finalX + menuRect.width > rightBoundary - padding) {
+              finalX = Math.max(containerRect.left + padding, rightBoundary - menuRect.width - padding);
+            }
+            if (finalX < containerRect.left + padding) {
+              finalX = containerRect.left + padding;
+            }
+            const bottomBoundary = containerRect.top + containerHeight;
+            if (finalY + menuRect.height > bottomBoundary - padding) {
+              finalY = Math.max(containerRect.top + padding, bottomBoundary - menuRect.height - padding);
+            }
+            if (finalY < containerRect.top + padding) {
+              finalY = containerRect.top + padding;
+            }
+            adjustedPosition.value = { x: finalX, y: finalY };
+            await nextTick();
+            isRepositioning.value = false;
+          };
+          watch(() => [props.show, props.x, props.y], ([newShow]) => {
+            if (newShow) {
+              calculatePosition();
+            }
+          });
+          const handleItemClick = (item) => {
+            item.action();
+            emit("close");
+          };
+          const handleGlobalClick = (e) => {
+            if (menuRef.value && !menuRef.value.contains(e.target)) {
+              emit("close");
+            }
+          };
+          watch(() => props.show, (isShow) => {
+            if (isShow) {
+              setTimeout(() => {
+                document.addEventListener("click", handleGlobalClick);
+              }, 0);
+            } else {
+              document.removeEventListener("click", handleGlobalClick);
+            }
+          });
+          onUnmounted(() => {
+            document.removeEventListener("click", handleGlobalClick);
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Teleport, { to: "body" }, [
+              createVNode(Transition, { name: "menu-fade" }, {
+                default: withCtx(() => [
+                  _ctx.show ? (openBlock(), createElementBlock("div", {
+                    key: 0,
+                    ref_key: "menuRef",
+                    ref: menuRef,
+                    class: normalizeClass(["context-menu", { "no-transition": isRepositioning.value }]),
+                    style: normalizeStyle({ left: adjustedPosition.value.x + "px", top: adjustedPosition.value.y + "px" })
+                  }, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.items, (item, index) => {
+                      return openBlock(), createElementBlock(Fragment, { key: index }, [
+                        item.label ? (openBlock(), createElementBlock("div", {
+                          key: 0,
+                          class: normalizeClass(["menu-item", { "menu-item-danger": item.danger }]),
+                          onClick: ($event) => handleItemClick(item)
+                        }, [
+                          item.icon ? (openBlock(), createElementBlock("span", {
+                            key: 0,
+                            class: "menu-icon",
+                            innerHTML: item.icon
+                          }, null, 8, _hoisted_2)) : createCommentVNode("", true),
+                          createElementVNode("span", _hoisted_3, toDisplayString(item.label), 1)
+                        ], 10, _hoisted_1$1)) : createCommentVNode("", true),
+                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_4)) : createCommentVNode("", true)
+                      ], 64);
+                    }), 128))
+                  ], 6)) : createCommentVNode("", true)
+                ]),
+                _: 1
+              })
+            ]);
+          };
+        }
+      });
+      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d6382fda"]]));
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -1005,15 +1182,7 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
           try {
             const stored = _GM_getValue(STORAGE_KEY, null);
             if (stored) {
-              const parsed = JSON.parse(stored);
-              const defaults = createDefaultData();
-              return {
-                tagTree: parsed.tagTree || defaults.tagTree,
-                itemTree: parsed.itemTree || defaults.itemTree,
-                templateTree: parsed.templateTree || defaults.templateTree,
-                activeTemplateId: parsed.activeTemplateId || defaults.activeTemplateId,
-                ui: parsed.ui || defaults.ui
-              };
+              return JSON.parse(stored);
             }
           } catch (e) {
             console.error("Failed to load config:", e);
@@ -1427,16 +1596,16 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagPresetTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagPresetTab-DVcME_pW-D31CGrBe.js'), void 0 ));
-          const ItemDataTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemDataTab-KajnemCJ-o4-TvZuQ.js'), void 0 ));
-          const TemplateTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TemplateTab-CgNQY4kC-Dgd1Ngrf.js'), void 0 ));
+          const TagPresetTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagPresetTab-CCS5qDFQ-eIB7zGAY.js'), void 0 ));
+          const ItemDataTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemDataTab-BOaT0Dfb-Dd6IYjVr.js'), void 0 ));
           const storage = ConfigStorage.getInstance();
           const uiState = computed(() => storage.data.value.ui);
           const sidebarRef = ref(null);
+          const showMenu = ref(false);
+          const menuPosition = ref({ x: 0, y: 0 });
           const tabs = [
-            { id: "tags", label: "Tag预设" },
-            { id: "items", label: "商品数据" },
-            { id: "templates", label: "模板配置" }
+            { id: "tags", label: "标签" },
+            { id: "items", label: "商品" }
           ];
           watch(() => uiState.value.sidebarOpen, (isOpen) => {
             const panelRoot = document.getElementById("booth-enhancer-panel-root");
@@ -1494,6 +1663,30 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
             };
             input.click();
           };
+          const toggleMenu = (event) => {
+            const target = event.currentTarget;
+            const rect = target.getBoundingClientRect();
+            menuPosition.value = {
+              x: rect.left - 100,
+              y: rect.bottom + 4
+            };
+            showMenu.value = !showMenu.value;
+          };
+          const closeMenu = () => {
+            showMenu.value = false;
+          };
+          const menuItems = computed(() => [
+            {
+              label: "导出配置",
+              icon: withSize(icons.upload, 14),
+              action: handleExport
+            },
+            {
+              label: "导入配置",
+              icon: withSize(icons.download, 14),
+              action: handleImport
+            }
+          ]);
           onMounted(() => {
             if (sidebarRef.value) {
               toast.setContainer(sidebarRef.value);
@@ -1515,14 +1708,9 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
               }, {
                 actions: withCtx(() => [
                   createVNode(unref(IconButton), {
-                    icon: unref(icons).upload,
-                    title: "导出配置",
-                    onClick: handleExport
-                  }, null, 8, ["icon"]),
-                  createVNode(unref(IconButton), {
-                    icon: unref(icons).download,
-                    title: "导入配置",
-                    onClick: handleImport
+                    icon: unref(icons).moreVertical,
+                    title: "更多操作",
+                    onClick: toggleMenu
                   }, null, 8, ["icon"]),
                   createVNode(unref(IconButton), {
                     icon: unref(icons).close,
@@ -1532,9 +1720,16 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
                 ]),
                 _: 1
               }, 8, ["active-tab"]),
+              createVNode(ContextMenu, {
+                show: showMenu.value,
+                x: menuPosition.value.x,
+                y: menuPosition.value.y,
+                items: menuItems.value,
+                onClose: closeMenu
+              }, null, 8, ["show", "x", "y", "items"]),
               createElementVNode("div", _hoisted_1, [
                 (openBlock(), createBlock(KeepAlive, null, [
-                  (openBlock(), createBlock(resolveDynamicComponent(uiState.value.activeTab === "tags" ? unref(TagPresetTab) : uiState.value.activeTab === "items" ? unref(ItemDataTab) : unref(TemplateTab)), {
+                  (openBlock(), createBlock(resolveDynamicComponent(uiState.value.activeTab === "tags" ? unref(TagPresetTab) : unref(ItemDataTab)), {
                     api: props.api
                   }, null, 8, ["api"]))
                 ], 1024))
@@ -1543,7 +1738,7 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-0a957ae2"]]);
+      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6fde86e8"]]);
       class PageModule {
         constructor(api) {
           __publicField(this, "api");
@@ -1874,9 +2069,9 @@ System.register("./__monkey.entry-CiFzQCYM.js", ['vue'], (function (exports, mod
                 progress.updateProgress(i + 1, tagsToAdd.length);
                 input.focus();
                 Simulate.input(input, tagsToAdd[i]);
-                await Utils.sleep(10);
+                await Utils.sleep(1);
                 Simulate.pressEnter(input);
-                await Utils.sleep(10);
+                await Utils.sleep(1);
               }
               progress.complete(
                 `处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`
@@ -3702,9 +3897,9 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CSXzk-BX-jwFXE.js', './useSearch-CPWiNq88-JrnLEP43.js', './__monkey.entry-CiFzQCYM.js'], (function (exports, module) {
+System.register("./TagPresetTab-CCS5qDFQ-eIB7zGAY.js", ['vue', './useSearch-k0q0c-eH-DBqF8V9N.js', './__monkey.entry-DB_lhVXb.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useModal, Tree, Modal, tagSearchFilter, _export_sfc, ConfigStorage;
+  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useModal, Tree, tagSearchFilter, Modal, _export_sfc, ConfigStorage;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
@@ -3728,9 +3923,8 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
     }, module => {
       useModal = module.u;
       Tree = module.T;
-      Modal = module.M;
-    }, module => {
       tagSearchFilter = module.t;
+      Modal = module.M;
     }, module => {
       _export_sfc = module._;
       ConfigStorage = module.C;
@@ -3746,27 +3940,26 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
       const _hoisted_4 = { class: "tag-text" };
       const _hoisted_5 = ["onClick"];
       const _hoisted_6 = { key: 0 };
-      const _hoisted_7 = {
-        key: 1,
-        class: "form-group"
-      };
-      const _hoisted_8 = { key: 2 };
-      const _hoisted_9 = { key: 3 };
-      const _hoisted_10 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
-      const _hoisted_11 = { key: 4 };
-      const _hoisted_12 = {
+      const _hoisted_7 = { key: 1 };
+      const _hoisted_8 = { class: "form-group" };
+      const _hoisted_9 = { class: "form-group" };
+      const _hoisted_10 = { key: 2 };
+      const _hoisted_11 = { key: 3 };
+      const _hoisted_12 = { class: "modal-message" };
+      const _hoisted_13 = { key: 4 };
+      const _hoisted_14 = {
         key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
+        class: "modal-message-with-margin"
       };
-      const _hoisted_13 = ["placeholder"];
-      const _hoisted_14 = { key: 5 };
-      const _hoisted_15 = {
+      const _hoisted_15 = ["placeholder"];
+      const _hoisted_16 = { key: 5 };
+      const _hoisted_17 = {
         key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
+        class: "modal-message-with-margin"
       };
-      const _hoisted_16 = ["placeholder"];
-      const _hoisted_17 = { key: 6 };
-      const _hoisted_18 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
+      const _hoisted_18 = ["placeholder"];
+      const _hoisted_19 = { key: 6 };
+      const _hoisted_20 = { class: "modal-message" };
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "TagPresetTab",
         props: {
@@ -3778,28 +3971,108 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
           const selectedNodeId = ref(null);
           const modal = useModal();
           const tree = computed(() => storage.data.value.tagTree);
-          const handleSelect = (node) => {
-            selectedNodeId.value = node.id;
-          };
-          const handleApplyTags = (node) => {
-            var _a;
-            const tags = (_a = node.data) == null ? void 0 : _a.tags;
-            if (tags && Array.isArray(tags) && tags.length > 0) {
-              props.api.addTags(tags);
+          const handleSelect = (nodes) => {
+            if (nodes.length > 0) {
+              selectedNodeId.value = nodes[0].id;
             }
           };
           const customMenuItems = computed(() => [
             {
               label: "应用标签",
-              action: (node) => {
-                if (node) {
-                  handleApplyTags(node);
+              action: (node, selection) => {
+                const tagsToApply = /* @__PURE__ */ new Set();
+                const extractRecursive = (n) => {
+                  var _a;
+                  if (((_a = n.data) == null ? void 0 : _a.tags) && Array.isArray(n.data.tags)) {
+                    n.data.tags.forEach((t) => tagsToApply.add(t));
+                  }
+                  if (n.children && n.children.length > 0) {
+                    n.children.forEach((childId) => {
+                      const childNode = tree.value.nodes[childId];
+                      if (childNode) {
+                        extractRecursive(childNode);
+                      }
+                    });
+                  }
+                };
+                if (selection && selection.length > 0) {
+                  selection.forEach(extractRecursive);
+                } else if (node) {
+                  extractRecursive(node);
+                }
+                if (tagsToApply.size > 0) {
+                  props.api.addTags(Array.from(tagsToApply));
                 }
               },
-              show: (node) => {
-                var _a;
-                return node !== null && ((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags) && node.data.tags.length > 0;
+              show: (node, selection) => {
+                const hasTagsRecursive = (n) => {
+                  var _a;
+                  if (!n) return false;
+                  if (((_a = n.data) == null ? void 0 : _a.tags) && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
+                    return true;
+                  }
+                  if (n.children && n.children.length > 0) {
+                    return n.children.some((childId) => {
+                      const childNode = tree.value.nodes[childId];
+                      return childNode && hasTagsRecursive(childNode);
+                    });
+                  }
+                  return false;
+                };
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTagsRecursive);
+                }
+                return hasTagsRecursive(node);
               }
+            },
+            {
+              label: "移除标签",
+              action: (node, selection) => {
+                const tagsToRemove = /* @__PURE__ */ new Set();
+                const extractRecursive = (n) => {
+                  var _a;
+                  if (((_a = n.data) == null ? void 0 : _a.tags) && Array.isArray(n.data.tags)) {
+                    n.data.tags.forEach((t) => tagsToRemove.add(t));
+                  }
+                  if (n.children && n.children.length > 0) {
+                    n.children.forEach((childId) => {
+                      const childNode = tree.value.nodes[childId];
+                      if (childNode) {
+                        extractRecursive(childNode);
+                      }
+                    });
+                  }
+                };
+                if (selection && selection.length > 0) {
+                  selection.forEach(extractRecursive);
+                } else if (node) {
+                  extractRecursive(node);
+                }
+                if (tagsToRemove.size > 0) {
+                  props.api.removeTags(Array.from(tagsToRemove));
+                }
+              },
+              show: (node, selection) => {
+                const hasTagsRecursive = (n) => {
+                  var _a;
+                  if (!n) return false;
+                  if (((_a = n.data) == null ? void 0 : _a.tags) && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
+                    return true;
+                  }
+                  if (n.children && n.children.length > 0) {
+                    return n.children.some((childId) => {
+                      const childNode = tree.value.nodes[childId];
+                      return childNode && hasTagsRecursive(childNode);
+                    });
+                  }
+                  return false;
+                };
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTagsRecursive);
+                }
+                return hasTagsRecursive(node);
+              },
+              danger: true
             }
           ]);
           const handleDeleteTag = (node, tagIndex) => {
@@ -3884,7 +4157,7 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
                 "on-rename": handleRename,
                 "on-delete": handleDelete,
                 "on-edit": handleEditTag,
-                onSelect: handleSelect
+                onSelectionChange: handleSelect
               }, {
                 default: withCtx(({ node }) => {
                   var _a;
@@ -3953,31 +4226,35 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
                   ])) : unref(modal).state.value.type === "createTag" ? (openBlock(), createElementBlock("div", _hoisted_7, [
-                    _cache[14] || (_cache[14] = createElementVNode("label", null, [
-                      createTextVNode("预设名称 "),
-                      createElementVNode("span", { class: "required" }, "*")
-                    ], -1)),
-                    withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.formData.name = $event),
-                      type: "text",
-                      placeholder: "例如：イチゴ配布物"
-                    }, null, 512), [
-                      [vModelText, unref(modal).state.value.formData.name]
+                    createElementVNode("div", _hoisted_8, [
+                      _cache[14] || (_cache[14] = createElementVNode("label", null, [
+                        createTextVNode("预设名称 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.formData.name = $event),
+                        type: "text",
+                        placeholder: "例如：イチゴ配布物"
+                      }, null, 512), [
+                        [vModelText, unref(modal).state.value.formData.name]
+                      ])
                     ]),
-                    _cache[15] || (_cache[15] = createElementVNode("label", { style: { "margin-top": "12px" } }, [
-                      createTextVNode("标签列表 "),
-                      createElementVNode("span", { class: "required" }, "*")
-                    ], -1)),
-                    withDirectives(createElementVNode("textarea", {
-                      "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.formData.tagsText = $event),
-                      placeholder: '支持两种格式：\n1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]\n2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ',
-                      rows: "8",
-                      style: { "font-family": "'Consolas', 'Monaco', monospace", "line-height": "1.5", "font-size": "11px" }
-                    }, null, 512), [
-                      [vModelText, unref(modal).state.value.formData.tagsText]
-                    ]),
-                    _cache[16] || (_cache[16] = createElementVNode("small", { style: { "display": "block", "margin-top": "6px", "color": "#6b7280", "font-size": "11px" } }, ' 💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入 ', -1))
-                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_8, [
+                    createElementVNode("div", _hoisted_9, [
+                      _cache[15] || (_cache[15] = createElementVNode("label", null, [
+                        createTextVNode("标签列表 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("textarea", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.formData.tagsText = $event),
+                        class: "modal-textarea-code-small",
+                        placeholder: '支持两种格式：\n1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]\n2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ',
+                        rows: "8"
+                      }, null, 512), [
+                        [vModelText, unref(modal).state.value.formData.tagsText]
+                      ]),
+                      _cache[16] || (_cache[16] = createElementVNode("small", { class: "form-hint-small" }, ' 💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入 ', -1))
+                    ])
+                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
                     withDirectives(createElementVNode("input", {
                       "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(modal).state.value.inputValue = $event),
                       type: "text",
@@ -3987,32 +4264,31 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
                     }, null, 544), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_9, [
-                    createElementVNode("p", _hoisted_10, toDisplayString(unref(modal).state.value.formData.message), 1)
-                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_11, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_12, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                    createElementVNode("p", _hoisted_12, toDisplayString(unref(modal).state.value.formData.message), 1)
+                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("input", {
                       "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(modal).state.value.inputValue = $event),
                       type: "text",
                       class: "modal-input",
                       placeholder: unref(modal).state.value.placeholder,
                       onKeyup: _cache[7] || (_cache[7] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
-                    }, null, 40, _hoisted_13), [
+                    }, null, 40, _hoisted_15), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_14, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_15, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("textarea", {
                       "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => unref(modal).state.value.inputValue = $event),
-                      class: "modal-input",
+                      class: "modal-input modal-textarea-code",
                       placeholder: unref(modal).state.value.placeholder,
-                      rows: "8",
-                      style: { "font-family": "'Consolas', 'Monaco', monospace", "line-height": "1.5", "font-size": "12px" }
-                    }, null, 8, _hoisted_16), [
+                      rows: "8"
+                    }, null, 8, _hoisted_18), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_17, [
-                    createElementVNode("p", _hoisted_18, toDisplayString(unref(modal).state.value.message), 1)
+                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
+                    createElementVNode("p", _hoisted_20, toDisplayString(unref(modal).state.value.message), 1)
                   ])) : createCommentVNode("", true)
                 ]),
                 _: 1
@@ -4021,15 +4297,15 @@ System.register("./TagPresetTab-DVcME_pW-D31CGrBe.js", ['vue', './useModal-BO7CS
           };
         }
       });
-      const TagPresetTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-9e62ff02"]]));
+      const TagPresetTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-865a3a00"]]));
 
     })
   };
 }));
 
-System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSXzk-BX-jwFXE.js', './useSearch-CPWiNq88-JrnLEP43.js', './__monkey.entry-CiFzQCYM.js'], (function (exports, module) {
+System.register("./ItemDataTab-BOaT0Dfb-Dd6IYjVr.js", ['vue', './useSearch-k0q0c-eH-DBqF8V9N.js', './__monkey.entry-DB_lhVXb.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useModal, Tree, Modal, itemDataSearchFilter, _export_sfc, ConfigStorage, toast;
+  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withModifiers, createTextVNode, Fragment, renderList, normalizeClass, withDirectives, vModelText, withKeys, useModal, Tree, itemDataSearchFilter, Modal, _export_sfc, ConfigStorage, withSize, icons, toast;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
@@ -4043,19 +4319,24 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
       createCommentVNode = module.createCommentVNode;
       createElementVNode = module.createElementVNode;
       toDisplayString = module.toDisplayString;
-      withDirectives = module.withDirectives;
-      withKeys = module.withKeys;
-      vModelText = module.vModelText;
+      withModifiers = module.withModifiers;
       createTextVNode = module.createTextVNode;
+      Fragment = module.Fragment;
+      renderList = module.renderList;
+      normalizeClass = module.normalizeClass;
+      withDirectives = module.withDirectives;
+      vModelText = module.vModelText;
+      withKeys = module.withKeys;
     }, module => {
       useModal = module.u;
       Tree = module.T;
-      Modal = module.M;
-    }, module => {
       itemDataSearchFilter = module.i;
+      Modal = module.M;
     }, module => {
       _export_sfc = module._;
       ConfigStorage = module.C;
+      withSize = module.w;
+      icons = module.i;
       toast = module.t;
     }],
     execute: (function () {
@@ -4137,43 +4418,69 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
         };
       }
       const _hoisted_1 = { class: "item-data-tab" };
-      const _hoisted_2 = {
+      const _hoisted_2 = ["innerHTML"];
+      const _hoisted_3 = ["onClick", "innerHTML"];
+      const _hoisted_4 = {
         key: 0,
         class: "item-custom-content"
       };
-      const _hoisted_3 = { class: "item-field" };
-      const _hoisted_4 = { class: "item-field" };
-      const _hoisted_5 = {
+      const _hoisted_5 = { class: "item-field" };
+      const _hoisted_6 = { class: "item-field" };
+      const _hoisted_7 = { class: "template-manager" };
+      const _hoisted_8 = { class: "template-list" };
+      const _hoisted_9 = { class: "template-list-header" };
+      const _hoisted_10 = ["innerHTML"];
+      const _hoisted_11 = { class: "template-items" };
+      const _hoisted_12 = { class: "template-item-header" };
+      const _hoisted_13 = { class: "template-name" };
+      const _hoisted_14 = {
+        key: 0,
+        class: "active-badge"
+      };
+      const _hoisted_15 = { class: "template-actions" };
+      const _hoisted_16 = ["onClick"];
+      const _hoisted_17 = ["innerHTML"];
+      const _hoisted_18 = ["onClick"];
+      const _hoisted_19 = ["innerHTML"];
+      const _hoisted_20 = ["onClick"];
+      const _hoisted_21 = ["innerHTML"];
+      const _hoisted_22 = { class: "template-preview-item" };
+      const _hoisted_23 = {
+        key: 0,
+        class: "edit-template-modal-content"
+      };
+      const _hoisted_24 = { class: "form-group" };
+      const _hoisted_25 = { class: "form-group" };
+      const _hoisted_26 = { class: "form-group" };
+      const _hoisted_27 = { class: "template-preview-item" };
+      const _hoisted_28 = {
         key: 0,
         class: "template-section"
       };
-      const _hoisted_6 = { class: "section-title" };
-      const _hoisted_7 = { class: "template-preview" };
-      const _hoisted_8 = { key: 0 };
-      const _hoisted_9 = {
-        key: 1,
-        class: "item-form"
-      };
-      const _hoisted_10 = { class: "form-group" };
-      const _hoisted_11 = { class: "form-group" };
-      const _hoisted_12 = { class: "form-group" };
-      const _hoisted_13 = { key: 2 };
-      const _hoisted_14 = { key: 3 };
-      const _hoisted_15 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
-      const _hoisted_16 = { key: 4 };
-      const _hoisted_17 = {
+      const _hoisted_29 = { class: "section-title" };
+      const _hoisted_30 = { class: "template-preview" };
+      const _hoisted_31 = { key: 0 };
+      const _hoisted_32 = { key: 1 };
+      const _hoisted_33 = { class: "form-group" };
+      const _hoisted_34 = { class: "form-group" };
+      const _hoisted_35 = { class: "form-group" };
+      const _hoisted_36 = { key: 2 };
+      const _hoisted_37 = { key: 3 };
+      const _hoisted_38 = { class: "modal-message" };
+      const _hoisted_39 = { key: 4 };
+      const _hoisted_40 = {
         key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
+        class: "modal-message-with-margin"
       };
-      const _hoisted_18 = ["placeholder"];
-      const _hoisted_19 = { key: 5 };
-      const _hoisted_20 = {
+      const _hoisted_41 = ["placeholder"];
+      const _hoisted_42 = { key: 5 };
+      const _hoisted_43 = {
         key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
+        class: "modal-message-with-margin"
       };
-      const _hoisted_21 = ["placeholder"];
-      const _hoisted_22 = { key: 6 };
-      const _hoisted_23 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
+      const _hoisted_44 = ["placeholder"];
+      const _hoisted_45 = { key: 6 };
+      const _hoisted_46 = { class: "modal-message" };
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "ItemDataTab",
         setup(__props) {
@@ -4181,10 +4488,31 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
           const selectedNodeId = ref(null);
           const showTemplateModal = ref(false);
           const selectedItem = ref(null);
+          const showTemplateManagerModal = ref(false);
+          const showEditTemplateModal = ref(false);
+          const editingTemplate = ref(null);
           const modal = useModal();
           const templates = useTemplates();
           const tree = computed(() => storage.data.value.itemTree);
-          const handleSelect = (node) => {
+          const templateTree = computed(() => storage.data.value.templateTree);
+          const activeTemplateId = computed(() => storage.data.value.activeTemplateId);
+          const flatTemplates = computed(() => {
+            var _a;
+            const result = [];
+            for (const nodeId in templateTree.value.nodes) {
+              const node = templateTree.value.nodes[nodeId];
+              if ((_a = node.data) == null ? void 0 : _a.content) {
+                result.push(node);
+              }
+            }
+            return result;
+          });
+          const handleSelect = (nodes) => {
+            if (nodes.length > 0) {
+              selectedNodeId.value = nodes[0].id;
+            }
+          };
+          const handlePreview = (node) => {
             var _a, _b;
             if (((_a = node.data) == null ? void 0 : _a.authorName) || ((_b = node.data) == null ? void 0 : _b.itemUrl)) {
               selectedItem.value = {
@@ -4192,8 +4520,6 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
                 data: node.data
               };
               showTemplateModal.value = true;
-            } else {
-              selectedNodeId.value = node.id;
             }
           };
           const handleCreateFolder = (parentId) => {
@@ -4247,6 +4573,78 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
               storage.deleteNode(tree.value, nodeId);
             }
           };
+          const handleCreateTemplate = () => {
+            editingTemplate.value = {
+              id: null,
+              // 新建时 id 为 null
+              name: "新建模板",
+              content: "{{authorName}} - {{itemName}}\n{{itemUrl}}",
+              isNew: true
+            };
+            showEditTemplateModal.value = true;
+          };
+          const handleEditTemplate = (node) => {
+            var _a;
+            if ((_a = node.data) == null ? void 0 : _a.content) {
+              editingTemplate.value = {
+                id: node.id,
+                name: node.name,
+                content: node.data.content,
+                isNew: false
+              };
+              showEditTemplateModal.value = true;
+            }
+          };
+          const handleSaveTemplate = () => {
+            if (!editingTemplate.value) return;
+            if (editingTemplate.value.isNew) {
+              const newNode = storage.createNode(
+                templateTree.value,
+                editingTemplate.value.name,
+                { content: editingTemplate.value.content },
+                null
+              );
+              if (Object.keys(templateTree.value.nodes).length === 1) {
+                storage.data.value.activeTemplateId = newNode.id;
+              }
+            } else {
+              const node = templateTree.value.nodes[editingTemplate.value.id];
+              if (node && node.data) {
+                node.name = editingTemplate.value.name;
+                node.data.content = editingTemplate.value.content;
+                node.updatedAt = Date.now();
+              }
+            }
+            storage["saveWithDebounce"]();
+            showEditTemplateModal.value = false;
+            editingTemplate.value = null;
+          };
+          const handleDeleteTemplate = async (nodeId) => {
+            const node = templateTree.value.nodes[nodeId];
+            if (nodeId === activeTemplateId.value) {
+              await modal.openModal({
+                type: "alert",
+                title: "无法删除",
+                formData: { message: "不能删除当前激活的模板，请先激活其他模板" }
+              });
+              return;
+            }
+            const confirmed = await modal.openModal({
+              type: "delete",
+              title: "确认删除",
+              formData: { message: `确定要删除"${node.name}"吗？` }
+            });
+            if (confirmed) {
+              storage.deleteNode(templateTree.value, nodeId);
+            }
+          };
+          const handleActivateTemplate = (nodeId) => {
+            storage.data.value.activeTemplateId = nodeId;
+            storage["saveWithDebounce"]();
+          };
+          const getExamplePreview = (content) => {
+            return content.replace(/\{\{authorName\}\}/g, "示例作者").replace(/\{\{itemName\}\}/g, "示例商品名称").replace(/\{\{itemUrl\}\}/g, "https://booth.pm/items/1234567");
+          };
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock("div", _hoisted_1, [
               createVNode(unref(Tree), {
@@ -4258,43 +4656,196 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
                 "on-rename": handleRename,
                 "on-delete": handleDelete,
                 "on-edit": handleEditItem,
-                onSelect: handleSelect
+                onSelectionChange: handleSelect
               }, {
+                toolbar: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "template-manager-btn",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showTemplateManagerModal.value = true),
+                    title: "模板管理"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 16)
+                    }, null, 8, _hoisted_2),
+                    _cache[24] || (_cache[24] = createElementVNode("span", null, "模板", -1))
+                  ])
+                ]),
+                header: withCtx(({ node }) => {
+                  var _a, _b;
+                  return [
+                    ((_a = node.data) == null ? void 0 : _a.authorName) || ((_b = node.data) == null ? void 0 : _b.itemUrl) ? (openBlock(), createElementBlock("span", {
+                      key: 0,
+                      class: "action-icon",
+                      title: "预览/复制",
+                      onClick: withModifiers(($event) => handlePreview(node), ["stop"]),
+                      innerHTML: unref(withSize)(unref(icons).eye, 14)
+                    }, null, 8, _hoisted_3)) : createCommentVNode("", true)
+                  ];
+                }),
                 default: withCtx(({ node }) => {
                   var _a, _b;
                   return [
-                    ((_a = node.data) == null ? void 0 : _a.authorName) || ((_b = node.data) == null ? void 0 : _b.itemUrl) ? (openBlock(), createElementBlock("div", _hoisted_2, [
-                      createElementVNode("span", _hoisted_3, toDisplayString(node.data.authorName || "—"), 1),
-                      _cache[18] || (_cache[18] = createElementVNode("span", { class: "item-separator" }, "·", -1)),
-                      createElementVNode("span", _hoisted_4, toDisplayString(node.name), 1)
+                    ((_a = node.data) == null ? void 0 : _a.authorName) || ((_b = node.data) == null ? void 0 : _b.itemUrl) ? (openBlock(), createElementBlock("div", _hoisted_4, [
+                      createElementVNode("span", _hoisted_5, toDisplayString(node.data.authorName || "—"), 1),
+                      _cache[25] || (_cache[25] = createElementVNode("span", { class: "item-separator" }, "·", -1)),
+                      createElementVNode("span", _hoisted_6, toDisplayString(node.name), 1)
                     ])) : createCommentVNode("", true)
                   ];
                 }),
                 _: 1
               }, 8, ["tree", "search-filter"]),
               createVNode(Modal, {
-                show: showTemplateModal.value,
-                title: "复制商品数据",
+                show: showTemplateManagerModal.value,
+                title: "模板管理",
                 "teleport-to": ".booth-enhancer-sidebar",
-                onClose: _cache[2] || (_cache[2] = ($event) => showTemplateModal.value = false)
+                onClose: _cache[1] || (_cache[1] = ($event) => showTemplateManagerModal.value = false),
+                width: "500px"
+              }, {
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_7, [
+                    createElementVNode("div", _hoisted_8, [
+                      createElementVNode("div", _hoisted_9, [
+                        createElementVNode("button", {
+                          class: "booth-btn booth-btn-md booth-btn-secondary btn-create",
+                          onClick: handleCreateTemplate
+                        }, [
+                          createElementVNode("span", {
+                            innerHTML: unref(withSize)(unref(icons).plus, 14)
+                          }, null, 8, _hoisted_10),
+                          _cache[26] || (_cache[26] = createTextVNode(" 新建模板 ", -1))
+                        ])
+                      ]),
+                      createElementVNode("div", _hoisted_11, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(flatTemplates.value, (template) => {
+                          return openBlock(), createElementBlock("div", {
+                            key: template.id,
+                            class: normalizeClass(["template-item", { "is-active": template.id === activeTemplateId.value }])
+                          }, [
+                            createElementVNode("div", _hoisted_12, [
+                              createElementVNode("span", _hoisted_13, toDisplayString(template.name), 1),
+                              template.id === activeTemplateId.value ? (openBlock(), createElementBlock("span", _hoisted_14, "当前")) : createCommentVNode("", true),
+                              createElementVNode("div", _hoisted_15, [
+                                createElementVNode("button", {
+                                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                                  onClick: ($event) => handleEditTemplate(template),
+                                  title: "编辑"
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).edit, 14)
+                                  }, null, 8, _hoisted_17)
+                                ], 8, _hoisted_16),
+                                template.id !== activeTemplateId.value ? (openBlock(), createElementBlock("button", {
+                                  key: 0,
+                                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                                  onClick: ($event) => handleActivateTemplate(template.id),
+                                  title: "设为当前"
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).check, 14)
+                                  }, null, 8, _hoisted_19)
+                                ], 8, _hoisted_18)) : createCommentVNode("", true),
+                                createElementVNode("button", {
+                                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                                  onClick: ($event) => handleDeleteTemplate(template.id),
+                                  title: "删除"
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).trash, 14)
+                                  }, null, 8, _hoisted_21)
+                                ], 8, _hoisted_20)
+                              ])
+                            ]),
+                            createElementVNode("div", _hoisted_22, [
+                              createElementVNode("pre", null, toDisplayString(getExamplePreview(template.data.content)), 1)
+                            ])
+                          ], 2);
+                        }), 128))
+                      ])
+                    ])
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(Modal, {
+                show: showEditTemplateModal.value,
+                title: "编辑模板",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[5] || (_cache[5] = ($event) => {
+                  showEditTemplateModal.value = false;
+                  editingTemplate.value = null;
+                }),
+                width: "500px"
               }, {
                 footer: withCtx(() => [
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-md booth-btn-secondary",
-                    onClick: _cache[0] || (_cache[0] = ($event) => showTemplateModal.value = false)
+                    onClick: _cache[4] || (_cache[4] = ($event) => {
+                      showEditTemplateModal.value = false;
+                      editingTemplate.value = null;
+                    })
+                  }, " 取消 "),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-primary",
+                    onClick: handleSaveTemplate
+                  }, " 保存 ")
+                ]),
+                default: withCtx(() => [
+                  editingTemplate.value ? (openBlock(), createElementBlock("div", _hoisted_23, [
+                    createElementVNode("div", _hoisted_24, [
+                      _cache[27] || (_cache[27] = createElementVNode("label", null, "模板名称", -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => editingTemplate.value.name = $event),
+                        type: "text",
+                        placeholder: "输入模板名称"
+                      }, null, 512), [
+                        [vModelText, editingTemplate.value.name]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_25, [
+                      _cache[28] || (_cache[28] = createElementVNode("label", null, "模板内容", -1)),
+                      _cache[29] || (_cache[29] = createElementVNode("p", { class: "form-hint" }, "可用占位符：{{authorName}}, {{itemName}}, {{itemUrl}}", -1)),
+                      withDirectives(createElementVNode("textarea", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => editingTemplate.value.content = $event),
+                        class: "template-textarea",
+                        rows: "12",
+                        placeholder: "输入模板内容..."
+                      }, null, 512), [
+                        [vModelText, editingTemplate.value.content]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_26, [
+                      _cache[30] || (_cache[30] = createElementVNode("label", null, "预览效果", -1)),
+                      createElementVNode("div", _hoisted_27, [
+                        createElementVNode("pre", null, toDisplayString(getExamplePreview(editingTemplate.value.content)), 1)
+                      ])
+                    ])
+                  ])) : createCommentVNode("", true)
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(Modal, {
+                show: showTemplateModal.value,
+                title: "复制商品数据",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[8] || (_cache[8] = ($event) => showTemplateModal.value = false)
+              }, {
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-secondary",
+                    onClick: _cache[6] || (_cache[6] = ($event) => showTemplateModal.value = false)
                   }, "取消"),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[1] || (_cache[1] = ($event) => selectedItem.value && unref(templates).applyAndCopy(unref(templates).selectedTemplateId.value, selectedItem.value).then(() => showTemplateModal.value = false))
+                    onClick: _cache[7] || (_cache[7] = ($event) => selectedItem.value && unref(templates).applyAndCopy(unref(templates).selectedTemplateId.value, selectedItem.value).then(() => showTemplateModal.value = false))
                   }, " 复制 ")
                 ]),
                 default: withCtx(() => {
                   var _a;
                   return [
-                    selectedItem.value ? (openBlock(), createElementBlock("div", _hoisted_5, [
-                      createElementVNode("h4", _hoisted_6, " 当前模板：" + toDisplayString(((_a = unref(templates).getSelectedTemplate()) == null ? void 0 : _a.name) || "无"), 1),
-                      createElementVNode("div", _hoisted_7, toDisplayString(unref(templates).previewTemplate(unref(templates).selectedTemplateId.value, selectedItem.value)), 1),
-                      _cache[19] || (_cache[19] = createElementVNode("p", { class: "template-hint" }, ' 💡 在"模板配置"标签页中管理模板 ', -1))
+                    selectedItem.value ? (openBlock(), createElementBlock("div", _hoisted_28, [
+                      createElementVNode("h4", _hoisted_29, " 当前模板：" + toDisplayString(((_a = unref(templates).getSelectedTemplate()) == null ? void 0 : _a.name) || "无"), 1),
+                      createElementVNode("div", _hoisted_30, toDisplayString(unref(templates).previewTemplate(unref(templates).selectedTemplateId.value, selectedItem.value)), 1),
+                      _cache[31] || (_cache[31] = createElementVNode("p", { class: "template-hint" }, ' 💡 点击工具栏"模板"按钮管理模板 ', -1))
                     ])) : createCommentVNode("", true)
                   ];
                 }),
@@ -4310,108 +4861,107 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
                   unref(modal).state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
                     key: 0,
                     class: "booth-btn booth-btn-md booth-btn-secondary",
-                    onClick: _cache[13] || (_cache[13] = //@ts-ignore
+                    onClick: _cache[19] || (_cache[19] = //@ts-ignore
                     (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
                   }, " 取消 ")) : createCommentVNode("", true),
                   unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
                     key: 1,
                     class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[14] || (_cache[14] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData))
+                    onClick: _cache[20] || (_cache[20] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData))
                   }, " 确定 ")) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
                     key: 2,
                     class: "booth-btn booth-btn-md booth-btn-danger",
-                    onClick: _cache[15] || (_cache[15] = ($event) => unref(modal).confirmModal(true))
+                    onClick: _cache[21] || (_cache[21] = ($event) => unref(modal).confirmModal(true))
                   }, " 删除 ")) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
                     key: 3,
                     class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[16] || (_cache[16] = ($event) => unref(modal).confirmModal())
+                    onClick: _cache[22] || (_cache[22] = ($event) => unref(modal).confirmModal())
                   }, " 确定 ")) : (openBlock(), createElementBlock("button", {
                     key: 4,
                     class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[17] || (_cache[17] = ($event) => unref(modal).confirmModal())
+                    onClick: _cache[23] || (_cache[23] = ($event) => unref(modal).confirmModal())
                   }, " 确定 "))
                 ]),
                 default: withCtx(() => [
-                  unref(modal).state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_8, [
+                  unref(modal).state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_31, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => unref(modal).state.value.inputValue = $event),
                       type: "text",
                       class: "modal-input",
                       placeholder: "文件夹名称",
-                      onKeyup: _cache[4] || (_cache[4] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[10] || (_cache[10] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
                     }, null, 544), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_9, [
-                    createElementVNode("div", _hoisted_10, [
-                      _cache[20] || (_cache[20] = createElementVNode("label", null, [
+                  ])) : unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_32, [
+                    createElementVNode("div", _hoisted_33, [
+                      _cache[32] || (_cache[32] = createElementVNode("label", null, [
                         createTextVNode("商品名称 "),
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => unref(modal).state.value.formData.name = $event),
+                        "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => unref(modal).state.value.formData.name = $event),
                         type: "text",
                         placeholder: "例如：イチゴ - Ichigo"
                       }, null, 512), [
                         [vModelText, unref(modal).state.value.formData.name]
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_11, [
-                      _cache[21] || (_cache[21] = createElementVNode("label", null, "作者名称", -1)),
+                    createElementVNode("div", _hoisted_34, [
+                      _cache[33] || (_cache[33] = createElementVNode("label", null, "作者名称", -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(modal).state.value.formData.authorName = $event),
+                        "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => unref(modal).state.value.formData.authorName = $event),
                         type: "text",
                         placeholder: "例如：みゅ"
                       }, null, 512), [
                         [vModelText, unref(modal).state.value.formData.authorName]
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_12, [
-                      _cache[22] || (_cache[22] = createElementVNode("label", null, "商品链接", -1)),
+                    createElementVNode("div", _hoisted_35, [
+                      _cache[34] || (_cache[34] = createElementVNode("label", null, "商品链接", -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => unref(modal).state.value.formData.itemUrl = $event),
+                        "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => unref(modal).state.value.formData.itemUrl = $event),
                         type: "text",
                         placeholder: "https://booth.pm/..."
                       }, null, 512), [
                         [vModelText, unref(modal).state.value.formData.itemUrl]
                       ])
                     ])
-                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_36, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => unref(modal).state.value.inputValue = $event),
                       type: "text",
                       class: "modal-input",
                       placeholder: "新名称",
-                      onKeyup: _cache[9] || (_cache[9] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[15] || (_cache[15] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
                     }, null, 544), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_14, [
-                    createElementVNode("p", _hoisted_15, toDisplayString(unref(modal).state.value.formData.message), 1)
-                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_16, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_37, [
+                    createElementVNode("p", _hoisted_38, toDisplayString(unref(modal).state.value.formData.message), 1)
+                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_39, [
+                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_40, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => unref(modal).state.value.inputValue = $event),
                       type: "text",
                       class: "modal-input",
                       placeholder: unref(modal).state.value.placeholder,
-                      onKeyup: _cache[11] || (_cache[11] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
-                    }, null, 40, _hoisted_18), [
+                      onKeyup: _cache[17] || (_cache[17] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                    }, null, 40, _hoisted_41), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_19, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_20, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_42, [
+                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_43, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("textarea", {
-                      "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => unref(modal).state.value.inputValue = $event),
-                      class: "modal-input",
+                      "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => unref(modal).state.value.inputValue = $event),
+                      class: "modal-input modal-textarea-code",
                       placeholder: unref(modal).state.value.placeholder,
-                      rows: "8",
-                      style: { "font-family": "'Consolas', 'Monaco', monospace", "line-height": "1.5", "font-size": "12px" }
-                    }, null, 8, _hoisted_21), [
+                      rows: "8"
+                    }, null, 8, _hoisted_44), [
                       [vModelText, unref(modal).state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_22, [
-                    createElementVNode("p", _hoisted_23, toDisplayString(unref(modal).state.value.message), 1)
+                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_45, [
+                    createElementVNode("p", _hoisted_46, toDisplayString(unref(modal).state.value.message), 1)
                   ])) : createCommentVNode("", true)
                 ]),
                 _: 1
@@ -4420,305 +4970,60 @@ System.register("./ItemDataTab-KajnemCJ-o4-TvZuQ.js", ['vue', './useModal-BO7CSX
           };
         }
       });
-      const ItemDataTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-d8aa8a2f"]]));
+      const ItemDataTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-446aec3d"]]));
 
     })
   };
 }));
 
-System.register("./useSearch-CPWiNq88-JrnLEP43.js", ['vue'], (function (exports, module) {
+System.register("./useSearch-k0q0c-eH-DBqF8V9N.js", ['vue', './__monkey.entry-DB_lhVXb.js'], (function (exports, module) {
   'use strict';
-  return {
-    setters: [null],
-    execute: (function () {
-
-      exports({
-        i: itemDataSearchFilter,
-        t: tagSearchFilter
-      });
-
-      function tagSearchFilter(node, searchText) {
-        var _a;
-        if (!((_a = node.data) == null ? void 0 : _a.tags)) return false;
-        const lowerSearch = searchText.toLowerCase();
-        const nodeName = node.name.toLowerCase();
-        const tagsText = node.data.tags.join(" ").toLowerCase();
-        return nodeName.includes(lowerSearch) || tagsText.includes(lowerSearch);
-      }
-      function itemDataSearchFilter(node, searchText) {
-        var _a, _b, _c, _d, _e, _f;
-        if (!((_a = node.data) == null ? void 0 : _a.authorName) && !((_b = node.data) == null ? void 0 : _b.itemUrl)) return false;
-        const lowerSearch = searchText.toLowerCase();
-        const nodeName = node.name.toLowerCase();
-        const authorName = ((_d = (_c = node.data) == null ? void 0 : _c.authorName) == null ? void 0 : _d.toLowerCase()) || "";
-        const itemUrl = ((_f = (_e = node.data) == null ? void 0 : _e.itemUrl) == null ? void 0 : _f.toLowerCase()) || "";
-        return nodeName.includes(lowerSearch) || authorName.includes(lowerSearch) || itemUrl.includes(lowerSearch);
-      }
-
-    })
-  };
-}));
-
-System.register("./TemplateTab-CgNQY4kC-Dgd1Ngrf.js", ['vue', './useModal-BO7CSXzk-BX-jwFXE.js', './__monkey.entry-CiFzQCYM.js'], (function (exports, module) {
-  'use strict';
-  var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createElementVNode, toDisplayString, createCommentVNode, withDirectives, withKeys, vModelText, useModal, Tree, Modal, _export_sfc, ConfigStorage;
-  return {
-    setters: [module => {
-      defineComponent = module.defineComponent;
-      computed = module.computed;
-      createElementBlock = module.createElementBlock;
-      openBlock = module.openBlock;
-      createVNode = module.createVNode;
-      unref = module.unref;
-      withCtx = module.withCtx;
-      createElementVNode = module.createElementVNode;
-      toDisplayString = module.toDisplayString;
-      createCommentVNode = module.createCommentVNode;
-      withDirectives = module.withDirectives;
-      withKeys = module.withKeys;
-      vModelText = module.vModelText;
-    }, module => {
-      useModal = module.u;
-      Tree = module.T;
-      Modal = module.M;
-    }, module => {
-      _export_sfc = module._;
-      ConfigStorage = module.C;
-    }],
-    execute: (function () {
-
-      const _hoisted_1 = { class: "template-tab" };
-      const _hoisted_2 = {
-        key: 0,
-        class: "active-badge"
-      };
-      const _hoisted_3 = { class: "template-custom-content" };
-      const _hoisted_4 = { class: "template-preview" };
-      const _hoisted_5 = { key: 0 };
-      const _hoisted_6 = {
-        key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
-      };
-      const _hoisted_7 = ["placeholder"];
-      const _hoisted_8 = { key: 1 };
-      const _hoisted_9 = {
-        key: 0,
-        style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6", "margin-bottom": "12px" }
-      };
-      const _hoisted_10 = ["placeholder"];
-      const _hoisted_11 = { key: 2 };
-      const _hoisted_12 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
-      const _hoisted_13 = { key: 3 };
-      const _hoisted_14 = { style: { "color": "#6b7280", "font-size": "13px", "line-height": "1.6" } };
-      const _sfc_main = /* @__PURE__ */ defineComponent({
-        __name: "TemplateTab",
-        props: {
-          api: {}
-        },
-        setup(__props) {
-          const storage = ConfigStorage.getInstance();
-          const modal = useModal();
-          const tree = computed(() => storage.data.value.templateTree);
-          const activeTemplateId = computed(() => storage.data.value.activeTemplateId);
-          const handleCreateTemplate = () => {
-            const data = { content: "{{authorName}} - {{itemName}}\n{{itemUrl}}" };
-            const newNode = storage.createNode(tree.value, "新建模板", data, null);
-            return newNode.id;
-          };
-          const handleEditTemplate = async (nodeId) => {
-            const node = storage.data.value.templateTree.nodes[nodeId];
-            if (!node || !node.data) return;
-            const result = await modal.openModal({
-              type: "textarea",
-              title: "编辑模板内容",
-              message: "可用占位符：{{authorName}}, {{itemName}}, {{itemUrl}}",
-              placeholder: "输入模板内容...",
-              defaultValue: node.data.content
-            });
-            if (result === null || result === node.data.content) return;
-            node.data.content = result;
-            node.updatedAt = Date.now();
-            storage["saveWithDebounce"]();
-          };
-          const handleRename = (nodeId, newName) => {
-            storage.renameNode(tree.value, nodeId, newName);
-          };
-          const handleDelete = async (nodeId) => {
-            const node = tree.value.nodes[nodeId];
-            if (!node) return;
-            if (nodeId === activeTemplateId.value) {
-              await modal.openModal({
-                type: "alert",
-                title: "无法删除",
-                message: "不能删除当前激活的模板，请先激活其他模板"
-              });
-              return;
-            }
-            const confirmed = await modal.openModal({
-              type: "delete",
-              title: "确认删除",
-              message: `确定要删除"${node.name}"吗？`
-            });
-            if (!confirmed) return;
-            storage.deleteNode(tree.value, nodeId);
-          };
-          const handleActivateTemplate = (nodeId) => {
-            const node = tree.value.nodes[nodeId];
-            if (!node || !node.data) return;
-            storage.data.value.activeTemplateId = nodeId;
-            storage["saveWithDebounce"]();
-          };
-          const customMenuItems = computed(() => [
-            {
-              label: "选择此模板",
-              action: (node) => {
-                if (node && node.id !== activeTemplateId.value) {
-                  handleActivateTemplate(node.id);
-                }
-              },
-              show: (node) => node !== null && node.data && node.id !== activeTemplateId.value
-              // 只在非当前模板的数据节点显示
-            }
-          ]);
-          const getExamplePreview = (content) => {
-            return content.replace(/\{\{authorName\}\}/g, "示例作者").replace(/\{\{itemName\}\}/g, "示例商品名称").replace(/\{\{itemUrl\}\}/g, "https://booth.pm/items/1234567");
-          };
-          return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1, [
-              createVNode(unref(Tree), {
-                tree: tree.value,
-                mode: "list",
-                "search-placeholder": "搜索模板...",
-                "search-filter": (node, searchText) => node.name.toLowerCase().includes(searchText.toLowerCase()),
-                "custom-menu-items": customMenuItems.value,
-                "on-create-item": handleCreateTemplate,
-                "on-rename": handleRename,
-                "on-delete": handleDelete,
-                "on-edit": handleEditTemplate
-              }, {
-                header: withCtx(({ node }) => [
-                  node.data && node.id === activeTemplateId.value ? (openBlock(), createElementBlock("span", _hoisted_2, "当前")) : createCommentVNode("", true)
-                ]),
-                default: withCtx(({ node }) => [
-                  createElementVNode("div", _hoisted_3, [
-                    createElementVNode("div", _hoisted_4, [
-                      createElementVNode("pre", null, toDisplayString(getExamplePreview(node.data.content)), 1)
-                    ])
-                  ])
-                ]),
-                _: 1
-              }, 8, ["tree", "search-filter", "custom-menu-items"]),
-              createVNode(Modal, {
-                show: unref(modal).state.value.show,
-                title: unref(modal).state.value.title,
-                "teleport-to": ".booth-enhancer-sidebar",
-                onClose: unref(modal).closeModal
-              }, {
-                footer: withCtx(() => [
-                  unref(modal).state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
-                    key: 0,
-                    class: "booth-btn booth-btn-md booth-btn-secondary",
-                    onClick: _cache[3] || (_cache[3] = //@ts-ignore
-                    (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
-                  }, " 取消 ")) : createCommentVNode("", true),
-                  unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
-                    key: 1,
-                    class: "booth-btn booth-btn-md booth-btn-danger",
-                    onClick: _cache[4] || (_cache[4] = ($event) => unref(modal).confirmModal(true))
-                  }, " 删除 ")) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
-                    key: 2,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[5] || (_cache[5] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 ")) : (openBlock(), createElementBlock("button", {
-                    key: 3,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[6] || (_cache[6] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 "))
-                ]),
-                default: withCtx(() => [
-                  unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_5, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_6, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
-                    withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(modal).state.value.inputValue = $event),
-                      type: "text",
-                      class: "modal-input",
-                      placeholder: unref(modal).state.value.placeholder,
-                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
-                    }, null, 40, _hoisted_7), [
-                      [vModelText, unref(modal).state.value.inputValue]
-                    ])
-                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_8, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_9, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
-                    withDirectives(createElementVNode("textarea", {
-                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.inputValue = $event),
-                      class: "modal-input",
-                      placeholder: unref(modal).state.value.placeholder,
-                      rows: "8",
-                      style: { "font-family": "'Consolas', 'Monaco', monospace", "line-height": "1.5", "font-size": "12px" }
-                    }, null, 8, _hoisted_10), [
-                      [vModelText, unref(modal).state.value.inputValue]
-                    ])
-                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
-                    createElementVNode("p", _hoisted_12, toDisplayString(unref(modal).state.value.message), 1)
-                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_13, [
-                    createElementVNode("p", _hoisted_14, toDisplayString(unref(modal).state.value.message), 1)
-                  ])) : createCommentVNode("", true)
-                ]),
-                _: 1
-              }, 8, ["show", "title", "onClose"])
-            ]);
-          };
-        }
-      });
-      const TemplateTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-addebd0f"]]));
-
-    })
-  };
-}));
-
-System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiFzQCYM.js'], (function (exports, module) {
-  'use strict';
-  var ref, defineComponent, computed, createElementBlock, openBlock, createCommentVNode, createBlock, createElementVNode, withDirectives, unref, vModelText, Fragment, renderList, createSlots, withCtx, renderSlot, mergeProps, withModifiers, normalizeClass, Teleport, normalizeStyle, toDisplayString, onMounted, onUnmounted, createVNode, Transition, watch, nextTick, resolveComponent, _export_sfc, ConfigStorage, withSize, icons;
+  var ref, defineComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, Teleport, Transition, normalizeStyle, toDisplayString, unref, watch, nextTick, resolveComponent, _export_sfc, ConfigStorage, ContextMenu, icons, withSize;
   return {
     setters: [module => {
       ref = module.ref;
       defineComponent = module.defineComponent;
       computed = module.computed;
+      onMounted = module.onMounted;
+      onUnmounted = module.onUnmounted;
       createElementBlock = module.createElementBlock;
       openBlock = module.openBlock;
       createCommentVNode = module.createCommentVNode;
-      createBlock = module.createBlock;
-      createElementVNode = module.createElementVNode;
+      createVNode = module.createVNode;
       withDirectives = module.withDirectives;
-      unref = module.unref;
+      createElementVNode = module.createElementVNode;
       vModelText = module.vModelText;
+      renderSlot = module.renderSlot;
       Fragment = module.Fragment;
       renderList = module.renderList;
+      createBlock = module.createBlock;
       createSlots = module.createSlots;
       withCtx = module.withCtx;
-      renderSlot = module.renderSlot;
       mergeProps = module.mergeProps;
       withModifiers = module.withModifiers;
       normalizeClass = module.normalizeClass;
       Teleport = module.Teleport;
+      Transition = module.Transition;
       normalizeStyle = module.normalizeStyle;
       toDisplayString = module.toDisplayString;
-      onMounted = module.onMounted;
-      onUnmounted = module.onUnmounted;
-      createVNode = module.createVNode;
-      Transition = module.Transition;
+      unref = module.unref;
       watch = module.watch;
       nextTick = module.nextTick;
       resolveComponent = module.resolveComponent;
     }, module => {
       _export_sfc = module._;
       ConfigStorage = module.C;
-      withSize = module.w;
+      ContextMenu = module.a;
       icons = module.i;
+      withSize = module.w;
     }],
     execute: (function () {
 
-      exports("u", useModal);
+      exports({
+        i: itemDataSearchFilter,
+        t: tagSearchFilter,
+        u: useModal
+      });
 
       const _hoisted_1$2 = { class: "modal-header" };
       const _hoisted_2$2 = { class: "modal-title" };
@@ -4818,7 +5123,7 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           };
         }
       });
-      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b90a005d"]]));
+      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-546fb7a1"]]));
       const _hoisted_1$1 = { class: "tree-item" };
       const _hoisted_2$1 = ["innerHTML"];
       const _hoisted_3$1 = {
@@ -4827,16 +5132,18 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
       };
       const _hoisted_4$1 = ["innerHTML"];
       const _hoisted_5$1 = ["innerHTML"];
-      const _hoisted_6$1 = { class: "name" };
-      const _hoisted_7$1 = {
-        key: 0,
+      const _hoisted_6$1 = ["innerHTML"];
+      const _hoisted_7$1 = ["innerHTML"];
+      const _hoisted_8$1 = { class: "name" };
+      const _hoisted_9 = {
+        key: 2,
         class: "count"
       };
-      const _hoisted_8$1 = {
-        key: 1,
+      const _hoisted_10 = {
+        key: 3,
         class: "node-header-extra"
       };
-      const _hoisted_9$1 = {
+      const _hoisted_11 = {
         key: 2,
         class: "tree-children"
       };
@@ -4847,7 +5154,11 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           tree: {},
           level: {},
           editingNodeId: {},
-          showChildren: { type: Boolean, default: true }
+          showChildren: { type: Boolean, default: true },
+          selection: {},
+          activeNodeId: {},
+          selectable: { type: Boolean, default: true },
+          selectableFilter: {}
         },
         emits: ["select", "contextmenu", "rename"],
         setup(__props, { emit: __emit }) {
@@ -4865,6 +5176,24 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             return props.node.children.map((id) => allNodes[id]).filter(Boolean);
           });
           const hasChildren = computed(() => props.node.children.length > 0);
+          const isSelected = computed(() => {
+            var _a;
+            return ((_a = props.selection) == null ? void 0 : _a.has(props.node.id)) || false;
+          });
+          const isActive = computed(() => props.activeNodeId === props.node.id);
+          const isSelectable = computed(() => {
+            if (!props.selectable) return false;
+            return props.selectableFilter ? props.selectableFilter(props.node) : true;
+          });
+          const nodeIcon = computed(() => {
+            const hasData = !!props.node.data;
+            const hasKids = hasChildren.value;
+            if (hasData) {
+              return hasKids ? icons.files : icons.file;
+            } else {
+              return hasKids ? icons.folderFilled : icons.folderEmpty;
+            }
+          });
           const toggleExpanded = () => {
             props.node.expanded = !props.node.expanded;
           };
@@ -4995,8 +5324,22 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
               cancelEdit();
             }
           };
-          const handleSelect = (node) => {
-            emit("select", node);
+          const handleNodeClick = (e) => {
+            if (isEditing.value) return;
+            const target = e.target;
+            if (target.closest("button, a, .action-icon")) {
+              return;
+            }
+            const isInput = target.closest("input, textarea, select");
+            if (isInput) {
+              if (isSelectable.value && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+                emit("select", props.node, e);
+              }
+              return;
+            }
+            if (isSelectable.value) {
+              emit("select", props.node, e);
+            }
           };
           const handleContextmenu = (event, node) => {
             if (isEditing.value) {
@@ -5029,24 +5372,39 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                 onDrop: handleDrop
               }, [
                 createElementVNode("div", {
-                  class: normalizeClass(["node-item", { "has-custom-content": _ctx.$slots.default, "is-editing": isEditing.value }])
+                  class: normalizeClass([
+                    "node-item",
+                    {
+                      "has-custom-content": _ctx.$slots.default,
+                      "is-editing": isEditing.value,
+                      "selected": isSelected.value,
+                      "active": isActive.value,
+                      "selectable": isSelectable.value
+                    }
+                  ]),
+                  onClick: handleNodeClick,
+                  onContextmenu: _cache[3] || (_cache[3] = withModifiers(($event) => handleContextmenu($event, _ctx.node), ["prevent"]))
                 }, [
                   createElementVNode("div", {
-                    class: normalizeClass(["tree-node-content", { "expanded": _ctx.node.expanded, "has-children": hasChildren.value }]),
-                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" }),
-                    onClick: _cache[2] || (_cache[2] = ($event) => !isEditing.value && (hasChildren.value ? toggleExpanded() : handleSelect(_ctx.node))),
-                    onContextmenu: _cache[3] || (_cache[3] = withModifiers(($event) => handleContextmenu($event, _ctx.node), ["prevent"]))
+                    class: normalizeClass([
+                      "tree-node-content",
+                      {
+                        "expanded": _ctx.node.expanded,
+                        "has-children": hasChildren.value
+                      }
+                    ]),
+                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" })
                   }, [
-                    _ctx.showChildren && hasChildren.value ? (openBlock(), createElementBlock("span", {
-                      key: 0,
-                      class: "expand-icon",
-                      onClick: _cache[0] || (_cache[0] = withModifiers(($event) => !isEditing.value && toggleExpanded(), ["stop"])),
-                      innerHTML: unref(withSize)(_ctx.node.expanded ? unref(icons).chevronDown : unref(icons).chevronRight, 12)
-                    }, null, 8, _hoisted_2$1)) : (openBlock(), createElementBlock("span", _hoisted_3$1)),
-                    isEditing.value ? (openBlock(), createElementBlock(Fragment, { key: 2 }, [
+                    isEditing.value ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                      _ctx.showChildren && hasChildren.value ? (openBlock(), createElementBlock("span", {
+                        key: 0,
+                        class: "expand-icon",
+                        onClick: _cache[0] || (_cache[0] = withModifiers(($event) => toggleExpanded(), ["stop"])),
+                        innerHTML: unref(withSize)(_ctx.node.expanded ? unref(icons).chevronDown : unref(icons).chevronRight, 12)
+                      }, null, 8, _hoisted_2$1)) : (openBlock(), createElementBlock("span", _hoisted_3$1)),
                       createElementVNode("span", {
                         class: "icon",
-                        innerHTML: unref(withSize)(_ctx.node.data ? unref(icons).file : unref(icons).folder, 16),
+                        innerHTML: unref(withSize)(nodeIcon.value, 16),
                         style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
                       }, null, 12, _hoisted_4$1),
                       withDirectives(createElementVNode("input", {
@@ -5059,41 +5417,57 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                       }, null, 544), [
                         [vModelText, editingName.value]
                       ])
-                    ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 3 }, [
-                      createElementVNode("span", {
-                        class: "icon",
-                        innerHTML: unref(withSize)(_ctx.node.data ? unref(icons).file : unref(icons).folder, 16),
-                        style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
-                      }, null, 12, _hoisted_5$1),
-                      createElementVNode("span", _hoisted_6$1, toDisplayString(_ctx.node.name), 1),
-                      hasChildren.value ? (openBlock(), createElementBlock("span", _hoisted_7$1, "(" + toDisplayString(_ctx.node.children.length) + ")", 1)) : createCommentVNode("", true),
-                      _ctx.$slots.header ? (openBlock(), createElementBlock("div", _hoisted_8$1, [
+                    ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                      _ctx.showChildren && hasChildren.value ? (openBlock(), createElementBlock("div", {
+                        key: 0,
+                        class: "toggle-area",
+                        onClick: _cache[2] || (_cache[2] = withModifiers(($event) => toggleExpanded(), ["stop"]))
+                      }, [
+                        createElementVNode("span", {
+                          class: "expand-icon",
+                          innerHTML: unref(withSize)(_ctx.node.expanded ? unref(icons).chevronDown : unref(icons).chevronRight, 12)
+                        }, null, 8, _hoisted_5$1),
+                        createElementVNode("span", {
+                          class: "icon",
+                          innerHTML: unref(withSize)(nodeIcon.value, 16),
+                          style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
+                        }, null, 12, _hoisted_6$1)
+                      ])) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                        _cache[7] || (_cache[7] = createElementVNode("span", { class: "expand-icon placeholder" }, null, -1)),
+                        createElementVNode("span", {
+                          class: "icon",
+                          innerHTML: unref(withSize)(nodeIcon.value, 16),
+                          style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
+                        }, null, 12, _hoisted_7$1)
+                      ], 64)),
+                      createElementVNode("span", _hoisted_8$1, toDisplayString(_ctx.node.name), 1),
+                      hasChildren.value ? (openBlock(), createElementBlock("span", _hoisted_9, "(" + toDisplayString(_ctx.node.children.length) + ")", 1)) : createCommentVNode("", true),
+                      _ctx.$slots.header ? (openBlock(), createElementBlock("div", _hoisted_10, [
                         renderSlot(_ctx.$slots, "header", {
                           node: _ctx.node,
                           level: currentLevel.value
                         }, void 0, true)
                       ])) : createCommentVNode("", true)
                     ], 64))
-                  ], 38),
+                  ], 6),
                   _ctx.$slots.default ? (openBlock(), createElementBlock("div", {
                     key: 0,
                     class: "node-custom-content",
-                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + 36 + "px" }),
-                    onContextmenu: _cache[4] || (_cache[4] = withModifiers(($event) => handleContextmenu($event, _ctx.node), ["prevent"]))
+                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + 36 + "px" })
                   }, [
                     renderSlot(_ctx.$slots, "default", {
                       node: _ctx.node,
                       level: currentLevel.value
                     }, void 0, true)
-                  ], 36)) : createCommentVNode("", true)
-                ], 2)
+                  ], 4)) : createCommentVNode("", true)
+                ], 34)
               ], 34),
               isDragOver.value && dropPosition.value === "after" ? (openBlock(), createElementBlock("div", {
                 key: 1,
                 class: "drop-indicator drop-indicator-after",
                 style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" })
               }, null, 4)) : createCommentVNode("", true),
-              _ctx.showChildren && _ctx.node.expanded && hasChildren.value ? (openBlock(), createElementBlock("div", _hoisted_9$1, [
+              _ctx.showChildren && _ctx.node.expanded && hasChildren.value ? (openBlock(), createElementBlock("div", _hoisted_11, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(children.value, (child) => {
                   return openBlock(), createBlock(_component_TreeNode, {
                     key: child.id,
@@ -5102,70 +5476,58 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                     level: currentLevel.value + 1,
                     "editing-node-id": _ctx.editingNodeId,
                     "show-children": _ctx.showChildren,
-                    onSelect: handleSelect,
-                    onContextmenu: handleContextmenu,
-                    onRename: _cache[5] || (_cache[5] = (nodeId, newName) => emit("rename", nodeId, newName))
+                    selection: _ctx.selection,
+                    "active-node-id": _ctx.activeNodeId,
+                    selectable: _ctx.selectable,
+                    "selectable-filter": _ctx.selectableFilter,
+                    onSelect: _cache[4] || (_cache[4] = (node, e) => emit("select", node, e)),
+                    onContextmenu: _cache[5] || (_cache[5] = (e, n) => emit("contextmenu", e, n)),
+                    onRename: _cache[6] || (_cache[6] = (nodeId, newName) => emit("rename", nodeId, newName))
                   }, createSlots({ _: 2 }, [
                     renderList(_ctx.$slots, (_, name) => {
                       return {
                         name,
                         fn: withCtx((slotData) => [
-                          renderSlot(_ctx.$slots, name, mergeProps({ ref_for: true }, slotData || {}), void 0, true)
+                          renderSlot(_ctx.$slots, name, mergeProps({ ref_for: true }, slotData), void 0, true)
                         ])
                       };
                     })
-                  ]), 1032, ["node", "tree", "level", "editing-node-id", "show-children"]);
+                  ]), 1032, ["node", "tree", "level", "editing-node-id", "show-children", "selection", "active-node-id", "selectable", "selectable-filter"]);
                 }), 128))
               ])) : createCommentVNode("", true)
             ]);
           };
         }
       });
-      const TreeNode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-4d1147ae"]]);
-      const _hoisted_1 = { class: "tree-wrapper" };
-      const _hoisted_2 = {
+      const TreeNode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-07f985ed"]]);
+      const _hoisted_1 = {
         key: 0,
         class: "tree-search"
       };
-      const _hoisted_3 = ["innerHTML"];
-      const _hoisted_4 = ["placeholder"];
-      const _hoisted_5 = {
+      const _hoisted_2 = ["placeholder"];
+      const _hoisted_3 = {
+        key: 0,
+        class: "tree-search-toolbar"
+      };
+      const _hoisted_4 = {
         key: 1,
         class: "search-results"
       };
-      const _hoisted_6 = {
+      const _hoisted_5 = {
         key: 0,
         class: "search-results-list"
       };
-      const _hoisted_7 = {
+      const _hoisted_6 = {
         key: 1,
         class: "search-empty"
       };
-      const _hoisted_8 = {
+      const _hoisted_7 = {
         key: 0,
         class: "empty-state"
       };
-      const _hoisted_9 = {
+      const _hoisted_8 = {
         key: 1,
         class: "tree-content"
-      };
-      const _hoisted_10 = {
-        key: 2,
-        class: "menu-separator"
-      };
-      const _hoisted_11 = ["onClick"];
-      const _hoisted_12 = {
-        key: 0,
-        class: "menu-separator"
-      };
-      const _hoisted_13 = {
-        key: 1,
-        class: "menu-separator"
-      };
-      const _hoisted_14 = ["onClick"];
-      const _hoisted_15 = {
-        key: 0,
-        class: "menu-separator"
       };
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "Tree",
@@ -5176,18 +5538,23 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           searchPlaceholder: {},
           searchFilter: {},
           customMenuItems: {},
+          selectable: { type: Boolean, default: true },
+          selectableFilter: {},
           onCreateFolder: {},
           onCreateItem: {},
           onRename: {},
           onDelete: {},
           onEdit: {}
         },
-        emits: ["select"],
+        emits: ["selectionChange"],
         setup(__props, { emit: __emit }) {
           const props = __props;
           const emit = __emit;
           const configStorage = ConfigStorage.getInstance();
           const searchText = ref("");
+          const selection = ref(/* @__PURE__ */ new Set());
+          const activeNodeId = ref(null);
+          const anchorNodeId = ref(null);
           const isSearching = computed(() => searchText.value.trim().length > 0);
           const searchResults = computed(() => {
             if (!isSearching.value || !props.searchFilter) {
@@ -5204,6 +5571,19 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             y: 0
           });
           const editingNodeId = ref(null);
+          const treeRootRef = ref(null);
+          const handleGlobalClick = (e) => {
+            if (!props.selectable || selection.value.size === 0) return;
+            if (!treeRootRef.value) return;
+            if (treeRootRef.value.contains(e.target)) return;
+            clearSelection();
+          };
+          onMounted(() => {
+            document.addEventListener("click", handleGlobalClick);
+          });
+          onUnmounted(() => {
+            document.removeEventListener("click", handleGlobalClick);
+          });
           const rootNodes = computed(() => {
             var _a;
             const allNodes = props.tree.nodes;
@@ -5221,17 +5601,96 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             if (!props.customMenuItems || props.customMenuItems.length === 0) {
               return [];
             }
+            const selectedNodes = getSelectedNodes();
             return props.customMenuItems.filter(
-              (item) => !item.show || item.show(targetNode.value)
+              (item) => !item.show || item.show(targetNode.value, selectedNodes)
             );
           });
           const visibleCustomMenuItemsForRoot = computed(() => {
             if (!props.customMenuItems || props.customMenuItems.length === 0) {
               return [];
             }
+            const selectedNodes = getSelectedNodes();
             return props.customMenuItems.filter(
-              (item) => !item.show || item.show(null)
+              (item) => !item.show || item.show(null, selectedNodes)
             );
+          });
+          const menuItems = computed(() => {
+            const items = [];
+            const selectedNodes = getSelectedNodes();
+            if (targetNode.value) {
+              if (props.mode === "tree") {
+                items.push({
+                  label: "新建文件夹节点",
+                  action: handleCreateFolder
+                });
+              }
+              items.push({
+                label: "新建数据节点",
+                action: handleCreateItem,
+                separator: true
+              });
+              items.push({
+                label: "重命名",
+                action: handleRename
+              });
+              if (targetNode.value.data && props.onEdit) {
+                items.push({
+                  label: "编辑数据",
+                  action: handleEdit
+                });
+              }
+              if (visibleCustomMenuItems.value.length > 0) {
+                if (items.length > 0) {
+                  items[items.length - 1].separator = true;
+                }
+                visibleCustomMenuItems.value.forEach((item) => {
+                  items.push({
+                    label: item.label,
+                    action: () => {
+                      item.action(targetNode.value, selectedNodes);
+                    },
+                    danger: item.danger,
+                    separator: item.separator
+                  });
+                });
+              }
+              if (items.length > 0) {
+                items[items.length - 1].separator = true;
+              }
+              items.push({
+                label: "删除",
+                action: handleDelete,
+                danger: true
+              });
+            } else {
+              if (props.mode === "tree") {
+                items.push({
+                  label: "新建文件夹节点",
+                  action: handleCreateFolder
+                });
+              }
+              items.push({
+                label: "新建数据节点",
+                action: handleCreateItem
+              });
+              if (visibleCustomMenuItemsForRoot.value.length > 0) {
+                if (items.length > 0) {
+                  items[items.length - 1].separator = true;
+                }
+                visibleCustomMenuItemsForRoot.value.forEach((item) => {
+                  items.push({
+                    label: item.label,
+                    action: () => {
+                      item.action(null, selectedNodes);
+                    },
+                    danger: item.danger,
+                    separator: item.separator
+                  });
+                });
+              }
+            }
+            return items;
           });
           const getParentId = () => {
             if (!contextMenu.value.targetId) return null;
@@ -5246,17 +5705,11 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
               x: event.clientX,
               y: event.clientY
             };
-            const closeMenu = () => {
-              contextMenu.value.show = false;
-              document.removeEventListener("click", closeMenu);
-            };
-            setTimeout(() => document.addEventListener("click", closeMenu), 0);
           };
           const handleCreateFolder = () => {
             var _a;
             const parentId = getParentId();
             const newNodeId = (_a = props.onCreateFolder) == null ? void 0 : _a.call(props, parentId);
-            contextMenu.value.show = false;
             if (newNodeId) {
               editingNodeId.value = newNodeId;
             }
@@ -5265,7 +5718,6 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             var _a;
             const parentId = getParentId();
             const newNodeId = (_a = props.onCreateItem) == null ? void 0 : _a.call(props, parentId);
-            contextMenu.value.show = false;
             if (newNodeId) {
               editingNodeId.value = newNodeId;
             }
@@ -5274,12 +5726,10 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             var _a;
             if (!contextMenu.value.targetId) return;
             (_a = props.onEdit) == null ? void 0 : _a.call(props, contextMenu.value.targetId);
-            contextMenu.value.show = false;
           };
           const handleRename = () => {
             if (!contextMenu.value.targetId) return;
             editingNodeId.value = contextMenu.value.targetId;
-            contextMenu.value.show = false;
           };
           const handleNodeRename = (nodeId, newName) => {
             var _a;
@@ -5291,7 +5741,6 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             if (!contextMenu.value.targetId) return;
             try {
               await ((_a = props.onDelete) == null ? void 0 : _a.call(props, contextMenu.value.targetId));
-              contextMenu.value.show = false;
             } catch (error) {
               console.debug("Delete cancelled or failed:", error);
             }
@@ -5335,30 +5784,119 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             }
             showContextMenu(e, null);
           };
-          const handleSelect = (node) => {
-            emit("select", node);
+          const handleTreeClick = (e) => {
+            const target = e.target;
+            if (!target.closest(".node-item")) {
+              if (selection.value.size > 0) {
+                clearSelection();
+              }
+            }
+          };
+          const getVisibleNodes = () => {
+            var _a;
+            const result = [];
+            const traverse = (nodeIds) => {
+              for (const id of nodeIds) {
+                const node = props.tree.nodes[id];
+                if (!node) continue;
+                result.push(node);
+                if (node.expanded && node.children.length > 0) {
+                  traverse(node.children);
+                }
+              }
+            };
+            if (props.mode === "list") {
+              result.push(...rootNodes.value);
+            } else if (isSearching.value) {
+              result.push(...searchResults.value);
+            } else {
+              traverse(props.parentId ? ((_a = props.tree.nodes[props.parentId]) == null ? void 0 : _a.children) || [] : props.tree.rootIds);
+            }
+            return result;
+          };
+          const getSelectedNodes = () => {
+            return Array.from(selection.value).map((id) => props.tree.nodes[id]).filter(Boolean);
+          };
+          const emitSelectionChange = () => {
+            const selectedNodes = getSelectedNodes();
+            emit("selectionChange", selectedNodes);
+          };
+          const handleSelection = (node, event) => {
+            if (props.selectableFilter && !props.selectableFilter(node)) {
+              return;
+            }
+            const isCtrl = (event == null ? void 0 : event.ctrlKey) || (event == null ? void 0 : event.metaKey);
+            const isShift = event == null ? void 0 : event.shiftKey;
+            const newSelection = new Set(selection.value);
+            if (isShift && anchorNodeId.value) {
+              const visibleNodes = getVisibleNodes();
+              const anchorIndex = visibleNodes.findIndex((n) => n.id === anchorNodeId.value);
+              const currentIndex = visibleNodes.findIndex((n) => n.id === node.id);
+              if (anchorIndex !== -1 && currentIndex !== -1) {
+                newSelection.clear();
+                const startIndex = Math.min(anchorIndex, currentIndex);
+                const endIndex = Math.max(anchorIndex, currentIndex);
+                for (let i = startIndex; i <= endIndex; i++) {
+                  const n = visibleNodes[i];
+                  if (!props.selectableFilter || props.selectableFilter(n)) {
+                    newSelection.add(n.id);
+                  }
+                }
+                activeNodeId.value = node.id;
+              }
+            } else if (isCtrl) {
+              if (newSelection.has(node.id)) {
+                newSelection.delete(node.id);
+                if (activeNodeId.value === node.id) {
+                  activeNodeId.value = null;
+                }
+              } else {
+                newSelection.add(node.id);
+                activeNodeId.value = node.id;
+                anchorNodeId.value = node.id;
+              }
+            } else {
+              newSelection.clear();
+              newSelection.add(node.id);
+              activeNodeId.value = node.id;
+              anchorNodeId.value = node.id;
+            }
+            selection.value = newSelection;
+            emitSelectionChange();
+          };
+          const clearSelection = () => {
+            selection.value = /* @__PURE__ */ new Set();
+            activeNodeId.value = null;
+            anchorNodeId.value = null;
+            emitSelectionChange();
           };
           const handleContextmenu = (event, node) => {
+            if (!selection.value.has(node.id)) {
+              handleSelection(node);
+            }
             showContextMenu(event, node);
           };
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1, [
-              _ctx.searchFilter ? (openBlock(), createElementBlock("div", _hoisted_2, [
-                createElementVNode("span", {
-                  class: "search-icon",
-                  innerHTML: unref(withSize)(unref(icons).search, 14)
-                }, null, 8, _hoisted_3),
+            return openBlock(), createElementBlock("div", {
+              class: "tree-wrapper",
+              ref_key: "treeRootRef",
+              ref: treeRootRef
+            }, [
+              _ctx.searchFilter ? (openBlock(), createElementBlock("div", _hoisted_1, [
                 withDirectives(createElementVNode("input", {
                   "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchText.value = $event),
                   type: "text",
                   placeholder: _ctx.searchPlaceholder || "搜索...",
                   class: "search-input"
-                }, null, 8, _hoisted_4), [
+                }, null, 8, _hoisted_2), [
                   [vModelText, searchText.value]
-                ])
+                ]),
+                _ctx.$slots.toolbar ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                  renderSlot(_ctx.$slots, "toolbar", {}, void 0, true)
+                ])) : createCommentVNode("", true)
               ])) : createCommentVNode("", true),
-              isSearching.value ? (openBlock(), createElementBlock("div", _hoisted_5, [
-                hasSearchResults.value ? (openBlock(), createElementBlock("div", _hoisted_6, [
+              isSearching.value ? (openBlock(), createElementBlock("div", _hoisted_4, [
+                hasSearchResults.value ? (openBlock(), createElementBlock("div", _hoisted_5, [
                   (openBlock(true), createElementBlock(Fragment, null, renderList(searchResults.value, (node) => {
                     return openBlock(), createBlock(TreeNode, {
                       key: node.id,
@@ -5367,7 +5905,11 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                       level: 0,
                       "editing-node-id": editingNodeId.value,
                       "show-children": false,
-                      onSelect: handleSelect,
+                      selection: selection.value,
+                      "active-node-id": activeNodeId.value,
+                      selectable: _ctx.selectable,
+                      "selectable-filter": _ctx.selectableFilter,
+                      onSelect: handleSelection,
                       onContextmenu: handleContextmenu,
                       onRename: handleNodeRename
                     }, createSlots({ _: 2 }, [
@@ -5379,18 +5921,19 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                           ])
                         };
                       })
-                    ]), 1032, ["node", "tree", "editing-node-id"]);
+                    ]), 1032, ["node", "tree", "editing-node-id", "selection", "active-node-id", "selectable", "selectable-filter"]);
                   }), 128))
-                ])) : (openBlock(), createElementBlock("div", _hoisted_7, " 没有找到匹配的结果 "))
+                ])) : (openBlock(), createElementBlock("div", _hoisted_6, " 没有找到匹配的结果 "))
               ])) : (openBlock(), createElementBlock("div", {
                 key: 2,
                 class: normalizeClass(["node-tree", { "tree-drag-over": isTreeDragOver.value }]),
                 onContextmenu: withModifiers(handleRootContextmenu, ["prevent"]),
+                onClick: handleTreeClick,
                 onDragover: handleTreeDragOver,
                 onDragleave: handleTreeDragLeave,
                 onDrop: handleTreeDrop
               }, [
-                rootNodes.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_8, " 暂无数据，右键新建 ")) : (openBlock(), createElementBlock("div", _hoisted_9, [
+                rootNodes.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_7, " 暂无数据，右键新建 ")) : (openBlock(), createElementBlock("div", _hoisted_8, [
                   (openBlock(true), createElementBlock(Fragment, null, renderList(rootNodes.value, (node) => {
                     return openBlock(), createBlock(TreeNode, {
                       key: node.id,
@@ -5399,7 +5942,11 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                       level: 0,
                       "editing-node-id": editingNodeId.value,
                       "show-children": _ctx.mode === "tree",
-                      onSelect: handleSelect,
+                      selection: selection.value,
+                      "active-node-id": activeNodeId.value,
+                      selectable: _ctx.selectable,
+                      "selectable-filter": _ctx.selectableFilter,
+                      onSelect: handleSelection,
                       onContextmenu: handleContextmenu,
                       onRename: handleNodeRename
                     }, createSlots({ _: 2 }, [
@@ -5411,85 +5958,22 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
                           ])
                         };
                       })
-                    ]), 1032, ["node", "tree", "editing-node-id", "show-children"]);
+                    ]), 1032, ["node", "tree", "editing-node-id", "show-children", "selection", "active-node-id", "selectable", "selectable-filter"]);
                   }), 128))
                 ]))
               ], 34)),
-              (openBlock(), createBlock(Teleport, { to: "body" }, [
-                contextMenu.value.show ? (openBlock(), createElementBlock("div", {
-                  key: 0,
-                  class: "context-menu",
-                  style: normalizeStyle({ left: contextMenu.value.x + "px", top: contextMenu.value.y + "px" })
-                }, [
-                  targetNode.value ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
-                    _ctx.mode === "tree" ? (openBlock(), createElementBlock("div", {
-                      key: 0,
-                      class: "menu-item",
-                      onClick: handleCreateFolder
-                    }, "新建文件夹节点")) : createCommentVNode("", true),
-                    createElementVNode("div", {
-                      class: "menu-item",
-                      onClick: handleCreateItem
-                    }, "新建数据节点"),
-                    _cache[1] || (_cache[1] = createElementVNode("div", { class: "menu-separator" }, null, -1)),
-                    createElementVNode("div", {
-                      class: "menu-item",
-                      onClick: handleRename
-                    }, "重命名"),
-                    targetNode.value.data && _ctx.onEdit ? (openBlock(), createElementBlock("div", {
-                      key: 1,
-                      class: "menu-item",
-                      onClick: handleEdit
-                    }, "编辑数据")) : createCommentVNode("", true),
-                    visibleCustomMenuItems.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_10)) : createCommentVNode("", true),
-                    (openBlock(true), createElementBlock(Fragment, null, renderList(visibleCustomMenuItems.value, (item, index) => {
-                      return openBlock(), createElementBlock(Fragment, { key: index }, [
-                        createElementVNode("div", {
-                          class: normalizeClass(["menu-item", { "menu-item-danger": item.danger }]),
-                          onClick: () => {
-                            item.action(targetNode.value);
-                            contextMenu.value.show = false;
-                          }
-                        }, toDisplayString(item.label), 11, _hoisted_11),
-                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_12)) : createCommentVNode("", true)
-                      ], 64);
-                    }), 128)),
-                    _cache[2] || (_cache[2] = createElementVNode("div", { class: "menu-separator" }, null, -1)),
-                    createElementVNode("div", {
-                      class: "menu-item menu-item-danger",
-                      onClick: handleDelete
-                    }, "删除")
-                  ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
-                    _ctx.mode === "tree" ? (openBlock(), createElementBlock("div", {
-                      key: 0,
-                      class: "menu-item",
-                      onClick: handleCreateFolder
-                    }, "新建文件夹节点")) : createCommentVNode("", true),
-                    createElementVNode("div", {
-                      class: "menu-item",
-                      onClick: handleCreateItem
-                    }, "新建数据节点"),
-                    visibleCustomMenuItemsForRoot.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_13)) : createCommentVNode("", true),
-                    (openBlock(true), createElementBlock(Fragment, null, renderList(visibleCustomMenuItemsForRoot.value, (item, index) => {
-                      return openBlock(), createElementBlock(Fragment, { key: index }, [
-                        createElementVNode("div", {
-                          class: normalizeClass(["menu-item", { "menu-item-danger": item.danger }]),
-                          onClick: () => {
-                            item.action(null);
-                            contextMenu.value.show = false;
-                          }
-                        }, toDisplayString(item.label), 11, _hoisted_14),
-                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_15)) : createCommentVNode("", true)
-                      ], 64);
-                    }), 128))
-                  ], 64))
-                ], 4)) : createCommentVNode("", true)
-              ]))
-            ]);
+              createVNode(ContextMenu, {
+                show: contextMenu.value.show,
+                x: contextMenu.value.x,
+                y: contextMenu.value.y,
+                items: menuItems.value,
+                onClose: _cache[1] || (_cache[1] = ($event) => contextMenu.value.show = false)
+              }, null, 8, ["show", "x", "y", "items"])
+            ], 512);
           };
         }
       });
-      const Tree = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-c4c782fd"]]));
+      const Tree = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-2358025e"]]));
       function useModal() {
         const state = ref({
           show: false,
@@ -5502,7 +5986,6 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           formData: {}
         });
         let resolvePromise = null;
-        let rejectPromise = null;
         const openModal = (options) => {
           state.value = {
             show: true,
@@ -5516,15 +5999,13 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           };
           return new Promise((resolve, reject) => {
             resolvePromise = resolve;
-            rejectPromise = reject;
           });
         };
         const closeModal = () => {
           state.value.show = false;
-          if (rejectPromise) {
-            rejectPromise();
+          if (resolvePromise) {
+            resolvePromise(void 0);
             resolvePromise = null;
-            rejectPromise = null;
           }
         };
         const confirmModal = (result) => {
@@ -5532,7 +6013,6 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           if (resolvePromise) {
             resolvePromise(result !== void 0 ? result : state.value.inputValue);
             resolvePromise = null;
-            rejectPromise = null;
           }
         };
         const confirm = (title, message) => {
@@ -5540,7 +6020,7 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
             type: "delete",
             title,
             defaultValue: message || ""
-          }).then(() => true).catch(() => false);
+          }).then((result) => !!result);
         };
         return {
           state,
@@ -5549,6 +6029,23 @@ System.register("./useModal-BO7CSXzk-BX-jwFXE.js", ['vue', './__monkey.entry-CiF
           confirmModal,
           confirm
         };
+      }
+      function tagSearchFilter(node, searchText) {
+        var _a;
+        if (!((_a = node.data) == null ? void 0 : _a.tags)) return false;
+        const lowerSearch = searchText.toLowerCase();
+        const nodeName = node.name.toLowerCase();
+        const tagsText = node.data.tags.join(" ").toLowerCase();
+        return nodeName.includes(lowerSearch) || tagsText.includes(lowerSearch);
+      }
+      function itemDataSearchFilter(node, searchText) {
+        var _a, _b, _c, _d, _e, _f;
+        if (!((_a = node.data) == null ? void 0 : _a.authorName) && !((_b = node.data) == null ? void 0 : _b.itemUrl)) return false;
+        const lowerSearch = searchText.toLowerCase();
+        const nodeName = node.name.toLowerCase();
+        const authorName = ((_d = (_c = node.data) == null ? void 0 : _c.authorName) == null ? void 0 : _d.toLowerCase()) || "";
+        const itemUrl = ((_f = (_e = node.data) == null ? void 0 : _e.itemUrl) == null ? void 0 : _f.toLowerCase()) || "";
+        return nodeName.includes(lowerSearch) || authorName.includes(lowerSearch) || itemUrl.includes(lowerSearch);
       }
 
     })

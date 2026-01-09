@@ -1,13 +1,828 @@
 /**
- * 样式系统入口文件
- * 统一导入所有样式
+ * Booth Enhancer 统一样式系统
+ * 基于 booth-order-analysis 设计规范
  */
 
-/* 1. 设计 tokens */
-@import './variables.css';
+/* ========================================
+   1. CSS 变量定义 - Design Tokens
+   ======================================== */
 
-/* 2. 组件样式 */
-@import './components.css';
+:root {
+  /* 主色 */
+  --be-color-primary: #3b82f6;
+  --be-color-primary-hover: #2563eb;
+  --be-color-primary-active: #1d4ed8;
+  
+  /* 功能色 */
+  --be-color-success: #10b981;
+  --be-color-success-hover: #059669;
+  --be-color-danger: #ef4444;
+  --be-color-danger-hover: #dc2626;
+  --be-color-warning: #f59e0b;
+  --be-color-info: #3b82f6;
+  
+  /* 中性色 - Tailwind Gray */
+  --be-color-gray-50: #f8fafc;
+  --be-color-gray-100: #f3f4f6;
+  --be-color-gray-200: #e5e7eb;
+  --be-color-gray-300: #d1d5db;
+  --be-color-gray-400: #9ca3af;
+  --be-color-gray-500: #6b7280;
+  --be-color-gray-600: #4b5563;
+  --be-color-gray-700: #374151;
+  --be-color-gray-800: #1f2937;
+  --be-color-gray-900: #111827;
+  
+  /* 文字色 */
+  --be-color-text: #374151;
+  --be-color-text-secondary: #6b7280;
+  --be-color-text-muted: #9ca3af;
+  --be-color-text-inverse: #ffffff;
+  
+  /* 背景色 */
+  --be-color-bg: #ffffff;
+  --be-color-bg-secondary: #f8fafc;
+  --be-color-bg-tertiary: #f3f4f6;
+  --be-color-bg-hover: #f9fafb;
+  --be-color-bg-active: #f3f4f6;
+  
+  /* 边框色 */
+  --be-color-border: #e5e7eb;
+  --be-color-border-hover: #d1d5db;
+  --be-color-border-light: #f3f4f6;
+  
+  /* 阴影 */
+  --be-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --be-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --be-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --be-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  
+  /* 间距 */
+  --be-space-xs: 4px;
+  --be-space-sm: 8px;
+  --be-space-md: 16px;
+  --be-space-lg: 24px;
+  --be-space-xl: 32px;
+  
+  /* 圆角 */
+  --be-radius-sm: 4px;
+  --be-radius: 6px;
+  --be-radius-md: 8px;
+  --be-radius-lg: 12px;
+  --be-radius-xl: 16px;
+  --be-radius-full: 9999px;
+  
+  /* 字号 */
+  --be-font-size-xs: 10px;
+  --be-font-size-sm: 11px;
+  --be-font-size-base: 12px;
+  --be-font-size-md: 13px;
+  --be-font-size-lg: 14px;
+  --be-font-size-xl: 16px;
+  --be-font-size-2xl: 18px;
+  
+  /* 过渡 */
+  --be-transition-fast: 0.1s ease;
+  --be-transition-normal: 0.15s ease;
+  --be-transition-slow: 0.3s ease;
+  
+  /* Z-index */
+  --be-z-dropdown: 1000;
+  --be-z-modal: 1500;
+  --be-z-toast: 2000;
+  --be-z-tooltip: 2500;
+}
 
-/* 3. 工具类 */
-@import './utilities.css';
+/* ========================================
+   2. 全局重置
+   ======================================== */
+
+.booth-enhancer-sidebar * {
+  box-sizing: border-box;
+}
+
+.booth-enhancer-sidebar input,
+.booth-enhancer-sidebar textarea,
+.booth-enhancer-sidebar select,
+.booth-enhancer-sidebar button {
+  font-family: inherit;
+}
+
+/* ========================================
+   3. 按钮系统 - booth-btn
+   ======================================== */
+
+/* 基础按钮样式 */
+.booth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  /* 默认样式 - 如果没有指定颜色变体，使用 secondary 样式 */
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.booth-btn:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.booth-btn:active:not(:disabled) {
+  background: #d1d5db;
+  transform: translateY(1px);
+}
+
+.booth-btn:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.booth-btn:disabled:hover {
+  background: #f3f4f6;
+  color: #9ca3af;
+  box-shadow: none;
+  transform: none;
+}
+
+/* 按钮尺寸 */
+.booth-btn-sm {
+  padding: 4px 8px;
+  font-size: 11px;
+  min-height: 24px;
+}
+
+.booth-btn-md {
+  padding: 6px 12px;
+  font-size: 12px;
+  min-height: 32px;
+}
+
+.booth-btn-lg {
+  padding: 8px 16px;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+/* 按钮颜色变体 */
+.booth-btn-primary {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+  border: 1px solid transparent;
+}
+
+.booth-btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+}
+
+.booth-btn-primary:active:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(1px);
+}
+
+.booth-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.booth-btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.booth-btn-secondary:active:not(:disabled) {
+  background: #d1d5db;
+  transform: translateY(1px);
+}
+
+.booth-btn-success {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+  border: 1px solid transparent;
+}
+
+.booth-btn-success:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);
+}
+
+.booth-btn-success:active:not(:disabled) {
+  background: #047857;
+  transform: translateY(1px);
+}
+
+.booth-btn-danger {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3);
+  border: 1px solid transparent;
+}
+
+.booth-btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+}
+
+.booth-btn-danger:active:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(1px);
+}
+
+.booth-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+}
+
+.booth-btn-ghost:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+.booth-btn-ghost:active:not(:disabled) {
+  background: #e2e8f0;
+  transform: translateY(1px);
+}
+
+/* 图标按钮 */
+.booth-btn-icon {
+  padding: 6px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.booth-btn-icon.booth-btn-sm {
+  padding: 4px;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.booth-btn-icon.booth-btn-lg {
+  padding: 8px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+/* Focus 状态 */
+.booth-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.booth-btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+/* 按钮组样式 */
+.booth-btn-group {
+  display: inline-flex;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.booth-btn-group .booth-btn {
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.booth-btn-group .booth-btn:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.booth-btn-group .booth-btn:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-right: none;
+}
+
+/* 加载状态 */
+.booth-btn-loading {
+  position: relative;
+  color: transparent;
+}
+
+.booth-btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: booth-btn-spin 0.6s linear infinite;
+}
+
+@keyframes booth-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   4. Toggle 开关样式
+   ======================================== */
+
+.booth-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.booth-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.booth-toggle .toggle-slider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+
+.booth-toggle .toggle-slider:before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.booth-toggle input[type="checkbox"]:checked+.toggle-slider {
+  background: #10b981;
+}
+
+.booth-toggle input[type="checkbox"]:checked+.toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.booth-toggle .toggle-label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Toggle hover 效果 */
+.booth-toggle:hover .toggle-slider {
+  background: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.booth-toggle:hover .toggle-label {
+  color: #1f2937;
+}
+
+/* Toggle 点击效果 */
+.booth-toggle input[type="checkbox"]:active+.toggle-slider {
+  transform: translateY(1px);
+}
+
+.booth-toggle input[type="checkbox"]:active+.toggle-slider:before {
+  transform: translateX(2px);
+}
+
+.booth-toggle input[type="checkbox"]:checked:active+.toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Toggle 尺寸变体 */
+.booth-toggle-sm .toggle-slider {
+  width: 36px;
+  height: 20px;
+}
+
+.booth-toggle-sm .toggle-slider:before {
+  width: 16px;
+  height: 16px;
+}
+
+.booth-toggle-sm input[type="checkbox"]:checked+.toggle-slider:before {
+  transform: translateX(16px);
+}
+
+.booth-toggle-lg .toggle-slider {
+  width: 52px;
+  height: 28px;
+}
+
+.booth-toggle-lg .toggle-slider:before {
+  width: 24px;
+  height: 24px;
+}
+
+.booth-toggle-lg input[type="checkbox"]:checked+.toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* ========================================
+   5. 输入框和表单样式 - 全局统一规则
+   ======================================== */
+
+/* 
+ * 最高优先级：确保所有输入框在整个应用中样式完全统一
+ * 这些规则会覆盖所有子组件的样式定义
+ */
+.booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]),
+.booth-enhancer-sidebar textarea,
+.booth-enhancer-sidebar select {
+  width: 100%;
+  padding: 6px 12px;
+  margin: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  display: block;
+  line-height: 1.5;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* 统一的 hover 状态 - 中灰色边框 */
+.booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]):hover,
+.booth-enhancer-sidebar textarea:hover,
+.booth-enhancer-sidebar select:hover {
+  border-color: #9ca3af;
+}
+
+/* 统一的 focus 状态 - 蓝色边框和光晕 */
+.booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]):focus,
+.booth-enhancer-sidebar textarea:focus,
+.booth-enhancer-sidebar select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.booth-enhancer-sidebar input::placeholder,
+.booth-enhancer-sidebar textarea::placeholder {
+  color: #9ca3af;
+}
+
+.booth-enhancer-sidebar textarea {
+  min-height: 5em;
+  resize: vertical;
+}
+
+/* Modal 内容样式 */
+.modal-content p {
+  margin: 0;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.5;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.modal-input:hover {
+  border-color: #9ca3af;
+}
+
+.modal-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modal-input::placeholder {
+  color: #9ca3af;
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group .required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.5;
+  transition: all 0.15s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* form-group 中的输入框继承全局统一样式 */
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+  border-color: #9ca3af;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+  min-height: 5em;
+  resize: vertical;
+}
+
+/* ========================================
+   6. 滚动条美化
+   ======================================== */
+
+.booth-enhancer-sidebar ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ========================================
+   7. 工具类样式
+   ======================================== */
+
+/* 间距工具类 */
+.be-m-0 { margin: 0 !important; }
+.be-mt-0 { margin-top: 0 !important; }
+.be-mr-0 { margin-right: 0 !important; }
+.be-mb-0 { margin-bottom: 0 !important; }
+.be-ml-0 { margin-left: 0 !important; }
+
+.be-m-xs { margin: var(--be-space-xs) !important; }
+.be-m-sm { margin: var(--be-space-sm) !important; }
+.be-m-md { margin: var(--be-space-md) !important; }
+.be-m-lg { margin: var(--be-space-lg) !important; }
+
+.be-p-0 { padding: 0 !important; }
+.be-pt-0 { padding-top: 0 !important; }
+.be-pr-0 { padding-right: 0 !important; }
+.be-pb-0 { padding-bottom: 0 !important; }
+.be-pl-0 { padding-left: 0 !important; }
+
+.be-p-xs { padding: var(--be-space-xs) !important; }
+.be-p-sm { padding: var(--be-space-sm) !important; }
+.be-p-md { padding: var(--be-space-md) !important; }
+.be-p-lg { padding: var(--be-space-lg) !important; }
+
+/* Flexbox 工具类 */
+.be-flex { display: flex !important; }
+.be-flex-column { flex-direction: column !important; }
+.be-flex-row { flex-direction: row !important; }
+
+.be-justify-start { justify-content: flex-start !important; }
+.be-justify-center { justify-content: center !important; }
+.be-justify-end { justify-content: flex-end !important; }
+.be-justify-between { justify-content: space-between !important; }
+
+.be-align-start { align-items: flex-start !important; }
+.be-align-center { align-items: center !important; }
+.be-align-end { align-items: flex-end !important; }
+
+.be-flex-1 { flex: 1 !important; }
+.be-flex-grow { flex-grow: 1 !important; }
+.be-flex-shrink-0 { flex-shrink: 0 !important; }
+
+.be-gap-xs { gap: var(--be-space-xs) !important; }
+.be-gap-sm { gap: var(--be-space-sm) !important; }
+.be-gap-md { gap: var(--be-space-md) !important; }
+.be-gap-lg { gap: var(--be-space-lg) !important; }
+
+/* 文本工具类 */
+.be-text-left { text-align: left !important; }
+.be-text-center { text-align: center !important; }
+.be-text-right { text-align: right !important; }
+
+.be-text-xs { font-size: var(--be-font-size-xs) !important; }
+.be-text-sm { font-size: var(--be-font-size-sm) !important; }
+.be-text-md { font-size: var(--be-font-size-md) !important; }
+.be-text-lg { font-size: var(--be-font-size-lg) !important; }
+
+.be-font-normal { font-weight: 400 !important; }
+.be-font-medium { font-weight: 500 !important; }
+.be-font-bold { font-weight: 600 !important; }
+
+.be-text-primary { color: var(--be-color-text) !important; }
+.be-text-secondary { color: var(--be-color-text-secondary) !important; }
+.be-text-muted { color: var(--be-color-text-muted) !important; }
+.be-text-danger { color: var(--be-color-danger) !important; }
+.be-text-success { color: var(--be-color-success) !important; }
+
+/* 显示工具类 */
+.be-hidden { display: none !important; }
+.be-visible { visibility: visible !important; }
+.be-invisible { visibility: hidden !important; }
+
+.be-block { display: block !important; }
+.be-inline { display: inline !important; }
+.be-inline-block { display: inline-block !important; }
+
+/* 宽度工具类 */
+.be-w-full { width: 100% !important; }
+.be-h-full { height: 100% !important; }
+
+/* 边框工具类 */
+.be-border { border: 1px solid var(--be-color-border) !important; }
+.be-border-0 { border: none !important; }
+.be-border-t { border-top: 1px solid var(--be-color-border) !important; }
+.be-border-r { border-right: 1px solid var(--be-color-border) !important; }
+.be-border-b { border-bottom: 1px solid var(--be-color-border) !important; }
+.be-border-l { border-left: 1px solid var(--be-color-border) !important; }
+
+.be-rounded-sm { border-radius: var(--be-radius-sm) !important; }
+.be-rounded-md { border-radius: var(--be-radius-md) !important; }
+.be-rounded-lg { border-radius: var(--be-radius-lg) !important; }
+.be-rounded-full { border-radius: 9999px !important; }
+
+/* 阴影工具类 */
+.be-shadow-sm { box-shadow: var(--be-shadow-sm) !important; }
+.be-shadow-md { box-shadow: var(--be-shadow-md) !important; }
+.be-shadow-lg { box-shadow: var(--be-shadow-lg) !important; }
+.be-shadow-none { box-shadow: none !important; }
+
+/* 光标工具类 */
+.be-cursor-pointer { cursor: pointer !important; }
+.be-cursor-default { cursor: default !important; }
+.be-cursor-not-allowed { cursor: not-allowed !important; }
+
+/* 溢出工具类 */
+.be-overflow-hidden { overflow: hidden !important; }
+.be-overflow-auto { overflow: auto !important; }
+.be-overflow-scroll { overflow: scroll !important; }
+
+/* 位置工具类 */
+.be-relative { position: relative !important; }
+.be-absolute { position: absolute !important; }
+.be-fixed { position: fixed !important; }
+.be-sticky { position: sticky !important; }
+
+/* 过渡工具类 */
+.be-transition { transition: all var(--be-transition-normal) !important; }
+.be-transition-fast { transition: all var(--be-transition-fast) !important; }
+.be-transition-slow { transition: all var(--be-transition-slow) !important; }
+
+/* ========================================
+   8. 响应式设计
+   ======================================== */
+
+/* 平板设备 */
+@media (max-width: 768px) {
+  .booth-btn-md {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-height: 28px;
+  }
+
+  .booth-btn-lg {
+    padding: 7px 14px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+  
+  .booth-toggle .toggle-label {
+    font-size: 12px;
+  }
+  
+  .form-group label {
+    font-size: 11px;
+  }
+  
+  .booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]),
+  .booth-enhancer-sidebar textarea,
+  .booth-enhancer-sidebar select {
+    font-size: 11px;
+  }
+}
+
+/* 手机设备 */
+@media (max-width: 480px) {
+  :root {
+    --be-space-md: 12px;
+    --be-space-lg: 16px;
+  }
+  
+  .booth-btn-sm {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-height: 20px;
+  }
+  
+  .booth-btn-md {
+    padding: 4px 8px;
+    font-size: 10px;
+    min-height: 24px;
+  }
+
+  .booth-btn-lg {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+  
+  .booth-toggle .toggle-slider {
+    width: 36px;
+    height: 20px;
+  }
+  
+  .booth-toggle .toggle-slider:before {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .booth-toggle input[type="checkbox"]:checked+.toggle-slider:before {
+    transform: translateX(16px);
+  }
+  
+  .booth-toggle .toggle-label {
+    font-size: 11px;
+  }
+}

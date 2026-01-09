@@ -80,8 +80,8 @@ export function useModal<T = any>() {
    */
   const closeModal = () => {
     state.value.show = false;
-    if (rejectPromise) {
-      rejectPromise();
+    if (resolvePromise) {
+      resolvePromise(undefined);
       resolvePromise = null;
       rejectPromise = null;
     }
@@ -107,9 +107,7 @@ export function useModal<T = any>() {
       type: 'delete',
       title,
       defaultValue: message || ''
-    })
-    .then(() => true)
-    .catch(() => false);
+    }).then(result => !!result);
   };
 
   return {

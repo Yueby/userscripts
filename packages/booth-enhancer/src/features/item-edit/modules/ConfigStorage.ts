@@ -41,17 +41,7 @@ export class ConfigStorage {
     try {
       const stored = GM_getValue(STORAGE_KEY, null);
       if (stored) {
-        const parsed = JSON.parse(stored) as any;
-        const defaults = createDefaultData();
-        
-        // 数据迁移：保留旧数据，添加缺失的新字段
-        return {
-          tagTree: parsed.tagTree || defaults.tagTree,
-          itemTree: parsed.itemTree || defaults.itemTree,
-          templateTree: parsed.templateTree || defaults.templateTree,
-          activeTemplateId: parsed.activeTemplateId || defaults.activeTemplateId,
-          ui: parsed.ui || defaults.ui
-        };
+        return JSON.parse(stored) as AppData;
       }
     } catch (e) {
       console.error('Failed to load config:', e);

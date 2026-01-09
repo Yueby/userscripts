@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
   Node,
   NodeTree as TreeType
 } from '../../../config-types';
 import { ConfigStorage } from '../../../modules/ConfigStorage';
-import { icons, withSize } from '../icons';
+import type { MenuItem } from '../ContextMenu.vue';
+import ContextMenu from '../ContextMenu.vue';
 import TreeNode from './TreeNode.vue';
 
 // 自定义菜单项接口
 export interface ContextMenuItem {
   label: string;
-  action: (node: Node | null) => void; // node 为 null 表示在空白处右键
-  show?: (node: Node | null) => boolean; // 是否显示该菜单项
+  action: (node: Node | null, selection: Node[]) => void; // selection 为当前选中的所有节点
+  show?: (node: Node | null, selection: Node[]) => boolean; // 是否显示该菜单项
   separator?: boolean; // 是否在此项后显示分隔符
   danger?: boolean; // 是否为危险操作（红色）
 }
@@ -24,6 +25,9 @@ const props = withDefaults(defineProps<{
   searchPlaceholder?: string; // 搜索框占位符
   searchFilter?: (node: Node, searchText: string) => boolean; // 搜索过滤函数
   customMenuItems?: ContextMenuItem[]; // 自定义右键菜单项
+  // 选择功能
+  selectable?: boolean; // 是否启用选择功能
+  selectableFilter?: (node: Node) => boolean; // 节点选择过滤函数
   // 回调函数
   onCreateFolder?: (parentId: string | null) => string | void; // 返回新创建的节点ID
   onCreateItem?: (parentId: string | null) => string | void; // 返回新创建的节点ID
@@ -31,17 +35,23 @@ const props = withDefaults(defineProps<{
   onDelete?: (nodeId: string) => Promise<void>;
   onEdit?: (nodeId: string) => void; // 编辑数据
 }>(), {
-  mode: 'tree'
+  mode: 'tree',
+  selectable: true
 });
 
 const emit = defineEmits<{
-  (e: 'select', node: Node): void;
+  (e: 'selectionChange', nodes: Node[]): void;
 }>();
 
 const configStorage = ConfigStorage.getInstance();
 
 // 搜索状态
 const searchText = ref('');
+
+// 选择状态管理（Unity 风格）
+const selection = ref<Set<string>>(new Set());
+const activeNodeId = ref<string | null>(null); // 当前活动节点（最后点击的）
+const anchorNodeId = ref<string | null>(null); // 范围选择的锚点
 
 // 是否在搜索模式
 const isSearching = computed(() => searchText.value.trim().length > 0);
@@ -69,6 +79,34 @@ const contextMenu = ref({
 
 // 正在编辑的节点 ID
 const editingNodeId = ref<string | null>(null);
+
+// DOM 引用
+const treeRootRef = ref<HTMLElement | null>(null);
+
+// 全局点击处理 - 点击外部取消选择
+const handleGlobalClick = (e: MouseEvent) => {
+  // 必须开启选择功能且有选中项
+  if (!props.selectable || selection.value.size === 0) return;
+  
+  // 如果 Tree 已经被卸载或不可见，不处理
+  if (!treeRootRef.value) return;
+  
+  // 检查点击目标是否在当前 Tree 组件内部
+  // 如果点击的是 Tree 内部，已经在 handleTreeClick 中处理了（或者被 stopPropagation 了）
+  // 注意：Node 类型冲突，使用 HTMLElement 替代
+  if (treeRootRef.value.contains(e.target as HTMLElement)) return;
+  
+  // 点击了外部，清除选择
+  clearSelection();
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleGlobalClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleGlobalClick);
+});
 
 // 计算根级别的节点（保持用户拖拽的顺序）
 const rootNodes = computed(() => {
@@ -102,8 +140,9 @@ const visibleCustomMenuItems = computed(() => {
   if (!props.customMenuItems || props.customMenuItems.length === 0) {
     return [];
   }
+  const selectedNodes = getSelectedNodes();
   return props.customMenuItems.filter(item => 
-    !item.show || item.show(targetNode.value)
+    !item.show || item.show(targetNode.value, selectedNodes)
   );
 });
 
@@ -112,9 +151,103 @@ const visibleCustomMenuItemsForRoot = computed(() => {
   if (!props.customMenuItems || props.customMenuItems.length === 0) {
     return [];
   }
+  const selectedNodes = getSelectedNodes();
   return props.customMenuItems.filter(item => 
-    !item.show || item.show(null)
+    !item.show || item.show(null, selectedNodes)
   );
+});
+
+// 构建菜单项列表（转换为通用 MenuItem 格式）
+const menuItems = computed<MenuItem[]>(() => {
+  const items: MenuItem[] = [];
+  const selectedNodes = getSelectedNodes();
+  
+  // 节点右键菜单
+  if (targetNode.value) {
+    // Unity 风格基础菜单
+    if (props.mode === 'tree') {
+      items.push({
+        label: '新建文件夹节点',
+        action: handleCreateFolder
+      });
+    }
+    items.push({
+      label: '新建数据节点',
+      action: handleCreateItem,
+      separator: true
+    });
+    items.push({
+      label: '重命名',
+      action: handleRename
+    });
+    if (targetNode.value.data && props.onEdit) {
+      items.push({
+        label: '编辑数据',
+        action: handleEdit
+      });
+    }
+    
+    // 自定义菜单项
+    if (visibleCustomMenuItems.value.length > 0) {
+      // 在最后一个已有项上添加分隔线
+      if (items.length > 0) {
+        items[items.length - 1].separator = true;
+      }
+      visibleCustomMenuItems.value.forEach(item => {
+        items.push({
+          label: item.label,
+          action: () => {
+            item.action(targetNode.value, selectedNodes);
+          },
+          danger: item.danger,
+          separator: item.separator
+        });
+      });
+    }
+    
+    // 删除按钮
+    if (items.length > 0) {
+      items[items.length - 1].separator = true;
+    }
+    items.push({
+      label: '删除',
+      action: handleDelete,
+      danger: true
+    });
+  } 
+  // 空白处右键菜单
+  else {
+    if (props.mode === 'tree') {
+      items.push({
+        label: '新建文件夹节点',
+        action: handleCreateFolder
+      });
+    }
+    items.push({
+      label: '新建数据节点',
+      action: handleCreateItem
+    });
+    
+    // 自定义菜单项（空白处）
+    if (visibleCustomMenuItemsForRoot.value.length > 0) {
+      // 在最后一个已有项上添加分隔线
+      if (items.length > 0) {
+        items[items.length - 1].separator = true;
+      }
+      visibleCustomMenuItemsForRoot.value.forEach(item => {
+        items.push({
+          label: item.label,
+          action: () => {
+            item.action(null, selectedNodes);
+          },
+          danger: item.danger,
+          separator: item.separator
+        });
+      });
+    }
+  }
+  
+  return items;
 });
 
 // 计算父节点ID（基于右键目标）
@@ -137,19 +270,12 @@ const showContextMenu = (event: MouseEvent, node: Node | null) => {
     x: event.clientX,
     y: event.clientY
   };
-  
-  const closeMenu = () => {
-    contextMenu.value.show = false;
-    document.removeEventListener('click', closeMenu);
-  };
-  setTimeout(() => document.addEventListener('click', closeMenu), 0);
 };
 
 // 创建文件夹（Unity 风格：直接创建并进入编辑模式）
 const handleCreateFolder = () => {
   const parentId = getParentId();
   const newNodeId = props.onCreateFolder?.(parentId);
-    contextMenu.value.show = false;
   
   // 如果返回了节点ID，立即激活编辑模式
   if (newNodeId) {
@@ -161,7 +287,6 @@ const handleCreateFolder = () => {
 const handleCreateItem = () => {
   const parentId = getParentId();
   const newNodeId = props.onCreateItem?.(parentId);
-    contextMenu.value.show = false;
   
   // 如果返回了节点ID，立即激活编辑模式
   if (newNodeId) {
@@ -172,17 +297,13 @@ const handleCreateItem = () => {
 // 编辑数据
 const handleEdit = () => {
   if (!contextMenu.value.targetId) return;
-  
   props.onEdit?.(contextMenu.value.targetId);
-  contextMenu.value.show = false;
 };
 
 // Unity 风格重命名：触发内联编辑
 const handleRename = () => {
   if (!contextMenu.value.targetId) return;
-  
   editingNodeId.value = contextMenu.value.targetId;
-    contextMenu.value.show = false;
 };
 
 // 处理重命名完成
@@ -197,7 +318,6 @@ const handleDelete = async () => {
   
   try {
     await props.onDelete?.(contextMenu.value.targetId);
-    contextMenu.value.show = false;
   } catch (error) {
     // 用户取消或失败
     console.debug('Delete cancelled or failed:', error);
@@ -260,27 +380,148 @@ const handleRootContextmenu = (e: MouseEvent) => {
   showContextMenu(e, null);
 };
 
-// 事件转发
-const handleSelect = (node: Node) => {
-  emit('select', node);
+// 空白处点击 - 取消所有选择
+const handleTreeClick = (e: MouseEvent) => {
+  // 如果点击的不是节点项（.node-item），取消所有选择
+  const target = e.target as HTMLElement;
+  if (!target.closest('.node-item')) {
+    if (selection.value.size > 0) {
+      clearSelection();
+    }
+  }
+};
+
+// 获取视觉顺序的所有可见节点（用于 Shift 范围选择）
+const getVisibleNodes = (): Node[] => {
+  const result: Node[] = [];
+  
+  const traverse = (nodeIds: string[]) => {
+    for (const id of nodeIds) {
+      const node = props.tree.nodes[id];
+      if (!node) continue;
+      
+      result.push(node);
+      
+      // 如果节点展开且有子节点，递归遍历
+      if (node.expanded && node.children.length > 0) {
+        traverse(node.children);
+      }
+    }
+  };
+  
+  // 从根节点开始遍历
+  if (props.mode === 'list') {
+    result.push(...rootNodes.value);
+  } else if (isSearching.value) {
+    result.push(...searchResults.value);
+  } else {
+    traverse(props.parentId ? props.tree.nodes[props.parentId]?.children || [] : props.tree.rootIds);
+  }
+  
+  return result;
+};
+
+// 获取所有选中的节点对象
+const getSelectedNodes = (): Node[] => {
+  // 保持插入顺序可能更好，但 Set 是按插入顺序的
+  // 如果需要按树的顺序，可以使用 getVisibleNodes 过滤
+  return Array.from(selection.value)
+    .map(id => props.tree.nodes[id])
+    .filter(Boolean);
+};
+
+// 发射选择变更事件
+const emitSelectionChange = () => {
+  const selectedNodes = getSelectedNodes();
+  emit('selectionChange', selectedNodes);
+};
+
+// 统一的选择处理
+const handleSelection = (node: Node, event?: MouseEvent) => {
+  // 检查节点是否可选择
+  if (props.selectableFilter && !props.selectableFilter(node)) {
+    return;
+  }
+
+  const isCtrl = event?.ctrlKey || event?.metaKey;
+  const isShift = event?.shiftKey;
+  
+  const newSelection = new Set(selection.value); // 复制当前选择
+
+  if (isShift && anchorNodeId.value) {
+    // Shift 范围选择
+    const visibleNodes = getVisibleNodes();
+    const anchorIndex = visibleNodes.findIndex(n => n.id === anchorNodeId.value);
+    const currentIndex = visibleNodes.findIndex(n => n.id === node.id);
+
+    if (anchorIndex !== -1 && currentIndex !== -1) {
+      newSelection.clear(); // 重置选择
+      const startIndex = Math.min(anchorIndex, currentIndex);
+      const endIndex = Math.max(anchorIndex, currentIndex);
+      
+      for (let i = startIndex; i <= endIndex; i++) {
+        const n = visibleNodes[i];
+        if (!props.selectableFilter || props.selectableFilter(n)) {
+          newSelection.add(n.id);
+        }
+      }
+      activeNodeId.value = node.id;
+    }
+  } else if (isCtrl) {
+    // Ctrl 切换选择
+    if (newSelection.has(node.id)) {
+      newSelection.delete(node.id);
+      if (activeNodeId.value === node.id) {
+        activeNodeId.value = null; // 取消激活
+      }
+    } else {
+      newSelection.add(node.id);
+      activeNodeId.value = node.id;
+      anchorNodeId.value = node.id;
+    }
+  } else {
+    // 单选
+    newSelection.clear();
+    newSelection.add(node.id);
+    activeNodeId.value = node.id;
+    anchorNodeId.value = node.id;
+  }
+  
+  selection.value = newSelection; // 赋值新 Set 触发更新
+  emitSelectionChange();
+};
+
+// 清除选择
+const clearSelection = () => {
+  selection.value = new Set();
+  activeNodeId.value = null;
+  anchorNodeId.value = null;
+  emitSelectionChange();
 };
 
 const handleContextmenu = (event: MouseEvent, node: Node) => {
+  // 如果右键点击的节点不在当前选中列表中，则改为选中该节点（单选）
+  if (!selection.value.has(node.id)) {
+    handleSelection(node);
+  }
   showContextMenu(event, node);
 };
 </script>
 
 <template>
-  <div class="tree-wrapper">
+  <div class="tree-wrapper" ref="treeRootRef">
     <!-- 搜索框 -->
     <div v-if="searchFilter" class="tree-search">
-      <span class="search-icon" v-html="withSize(icons.search, 14)"></span>
       <input 
         v-model="searchText"
         type="text" 
         :placeholder="searchPlaceholder || '搜索...'"
         class="search-input"
       />
+      <!-- 右侧工具栏插槽 -->
+      <div v-if="$slots.toolbar" class="tree-search-toolbar">
+        <slot name="toolbar" />
+      </div>
     </div>
 
     <!-- 搜索结果 -->
@@ -294,7 +535,11 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
           :level="0"
           :editing-node-id="editingNodeId"
           :show-children="false"
-          @select="handleSelect"
+          :selection="selection"
+          :active-node-id="activeNodeId"
+          :selectable="selectable"
+          :selectable-filter="selectableFilter"
+          @select="handleSelection"
           @contextmenu="handleContextmenu"
           @rename="handleNodeRename"
         >
@@ -314,6 +559,7 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
       v-else
       :class="['node-tree', { 'tree-drag-over': isTreeDragOver }]"
       @contextmenu.prevent="handleRootContextmenu"
+      @click="handleTreeClick"
       @dragover="handleTreeDragOver"
       @dragleave="handleTreeDragLeave"
       @drop="handleTreeDrop"
@@ -329,17 +575,21 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
     <!-- 根节点列表 -->
       <div v-else class="tree-content">
         <TreeNode
-        v-for="node in rootNodes"
-        :key="node.id"
-        :node="node"
-        :tree="tree"
-        :level="0"
+          v-for="node in rootNodes"
+          :key="node.id"
+          :node="node"
+          :tree="tree"
+          :level="0"
           :editing-node-id="editingNodeId"
           :show-children="mode === 'tree'"
-        @select="handleSelect"
-        @contextmenu="handleContextmenu"
+          :selection="selection"
+          :active-node-id="activeNodeId"
+          :selectable="selectable"
+          :selectable-filter="selectableFilter"
+          @select="handleSelection"
+          @contextmenu="handleContextmenu"
           @rename="handleNodeRename"
-      >
+        >
         <!-- 转发所有插槽 -->
         <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
           <slot :name="name" v-bind="slotData || {}"></slot>
@@ -349,55 +599,13 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
     </div>
 
     <!-- 右键菜单 -->
-    <Teleport to="body">
-      <div
-        v-if="contextMenu.show"
-        class="context-menu"
-        :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
-      >
-        <!-- Unity 风格：统一的节点菜单 -->
-        <template v-if="targetNode">
-          <div v-if="mode === 'tree'" class="menu-item" @click="handleCreateFolder">新建文件夹节点</div>
-          <div class="menu-item" @click="handleCreateItem">新建数据节点</div>
-          <div class="menu-separator"></div>
-          <div class="menu-item" @click="handleRename">重命名</div>
-          <div v-if="targetNode.data && onEdit" class="menu-item" @click="handleEdit">编辑数据</div>
-          
-          <!-- 自定义菜单项（节点右键） -->
-          <div v-if="visibleCustomMenuItems.length > 0" class="menu-separator"></div>
-          <template v-for="(item, index) in visibleCustomMenuItems" :key="index">
-            <div 
-              :class="['menu-item', { 'menu-item-danger': item.danger }]" 
-              @click="() => { item.action(targetNode); contextMenu.show = false; }"
-            >
-              {{ item.label }}
-            </div>
-            <div v-if="item.separator" class="menu-separator"></div>
-          </template>
-          
-          <div class="menu-separator"></div>
-          <div class="menu-item menu-item-danger" @click="handleDelete">删除</div>
-        </template>
-        
-        <!-- 空白处菜单（根级别） -->
-        <template v-else>
-          <div v-if="mode === 'tree'" class="menu-item" @click="handleCreateFolder">新建文件夹节点</div>
-          <div class="menu-item" @click="handleCreateItem">新建数据节点</div>
-          
-          <!-- 自定义菜单项（空白处右键） -->
-          <div v-if="visibleCustomMenuItemsForRoot.length > 0" class="menu-separator"></div>
-          <template v-for="(item, index) in visibleCustomMenuItemsForRoot" :key="index">
-            <div 
-              :class="['menu-item', { 'menu-item-danger': item.danger }]" 
-              @click="() => { item.action(null); contextMenu.show = false; }"
-            >
-              {{ item.label }}
-            </div>
-            <div v-if="item.separator" class="menu-separator"></div>
-          </template>
-        </template>
-      </div>
-    </Teleport>
+    <ContextMenu
+      :show="contextMenu.show"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      :items="menuItems"
+      @close="contextMenu.show = false"
+    />
   </div>
 </template>
 
@@ -420,15 +628,15 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   flex-shrink: 0;
 }
 
-.search-icon {
+/* 自定义操作栏 */
+.tree-toolbar {
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
-  color: #9ca3af;
-}
-
-.search-icon :deep(svg) {
-  width: 14px;
-  height: 14px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -438,6 +646,13 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   background: transparent;
   font-size: 12px;
   color: #374151;
+}
+
+.tree-search-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .search-input::placeholder {
@@ -451,15 +666,20 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   min-height: 0;
 }
 
-.search-results-list {
-  /* 直接使用 TreeNode 组件，无需额外样式 */
-}
-
 .search-empty {
   padding: 40px 20px;
   text-align: center;
   color: #9ca3af;
   font-size: 13px;
+}
+
+.tree-toolbar {
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  min-height: 40px;
 }
 
 /* 树形结构 */
@@ -485,51 +705,5 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   border-radius: 4px;
   margin: 8px;
   transition: all 0.15s ease;
-}
-
-/* 右键菜单 */
-.context-menu {
-  position: fixed;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10000;
-  min-width: 140px;
-  overflow: hidden;
-  padding: 4px 0;
-}
-
-.menu-item {
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 12px;
-  color: #374151;
-  display: flex;
-  align-items: center;
-}
-
-.menu-item:hover {
-  background: #f3f4f6;
-}
-
-.menu-item-danger {
-  color: #ef4444;
-}
-
-.menu-item-danger:hover {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.menu-separator {
-  height: 1px;
-  min-height: 1px;
-  max-height: 1px;
-  background: #e5e7eb;
-  margin: 4px 0;
-  font-size: 0;
-  line-height: 0;
 }
 </style>

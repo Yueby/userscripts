@@ -23,6 +23,7 @@ export interface TagData {
 // 商品数据
 export interface ItemData {
   authorName: string;
+  itemName: string;
   itemUrl: string;
 }
 
@@ -45,7 +46,7 @@ export interface AppData {
   activeTemplateId: string;  // 当前选中的模板节点ID
   ui: {
     sidebarOpen: boolean;
-    activeTab: 'tags' | 'items' | 'templates';
+    activeTab: 'tags' | 'items' | 'edit';
   };
 }
 

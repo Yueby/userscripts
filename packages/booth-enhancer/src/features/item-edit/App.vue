@@ -2,7 +2,9 @@
 import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../api/item-edit';
 import { IconButton, TabBar, toast } from './components/ui';
-import { icons } from './components/ui/icons';
+import type { MenuItem } from './components/ui/ContextMenu.vue';
+import ContextMenu from './components/ui/ContextMenu.vue';
+import { icons, withSize } from './components/ui/icons';
 import { ConfigStorage } from './modules/ConfigStorage';
 import './styles/index.css';
 
@@ -12,9 +14,9 @@ const props = defineProps<{
 }>();
 
 // 异步加载标签页组件
-const TagPresetTab = defineAsyncComponent(() => import('./components/tabs/TagPresetTab.vue'));
-const ItemDataTab = defineAsyncComponent(() => import('./components/tabs/ItemDataTab.vue'));
-const TemplateTab = defineAsyncComponent(() => import('./components/tabs/TemplateTab.vue'));
+const TagTab = defineAsyncComponent(() => import('./components/tabs/TagTab.vue'));
+const ItemTab = defineAsyncComponent(() => import('./components/tabs/ItemTab.vue'));
+const EditTab = defineAsyncComponent(() => import('./components/tabs/EditTab.vue'));
 
 const storage = ConfigStorage.getInstance();
 const uiState = computed(() => storage.data.value.ui);
@@ -22,11 +24,15 @@ const uiState = computed(() => storage.data.value.ui);
 // 根元素引用（用于 Toast 容器）
 const sidebarRef = ref<HTMLElement | null>(null);
 
+// 下拉菜单状态
+const showMenu = ref(false);
+const menuPosition = ref({ x: 0, y: 0 });
+
 // 标签页配置
 const tabs = [
-  { id: 'tags', label: 'Tag预设' },
-  { id: 'items', label: '商品数据' },
-  { id: 'templates', label: '模板配置' }
+  { id: 'tags', label: '标签' },
+  { id: 'items', label: '商品' },
+  { id: 'edit', label: '编辑' }
 ];
 
 // 监听侧边栏开关状态
@@ -97,6 +103,36 @@ const handleImport = () => {
   input.click();
 };
 
+// 切换下拉菜单
+const toggleMenu = (event: MouseEvent) => {
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  menuPosition.value = {
+    x: rect.left - 100,
+    y: rect.bottom + 4
+  };
+  showMenu.value = !showMenu.value;
+};
+
+// 关闭菜单
+const closeMenu = () => {
+  showMenu.value = false;
+};
+
+// 菜单项配置
+const menuItems = computed<MenuItem[]>(() => [
+  {
+    label: '导出配置',
+    icon: withSize(icons.upload, 14),
+    action: handleExport
+  },
+  {
+    label: '导入配置',
+    icon: withSize(icons.download, 14),
+    action: handleImport
+  }
+]);
+
 // 设置 Toast 容器
 onMounted(() => {
   if (sidebarRef.value) {
@@ -115,23 +151,34 @@ onUnmounted(() => {
     <TabBar
       :active-tab="uiState.activeTab"
       :tabs="tabs"
-      @update:active-tab="(val) => uiState.activeTab = val as 'tags' | 'items' | 'templates'"
+      @update:active-tab="(val) => uiState.activeTab = val as 'tags' | 'items' | 'edit'"
     >
       <template #actions>
-        <IconButton :icon="icons.upload" title="导出配置" @click="handleExport" />
-        <IconButton :icon="icons.download" title="导入配置" @click="handleImport" />
+        <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
         <IconButton :icon="icons.close" title="关闭" @click="closeSidebar" />
       </template>
     </TabBar>
 
+    <!-- 下拉菜单 -->
+    <ContextMenu
+      :show="showMenu"
+      :x="menuPosition.x"
+      :y="menuPosition.y"
+      :items="menuItems"
+      @close="closeMenu"
+    />
+
     <!-- 内容区 -->
     <div class="sidebar-content">
-      <KeepAlive>
-        <component
-          :is="uiState.activeTab === 'tags' ? TagPresetTab : uiState.activeTab === 'items' ? ItemDataTab : TemplateTab"
-          :api="props.api"
-        />
-      </KeepAlive>
+      <Transition name="tab-slide" mode="out-in">
+        <KeepAlive>
+          <component
+            :is="uiState.activeTab === 'tags' ? TagTab : uiState.activeTab === 'items' ? ItemTab : EditTab"
+            :key="uiState.activeTab"
+            :api="props.api"
+          />
+        </KeepAlive>
+      </Transition>
     </div>
   </div>
 </template>
@@ -159,5 +206,37 @@ onUnmounted(() => {
   flex-direction: column;
   background: #fff;
   min-height: 0;
+  position: relative;
+}
+
+/* Tab 切换动画 */
+.tab-slide-enter-active {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.tab-slide-leave-active {
+  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+
+.tab-slide-enter-from {
+  opacity: 0;
+  transform: translateX(15px);
+}
+
+.tab-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.tab-slide-enter-to,
+.tab-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 确保过渡元素占满容器 */
+.sidebar-content > * {
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -23,15 +23,9 @@ const modal = useModal();
 const tree = computed(() => storage.data.value.tagTree);
 
 // 处理节点选择
-const handleSelect = (node: Node) => {
-  selectedNodeId.value = node.id;
-};
-
-// 应用标签预设到页面
-const handleApplyTags = (node: Node) => {
-  const tags = node.data?.tags;
-  if (tags && Array.isArray(tags) && tags.length > 0) {
-    props.api.addTags(tags);
+const handleSelect = (nodes: Node[]) => {
+  if (nodes.length > 0) {
+    selectedNodeId.value = nodes[0].id;
   }
 };
 
@@ -39,12 +33,124 @@ const handleApplyTags = (node: Node) => {
 const customMenuItems = computed<ContextMenuItem[]>(() => [
   {
     label: '应用标签',
-    action: (node) => {
-      if (node) {
-        handleApplyTags(node);
+    action: (node, selection) => {
+      const tagsToApply = new Set<string>();
+      
+      // 递归提取节点及其所有子节点的标签
+      const extractRecursive = (n: Node) => {
+        // 提取当前节点的标签
+        if (n.data?.tags && Array.isArray(n.data.tags)) {
+          n.data.tags.forEach((t: string) => tagsToApply.add(t));
+        }
+        
+        // 递归提取子节点的标签
+        if (n.children && n.children.length > 0) {
+          n.children.forEach((childId: string) => {
+            const childNode = tree.value.nodes[childId];
+            if (childNode) {
+              extractRecursive(childNode);
+            }
+          });
+        }
+      };
+
+      if (selection && selection.length > 0) {
+        selection.forEach(extractRecursive);
+      } else if (node) {
+        extractRecursive(node);
+      }
+
+      if (tagsToApply.size > 0) {
+        props.api.addTags(Array.from(tagsToApply));
       }
     },
-    show: (node) => node !== null && node.data?.tags && Array.isArray(node.data.tags) && node.data.tags.length > 0,
+    show: (node, selection) => {
+      // 递归检查节点及其所有子节点是否有标签
+      const hasTagsRecursive = (n: Node | null): boolean => {
+        if (!n) return false;
+        
+        // 检查当前节点是否有标签
+        if (n.data?.tags && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
+          return true;
+        }
+        
+        // 检查子节点是否有标签
+        if (n.children && n.children.length > 0) {
+          return n.children.some((childId: string) => {
+            const childNode = tree.value.nodes[childId];
+            return childNode && hasTagsRecursive(childNode);
+          });
+        }
+        
+        return false;
+      };
+      
+      if (selection && selection.length > 0) {
+        return selection.some(hasTagsRecursive);
+      }
+      return hasTagsRecursive(node);
+    },
+  },
+  {
+    label: '移除标签',
+    action: (node, selection) => {
+      const tagsToRemove = new Set<string>();
+      
+      // 递归提取节点及其所有子节点的标签
+      const extractRecursive = (n: Node) => {
+        // 提取当前节点的标签
+        if (n.data?.tags && Array.isArray(n.data.tags)) {
+          n.data.tags.forEach((t: string) => tagsToRemove.add(t));
+        }
+        
+        // 递归提取子节点的标签
+        if (n.children && n.children.length > 0) {
+          n.children.forEach((childId: string) => {
+            const childNode = tree.value.nodes[childId];
+            if (childNode) {
+              extractRecursive(childNode);
+            }
+          });
+        }
+      };
+
+      if (selection && selection.length > 0) {
+        selection.forEach(extractRecursive);
+      } else if (node) {
+        extractRecursive(node);
+      }
+
+      if (tagsToRemove.size > 0) {
+        props.api.removeTags(Array.from(tagsToRemove));
+      }
+    },
+    show: (node, selection) => {
+      // 递归检查节点及其所有子节点是否有标签
+      const hasTagsRecursive = (n: Node | null): boolean => {
+        if (!n) return false;
+        
+        // 检查当前节点是否有标签
+        if (n.data?.tags && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
+          return true;
+        }
+        
+        // 检查子节点是否有标签
+        if (n.children && n.children.length > 0) {
+          return n.children.some((childId: string) => {
+            const childNode = tree.value.nodes[childId];
+            return childNode && hasTagsRecursive(childNode);
+          });
+        }
+        
+        return false;
+      };
+      
+      if (selection && selection.length > 0) {
+        return selection.some(hasTagsRecursive);
+      }
+      return hasTagsRecursive(node);
+    },
+    danger: true,
   }
 ]);
 
@@ -165,13 +271,12 @@ const handleDelete = async (nodeId: string) => {
       :on-rename="handleRename"
       :on-delete="handleDelete"
       :on-edit="handleEditTag"
-      @select="handleSelect"
+      @selection-change="handleSelect"
     >
       
       <!-- 下层：Tag 标签列表（仅 Tag 预设显示） -->
       <template #default="{ node }">
-        <template v-if="node.data?.tags">
-          <div class="tag-custom-content">
+        <div v-if="node.data?.tags" class="tag-custom-content">
             <div class="tag-badges-wrapper">
               <span 
                 v-for="(tag, index) in node.data.tags" 
@@ -189,7 +294,6 @@ const handleDelete = async (nodeId: string) => {
               </span>
             </div>
           </div>
-        </template>
       </template>
     </Tree>
 
@@ -212,24 +316,28 @@ const handleDelete = async (nodeId: string) => {
       </div>
       
       <!-- 创建 Tag 预设 -->
-      <div v-else-if="modal.state.value.type === 'createTag'" class="form-group">
-        <label>预设名称 <span class="required">*</span></label>
-        <input
-          v-model="modal.state.value.formData.name"
-          type="text"
-          placeholder="例如：イチゴ配布物"
-        />
+      <div v-else-if="modal.state.value.type === 'createTag'">
+        <div class="form-group">
+          <label>预设名称 <span class="required">*</span></label>
+          <input
+            v-model="modal.state.value.formData.name"
+            type="text"
+            placeholder="例如：イチゴ配布物"
+          />
+        </div>
         
-        <label style="margin-top: 12px">标签列表 <span class="required">*</span></label>
-        <textarea
-          v-model="modal.state.value.formData.tagsText"
-          placeholder='支持两种格式：&#10;1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]&#10;2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ'
-          rows="8"
-          style="font-family: 'Consolas', 'Monaco', monospace; line-height: 1.5; font-size: 11px;"
-        ></textarea>
-        <small style="display: block; margin-top: 6px; color: #6b7280; font-size: 11px;">
-          💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入
-        </small>
+        <div class="form-group">
+          <label>标签列表 <span class="required">*</span></label>
+          <textarea
+            v-model="modal.state.value.formData.tagsText"
+            class="modal-textarea-code-small"
+            placeholder='支持两种格式：&#10;1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]&#10;2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ'
+            rows="8"
+          ></textarea>
+          <small class="form-hint-small">
+            💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入
+          </small>
+        </div>
       </div>
       
       <!-- 重命名 -->
@@ -245,12 +353,12 @@ const handleDelete = async (nodeId: string) => {
       
       <!-- 删除确认 -->
       <div v-else-if="modal.state.value.type === 'delete'">
-        <p style="color: #6b7280; font-size: 13px; line-height: 1.6;">{{ modal.state.value.formData.message }}</p>
+        <p class="modal-message">{{ modal.state.value.formData.message }}</p>
       </div>
       
       <!-- 通用输入框 -->
       <div v-else-if="modal.state.value.type === 'input'">
-        <p v-if="modal.state.value.message" style="color: #6b7280; font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
+        <p v-if="modal.state.value.message" class="modal-message-with-margin">
           {{ modal.state.value.message }}
         </p>
         <input
@@ -264,21 +372,20 @@ const handleDelete = async (nodeId: string) => {
       
       <!-- 通用文本域 -->
       <div v-else-if="modal.state.value.type === 'textarea'">
-        <p v-if="modal.state.value.message" style="color: #6b7280; font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
+        <p v-if="modal.state.value.message" class="modal-message-with-margin">
           {{ modal.state.value.message }}
         </p>
         <textarea
           v-model="modal.state.value.inputValue"
-          class="modal-input"
+          class="modal-input modal-textarea-code"
           :placeholder="modal.state.value.placeholder"
           rows="8"
-          style="font-family: 'Consolas', 'Monaco', monospace; line-height: 1.5; font-size: 12px;"
         ></textarea>
       </div>
       
       <!-- 通用提示框 -->
       <div v-else-if="modal.state.value.type === 'alert'">
-        <p style="color: #6b7280; font-size: 13px; line-height: 1.6;">{{ modal.state.value.message }}</p>
+        <p class="modal-message">{{ modal.state.value.message }}</p>
       </div>
 
       <template #footer>
@@ -442,11 +549,12 @@ const handleDelete = async (nodeId: string) => {
   border: none;
   border-radius: 50%;
   color: #3b82f6;
-  font-size: 14px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 0;
   cursor: pointer;
   transition: all 0.15s ease;
   opacity: 0.7;
+  font-family: Arial, sans-serif;
 }
 
 .tag-delete-btn:hover {
@@ -454,5 +562,38 @@ const handleDelete = async (nodeId: string) => {
   background: #3b82f6;
   color: white;
   transform: scale(1.1);
+}
+
+/* Modal 内容样式 */
+.modal-message {
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modal-message-with-margin {
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.modal-textarea-code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  line-height: 1.5;
+}
+
+.modal-textarea-code-small {
+  font-family: 'Consolas', 'Monaco', monospace;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
+.form-hint-small {
+  display: block;
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 11px;
 }
 </style>

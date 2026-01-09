@@ -25,6 +25,10 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
   private _newSectionCallback?: (section: ItemEditSectionElement) => void;
   private _newVariationCallback?: (variation: ItemEditVariationElement) => void;
+  private _nameChangeCallback?: (value: string) => void;
+  private _descriptionChangeCallback?: (value: string) => void;
+  private _sectionsChangeCallback?: () => void;
+  private _variationsChangeCallback?: () => void;
 
   constructor() {
     super();
@@ -470,7 +474,7 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   async addTags(tags: string[]): Promise<void> {
     if (!this._data.tagElements) return;
 
-    const { input, inputContainer } = this._data.tagElements;
+    const { input } = this._data.tagElements;
 
     for (const tag of tags) {
       if (this.hasTag(tag)) continue;
@@ -488,8 +492,40 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
       });
       input.dispatchEvent(enterEvent);
 
-      // 等待一点时间，避免太快
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // 等待一点时间，避免太快（减少延迟以提高速度）
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  }
+
+  /**
+   * 批量移除 Tags
+   */
+  async removeTags(tags: string[]): Promise<void> {
+    if (!this._data.tagElements) return;
+
+    const tagsToRemove = new Set(tags);
+    const currentTags = this.getTagTexts();
+    
+    // 找到需要删除的标签的索引
+    const indicesToRemove: number[] = [];
+    currentTags.forEach((tag, index) => {
+      if (tagsToRemove.has(tag)) {
+        indicesToRemove.push(index);
+      }
+    });
+
+    if (indicesToRemove.length === 0) return;
+
+    // 获取所有删除按钮
+    const deleteButtons = this.getTagDeleteButtons();
+    
+    // 从后往前删除，避免索引变化
+    for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+      const index = indicesToRemove[i];
+      if (deleteButtons[index]) {
+        deleteButtons[index].click();
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
     }
   }
 

@@ -7,18 +7,28 @@ import {
 import { ConfigStorage } from '../../../modules/ConfigStorage';
 import { icons, withSize } from '../icons';
 
+// 定义泛型插槽
+defineSlots<{
+  [key: string]: (props: any) => any
+}>();
+
 const props = withDefaults(defineProps<{
   node: Node;
   tree: NodeTree<any>;
   level?: number;
   editingNodeId?: string | null;
   showChildren?: boolean; // 是否显示子节点（列表模式下为false）
+  selection?: Set<string>; // 选中集合
+  activeNodeId?: string | null; // 激活节点 ID
+  selectable?: boolean; // 是否可选择
+  selectableFilter?: (node: Node) => boolean; // 节点选择过滤函数
 }>(), {
-  showChildren: true
+  showChildren: true,
+  selectable: true
 });
 
 const emit = defineEmits<{
-  (e: 'select', node: Node): void;
+  (e: 'select', node: Node, event?: MouseEvent): void;
   (e: 'contextmenu', event: MouseEvent, node: Node): void;
   (e: 'rename', nodeId: string, newName: string): void;
 }>();
@@ -43,6 +53,28 @@ const children = computed(() => {
 
 // 是否有子节点
 const hasChildren = computed(() => props.node.children.length > 0);
+
+// 计算状态
+const isSelected = computed(() => props.selection?.has(props.node.id) || false);
+const isActive = computed(() => props.activeNodeId === props.node.id);
+const isSelectable = computed(() => {
+  if (!props.selectable) return false;
+  return props.selectableFilter ? props.selectableFilter(props.node) : true;
+});
+
+// 根据节点类型和状态选择图标
+const nodeIcon = computed(() => {
+  const hasData = !!props.node.data;
+  const hasKids = hasChildren.value;
+  
+  if (hasData) {
+    // 数据节点
+    return hasKids ? icons.files : icons.file;
+  } else {
+    // 文件夹节点
+    return hasKids ? icons.folderFilled : icons.folderEmpty;
+  }
+});
 
 // 展开/折叠（Unity 风格：所有节点都可以展开/折叠）
 const toggleExpanded = () => {
@@ -220,9 +252,34 @@ const handleEditKeydown = (e: KeyboardEvent) => {
   }
 };
 
-// 事件转发
-const handleSelect = (node: Node) => {
-  emit('select', node);
+// 节点点击处理
+const handleNodeClick = (e: MouseEvent) => {
+  if (isEditing.value) return;
+  
+  const target = e.target as HTMLElement;
+  
+  // 1. 点击按钮、链接、自定义操作图标时，完全忽略（由它们自己的事件处理）
+  if (target.closest('button, a, .action-icon')) {
+    return;
+  }
+  
+  // 2. 点击表单输入元素时，应该选中节点，但不应该触发多选（Ctrl/Shift）
+  const isInput = target.closest('input, textarea, select');
+  
+  if (isInput) {
+    // 仅在单选模式下允许选中
+    // 如果用户按住 Ctrl/Shift 点击输入框，通常是想操作文本，而不是操作节点多选
+    // 同时也只有在可选择时才触发
+    if (isSelectable.value && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+       emit('select', props.node, e);
+    }
+    return;
+  }
+  
+  // 3. 点击普通区域
+  if (isSelectable.value) {
+    emit('select', props.node, e);
+  }
 };
 
 const handleContextmenu = (event: MouseEvent, node: Node) => {
@@ -261,29 +318,44 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
     >
       <!-- 节点整体容器（上下层一体） -->
       <div 
-        :class="['node-item', { 'has-custom-content': $slots.default, 'is-editing': isEditing }]"
+        :class="[
+          'node-item', 
+          { 
+            'has-custom-content': $slots.default, 
+            'is-editing': isEditing,
+            'selected': isSelected,
+            'active': isActive,
+            'selectable': isSelectable
+          }
+        ]"
+        @click="handleNodeClick"
+        @contextmenu.prevent="handleContextmenu($event, node)"
       >
         <!-- 上层：统一的图标 + 名字 -->
         <div 
-          :class="['tree-node-content', { 'expanded': node.expanded, 'has-children': hasChildren }]"
+          :class="[
+            'tree-node-content', 
+            { 
+              'expanded': node.expanded, 
+              'has-children': hasChildren
+            }
+          ]"
           :style="{ paddingLeft: (currentLevel * 20) + 'px' }"
-          @click="!isEditing && (hasChildren ? toggleExpanded() : handleSelect(node))"
-          @contextmenu.prevent="handleContextmenu($event, node)"
         >
-          <!-- 展开/折叠箭头（有子节点时显示） -->
-          <span 
-            v-if="showChildren && hasChildren"
-            class="expand-icon" 
-            @click.stop="!isEditing && toggleExpanded()"
-            v-html="withSize(node.expanded ? icons.chevronDown : icons.chevronRight, 12)"
-          ></span>
-          <span v-else class="expand-icon placeholder"></span>
-          
           <!-- 编辑模式 -->
           <template v-if="isEditing">
+            <!-- 展开/折叠箭头（有子节点时显示） -->
+            <span 
+              v-if="showChildren && hasChildren"
+              class="expand-icon" 
+              @click.stop="toggleExpanded()"
+              v-html="withSize(node.expanded ? icons.chevronDown : icons.chevronRight, 12)"
+            ></span>
+            <span v-else class="expand-icon placeholder"></span>
+            
             <span 
               class="icon" 
-              v-html="withSize(node.data ? icons.file : icons.folder, 16)"
+              v-html="withSize(nodeIcon, 16)"
               :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
             ></span>
             <input
@@ -297,11 +369,33 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
           
           <!-- 普通模式：统一渲染图标和名字 -->
           <template v-else>
-            <span 
-              class="icon" 
-              v-html="withSize(node.data ? icons.file : icons.folder, 16)"
-              :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
-            ></span>
+            <!-- 折叠控制区（箭头+图标+间距） -->
+            <div 
+              v-if="showChildren && hasChildren"
+              class="toggle-area"
+              @click.stop="toggleExpanded()"
+            >
+              <span 
+                class="expand-icon" 
+                v-html="withSize(node.expanded ? icons.chevronDown : icons.chevronRight, 12)"
+              ></span>
+              <span 
+                class="icon" 
+                v-html="withSize(nodeIcon, 16)"
+                :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
+              ></span>
+            </div>
+            
+            <!-- 无子节点时只显示占位和图标 -->
+            <template v-else>
+              <span class="expand-icon placeholder"></span>
+              <span 
+                class="icon" 
+                v-html="withSize(nodeIcon, 16)"
+                :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
+              ></span>
+            </template>
+            
             <span class="name">{{ node.name }}</span>
             <span v-if="hasChildren" class="count">({{ node.children.length }})</span>
             
@@ -317,7 +411,6 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
           v-if="$slots.default"
           class="node-custom-content"
           :style="{ paddingLeft: (currentLevel * 20 + 36) + 'px' }"
-          @contextmenu.prevent="handleContextmenu($event, node)"
         >
           <slot 
             :node="node" 
@@ -344,13 +437,17 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
         :level="currentLevel + 1"
         :editing-node-id="editingNodeId"
         :show-children="showChildren"
-        @select="handleSelect"
-        @contextmenu="handleContextmenu"
+        :selection="selection"
+        :active-node-id="activeNodeId"
+        :selectable="selectable"
+        :selectable-filter="selectableFilter"
+        @select="(node, e) => emit('select', node, e)"
+        @contextmenu="(e, n) => emit('contextmenu', e, n)"
         @rename="(nodeId, newName) => emit('rename', nodeId, newName)"
       >
         <!-- 转发所有插槽 -->
-        <template v-for="(_, name) in $slots" :key="name" #[name]="slotData: any">
-          <slot :name="name" v-bind="slotData || {}"></slot>
+        <template v-for="(_, name) in $slots" :key="name" v-slot:[name]="slotData">
+          <slot :name="name" v-bind="slotData" />
         </template>
       </TreeNode>
     </div>
@@ -430,15 +527,41 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
 }
 
-/* 节点整体容器（上下层一体） */
+/* 节点整体容器（上下层一体） - 可点击 */
 .node-item {
+  position: relative; /* 为伪元素定位 */
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: background 0.15s ease;
+  cursor: pointer;
 }
 
-/* 整体 hover（非编辑模式） */
-.node-item:not(.is-editing):hover {
-  background: #f3f4f6;
+/* 编辑模式下不可点击 */
+.node-item.is-editing {
+  cursor: default;
+}
+
+/* Hover 叠加层（使用伪元素实现颜色混合） */
+.node-item:not(.is-editing)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  pointer-events: none; /* 确保不阻挡点击 */
+  transition: background-color 0.1s ease;
+  z-index: 1; /* 确保在内容之上 */
+}
+
+/* Hover 时显示灰色遮罩 */
+.node-item:not(.is-editing):hover::after {
+  background-color: rgba(0, 0, 0, 0.04); /* 4% 透明黑色 */
+}
+
+/* 单选/多选状态统一 */
+.node-item.selected {
+  background: #bfdbfe;
 }
 
 /* 上层内容 */
@@ -447,7 +570,8 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   align-items: center;
   padding: 4px 8px;
   min-height: 28px;
-  cursor: pointer;
+  cursor: inherit;
+  transition: background 0.15s ease;
 }
 
 /* 有自定义内容时，上层不要下边距 */
@@ -460,8 +584,27 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   cursor: default;
 }
 
-.tree-node-content.has-children {
-  cursor: default;
+/* 折叠控制区域（包含箭头+图标+间距） */
+.toggle-area {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 2; /* 确保在 hover 层之上 */
+  transition: opacity 0.15s ease;
+  margin-right: 8px;
+}
+
+.toggle-area:hover {
+  opacity: 0.7;
+}
+
+.toggle-area .expand-icon {
+  margin-right: 4px;
+}
+
+.toggle-area .icon {
+  margin-right: 0;
 }
 
 /* 展开/折叠箭头 */
@@ -474,8 +617,9 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   margin-right: 4px;
   color: #6b7280;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.15s ease;
+  position: relative;
+  z-index: 2; /* 确保在 hover 层之上 */
 }
 
 .expand-icon.placeholder {
@@ -483,10 +627,13 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   cursor: default;
 }
 
-/* 编辑模式下箭头不可点击 */
-.node-item.is-editing .expand-icon {
-  cursor: default;
-  opacity: 0.5;
+/* 编辑模式下箭头仍可点击且有 hover 效果 */
+.node-item.is-editing .expand-icon:not(.placeholder) {
+  cursor: pointer;
+}
+
+.node-item.is-editing .expand-icon:not(.placeholder):hover {
+  opacity: 0.7;
 }
 
 .expand-icon :deep(svg) {
@@ -503,6 +650,8 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   height: 16px;
   margin-right: 8px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2; /* 确保在 hover 层之上 */
 }
 
 .icon :deep(svg) {
@@ -519,6 +668,12 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
   padding-right: 8px;
 }
 
+/* 如果下层内容为空，不显示 */
+.node-custom-content:empty {
+  display: none;
+  padding: 0;
+}
+
 /* 编辑模式下自定义内容降低不透明度 */
 .node-item.is-editing .node-custom-content {
   opacity: 0.6;
@@ -529,18 +684,11 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
 .node-name-input {
   flex: 1;
   padding: 2px 6px;
-  border: 1px solid #3b82f6;
   border-radius: 3px;
   font-size: 13px;
   font-family: inherit;
-  outline: none;
-  background: #ffffff;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   line-height: 1.4;
-}
-
-.node-name-input:focus {
-  border-color: #2563eb;
+  /* hover 和 focus 状态由全局样式统一控制 */
 }
 
 /* 名称 */
