@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../api/item-edit';
-import { IconButton, TabBar, toast } from './components/ui';
+import { IconButton, Modal, TabBar, toast } from './components/ui';
 import type { MenuItem } from './components/ui/ContextMenu.vue';
 import ContextMenu from './components/ui/ContextMenu.vue';
 import { icons, withSize } from './components/ui/icons';
@@ -27,7 +27,9 @@ const {
   exportAllItems, 
   importAllFromZip,
   importTags,
-  importItems
+  importItems,
+  exportSingleItem,
+  importSingleItem
 } = useStorage();
 
 // 获取当前 Tab 组件
@@ -51,6 +53,10 @@ const sidebarRef = ref<HTMLElement | null>(null);
 // 下拉菜单状态
 const showMenu = ref(false);
 const menuPosition = ref({ x: 0, y: 0 });
+
+// 导入冲突对话框状态
+const showImportConflictDialog = ref(false);
+const pendingImportConfig = ref<any>(null);
 
 // 标签页配置
 const tabs = [
@@ -193,6 +199,65 @@ const currentTabLabel = computed(() => {
   }
 });
 
+// 导出当前商品配置
+function handleEditExport() {
+  if (!props.itemId) {
+    toast.error('无法获取当前商品ID');
+    return;
+  }
+  
+  try {
+    const config = exportSingleItem(props.itemId);
+    if (!config) {
+      toast.error('当前商品没有配置数据');
+      return;
+    }
+    
+    const timestamp = generateTimestamp();
+    downloadJSON(config, `booth-item-${props.itemId}-${timestamp}.json`);
+    toast.success('商品配置导出成功');
+  } catch (error) {
+    console.error('导出失败:', error);
+    toast.error('导出失败：' + (error as Error).message);
+  }
+}
+
+// 导入商品配置
+function handleEditImport() {
+  triggerFileInput('.json,application/json', async (file) => {
+    try {
+      const config = await readJSONFile(file);
+      const success = importSingleItem(config, { replace: false });
+      
+      if (!success) {
+        pendingImportConfig.value = config;
+        showImportConflictDialog.value = true;
+      } else {
+        toast.success('商品配置导入成功');
+      }
+    } catch (error) {
+      console.error('导入失败:', error);
+      toast.error('导入失败：' + (error as Error).message);
+    }
+  });
+}
+
+// 确认替换已有配置
+function confirmReplaceConfig() {
+  if (pendingImportConfig.value) {
+    importSingleItem(pendingImportConfig.value, { replace: true });
+    toast.success('商品配置导入成功');
+  }
+  showImportConflictDialog.value = false;
+  pendingImportConfig.value = null;
+}
+
+// 取消导入
+function cancelImport() {
+  showImportConflictDialog.value = false;
+  pendingImportConfig.value = null;
+}
+
 // 菜单项配置
 const menuItems = computed<MenuItem[]>(() => {
   const isEditTab = data.value.ui.activeTab === 'edit';
@@ -214,16 +279,14 @@ const menuItems = computed<MenuItem[]>(() => {
       action: () => {}
     },
     {
-      label: `导出${currentTabLabel.value}数据 (JSON)`,
+      label: isEditTab ? '导出当前商品 (JSON)' : `导出${currentTabLabel.value}数据 (JSON)`,
       icon: withSize(icons.upload, 14),
-      action: handleTabExport,
-      disabled: isEditTab
+      action: isEditTab ? handleEditExport : handleTabExport
     },
     {
-      label: `导入${currentTabLabel.value}数据 (JSON)`,
+      label: isEditTab ? '导入商品配置 (JSON)' : `导入${currentTabLabel.value}数据 (JSON)`,
       icon: withSize(icons.download, 14),
-      action: handleTabImport,
-      disabled: isEditTab
+      action: isEditTab ? handleEditImport : handleTabImport
     }
   ];
 });
@@ -262,6 +325,29 @@ onUnmounted(() => {
       :items="menuItems"
       @close="closeMenu"
     />
+
+    <!-- 导入冲突确认 Modal -->
+    <Modal
+      :show="showImportConflictDialog"
+      title="导入确认"
+      :teleport-to="'.booth-enhancer-sidebar'"
+      @close="cancelImport"
+      width="400px"
+    >
+      <div class="modal-content">
+        <p>商品 ID <strong>{{ pendingImportConfig?.itemId }}</strong> 已存在配置。</p>
+        <p>是否要替换现有配置？</p>
+      </div>
+
+      <template #footer>
+        <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary" @click="cancelImport" title="取消">
+          <span v-html="withSize(icons.close, 18)"></span>
+        </button>
+        <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-danger" @click="confirmReplaceConfig" title="替换">
+          <span v-html="withSize(icons.check, 18)"></span>
+        </button>
+      </template>
+    </Modal>
 
     <!-- 内容区 -->
     <div class="sidebar-content">

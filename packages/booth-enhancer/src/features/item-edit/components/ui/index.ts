@@ -2,11 +2,12 @@
  * UI 组件导出入口
  */
 
-export { default as IconButton } from './IconButton.vue';
-export { default as Modal } from './Modal.vue';
-export { default as TabBar } from './TabBar.vue';
 export { default as ContextMenu } from './ContextMenu.vue';
 export type { MenuItem } from './ContextMenu.vue';
+export { default as IconButton } from './IconButton.vue';
+export { default as Modal } from './Modal.vue';
+export { default as SectionHeader } from './SectionHeader.vue';
+export { default as TabBar } from './TabBar.vue';
 
 // 树组件
 export { Tree, TreeNode } from './tree';

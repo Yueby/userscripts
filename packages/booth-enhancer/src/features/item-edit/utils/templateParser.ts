@@ -33,5 +33,7 @@ export function formatDate(timestamp: number): string {
 }
 
 export function calculateTotalSupport(variations: VariationData[]): number {
-  return variations.reduce((sum, v) => sum + Number(v.supportCount), 0);
+  return variations
+    .filter(v => !v.isFullset)
+    .reduce((sum, v) => sum + Number(v.supportCount), 0);
 }

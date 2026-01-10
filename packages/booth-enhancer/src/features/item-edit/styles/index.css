@@ -395,7 +395,7 @@
 .booth-toggle .toggle-label {
   font-size: 14px;
   color: #374151;
-  font-weight: 500;
+  font-weight: normal;
 }
 
 /* Toggle hover 效果 */
@@ -501,7 +501,7 @@
 }
 
 .booth-enhancer-sidebar textarea {
-  min-height: 5em;
+  min-height: 1.25em;
   resize: vertical;
 }
 
@@ -509,7 +509,7 @@
 .modal-content {
   display: flex;
   flex-direction: column;
-  gap: var(--be-space-md);
+  gap: var(--be-space-sm);
 }
 
 .modal-content p {
@@ -520,7 +520,7 @@
 
 /* 表单组 */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: var(--be-space-sm);
 }
 
 .form-group:last-child {
@@ -529,7 +529,7 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-size: 12px;
   font-weight: 500;
   color: #374151;
@@ -549,54 +549,68 @@
 }
 
 .form-hint {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: var(--be-font-size-xs);
   color: var(--be-color-text-secondary);
 }
 
-/* 预览框样式 */
-.preview-box {
-  padding: 12px;
-  background: var(--be-color-bg-secondary);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius);
-}
-
-.preview-box.compact {
-  margin-top: var(--be-space-sm);
-}
-
-.preview-label {
-  font-size: var(--be-font-size-sm);
-  font-weight: 500;
-  color: var(--be-color-text-secondary);
-  margin-bottom: var(--be-space-sm);
-}
-
-.preview-content {
-  font-size: var(--be-font-size-md);
-  color: var(--be-color-text);
-  font-weight: 500;
-}
-
-.preview-content.text {
-  font-size: var(--be-font-size-base);
-  font-weight: normal;
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin: 0;
-  font-family: inherit;
-}
 
 /* 空状态提示 */
 .empty-hint {
-  padding: 40px 20px;
+  padding: var(--be-space-md);
   text-align: center;
-  color: var(--be-color-text-muted);
-  font-size: var(--be-font-size-base);
-  font-style: italic;
+  color: var(--be-color-text-secondary);
+  font-size: var(--be-font-size-md);
   background: var(--be-color-bg-secondary);
   border-radius: var(--be-radius);
+}
+
+/* ========================================
+   9. Modal 内容样式
+   ======================================== */
+
+.hint-text {
+  font-size: var(--be-font-size-base);
+  color: var(--be-color-text-secondary);
+}
+
+
+/* Tab 导航 */
+.tab-nav {
+  display: flex;
+  gap: var(--be-space-xs);
+  border-bottom: 1px solid var(--be-color-border);
+  margin-bottom: var(--be-space-sm);
+}
+
+.tab-btn {
+  padding: var(--be-space-xs) var(--be-space-sm);
+  font-size: var(--be-font-size-base);
+  font-weight: 500;
+  color: var(--be-color-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--be-transition-normal);
+}
+
+.tab-btn:hover {
+  color: var(--be-color-text);
+  background: var(--be-color-bg-secondary);
+}
+
+.tab-btn.active {
+  color: var(--be-color-primary);
+  border-bottom-color: var(--be-color-primary);
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--be-space-sm);
 }
 
 .form-group input,
@@ -634,7 +648,7 @@
 }
 
 .form-group textarea {
-  min-height: 5em;
+  min-height: 1.25em;
   resize: vertical;
 }
 
@@ -688,6 +702,26 @@
 .be-p-md { padding: var(--be-space-md) !important; }
 .be-p-lg { padding: var(--be-space-lg) !important; }
 
+.be-px-xs { padding-left: var(--be-space-xs) !important; padding-right: var(--be-space-xs) !important; }
+.be-px-sm { padding-left: var(--be-space-sm) !important; padding-right: var(--be-space-sm) !important; }
+.be-px-md { padding-left: var(--be-space-md) !important; padding-right: var(--be-space-md) !important; }
+.be-px-lg { padding-left: var(--be-space-lg) !important; padding-right: var(--be-space-lg) !important; }
+
+.be-pt-xs { padding-top: var(--be-space-xs) !important; }
+.be-pt-sm { padding-top: var(--be-space-sm) !important; }
+.be-pt-md { padding-top: var(--be-space-md) !important; }
+.be-pt-lg { padding-top: var(--be-space-lg) !important; }
+
+.be-pb-xs { padding-bottom: var(--be-space-xs) !important; }
+.be-pb-sm { padding-bottom: var(--be-space-sm) !important; }
+.be-pb-md { padding-bottom: var(--be-space-md) !important; }
+.be-pb-lg { padding-bottom: var(--be-space-lg) !important; }
+
+.be-mb-xs { margin-bottom: var(--be-space-xs) !important; }
+.be-mb-sm { margin-bottom: var(--be-space-sm) !important; }
+.be-mb-md { margin-bottom: var(--be-space-md) !important; }
+.be-mb-lg { margin-bottom: var(--be-space-lg) !important; }
+
 /* Flexbox 工具类 */
 .be-flex { display: flex !important; }
 .be-flex-column { flex-direction: column !important; }
@@ -705,6 +739,7 @@
 .be-flex-1 { flex: 1 !important; }
 .be-flex-grow { flex-grow: 1 !important; }
 .be-flex-shrink-0 { flex-shrink: 0 !important; }
+.be-min-w-0 { min-width: 0 !important; }
 
 .be-gap-xs { gap: var(--be-space-xs) !important; }
 .be-gap-sm { gap: var(--be-space-sm) !important; }
@@ -742,7 +777,14 @@
 
 /* 宽度工具类 */
 .be-w-full { width: 100% !important; }
+.be-w-auto { width: auto !important; }
 .be-h-full { height: 100% !important; }
+
+/* Grid 工具类 */
+.be-grid { display: grid !important; }
+.be-grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+.be-grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+.be-grid-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
 
 /* 边框工具类 */
 .be-border { border: 1px solid var(--be-color-border) !important; }
@@ -756,6 +798,11 @@
 .be-rounded-md { border-radius: var(--be-radius-md) !important; }
 .be-rounded-lg { border-radius: var(--be-radius-lg) !important; }
 .be-rounded-full { border-radius: 9999px !important; }
+
+/* 背景色工具类 */
+.be-bg { background: var(--be-color-bg) !important; }
+.be-bg-secondary { background: var(--be-color-bg-secondary) !important; }
+.be-bg-tertiary { background: var(--be-color-bg-tertiary) !important; }
 
 /* 阴影工具类 */
 .be-shadow-sm { box-shadow: var(--be-shadow-sm) !important; }
@@ -772,6 +819,10 @@
 .be-overflow-hidden { overflow: hidden !important; }
 .be-overflow-auto { overflow: auto !important; }
 .be-overflow-scroll { overflow: scroll !important; }
+
+/* 文本溢出工具类 */
+.be-whitespace-nowrap { white-space: nowrap !important; }
+.be-text-ellipsis { text-overflow: ellipsis !important; overflow: hidden !important; }
 
 /* 位置工具类 */
 .be-relative { position: relative !important; }

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import type { ItemEditAPI } from '../../../../api/item-edit';
-import { tagSearchFilter, useModal, useStorage } from '../../composables';
+import { tagSearchFilter, useStorage, useTreeTab } from '../../composables';
 import { Node } from '../../config-types';
+import { icons, withSize } from '../ui/icons';
 import Modal from '../ui/Modal.vue';
 import type { ContextMenuItem } from '../ui/tree/Tree.vue';
 import Tree from '../ui/tree/Tree.vue';
@@ -12,21 +13,10 @@ const props = defineProps<{
 }>();
 
 // 使用 Composables
-const { data, createNode, renameNode, deleteNode } = useStorage();
-const modal = useModal();
-
-// 核心状态
-const selectedNodeId = ref<string | null>(null);
+const { data, createNode, renameNode } = useStorage();
 
 // 树形数据
 const tree = computed(() => data.value.tagTree);
-
-// 处理节点选择
-const handleSelect = (nodes: Node[]) => {
-  if (nodes.length > 0) {
-    selectedNodeId.value = nodes[0].id;
-  }
-};
 
 // 递归检查节点是否包含标签
 function hasTagsRecursive(node: Node | null): boolean {
@@ -147,84 +137,56 @@ const parseTags = (tagsText: string): string[] => {
 };
 
 // === 树操作回调（传递给 Tree） ===
-
-// Unity 风格创建文件夹：直接创建，返回节点ID
-const handleCreateFolder = (parentId: string | null): string => {
-  const newNode = createNode(tree.value, '新建文件夹', undefined, parentId);
-  return newNode.id;
-};
-
-// Unity 风格创建 Tag 预设：直接创建，返回节点ID
-const handleCreateTag = (parentId: string | null): string => {
-  const tagData = { tags: [] }; // 创建空的Tag预设
-  const newNode = createNode(tree.value, '新建 Tag 预设', tagData, parentId);
-  return newNode.id;
-};
-
-// 编辑 Tag 数据
-const handleEditTag = async (nodeId: string) => {
-  const node = data.value.tagTree.nodes[nodeId];
-  if (!node || !node.data) return;
-  
-  const result = await modal.openModal({
-    type: 'createTag',
-    title: '编辑 Tag 预设',
-    formData: {
-      name: node.name,
-      tagsText: node.data.tags.join('\n')
-    }
-  });
-  
-  if (result && result.name && result.tagsText) {
-    const tags = parseTags(result.tagsText);
-    if (tags.length > 0) {
-      // 更新节点名称和数据
-      renameNode(tree.value, nodeId, result.name.trim());
-      node.data.tags = tags;
+// 使用 TreeTab composable 处理基础树操作
+const treeTab = useTreeTab({
+  tree: () => data.value.tagTree,
+  onCreateFolder: (parentId) => {
+    const newNode = createNode(tree.value, '新建文件夹', undefined, parentId);
+    return newNode.id;
+  },
+  onCreateItem: (parentId) => {
+    const tagData = { tags: [] };
+    const newNode = createNode(tree.value, '新建 Tag 预设', tagData, parentId);
+    return newNode.id;
+  },
+  onEditItem: async (nodeId) => {
+    const node = data.value.tagTree.nodes[nodeId];
+    if (!node || !node.data) return;
+    
+    const result = await treeTab.modal.openModal({
+      type: 'createTag',
+      title: '编辑 Tag 预设',
+      formData: {
+        name: node.name,
+        tagsText: node.data.tags.join('\n')
+      }
+    });
+    
+    if (result && result.name && result.tagsText) {
+      const tags = parseTags(result.tagsText);
+      if (tags.length > 0) {
+        renameNode(tree.value, nodeId, result.name.trim());
+        node.data.tags = tags;
+      }
     }
   }
-};
-
-// 重命名（Unity 风格：内联编辑）
-const handleRename = (nodeId: string, newName: string) => {
-  const trimmedName = newName.trim();
-  if (trimmedName) {
-    renameNode(tree.value, nodeId, trimmedName);
-  }
-};
-
-// 删除
-const handleDelete = async (nodeId: string) => {
-  const node = data.value.tagTree.nodes[nodeId];
-  if (!node) return; // 节点不存在时直接返回
-  
-  const confirmed = await modal.openModal({
-    type: 'delete',
-    title: '确认删除',
-    formData: { message: `确定要删除"${node.name}"吗？` }
-  });
-  
-  if (confirmed) {
-    deleteNode(tree.value, nodeId);
-  }
-  // 取消时直接返回，不抛出错误
-};
+});
 </script>
 
 <template>
   <div class="tag-preset-tab">
     <!-- 文件树（内置搜索） -->
     <Tree
-      :tree="tree"
+      :tree="treeTab.tree.value"
       search-placeholder="搜索 Tag..."
       :search-filter="tagSearchFilter"
       :custom-menu-items="customMenuItems"
-      :on-create-folder="handleCreateFolder"
-      :on-create-item="handleCreateTag"
-      :on-rename="handleRename"
-      :on-delete="handleDelete"
-      :on-edit="handleEditTag"
-      @selection-change="handleSelect"
+      :on-create-folder="treeTab.handleCreateFolder"
+      :on-create-item="treeTab.handleCreateItem"
+      :on-rename="treeTab.handleRename"
+      :on-delete="treeTab.handleDelete"
+      :on-edit="treeTab.handleEditItem"
+      @selection-change="treeTab.handleSelect"
     >
       
       <!-- 下层：Tag 标签列表（仅 Tag 预设显示） -->
@@ -252,27 +214,27 @@ const handleDelete = async (nodeId: string) => {
 
     <!-- Modal -->
     <Modal
-      :show="modal.state.value.show"
-      :title="modal.state.value.title"
+      :show="treeTab.modal.state.value.show"
+      :title="treeTab.modal.state.value.title"
       :teleport-to="'.booth-enhancer-sidebar'"
-      @close="modal.closeModal"
+      @close="treeTab.modal.closeModal"
     >
       <!-- 创建文件夹 -->
-      <div v-if="modal.state.value.type === 'createFolder'">
+      <div v-if="treeTab.modal.state.value.type === 'createFolder'">
         <input
-          v-model="modal.state.value.inputValue"
+          v-model="treeTab.modal.state.value.inputValue"
           type="text"
           placeholder="文件夹名称"
-          @keyup.enter="modal.confirmModal()"
+          @keyup.enter="treeTab.modal.confirmModal()"
         />
       </div>
       
       <!-- 创建 Tag 预设 -->
-      <div v-else-if="modal.state.value.type === 'createTag'">
+      <div v-else-if="treeTab.modal.state.value.type === 'createTag'">
         <div class="form-group">
           <label>预设名称 <span class="required">*</span></label>
           <input
-            v-model="modal.state.value.formData.name"
+            v-model="treeTab.modal.state.value.formData.name"
             type="text"
             placeholder="例如：イチゴ配布物"
           />
@@ -281,10 +243,10 @@ const handleDelete = async (nodeId: string) => {
         <div class="form-group">
           <label>标签列表 <span class="required">*</span></label>
           <textarea
-            v-model="modal.state.value.formData.tagsText"
+            v-model="treeTab.modal.state.value.formData.tagsText"
             class="modal-textarea-code-small"
             placeholder='支持两种格式：&#10;1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]&#10;2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ'
-            rows="8"
+            rows="4"
           ></textarea>
           <small class="form-hint-small">
             💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入
@@ -293,86 +255,91 @@ const handleDelete = async (nodeId: string) => {
       </div>
       
       <!-- 重命名 -->
-      <div v-else-if="modal.state.value.type === 'rename'">
+      <div v-else-if="treeTab.modal.state.value.type === 'rename'">
         <input
-          v-model="modal.state.value.inputValue"
+          v-model="treeTab.modal.state.value.inputValue"
           type="text"
           placeholder="新名称"
-          @keyup.enter="modal.confirmModal()"
+          @keyup.enter="treeTab.modal.confirmModal()"
         />
       </div>
       
       <!-- 删除确认 -->
-      <div v-else-if="modal.state.value.type === 'delete'">
-        <p class="modal-message">{{ modal.state.value.formData.message }}</p>
+      <div v-else-if="treeTab.modal.state.value.type === 'delete'">
+        <p class="modal-message">{{ treeTab.modal.state.value.formData.message }}</p>
       </div>
       
       <!-- 通用输入框 -->
-      <div v-else-if="modal.state.value.type === 'input'">
-        <p v-if="modal.state.value.message" class="modal-message-with-margin">
-          {{ modal.state.value.message }}
+      <div v-else-if="treeTab.modal.state.value.type === 'input'">
+        <p v-if="treeTab.modal.state.value.message" class="modal-message-with-margin">
+          {{ treeTab.modal.state.value.message }}
         </p>
         <input
-          v-model="modal.state.value.inputValue"
+          v-model="treeTab.modal.state.value.inputValue"
           type="text"
-          :placeholder="modal.state.value.placeholder"
-          @keyup.enter="modal.confirmModal()"
+          :placeholder="treeTab.modal.state.value.placeholder"
+          @keyup.enter="treeTab.modal.confirmModal()"
         />
       </div>
       
       <!-- 通用文本域 -->
-      <div v-else-if="modal.state.value.type === 'textarea'">
-        <p v-if="modal.state.value.message" class="modal-message-with-margin">
-          {{ modal.state.value.message }}
+      <div v-else-if="treeTab.modal.state.value.type === 'textarea'">
+        <p v-if="treeTab.modal.state.value.message" class="modal-message-with-margin">
+          {{ treeTab.modal.state.value.message }}
         </p>
         <textarea
-          v-model="modal.state.value.inputValue"
+          v-model="treeTab.modal.state.value.inputValue"
           class="modal-textarea-code"
-          :placeholder="modal.state.value.placeholder"
-          rows="8"
+          :placeholder="treeTab.modal.state.value.placeholder"
+          rows="4"
         ></textarea>
       </div>
       
       <!-- 通用提示框 -->
-      <div v-else-if="modal.state.value.type === 'alert'">
-        <p class="modal-message">{{ modal.state.value.message }}</p>
+      <div v-else-if="treeTab.modal.state.value.type === 'alert'">
+        <p class="modal-message">{{ treeTab.modal.state.value.message }}</p>
       </div>
 
       <template #footer>
         <button 
-          v-if="modal.state.value.type !== 'alert'"
-          class="booth-btn booth-btn-md booth-btn-secondary" 
-          @click="modal.closeModal"
+          v-if="treeTab.modal.state.value.type !== 'alert'"
+          class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary" 
+          @click="treeTab.modal.closeModal"
+          title="取消"
         >
-          取消
+          <span v-html="withSize(icons.close, 18)"></span>
         </button>
         <button 
-          v-if="modal.state.value.type === 'createTag'"
-          class="booth-btn booth-btn-md booth-btn-primary"
-          @click="modal.confirmModal(modal.state.value.formData)"
+          v-if="treeTab.modal.state.value.type === 'createTag'"
+          class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
+          @click="treeTab.modal.confirmModal(treeTab.modal.state.value.formData)"
+          title="确定"
         >
-          确定
+          <span v-html="withSize(icons.check, 18)"></span>
         </button>
         <button 
-          v-else-if="modal.state.value.type === 'delete'"
-          class="booth-btn booth-btn-md booth-btn-danger"
-          @click="modal.confirmModal(true)"
+          v-else-if="treeTab.modal.state.value.type === 'delete'"
+          class="booth-btn booth-btn-md booth-btn-icon booth-btn-danger"
+          @click="treeTab.modal.confirmModal(true)"
+          title="删除"
         >
-          删除
+          <span v-html="withSize(icons.trash, 18)"></span>
         </button>
         <button 
-          v-else-if="modal.state.value.type === 'alert'"
-          class="booth-btn booth-btn-md booth-btn-primary"
-          @click="modal.confirmModal()"
+          v-else-if="treeTab.modal.state.value.type === 'alert'"
+          class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
+          @click="treeTab.modal.confirmModal()"
+          title="确定"
         >
-          确定
+          <span v-html="withSize(icons.check, 18)"></span>
         </button>
         <button 
           v-else
-          class="booth-btn booth-btn-md booth-btn-primary"
-          @click="modal.confirmModal()"
+          class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
+          @click="treeTab.modal.confirmModal()"
+          title="确定"
         >
-          确定
+          <span v-html="withSize(icons.check, 18)"></span>
         </button>
       </template>
     </Modal>

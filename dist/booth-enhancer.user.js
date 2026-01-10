@@ -22,12 +22,12 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const o=document.createElement("style");o.textContent=e,document.head.append(o)})(' .icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-31a51cc2]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-31a51cc2]{position:absolute;z-index:2000}.modal-container[data-v-31a51cc2]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}.modal-header[data-v-31a51cc2]{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-31a51cc2]{margin:0;font-size:16px;font-weight:600;color:#374151}.modal-header .booth-btn[data-v-31a51cc2] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-31a51cc2]{padding:5px;overflow-y:auto;flex:1;min-height:0;font-size:13px;color:#374151}.modal-footer[data-v-31a51cc2]{padding:16px 20px;border-top:1px solid #e5e7eb;display:flex;gap:12px;justify-content:flex-end;flex-shrink:0;background:#f8fafc}.modal-footer .booth-btn[data-v-31a51cc2]{flex:1;min-width:80px}.modal-enter-active[data-v-31a51cc2],.modal-leave-active[data-v-31a51cc2]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-31a51cc2],.modal-leave-active .modal-container[data-v-31a51cc2]{transition:transform .3s ease}.modal-enter-from[data-v-31a51cc2],.modal-leave-to[data-v-31a51cc2]{opacity:0}.modal-enter-from .modal-container[data-v-31a51cc2],.modal-leave-to .modal-container[data-v-31a51cc2]{transform:translateY(100%)}.modal-body[data-v-31a51cc2]::-webkit-scrollbar{width:6px}.modal-body[data-v-31a51cc2]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-31a51cc2]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-31a51cc2]::-webkit-scrollbar-thumb:hover{background:#999}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-b7665db9]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-b7665db9]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-b7665db9]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-b7665db9]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-b7665db9]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-b7665db9]::placeholder{color:#9ca3af}.search-results[data-v-b7665db9]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-b7665db9]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-b7665db9]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-b7665db9]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-b7665db9]{position:relative;z-index:1}.empty-state[data-v-b7665db9]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-8988ff8e]{display:flex;flex-direction:column;gap:12px}.draggable-card[data-v-8988ff8e]{padding:12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:move;transition:var(--be-transition-normal)}.draggable-card[data-v-8988ff8e]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.card-header[data-v-8988ff8e]{display:flex;align-items:center;gap:var(--be-space-sm);margin-bottom:12px}.drag-handle[data-v-8988ff8e]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0}.drag-handle[data-v-8988ff8e]:active{cursor:grabbing}.card-number[data-v-8988ff8e]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.header-content[data-v-8988ff8e]{flex:1;min-width:0}.card-body[data-v-8988ff8e]{display:flex;flex-direction:column;gap:var(--be-space-md)}.card-footer[data-v-8988ff8e]{margin-top:12px;padding-top:12px;border-top:1px solid var(--be-color-border)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:500}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:5em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-md)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:12px}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:6px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:4px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.preview-box{padding:12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.preview-box.compact{margin-top:var(--be-space-sm)}.preview-label{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-secondary);margin-bottom:var(--be-space-sm)}.preview-content{font-size:var(--be-font-size-md);color:var(--be-color-text);font-weight:500}.preview-content.text{font-size:var(--be-font-size-base);font-weight:400;white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit}.empty-hint{padding:40px 20px;text-align:center;color:var(--be-color-text-muted);font-size:var(--be-font-size-base);font-style:italic;background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:5em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-h-full{height:100%!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-1ec927fc]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-1ec927fc]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-1ec927fc]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-1ec927fc]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-1ec927fc]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-1ec927fc]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-1ec927fc],.tab-slide-leave-from[data-v-1ec927fc]{opacity:1;transform:translate(0)}.sidebar-content[data-v-1ec927fc]>*{width:100%;height:100%}.tag-preset-tab[data-v-4d4f39a2]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-4d4f39a2]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-4d4f39a2]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-4d4f39a2]::-webkit-scrollbar{width:6px}.tree-container[data-v-4d4f39a2]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-4d4f39a2]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-4d4f39a2]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-4d4f39a2]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-4d4f39a2]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-4d4f39a2]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-4d4f39a2]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-4d4f39a2]{width:100%}.tag-badges-wrapper[data-v-4d4f39a2]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-4d4f39a2]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-4d4f39a2]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-4d4f39a2]{flex-shrink:0}.tag-delete-btn[data-v-4d4f39a2]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;font-size:16px;line-height:0;cursor:pointer;transition:all .15s ease;opacity:.7;font-family:Arial,sans-serif}.tag-delete-btn[data-v-4d4f39a2]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-4d4f39a2]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-4d4f39a2]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-4d4f39a2]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-4d4f39a2]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-4d4f39a2]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-2ed796f5]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-2ed796f5]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-2ed796f5]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-2ed796f5]{flex-shrink:0}.modal-message[data-v-2ed796f5]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-2ed796f5]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-2ed796f5]{font-family:Consolas,Monaco,monospace;line-height:1.5}.price-modal-content[data-v-5c872214]{display:flex;flex-direction:column;gap:var(--be-space-lg)}.config-section[data-v-5c872214]{display:flex;flex-direction:column;gap:var(--be-space-md)}.section-header[data-v-5c872214]{display:flex;justify-content:space-between;align-items:center}.section-title[data-v-5c872214]{margin:0;font-size:var(--be-font-size-md);font-weight:600;color:var(--be-color-text)}.action-buttons[data-v-5c872214]{display:flex;gap:var(--be-space-sm)}.variation-fields[data-v-5c872214]{display:flex;align-items:center;gap:var(--be-space-sm)}.variation-name[data-v-5c872214]{flex:1;padding:4px var(--be-space-sm);font-size:var(--be-font-size-base);height:28px}.variation-count[data-v-5c872214]{width:70px;padding:4px var(--be-space-sm);font-size:var(--be-font-size-base);height:28px}.checkbox-wrapper[data-v-5c872214]{display:flex;align-items:center;gap:var(--be-space-xs);font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);cursor:pointer;white-space:nowrap}.checkbox-wrapper input[type=checkbox][data-v-5c872214]{width:auto;margin:0;cursor:pointer}.price-row[data-v-5c872214]{display:grid;grid-template-columns:1fr 1fr;gap:var(--be-space-md)}.info-row[data-v-5c872214]{display:flex;gap:var(--be-space-sm);flex-wrap:wrap}.info-badge[data-v-5c872214]{padding:4px 12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-full);font-size:var(--be-font-size-sm);color:var(--be-color-text)}.discount-body[data-v-5c872214]{display:flex;flex-direction:column;gap:var(--be-space-md)}.price-preview[data-v-5c872214]{padding:12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.preview-title[data-v-5c872214]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);margin-bottom:var(--be-space-sm)}.price-item[data-v-5c872214]{display:flex;justify-content:space-between;align-items:center;font-size:var(--be-font-size-base);margin-bottom:4px}.price-item[data-v-5c872214]:last-child{margin-bottom:0}.price-item .label[data-v-5c872214]{color:var(--be-color-text-secondary);font-weight:500}.price-item .price-value[data-v-5c872214]{color:var(--be-color-text);font-weight:600}.sections-modal-content[data-v-59f93226]{display:flex;flex-direction:column;min-height:400px}.tab-nav[data-v-59f93226]{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-md)}.tab-btn[data-v-59f93226]{padding:var(--be-space-sm) var(--be-space-md);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn[data-v-59f93226]:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active[data-v-59f93226]{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content[data-v-59f93226]{flex:1;overflow-y:auto}.tab-panel[data-v-59f93226]{display:flex;flex-direction:column;gap:12px}.panel-header[data-v-59f93226]{display:flex;justify-content:flex-end}.panel-hint[data-v-59f93226]{margin:0;padding:12px;background:var(--be-color-bg-secondary);border-radius:var(--be-radius);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.template-name-input[data-v-59f93226]{flex:1;font-weight:600;padding:4px var(--be-space-sm);font-size:var(--be-font-size-base);height:28px}.entry-type-select[data-v-59f93226]{padding:2px 6px;font-size:var(--be-font-size-sm);height:24px;width:auto;flex-shrink:0}.entry-date[data-v-59f93226]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);flex:1;text-align:right}.template-grid[data-v-59f93226]{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.template-card[data-v-59f93226]{padding:12px;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:pointer;transition:var(--be-transition-normal)}.template-card[data-v-59f93226]:hover{border-color:var(--be-color-primary);box-shadow:0 2px 4px #3b82f61a}.card-name[data-v-59f93226]{font-size:var(--be-font-size-md);font-weight:600;color:var(--be-color-text);margin-bottom:var(--be-space-sm)}.card-preview[data-v-59f93226]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary)}.preview-line[data-v-59f93226]{margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.preview-body[data-v-59f93226]{color:var(--be-color-text-muted)}.label-hint[data-v-59f93226]{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint[data-v-59f93226]{margin:4px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.template-config-modal[data-v-f4a0a369]{display:flex;flex-direction:column;gap:var(--be-space-md);min-height:500px;max-height:70vh}.template-content[data-v-f4a0a369]{flex:1;overflow-y:auto}.template-section[data-v-f4a0a369]{padding:0}.section-header[data-v-f4a0a369]{display:flex;justify-content:flex-end;margin-bottom:var(--be-space-md)}.hint-text[data-v-f4a0a369]{margin-bottom:var(--be-space-md);padding:10px;background:var(--be-color-bg-secondary);border-radius:var(--be-radius);font-size:12px;color:var(--be-color-text-secondary)}.template-name-input[data-v-f4a0a369]{flex:1;font-weight:500}.form-hint[data-v-f4a0a369]{margin:0 0 6px;font-size:11px;color:var(--be-color-text-secondary);font-style:italic}.empty-hint[data-v-f4a0a369]{text-align:center;padding:var(--be-space-xl);color:var(--be-color-text-secondary);font-size:13px}.edit-tab-header[data-v-f2136b48]{display:flex;align-items:center;gap:var(--be-space-sm);padding:var(--be-space-md);border-bottom:1px solid var(--be-color-border);background:var(--be-color-bg)}.header-spacer[data-v-f2136b48]{flex:1}.empty-state[data-v-f2136b48]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-f2136b48]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state h3[data-v-f2136b48]{margin:0 0 var(--be-space-sm);font-size:var(--be-font-size-xl);font-weight:600;color:var(--be-color-text)}.empty-state p[data-v-f2136b48]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.edit-tab[data-v-f2136b48]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-f2136b48]{flex:1;overflow-y:auto;padding:6px 6px 80px;display:flex;flex-direction:column;gap:20px}.edit-section[data-v-f2136b48],.preview-section[data-v-f2136b48]{background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);padding:var(--be-space-md)}.section-header[data-v-f2136b48]{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section-header h3[data-v-f2136b48]{margin:0;font-size:var(--be-font-size-lg);font-weight:600;color:var(--be-color-text)}.actions[data-v-f2136b48]{display:flex;gap:var(--be-space-sm)}.preview-content[data-v-f2136b48]{margin-top:var(--be-space-sm)}.preview-box[data-v-f2136b48]{margin-top:var(--be-space-sm);padding:12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.preview-label[data-v-f2136b48]{font-size:var(--be-font-size-xs);font-weight:500;color:var(--be-color-text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}.preview-box .preview-content[data-v-f2136b48]{font-size:var(--be-font-size-md);color:var(--be-color-text);font-weight:500;margin-top:0}.preview-text[data-v-f2136b48]{padding:12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);font-size:var(--be-font-size-base);color:var(--be-color-text);line-height:1.5;white-space:pre-wrap;word-break:break-word;min-height:80px;margin:0;font-family:inherit}.list-section[data-v-f2136b48]{background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);padding:var(--be-space-md)}.empty-hint[data-v-f2136b48]{padding:40px 20px;text-align:center;color:var(--be-color-text-muted);font-size:var(--be-font-size-base);font-style:italic}.section-preview[data-v-f2136b48]{padding:10px;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-label[data-v-f2136b48]{font-size:var(--be-font-size-xs);font-weight:500;color:var(--be-color-text-muted);margin-bottom:6px}.preview-headline[data-v-f2136b48]{font-size:var(--be-font-size-base);font-weight:600;color:var(--be-color-text);margin-bottom:4px}.preview-body[data-v-f2136b48]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);white-space:pre-wrap;word-break:break-word}.variations-list[data-v-f2136b48]{display:flex;flex-direction:column;gap:var(--be-space-sm)}.variation-card[data-v-f2136b48]{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:move;transition:var(--be-transition-normal)}.variation-card[data-v-f2136b48]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.variation-card .number[data-v-f2136b48]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary)}.variation-card .name[data-v-f2136b48]{flex:1;font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text)}.variation-card .support[data-v-f2136b48]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);padding:2px 6px;background:var(--be-color-bg);border-radius:var(--be-radius-sm)}.variation-card .price[data-v-f2136b48]{font-size:var(--be-font-size-base);font-weight:600;color:var(--be-color-success)}.variation-card .badge[data-v-f2136b48]{font-size:var(--be-font-size-xs);font-weight:600;color:var(--be-color-primary);background:#dbeafe;padding:2px var(--be-space-sm);border-radius:var(--be-radius-full)}.section-footer[data-v-f2136b48]{margin-top:12px;display:flex;justify-content:flex-end}.action-bar[data-v-f2136b48]{position:fixed;bottom:0;left:0;right:0;padding:var(--be-space-md);background:var(--be-color-bg);border-top:1px solid var(--be-color-border);display:flex;justify-content:center;box-shadow:0 -2px 8px #0000000d}.error-state[data-v-f2136b48]{padding:40px 20px;text-align:center;color:var(--be-color-danger);font-size:var(--be-font-size-lg)} ');
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(' .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-abeda2bd]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-abeda2bd]{position:absolute;z-index:2000}.modal-container[data-v-abeda2bd]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-abeda2bd]{max-height:70%}.modal-header[data-v-abeda2bd]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-abeda2bd]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-abeda2bd]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-abeda2bd] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-abeda2bd]{padding:8px;overflow-y:auto;flex:1;min-height:0;font-size:13px;color:#374151}.modal-footer[data-v-abeda2bd]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-abeda2bd] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-abeda2bd]{width:100%}.modal-enter-active[data-v-abeda2bd],.modal-leave-active[data-v-abeda2bd]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-abeda2bd],.modal-leave-active .modal-container[data-v-abeda2bd]{transition:transform .3s ease}.modal-enter-from[data-v-abeda2bd],.modal-leave-to[data-v-abeda2bd]{opacity:0}.modal-enter-from .modal-container[data-v-abeda2bd],.modal-leave-to .modal-container[data-v-abeda2bd]{transform:translateY(100%)}.modal-body[data-v-abeda2bd]::-webkit-scrollbar{width:6px}.modal-body[data-v-abeda2bd]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-abeda2bd]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-abeda2bd]::-webkit-scrollbar-thumb:hover{background:#999}.section-header-container[data-v-bd8a2399]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-bd8a2399]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-bd8a2399]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-bd8a2399]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-bd8a2399]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-b7665db9]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-b7665db9]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-b7665db9]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-b7665db9]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-b7665db9]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-b7665db9]::placeholder{color:#9ca3af}.search-results[data-v-b7665db9]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-b7665db9]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-b7665db9]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-b7665db9]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-b7665db9]{position:relative;z-index:1}.empty-state[data-v-b7665db9]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-b9ebef1f]{display:flex;flex-direction:column;gap:8px}.draggable-card[data-v-b9ebef1f]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:move;transition:var(--be-transition-normal)}.draggable-card[data-v-b9ebef1f]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.card-actions[data-v-b9ebef1f]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-b9ebef1f]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center}.drag-handle[data-v-b9ebef1f]:active{cursor:grabbing}.card-number[data-v-b9ebef1f]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-b9ebef1f]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-b9ebef1f]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:44px;height:24px;background:#d1d5db;border-radius:12px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#10b981}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(20px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(20px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-ef8b0a5f]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-ef8b0a5f]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-ef8b0a5f]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-ef8b0a5f]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-ef8b0a5f]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-ef8b0a5f]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-ef8b0a5f],.tab-slide-leave-from[data-v-ef8b0a5f]{opacity:1;transform:translate(0)}.sidebar-content[data-v-ef8b0a5f]>*{width:100%;height:100%}.tag-preset-tab[data-v-e495ea3c]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-e495ea3c]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-e495ea3c]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-e495ea3c]::-webkit-scrollbar{width:6px}.tree-container[data-v-e495ea3c]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-e495ea3c]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-e495ea3c]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-e495ea3c]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-e495ea3c]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-e495ea3c]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-e495ea3c]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-e495ea3c]{width:100%}.tag-badges-wrapper[data-v-e495ea3c]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-e495ea3c]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-e495ea3c]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-e495ea3c]{flex-shrink:0}.tag-delete-btn[data-v-e495ea3c]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;font-size:16px;line-height:0;cursor:pointer;transition:all .15s ease;opacity:.7;font-family:Arial,sans-serif}.tag-delete-btn[data-v-e495ea3c]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-e495ea3c]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-e495ea3c]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-e495ea3c]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-e495ea3c]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-e495ea3c]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-6c6b3856]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-6c6b3856]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-6c6b3856]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-6c6b3856]{flex-shrink:0}.modal-message[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-6c6b3856]{font-family:Consolas,Monaco,monospace;line-height:1.5}.edit-tab-header[data-v-f59e0ed0]{display:flex;align-items:center;gap:var(--be-space-sm);padding:var(--be-space-md);border-bottom:1px solid var(--be-color-border);background:var(--be-color-bg)}.header-spacer[data-v-f59e0ed0]{flex:1}.empty-state[data-v-f59e0ed0]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-f59e0ed0]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-f59e0ed0]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.empty-hint[data-v-f59e0ed0]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.edit-tab[data-v-f59e0ed0]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-f59e0ed0]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.section-preview[data-v-f59e0ed0]{padding:var(--be-space-sm);background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-label[data-v-f59e0ed0]{font-size:var(--be-font-size-xs);font-weight:500;color:var(--be-color-text-muted);margin-bottom:4px}.preview-headline[data-v-f59e0ed0]{font-size:var(--be-font-size-base);font-weight:600;color:var(--be-color-text);margin-bottom:4px}.preview-body[data-v-f59e0ed0]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);white-space:pre-wrap;word-break:break-word}.variation-info[data-v-f59e0ed0]{display:flex;flex-direction:column;gap:var(--be-space-sm)}.variation-details[data-v-f59e0ed0]{display:flex;align-items:center;gap:var(--be-space-sm)}.variation-details .support[data-v-f59e0ed0]{font-size:var(--be-font-size-sm);color:var(--be-color-text-secondary);padding:2px 6px;background:var(--be-color-bg);border-radius:var(--be-radius-sm)}.variation-details .price[data-v-f59e0ed0]{font-size:var(--be-font-size-base);font-weight:600;color:var(--be-color-success)}.variation-details .badge[data-v-f59e0ed0]{font-size:var(--be-font-size-xs);font-weight:600;color:var(--be-color-primary);background:#dbeafe;padding:2px var(--be-space-sm);border-radius:var(--be-radius-full)}.error-state[data-v-f59e0ed0]{padding:40px 20px;text-align:center;color:var(--be-color-danger);font-size:var(--be-font-size-lg)} ');
 
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-xDA_xLW6.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,9 +39,9 @@ System.register("./__entry.js", ['./__monkey.entry-BqCU_ghY.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-xDA_xLW6.js", ['vue'], (function (exports, module) {
   'use strict';
-  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, toDisplayString, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
+  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createTextVNode, toDisplayString, createBlock, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
     setters: [module => {
       createApp = module.createApp;
@@ -58,13 +58,14 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
       createElementVNode = module.createElementVNode;
       unref = module.unref;
       withCtx = module.withCtx;
+      createTextVNode = module.createTextVNode;
+      toDisplayString = module.toDisplayString;
       createBlock = module.createBlock;
       resolveDynamicComponent = module.resolveDynamicComponent;
       createCommentVNode = module.createCommentVNode;
       Fragment = module.Fragment;
       renderList = module.renderList;
       normalizeClass = module.normalizeClass;
-      toDisplayString = module.toDisplayString;
       renderSlot = module.renderSlot;
       Teleport = module.Teleport;
       Transition = module.Transition;
@@ -77,11 +78,8 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
         b: getSelectedDescriptionTemplate,
         c: getSelectedDiscountTemplate,
         d: createDefaultItemConfig,
-        e: downloadJSON,
-        f: triggerFileInput,
+        e: getSelectedChangelogTemplate,
         g: getSelectedNameTemplate,
-        h: getSelectedChangelogTemplate,
-        r: readJSONFile,
         u: useStorage
       });
 
@@ -794,219 +792,18 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
           return baseModule().catch(handlePreloadError);
         });
       };
-      const _hoisted_1$3 = ["title"];
-      const _hoisted_2$2 = ["innerHTML"];
-      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
-        __name: "IconButton",
-        props: {
-          icon: {},
-          title: {},
-          variant: {}
-        },
-        emits: ["click"],
-        setup(__props, { emit: __emit }) {
-          const emit = __emit;
-          const handleClick = (e) => {
-            emit("click", e);
-          };
-          return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("button", {
-              class: normalizeClass(["icon-btn", { [`variant-${_ctx.variant}`]: _ctx.variant }]),
-              title: _ctx.title,
-              onClick: handleClick
-            }, [
-              createElementVNode("span", { innerHTML: _ctx.icon }, null, 8, _hoisted_2$2)
-            ], 10, _hoisted_1$3);
-          };
-        }
-      });
-      const _export_sfc = exports("_", (sfc, props) => {
-        const target = sfc.__vccOpts || sfc;
-        for (const [key, val] of props) {
-          target[key] = val;
-        }
-        return target;
-      });
-      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-996dd7d2"]]);
-      const withSize = exports("w", (svg, size, strokeWidth) => {
-        let result = svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
-        if (strokeWidth !== void 0) {
-          result = result.replace(/stroke-width="[\d.]+"/g, `stroke-width="${strokeWidth}"`);
-        }
-        return result;
-      });
-      const icons = exports("i", {
-        // 导航
-        chevronLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="15 18 9 12 15 6"></polyline>
-  </svg>`,
-        chevronRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="9 18 15 12 9 6"></polyline>
-  </svg>`,
-        chevronUp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="18 15 12 9 6 15"></polyline>
-  </svg>`,
-        chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="6 9 12 15 18 9"></polyline>
-  </svg>`,
-        // 操作
-        download: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7 10 12 15 17 10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>`,
-        upload: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="17 8 12 3 7 8"></polyline>
-    <line x1="12" y1="3" x2="12" y2="15"></line>
-  </svg>`,
-        close: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>`,
-        plus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <line x1="5" y1="12" x2="19" y2="12"></line>
-  </svg>`,
-        edit: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-  </svg>`,
-        trash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="3 6 5 6 21 6"></polyline>
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-  </svg>`,
-        copy: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-  </svg>`,
-        // 文件夹
-        folderEmpty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-  </svg>`,
-        folderFilled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-  </svg>`,
-        folder: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-  </svg>`,
-        folderOpen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"></path>
-  </svg>`,
-        file: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-    <polyline points="13 2 13 9 20 9"></polyline>
-  </svg>`,
-        files: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 7H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12z" fill="currentColor"></path>
-    <polyline points="12 7 12 12 16 12" fill="currentColor"></polyline>
-    <path d="M17 2H10a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z" fill="white"></path>
-    <polyline points="17 2 17 7 21 7" fill="white"></polyline>
-  </svg>`,
-        // 搜索
-        search: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="11" cy="11" r="8"></circle>
-    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-  </svg>`,
-        // 标签
-        tag: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-    <line x1="7" y1="7" x2="7.01" y2="7"></line>
-  </svg>`,
-        // 设置
-        settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="3"></circle>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-  </svg>`,
-        // 状态
-        eye: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>`,
-        check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>`,
-        alertCircle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="8" x2="12" y2="12"></line>
-    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-  </svg>`,
-        info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="16" x2="12" y2="12"></line>
-    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-  </svg>`,
-        // 其他
-        moreVertical: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="1"></circle>
-    <circle cx="12" cy="5" r="1"></circle>
-    <circle cx="12" cy="19" r="1"></circle>
-  </svg>`,
-        moreHorizontal: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="1"></circle>
-    <circle cx="19" cy="12" r="1"></circle>
-    <circle cx="5" cy="12" r="1"></circle>
-  </svg>`
-      });
-      const _hoisted_1$2 = { class: "tab-bar" };
-      const _hoisted_2$1 = { class: "tab-list" };
-      const _hoisted_3$1 = ["onClick"];
-      const _hoisted_4$1 = ["innerHTML"];
-      const _hoisted_5$1 = { class: "tab-label" };
-      const _hoisted_6 = {
-        key: 0,
-        class: "tab-actions"
-      };
-      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
-        __name: "TabBar",
-        props: {
-          tabs: {},
-          activeTab: {}
-        },
-        emits: ["update:activeTab"],
-        setup(__props, { emit: __emit }) {
-          const emit = __emit;
-          const handleTabClick = (tabId) => {
-            emit("update:activeTab", tabId);
-          };
-          return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$2, [
-              createElementVNode("div", _hoisted_2$1, [
-                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
-                  return openBlock(), createElementBlock("button", {
-                    key: tab.id,
-                    class: normalizeClass(["tab-btn", { active: _ctx.activeTab === tab.id }]),
-                    onClick: ($event) => handleTabClick(tab.id)
-                  }, [
-                    tab.icon ? (openBlock(), createElementBlock("span", {
-                      key: 0,
-                      class: "tab-icon",
-                      innerHTML: tab.icon
-                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
-                    createElementVNode("span", _hoisted_5$1, toDisplayString(tab.label), 1)
-                  ], 10, _hoisted_3$1);
-                }), 128))
-              ]),
-              _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
-                renderSlot(_ctx.$slots, "actions", {}, void 0, true)
-              ])) : createCommentVNode("", true)
-            ]);
-          };
-        }
-      });
-      const TabBar = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ee7eccb8"]]));
-      const _hoisted_1$1 = {
+      const _hoisted_1$4 = {
         key: 0,
         class: "menu-separator"
       };
-      const _hoisted_2 = ["onClick"];
-      const _hoisted_3 = ["innerHTML"];
-      const _hoisted_4 = { class: "menu-label" };
-      const _hoisted_5 = {
+      const _hoisted_2$4 = ["onClick"];
+      const _hoisted_3$3 = ["innerHTML"];
+      const _hoisted_4$3 = { class: "menu-label" };
+      const _hoisted_5$2 = {
         key: 2,
         class: "menu-separator"
       };
-      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$4 = /* @__PURE__ */ defineComponent({
         __name: "ContextMenu",
         props: {
           show: { type: Boolean },
@@ -1106,7 +903,7 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
                   }, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.items, (item, index) => {
                       return openBlock(), createElementBlock(Fragment, { key: index }, [
-                        item.label === "-" ? (openBlock(), createElementBlock("div", _hoisted_1$1)) : (openBlock(), createElementBlock("div", {
+                        item.label === "-" ? (openBlock(), createElementBlock("div", _hoisted_1$4)) : (openBlock(), createElementBlock("div", {
                           key: 1,
                           class: normalizeClass(["menu-item", {
                             "menu-item-danger": item.danger,
@@ -1118,10 +915,10 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
                             key: 0,
                             class: "menu-icon",
                             innerHTML: item.icon
-                          }, null, 8, _hoisted_3)) : createCommentVNode("", true),
-                          createElementVNode("span", _hoisted_4, toDisplayString(item.label), 1)
-                        ], 10, _hoisted_2)),
-                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_5)) : createCommentVNode("", true)
+                          }, null, 8, _hoisted_3$3)) : createCommentVNode("", true),
+                          createElementVNode("span", _hoisted_4$3, toDisplayString(item.label), 1)
+                        ], 10, _hoisted_2$4)),
+                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_5$2)) : createCommentVNode("", true)
                       ], 64);
                     }), 128))
                   ], 6)) : createCommentVNode("", true)
@@ -1132,7 +929,316 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-4d60a255"]]));
+      const _export_sfc = exports("_", (sfc, props) => {
+        const target = sfc.__vccOpts || sfc;
+        for (const [key, val] of props) {
+          target[key] = val;
+        }
+        return target;
+      });
+      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-4d60a255"]]));
+      const _hoisted_1$3 = ["title"];
+      const _hoisted_2$3 = ["innerHTML"];
+      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+        __name: "IconButton",
+        props: {
+          icon: {},
+          title: {},
+          variant: {}
+        },
+        emits: ["click"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const handleClick = (e) => {
+            emit("click", e);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("button", {
+              class: normalizeClass(["icon-btn", { [`variant-${_ctx.variant}`]: _ctx.variant }]),
+              title: _ctx.title,
+              onClick: handleClick
+            }, [
+              createElementVNode("span", { innerHTML: _ctx.icon }, null, 8, _hoisted_2$3)
+            ], 10, _hoisted_1$3);
+          };
+        }
+      });
+      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-996dd7d2"]]);
+      const withSize = exports("w", (svg, size, strokeWidth) => {
+        let result = svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
+        if (strokeWidth !== void 0) {
+          result = result.replace(/stroke-width="[\d.]+"/g, `stroke-width="${strokeWidth}"`);
+        }
+        return result;
+      });
+      const icons = exports("i", {
+        // 导航
+        chevronLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>`,
+        chevronRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>`,
+        chevronUp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>`,
+        chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>`,
+        // 操作
+        download: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>`,
+        upload: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="17 8 12 3 7 8"></polyline>
+    <line x1="12" y1="3" x2="12" y2="15"></line>
+  </svg>`,
+        send: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"></line>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>`,
+        close: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>`,
+        plus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>`,
+        edit: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+  </svg>`,
+        trash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>`,
+        copy: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>`,
+        // 文件夹
+        folderEmpty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folderFilled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folder: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folderOpen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"></path>
+  </svg>`,
+        file: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+    <polyline points="13 2 13 9 20 9"></polyline>
+  </svg>`,
+        files: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 7H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12z" fill="currentColor"></path>
+    <polyline points="12 7 12 12 16 12" fill="currentColor"></polyline>
+    <path d="M17 2H10a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z" fill="white"></path>
+    <polyline points="17 2 17 7 21 7" fill="white"></polyline>
+  </svg>`,
+        // 搜索
+        search: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>`,
+        // 标签
+        tag: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+  </svg>`,
+        // 设置
+        settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+  </svg>`,
+        // 状态
+        eye: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>`,
+        check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>`,
+        alertCircle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="8" x2="12" y2="12"></line>
+    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+  </svg>`,
+        info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>`,
+        // 其他
+        moreVertical: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1"></circle>
+    <circle cx="12" cy="5" r="1"></circle>
+    <circle cx="12" cy="19" r="1"></circle>
+  </svg>`,
+        moreHorizontal: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1"></circle>
+    <circle cx="19" cy="12" r="1"></circle>
+    <circle cx="5" cy="12" r="1"></circle>
+  </svg>`
+      });
+      const _hoisted_1$2 = { class: "modal-header" };
+      const _hoisted_2$2 = { class: "modal-title" };
+      const _hoisted_3$2 = { class: "modal-header-actions" };
+      const _hoisted_4$2 = ["innerHTML"];
+      const _hoisted_5$1 = { class: "modal-body" };
+      const _hoisted_6$1 = {
+        key: 0,
+        class: "modal-footer"
+      };
+      const _hoisted_7 = ["onClick"];
+      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+        __name: "Modal",
+        props: {
+          show: { type: Boolean },
+          title: {},
+          width: {},
+          buttons: {},
+          closeOnClickOutside: { type: Boolean, default: true },
+          closeOnEsc: { type: Boolean, default: true },
+          teleportTo: { default: "body" }
+        },
+        emits: ["close", "action"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const handleClose = () => {
+            emit("close");
+          };
+          const handleOverlayClick = (e) => {
+            if (props.closeOnClickOutside && e.target === e.currentTarget) {
+              handleClose();
+            }
+          };
+          const handleButtonClick = (action) => {
+            emit("action", action);
+          };
+          const handleKeyDown = (e) => {
+            if (props.closeOnEsc && e.key === "Escape" && props.show) {
+              handleClose();
+            }
+          };
+          onMounted(() => {
+            document.addEventListener("keydown", handleKeyDown);
+          });
+          onUnmounted(() => {
+            document.removeEventListener("keydown", handleKeyDown);
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Teleport, {
+              to: _ctx.teleportTo,
+              disabled: _ctx.teleportTo !== "body"
+            }, [
+              createVNode(Transition, { name: "modal" }, {
+                default: withCtx(() => [
+                  _ctx.show ? (openBlock(), createElementBlock("div", {
+                    key: 0,
+                    class: normalizeClass(["modal-overlay", { "modal-in-sidebar": _ctx.teleportTo !== "body" }]),
+                    onClick: handleOverlayClick
+                  }, [
+                    createElementVNode("div", {
+                      class: "modal-container",
+                      style: normalizeStyle({ width: _ctx.width || "400px" })
+                    }, [
+                      createElementVNode("div", _hoisted_1$2, [
+                        createElementVNode("div", _hoisted_2$2, toDisplayString(_ctx.title || "提示"), 1),
+                        createElementVNode("div", _hoisted_3$2, [
+                          renderSlot(_ctx.$slots, "header-actions", {}, void 0, true),
+                          createElementVNode("button", {
+                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                            onClick: handleClose,
+                            type: "button",
+                            title: "关闭"
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(icons).close
+                            }, null, 8, _hoisted_4$2)
+                          ])
+                        ])
+                      ]),
+                      createElementVNode("div", _hoisted_5$1, [
+                        renderSlot(_ctx.$slots, "default", {}, void 0, true)
+                      ]),
+                      _ctx.$slots.footer || _ctx.buttons && _ctx.buttons.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, [
+                        renderSlot(_ctx.$slots, "footer", {}, () => [
+                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.buttons, (btn) => {
+                            return openBlock(), createElementBlock("button", {
+                              key: btn.action,
+                              class: normalizeClass(["booth-btn booth-btn-md", [`booth-btn-${btn.variant || "secondary"}`]]),
+                              onClick: ($event) => handleButtonClick(btn.action),
+                              type: "button"
+                            }, toDisplayString(btn.text), 11, _hoisted_7);
+                          }), 128))
+                        ], true)
+                      ])) : createCommentVNode("", true)
+                    ], 4)
+                  ], 2)) : createCommentVNode("", true)
+                ]),
+                _: 3
+              })
+            ], 8, ["to", "disabled"]);
+          };
+        }
+      });
+      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-abeda2bd"]]));
+      const _hoisted_1$1 = { class: "tab-bar" };
+      const _hoisted_2$1 = { class: "tab-list" };
+      const _hoisted_3$1 = ["onClick"];
+      const _hoisted_4$1 = ["innerHTML"];
+      const _hoisted_5 = { class: "tab-label" };
+      const _hoisted_6 = {
+        key: 0,
+        class: "tab-actions"
+      };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "TabBar",
+        props: {
+          tabs: {},
+          activeTab: {}
+        },
+        emits: ["update:activeTab"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const handleTabClick = (tabId) => {
+            emit("update:activeTab", tabId);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$1, [
+              createElementVNode("div", _hoisted_2$1, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
+                  return openBlock(), createElementBlock("button", {
+                    key: tab.id,
+                    class: normalizeClass(["tab-btn", { active: _ctx.activeTab === tab.id }]),
+                    onClick: ($event) => handleTabClick(tab.id)
+                  }, [
+                    tab.icon ? (openBlock(), createElementBlock("span", {
+                      key: 0,
+                      class: "tab-icon",
+                      innerHTML: tab.icon
+                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
+                    createElementVNode("span", _hoisted_5, toDisplayString(tab.label), 1)
+                  ], 10, _hoisted_3$1);
+                }), 128))
+              ]),
+              _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                renderSlot(_ctx.$slots, "actions", {}, void 0, true)
+              ])) : createCommentVNode("", true)
+            ]);
+          };
+        }
+      });
+      const TabBar = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ee7eccb8"]]));
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -4208,7 +4314,10 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
         };
         input.click();
       }
-      const _hoisted_1 = { class: "sidebar-content" };
+      const _hoisted_1 = { class: "modal-content" };
+      const _hoisted_2 = ["innerHTML"];
+      const _hoisted_3 = ["innerHTML"];
+      const _hoisted_4 = { class: "sidebar-content" };
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "App",
         props: {
@@ -4217,9 +4326,9 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BCZP9fS5-CJaNxJCx.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-CS_L40ZA-D1eTKGB4.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-BnHsFbrX-BYY1YA_h.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BV8fV_L1-D0KkjHLa.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-H_z0Yqg_-Chwuwi-1.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-BxXSkDY2-CzUOF7Zy.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -4228,7 +4337,9 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
             exportAllItems,
             importAllFromZip,
             importTags,
-            importItems
+            importItems,
+            exportSingleItem,
+            importSingleItem
           } = useStorage();
           function getTabComponent() {
             const activeTab = data.value.ui.activeTab;
@@ -4246,6 +4357,8 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
           const sidebarRef = ref(null);
           const showMenu = ref(false);
           const menuPosition = ref({ x: 0, y: 0 });
+          const showImportConflictDialog = ref(false);
+          const pendingImportConfig = ref(null);
           const tabs = [
             { id: "tags", label: "标签" },
             { id: "items", label: "商品" },
@@ -4360,6 +4473,54 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
                 return "";
             }
           });
+          function handleEditExport() {
+            if (!props.itemId) {
+              toast.error("无法获取当前商品ID");
+              return;
+            }
+            try {
+              const config = exportSingleItem(props.itemId);
+              if (!config) {
+                toast.error("当前商品没有配置数据");
+                return;
+              }
+              const timestamp = generateTimestamp();
+              downloadJSON(config, `booth-item-${props.itemId}-${timestamp}.json`);
+              toast.success("商品配置导出成功");
+            } catch (error) {
+              console.error("导出失败:", error);
+              toast.error("导出失败：" + error.message);
+            }
+          }
+          function handleEditImport() {
+            triggerFileInput(".json,application/json", async (file) => {
+              try {
+                const config = await readJSONFile(file);
+                const success = importSingleItem(config, { replace: false });
+                if (!success) {
+                  pendingImportConfig.value = config;
+                  showImportConflictDialog.value = true;
+                } else {
+                  toast.success("商品配置导入成功");
+                }
+              } catch (error) {
+                console.error("导入失败:", error);
+                toast.error("导入失败：" + error.message);
+              }
+            });
+          }
+          function confirmReplaceConfig() {
+            if (pendingImportConfig.value) {
+              importSingleItem(pendingImportConfig.value, { replace: true });
+              toast.success("商品配置导入成功");
+            }
+            showImportConflictDialog.value = false;
+            pendingImportConfig.value = null;
+          }
+          function cancelImport() {
+            showImportConflictDialog.value = false;
+            pendingImportConfig.value = null;
+          }
           const menuItems = computed(() => {
             const isEditTab = data.value.ui.activeTab === "edit";
             return [
@@ -4380,16 +4541,14 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
                 }
               },
               {
-                label: `导出${currentTabLabel.value}数据 (JSON)`,
+                label: isEditTab ? "导出当前商品 (JSON)" : `导出${currentTabLabel.value}数据 (JSON)`,
                 icon: withSize(icons.upload, 14),
-                action: handleTabExport,
-                disabled: isEditTab
+                action: isEditTab ? handleEditExport : handleTabExport
               },
               {
-                label: `导入${currentTabLabel.value}数据 (JSON)`,
+                label: isEditTab ? "导入商品配置 (JSON)" : `导入${currentTabLabel.value}数据 (JSON)`,
                 icon: withSize(icons.download, 14),
-                action: handleTabImport,
-                disabled: isEditTab
+                action: isEditTab ? handleEditImport : handleTabImport
               }
             ];
           });
@@ -4433,7 +4592,49 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
                 items: menuItems.value,
                 onClose: closeMenu
               }, null, 8, ["show", "x", "y", "items"]),
-              createElementVNode("div", _hoisted_1, [
+              createVNode(unref(Modal), {
+                show: showImportConflictDialog.value,
+                title: "导入确认",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: cancelImport,
+                width: "400px"
+              }, {
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: cancelImport,
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_2)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: confirmReplaceConfig,
+                    title: "替换"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_3)
+                  ])
+                ]),
+                default: withCtx(() => {
+                  var _a;
+                  return [
+                    createElementVNode("div", _hoisted_1, [
+                      createElementVNode("p", null, [
+                        _cache[0] || (_cache[0] = createTextVNode("商品 ID ", -1)),
+                        createElementVNode("strong", null, toDisplayString((_a = pendingImportConfig.value) == null ? void 0 : _a.itemId), 1),
+                        _cache[1] || (_cache[1] = createTextVNode(" 已存在配置。", -1))
+                      ]),
+                      _cache[2] || (_cache[2] = createElementVNode("p", null, "是否要替换现有配置？", -1))
+                    ])
+                  ];
+                }),
+                _: 1
+              }, 8, ["show"]),
+              createElementVNode("div", _hoisted_4, [
                 (openBlock(), createBlock(resolveDynamicComponent(getTabComponent()), {
                   key: unref(data).ui.activeTab + "-" + Date.now(),
                   api: props.api
@@ -4443,7 +4644,7 @@ System.register("./__monkey.entry-BqCU_ghY.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-1ec927fc"]]);
+      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-ef8b0a5f"]]);
       class PageModule {
         constructor(api) {
           __publicField(this, "api");
@@ -6607,13 +6808,12 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dmj4t9GW.js', './useSearch-BDAw0Ci_-J-gwRsia.js', './__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./TagTab-BV8fV_L1-D0KkjHLa.js", ['vue', './useTreeTab-C9m3nt2O-gtVEFu7Y.js', './__monkey.entry-xDA_xLW6.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useModal, Modal, Tree, tagSearchFilter, _export_sfc, useStorage;
+  var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
-      ref = module.ref;
       computed = module.computed;
       createElementBlock = module.createElementBlock;
       openBlock = module.openBlock;
@@ -6631,14 +6831,15 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
       vModelText = module.vModelText;
       createTextVNode = module.createTextVNode;
     }, module => {
-      useModal = module.u;
-      Modal = module.M;
-    }, module => {
+      useTreeTab = module.u;
       Tree = module.T;
       tagSearchFilter = module.t;
     }, module => {
       _export_sfc = module._;
       useStorage = module.u;
+      Modal = module.M;
+      withSize = module.w;
+      icons = module.i;
     }],
     execute: (function () {
 
@@ -6671,6 +6872,11 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
       const _hoisted_18 = ["placeholder"];
       const _hoisted_19 = { key: 6 };
       const _hoisted_20 = { class: "modal-message" };
+      const _hoisted_21 = ["innerHTML"];
+      const _hoisted_22 = ["innerHTML"];
+      const _hoisted_23 = ["innerHTML"];
+      const _hoisted_24 = ["innerHTML"];
+      const _hoisted_25 = ["innerHTML"];
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "TagTab",
         props: {
@@ -6678,15 +6884,8 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
         },
         setup(__props) {
           const props = __props;
-          const { data, createNode, renameNode, deleteNode } = useStorage();
-          const modal = useModal();
-          const selectedNodeId = ref(null);
+          const { data, createNode, renameNode } = useStorage();
           const tree = computed(() => data.value.tagTree);
-          const handleSelect = (nodes) => {
-            if (nodes.length > 0) {
-              selectedNodeId.value = nodes[0].id;
-            }
-          };
           function hasTagsRecursive(node) {
             var _a;
             if (!node) return false;
@@ -6778,65 +6977,50 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
             }
             return trimmed.split(/[,\n]+/).map((tag) => tag.trim()).filter((tag) => tag.length > 0);
           };
-          const handleCreateFolder = (parentId) => {
-            const newNode = createNode(tree.value, "新建文件夹", void 0, parentId);
-            return newNode.id;
-          };
-          const handleCreateTag = (parentId) => {
-            const tagData = { tags: [] };
-            const newNode = createNode(tree.value, "新建 Tag 预设", tagData, parentId);
-            return newNode.id;
-          };
-          const handleEditTag = async (nodeId) => {
-            const node = data.value.tagTree.nodes[nodeId];
-            if (!node || !node.data) return;
-            const result = await modal.openModal({
-              type: "createTag",
-              title: "编辑 Tag 预设",
-              formData: {
-                name: node.name,
-                tagsText: node.data.tags.join("\n")
+          const treeTab = useTreeTab({
+            tree: () => data.value.tagTree,
+            onCreateFolder: (parentId) => {
+              const newNode = createNode(tree.value, "新建文件夹", void 0, parentId);
+              return newNode.id;
+            },
+            onCreateItem: (parentId) => {
+              const tagData = { tags: [] };
+              const newNode = createNode(tree.value, "新建 Tag 预设", tagData, parentId);
+              return newNode.id;
+            },
+            onEditItem: async (nodeId) => {
+              const node = data.value.tagTree.nodes[nodeId];
+              if (!node || !node.data) return;
+              const result = await treeTab.modal.openModal({
+                type: "createTag",
+                title: "编辑 Tag 预设",
+                formData: {
+                  name: node.name,
+                  tagsText: node.data.tags.join("\n")
+                }
+              });
+              if (result && result.name && result.tagsText) {
+                const tags = parseTags(result.tagsText);
+                if (tags.length > 0) {
+                  renameNode(tree.value, nodeId, result.name.trim());
+                  node.data.tags = tags;
+                }
               }
-            });
-            if (result && result.name && result.tagsText) {
-              const tags = parseTags(result.tagsText);
-              if (tags.length > 0) {
-                renameNode(tree.value, nodeId, result.name.trim());
-                node.data.tags = tags;
-              }
             }
-          };
-          const handleRename = (nodeId, newName) => {
-            const trimmedName = newName.trim();
-            if (trimmedName) {
-              renameNode(tree.value, nodeId, trimmedName);
-            }
-          };
-          const handleDelete = async (nodeId) => {
-            const node = data.value.tagTree.nodes[nodeId];
-            if (!node) return;
-            const confirmed = await modal.openModal({
-              type: "delete",
-              title: "确认删除",
-              formData: { message: `确定要删除"${node.name}"吗？` }
-            });
-            if (confirmed) {
-              deleteNode(tree.value, nodeId);
-            }
-          };
+          });
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock("div", _hoisted_1, [
               createVNode(Tree, {
-                tree: tree.value,
+                tree: unref(treeTab).tree.value,
                 "search-placeholder": "搜索 Tag...",
                 "search-filter": unref(tagSearchFilter),
                 "custom-menu-items": customMenuItems.value,
-                "on-create-folder": handleCreateFolder,
-                "on-create-item": handleCreateTag,
-                "on-rename": handleRename,
-                "on-delete": handleDelete,
-                "on-edit": handleEditTag,
-                onSelectionChange: handleSelect
+                "on-create-folder": unref(treeTab).handleCreateFolder,
+                "on-create-item": unref(treeTab).handleCreateItem,
+                "on-rename": unref(treeTab).handleRename,
+                "on-delete": unref(treeTab).handleDelete,
+                "on-edit": unref(treeTab).handleEditItem,
+                onSelectionChange: unref(treeTab).handleSelect
               }, {
                 default: withCtx(({ node }) => {
                   var _a;
@@ -6861,60 +7045,85 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
                   ];
                 }),
                 _: 1
-              }, 8, ["tree", "search-filter", "custom-menu-items"]),
+              }, 8, ["tree", "search-filter", "custom-menu-items", "on-create-folder", "on-create-item", "on-rename", "on-delete", "on-edit", "onSelectionChange"]),
               createVNode(Modal, {
-                show: unref(modal).state.value.show,
-                title: unref(modal).state.value.title,
+                show: unref(treeTab).modal.state.value.show,
+                title: unref(treeTab).modal.state.value.title,
                 "teleport-to": ".booth-enhancer-sidebar",
-                onClose: unref(modal).closeModal
+                onClose: unref(treeTab).modal.closeModal
               }, {
                 footer: withCtx(() => [
-                  unref(modal).state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
+                  unref(treeTab).modal.state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
                     key: 0,
-                    class: "booth-btn booth-btn-md booth-btn-secondary",
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                     onClick: _cache[9] || (_cache[9] = //@ts-ignore
-                    (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
-                  }, " 取消 ")) : createCommentVNode("", true),
-                  unref(modal).state.value.type === "createTag" ? (openBlock(), createElementBlock("button", {
+                    (...args) => unref(treeTab).modal.closeModal && unref(treeTab).modal.closeModal(...args)),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_21)
+                  ])) : createCommentVNode("", true),
+                  unref(treeTab).modal.state.value.type === "createTag" ? (openBlock(), createElementBlock("button", {
                     key: 1,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[10] || (_cache[10] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData))
-                  }, " 确定 ")) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[10] || (_cache[10] = ($event) => unref(treeTab).modal.confirmModal(unref(treeTab).modal.state.value.formData)),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_22)
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
                     key: 2,
-                    class: "booth-btn booth-btn-md booth-btn-danger",
-                    onClick: _cache[11] || (_cache[11] = ($event) => unref(modal).confirmModal(true))
-                  }, " 删除 ")) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: _cache[11] || (_cache[11] = ($event) => unref(treeTab).modal.confirmModal(true)),
+                    title: "删除"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                    }, null, 8, _hoisted_23)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
                     key: 3,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[12] || (_cache[12] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 ")) : (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[12] || (_cache[12] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_24)
+                  ])) : (openBlock(), createElementBlock("button", {
                     key: 4,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[13] || (_cache[13] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 "))
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[13] || (_cache[13] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_25)
+                  ]))
                 ]),
                 default: withCtx(() => [
-                  unref(modal).state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                  unref(treeTab).modal.state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_6, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
                       placeholder: "文件夹名称",
-                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 544), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "createTag" ? (openBlock(), createElementBlock("div", _hoisted_7, [
+                  ])) : unref(treeTab).modal.state.value.type === "createTag" ? (openBlock(), createElementBlock("div", _hoisted_7, [
                     createElementVNode("div", _hoisted_8, [
                       _cache[14] || (_cache[14] = createElementVNode("label", null, [
                         createTextVNode("预设名称 "),
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.formData.name = $event),
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(treeTab).modal.state.value.formData.name = $event),
                         type: "text",
                         placeholder: "例如：イチゴ配布物"
                       }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.name]
+                        [vModelText, unref(treeTab).modal.state.value.formData.name]
                       ])
                     ]),
                     createElementVNode("div", _hoisted_9, [
@@ -6923,48 +7132,48 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
                       withDirectives(createElementVNode("textarea", {
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.formData.tagsText = $event),
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(treeTab).modal.state.value.formData.tagsText = $event),
                         class: "modal-textarea-code-small",
                         placeholder: '支持两种格式：\n1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]\n2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ',
-                        rows: "8"
+                        rows: "4"
                       }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.tagsText]
+                        [vModelText, unref(treeTab).modal.state.value.formData.tagsText]
                       ]),
                       _cache[16] || (_cache[16] = createElementVNode("small", { class: "form-hint-small" }, ' 💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入 ', -1))
                     ])
-                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
+                  ])) : unref(treeTab).modal.state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
                       placeholder: "新名称",
-                      onKeyup: _cache[5] || (_cache[5] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[5] || (_cache[5] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 544), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
-                    createElementVNode("p", _hoisted_12, toDisplayString(unref(modal).state.value.formData.message), 1)
-                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                    createElementVNode("p", _hoisted_12, toDisplayString(unref(treeTab).modal.state.value.formData.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
-                      placeholder: unref(modal).state.value.placeholder,
-                      onKeyup: _cache[7] || (_cache[7] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      onKeyup: _cache[7] || (_cache[7] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 40, _hoisted_15), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(treeTab).modal.state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("textarea", {
-                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       class: "modal-textarea-code",
-                      placeholder: unref(modal).state.value.placeholder,
-                      rows: "8"
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      rows: "4"
                     }, null, 8, _hoisted_18), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
-                    createElementVNode("p", _hoisted_20, toDisplayString(unref(modal).state.value.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
+                    createElementVNode("p", _hoisted_20, toDisplayString(unref(treeTab).modal.state.value.message), 1)
                   ])) : createCommentVNode("", true)
                 ]),
                 _: 1
@@ -6973,19 +7182,18 @@ System.register("./TagTab-BCZP9fS5-CJaNxJCx.js", ['vue', './useModal-OGcRyhnf-Dm
           };
         }
       });
-      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4d4f39a2"]]));
+      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-e495ea3c"]]));
 
     })
   };
 }));
 
-System.register("./ItemTab-CS_L40ZA-D1eTKGB4.js", ['vue', './useModal-OGcRyhnf-Dmj4t9GW.js', './useSearch-BDAw0Ci_-J-gwRsia.js', './__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./ItemTab-H_z0Yqg_-Chwuwi-1.js", ['vue', './useTreeTab-C9m3nt2O-gtVEFu7Y.js', './__monkey.entry-xDA_xLW6.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, ref, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useModal, Modal, Tree, itemDataSearchFilter, _export_sfc, useStorage;
+  var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
-      ref = module.ref;
       computed = module.computed;
       createElementBlock = module.createElementBlock;
       openBlock = module.openBlock;
@@ -7000,14 +7208,15 @@ System.register("./ItemTab-CS_L40ZA-D1eTKGB4.js", ['vue', './useModal-OGcRyhnf-D
       vModelText = module.vModelText;
       createTextVNode = module.createTextVNode;
     }, module => {
-      useModal = module.u;
-      Modal = module.M;
-    }, module => {
+      useTreeTab = module.u;
       Tree = module.T;
       itemDataSearchFilter = module.i;
     }, module => {
       _export_sfc = module._;
       useStorage = module.u;
+      Modal = module.M;
+      withSize = module.w;
+      icons = module.i;
     }],
     execute: (function () {
 
@@ -7040,84 +7249,66 @@ System.register("./ItemTab-CS_L40ZA-D1eTKGB4.js", ['vue', './useModal-OGcRyhnf-D
       const _hoisted_18 = ["placeholder"];
       const _hoisted_19 = { key: 6 };
       const _hoisted_20 = { class: "modal-message" };
+      const _hoisted_21 = ["innerHTML"];
+      const _hoisted_22 = ["innerHTML"];
+      const _hoisted_23 = ["innerHTML"];
+      const _hoisted_24 = ["innerHTML"];
+      const _hoisted_25 = ["innerHTML"];
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "ItemTab",
         setup(__props) {
-          const { data, createNode, renameNode, deleteNode } = useStorage();
-          const modal = useModal();
-          const selectedNodeId = ref(null);
-          const tree = computed(() => data.value.itemTree);
-          const handleSelect = (nodes) => {
-            if (nodes.length > 0) {
-              selectedNodeId.value = nodes[0].id;
-            }
-          };
-          function handleCreateFolder(parentId) {
-            const newNode = createNode(tree.value, "新建文件夹", void 0, parentId);
-            return newNode.id;
-          }
-          function handleCreateItem(parentId) {
-            const itemData = {
-              authorName: "",
-              itemName: "",
-              itemUrl: ""
-            };
-            const newNode = createNode(tree.value, "新建商品数据", itemData, parentId);
-            return newNode.id;
-          }
-          async function handleEditItem(nodeId) {
-            var _a;
-            const node = data.value.itemTree.nodes[nodeId];
-            if (!node || !node.data) return;
-            const result = await modal.openModal({
-              type: "createItem",
-              title: "编辑商品数据",
-              formData: {
-                name: node.name,
-                authorName: node.data.authorName || "",
-                itemUrl: node.data.itemUrl || ""
+          const { data, createNode, renameNode } = useStorage();
+          const treeTab = useTreeTab({
+            tree: () => data.value.itemTree,
+            onCreateFolder: (parentId) => {
+              const newNode = createNode(data.value.itemTree, "新建文件夹", void 0, parentId);
+              return newNode.id;
+            },
+            onCreateItem: (parentId) => {
+              const itemData = {
+                authorName: "",
+                itemName: "",
+                itemUrl: ""
+              };
+              const newNode = createNode(data.value.itemTree, "新建商品数据", itemData, parentId);
+              return newNode.id;
+            },
+            onEditItem: async (nodeId) => {
+              var _a;
+              const node = data.value.itemTree.nodes[nodeId];
+              if (!node || !node.data) return;
+              const result = await treeTab.modal.openModal({
+                type: "createItem",
+                title: "编辑商品数据",
+                formData: {
+                  name: node.name,
+                  authorName: node.data.authorName || "",
+                  itemUrl: node.data.itemUrl || ""
+                }
+              });
+              if ((_a = result == null ? void 0 : result.name) == null ? void 0 : _a.trim()) {
+                const trimmedName = result.name.trim();
+                renameNode(data.value.itemTree, nodeId, trimmedName);
+                node.data.authorName = result.authorName.trim();
+                node.data.itemName = trimmedName;
+                node.data.itemUrl = result.itemUrl.trim();
               }
-            });
-            if ((_a = result == null ? void 0 : result.name) == null ? void 0 : _a.trim()) {
-              const trimmedName = result.name.trim();
-              renameNode(tree.value, nodeId, trimmedName);
-              node.data.authorName = result.authorName.trim();
-              node.data.itemName = trimmedName;
-              node.data.itemUrl = result.itemUrl.trim();
             }
-          }
-          function handleRename(nodeId, newName) {
-            const trimmedName = newName.trim();
-            if (trimmedName) {
-              renameNode(tree.value, nodeId, trimmedName);
-            }
-          }
-          async function handleDelete(nodeId) {
-            const node = data.value.itemTree.nodes[nodeId];
-            if (!node) return;
-            const confirmed = await modal.openModal({
-              type: "delete",
-              title: "确认删除",
-              formData: { message: `确定要删除"${node.name}"吗？` }
-            });
-            if (confirmed) {
-              deleteNode(tree.value, nodeId);
-            }
-          }
+          });
           const customMenuItems = computed(() => []);
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock("div", _hoisted_1, [
               createVNode(unref(Tree), {
-                tree: tree.value,
+                tree: unref(treeTab).tree.value,
                 "search-placeholder": "搜索商品数据...",
                 "search-filter": unref(itemDataSearchFilter),
-                "on-create-folder": handleCreateFolder,
-                "on-create-item": handleCreateItem,
-                "on-rename": handleRename,
-                "on-delete": handleDelete,
-                "on-edit": handleEditItem,
+                "on-create-folder": unref(treeTab).handleCreateFolder,
+                "on-create-item": unref(treeTab).handleCreateItem,
+                "on-rename": unref(treeTab).handleRename,
+                "on-delete": unref(treeTab).handleDelete,
+                "on-edit": unref(treeTab).handleEditItem,
                 "custom-menu-items": customMenuItems.value,
-                onSelectionChange: handleSelect
+                onSelectionChange: unref(treeTab).handleSelect
               }, {
                 default: withCtx(({ node }) => {
                   var _a, _b;
@@ -7130,115 +7321,140 @@ System.register("./ItemTab-CS_L40ZA-D1eTKGB4.js", ['vue', './useModal-OGcRyhnf-D
                   ];
                 }),
                 _: 1
-              }, 8, ["tree", "search-filter", "custom-menu-items"]),
+              }, 8, ["tree", "search-filter", "on-create-folder", "on-create-item", "on-rename", "on-delete", "on-edit", "custom-menu-items", "onSelectionChange"]),
               createVNode(Modal, {
-                show: unref(modal).state.value.show,
-                title: unref(modal).state.value.title,
+                show: unref(treeTab).modal.state.value.show,
+                title: unref(treeTab).modal.state.value.title,
                 "teleport-to": ".booth-enhancer-sidebar",
-                onClose: unref(modal).closeModal
+                onClose: unref(treeTab).modal.closeModal
               }, {
                 footer: withCtx(() => [
-                  unref(modal).state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
+                  unref(treeTab).modal.state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
                     key: 0,
-                    class: "booth-btn booth-btn-md booth-btn-secondary",
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                     onClick: _cache[10] || (_cache[10] = //@ts-ignore
-                    (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
-                  }, " 取消 ")) : createCommentVNode("", true),
-                  unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
+                    (...args) => unref(treeTab).modal.closeModal && unref(treeTab).modal.closeModal(...args)),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_21)
+                  ])) : createCommentVNode("", true),
+                  unref(treeTab).modal.state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
                     key: 1,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[11] || (_cache[11] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData))
-                  }, " 确定 ")) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[11] || (_cache[11] = ($event) => unref(treeTab).modal.confirmModal(unref(treeTab).modal.state.value.formData)),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_22)
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
                     key: 2,
-                    class: "booth-btn booth-btn-md booth-btn-danger",
-                    onClick: _cache[12] || (_cache[12] = ($event) => unref(modal).confirmModal(true))
-                  }, " 删除 ")) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: _cache[12] || (_cache[12] = ($event) => unref(treeTab).modal.confirmModal(true)),
+                    title: "删除"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                    }, null, 8, _hoisted_23)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
                     key: 3,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[13] || (_cache[13] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 ")) : (openBlock(), createElementBlock("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[13] || (_cache[13] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_24)
+                  ])) : (openBlock(), createElementBlock("button", {
                     key: 4,
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[14] || (_cache[14] = ($event) => unref(modal).confirmModal())
-                  }, " 确定 "))
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[14] || (_cache[14] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_25)
+                  ]))
                 ]),
                 default: withCtx(() => [
-                  unref(modal).state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_5, [
+                  unref(treeTab).modal.state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_5, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
                       placeholder: "文件夹名称",
-                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 544), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                  ])) : unref(treeTab).modal.state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_6, [
                     createElementVNode("div", _hoisted_7, [
                       _cache[16] || (_cache[16] = createElementVNode("label", null, [
                         createTextVNode("商品名称 "),
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.formData.name = $event),
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(treeTab).modal.state.value.formData.name = $event),
                         type: "text",
                         placeholder: "例如：イチゴ - Ichigo"
                       }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.name]
+                        [vModelText, unref(treeTab).modal.state.value.formData.name]
                       ])
                     ]),
                     createElementVNode("div", _hoisted_8, [
                       _cache[17] || (_cache[17] = createElementVNode("label", null, "作者名称", -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.formData.authorName = $event),
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(treeTab).modal.state.value.formData.authorName = $event),
                         type: "text",
                         placeholder: "例如：みゅ"
                       }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.authorName]
+                        [vModelText, unref(treeTab).modal.state.value.formData.authorName]
                       ])
                     ]),
                     createElementVNode("div", _hoisted_9, [
                       _cache[18] || (_cache[18] = createElementVNode("label", null, "商品链接", -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(modal).state.value.formData.itemUrl = $event),
+                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(treeTab).modal.state.value.formData.itemUrl = $event),
                         type: "text",
                         placeholder: "https://booth.pm/..."
                       }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.itemUrl]
+                        [vModelText, unref(treeTab).modal.state.value.formData.itemUrl]
                       ])
                     ])
-                  ])) : unref(modal).state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
+                  ])) : unref(treeTab).modal.state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
                       placeholder: "新名称",
-                      onKeyup: _cache[6] || (_cache[6] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      onKeyup: _cache[6] || (_cache[6] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 544), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
-                    createElementVNode("p", _hoisted_12, toDisplayString(unref(modal).state.value.formData.message), 1)
-                  ])) : unref(modal).state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                    createElementVNode("p", _hoisted_12, toDisplayString(unref(treeTab).modal.state.value.formData.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       type: "text",
-                      placeholder: unref(modal).state.value.placeholder,
-                      onKeyup: _cache[8] || (_cache[8] = withKeys(($event) => unref(modal).confirmModal(), ["enter"]))
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      onKeyup: _cache[8] || (_cache[8] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
                     }, null, 40, _hoisted_15), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
-                    unref(modal).state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(modal).state.value.message), 1)) : createCommentVNode("", true),
+                  ])) : unref(treeTab).modal.state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
                     withDirectives(createElementVNode("textarea", {
-                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => unref(modal).state.value.inputValue = $event),
+                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
                       class: "modal-textarea-code",
-                      placeholder: unref(modal).state.value.placeholder,
-                      rows: "8"
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      rows: "4"
                     }, null, 8, _hoisted_18), [
-                      [vModelText, unref(modal).state.value.inputValue]
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
                     ])
-                  ])) : unref(modal).state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
-                    createElementVNode("p", _hoisted_20, toDisplayString(unref(modal).state.value.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
+                    createElementVNode("p", _hoisted_20, toDisplayString(unref(treeTab).modal.state.value.message), 1)
                   ])) : createCommentVNode("", true)
                 ]),
                 _: 1
@@ -7247,20 +7463,20 @@ System.register("./ItemTab-CS_L40ZA-D1eTKGB4.js", ['vue', './useModal-OGcRyhnf-D
           };
         }
       });
-      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-2ed796f5"]]));
+      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6c6b3856"]]));
 
     })
   };
 }));
 
-System.register("./useSearch-BDAw0Ci_-J-gwRsia.js", ['vue', './__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./useTreeTab-C9m3nt2O-gtVEFu7Y.js", ['vue', './__monkey.entry-xDA_xLW6.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, ref, computed, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, ConfigStorage, ContextMenu, icons, withSize;
+  var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
     setters: [module => {
-      defineComponent = module.defineComponent;
       ref = module.ref;
       computed = module.computed;
+      defineComponent = module.defineComponent;
       onMounted = module.onMounted;
       onUnmounted = module.onUnmounted;
       createElementBlock = module.createElementBlock;
@@ -7287,16 +7503,20 @@ System.register("./useSearch-BDAw0Ci_-J-gwRsia.js", ['vue', './__monkey.entry-Bq
       nextTick = module.nextTick;
     }, module => {
       _export_sfc = module._;
+      useStorage = module.u;
       ConfigStorage = module.C;
       ContextMenu = module.a;
       icons = module.i;
       withSize = module.w;
+    }, module => {
+      useModal = module.u;
     }],
     execute: (function () {
 
       exports({
         i: itemDataSearchFilter,
-        t: tagSearchFilter
+        t: tagSearchFilter,
+        u: useTreeTab
       });
 
       const _hoisted_1$1 = { class: "tree-item" };
@@ -8138,14 +8358,75 @@ System.register("./useSearch-BDAw0Ci_-J-gwRsia.js", ['vue', './__monkey.entry-Bq
         const itemUrl = ((_f = (_e = node.data) == null ? void 0 : _e.itemUrl) == null ? void 0 : _f.toLowerCase()) || "";
         return nodeName.includes(lowerSearch) || authorName.includes(lowerSearch) || itemUrl.includes(lowerSearch);
       }
+      function useTreeTab(options) {
+        const { renameNode, deleteNode } = useStorage();
+        const modal = useModal();
+        const selectedNodeId = ref(null);
+        const tree = computed(
+          () => typeof options.tree === "function" ? options.tree() : options.tree
+        );
+        function handleSelect(nodes) {
+          if (nodes.length > 0) {
+            selectedNodeId.value = nodes[0].id;
+          }
+        }
+        function handleCreateFolder(parentId) {
+          if (options.onCreateFolder) {
+            return options.onCreateFolder(parentId);
+          }
+          const storage = useStorage();
+          const newNode = storage.createNode(tree.value, "新建文件夹", void 0, parentId);
+          return newNode.id;
+        }
+        function handleCreateItem(parentId) {
+          if (options.onCreateItem) {
+            return options.onCreateItem(parentId);
+          }
+          throw new Error("onCreateItem is required");
+        }
+        async function handleEditItem(nodeId) {
+          if (options.onEditItem) {
+            await options.onEditItem(nodeId);
+          }
+        }
+        function handleRename(nodeId, newName) {
+          const trimmedName = newName.trim();
+          if (trimmedName) {
+            renameNode(tree.value, nodeId, trimmedName);
+          }
+        }
+        async function handleDelete(nodeId) {
+          const node = tree.value.nodes[nodeId];
+          if (!node) return;
+          const confirmed = await modal.openModal({
+            type: "delete",
+            title: "确认删除",
+            formData: { message: `确定要删除"${node.name}"吗？` }
+          });
+          if (confirmed) {
+            deleteNode(tree.value, nodeId);
+          }
+        }
+        return {
+          selectedNodeId,
+          tree,
+          handleSelect,
+          handleCreateFolder,
+          handleCreateItem,
+          handleEditItem,
+          handleRename,
+          handleDelete,
+          modal
+        };
+      }
 
     })
   };
 }));
 
-System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-Dmj4t9GW.js', './__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./EditTab-BxXSkDY2-CzUOF7Zy.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-xDA_xLW6.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, renderList, renderSlot, normalizeClass, vModelCheckbox, useModal, Modal, _export_sfc, useStorage, getSelectedNameTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, withSize, icons, createDefaultItemConfig, downloadJSON, triggerFileInput, readJSONFile, getSelectedChangelogTemplate, TabBar;
+  var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createBlock, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, createVNode, toDisplayString, withModifiers, nextTick, renderList, normalizeClass, vModelCheckbox, useSlots, renderSlot, useModal, _export_sfc, useStorage, getSelectedNameTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedChangelogTemplate, TabBar;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
@@ -8156,7 +8437,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
       createElementBlock = module.createElementBlock;
       openBlock = module.openBlock;
       Fragment = module.Fragment;
-      createVNode = module.createVNode;
+      createBlock = module.createBlock;
       createCommentVNode = module.createCommentVNode;
       unref = module.unref;
       withCtx = module.withCtx;
@@ -8166,15 +8447,17 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
       withKeys = module.withKeys;
       vModelText = module.vModelText;
       vModelSelect = module.vModelSelect;
+      createVNode = module.createVNode;
       toDisplayString = module.toDisplayString;
-      createBlock = module.createBlock;
+      withModifiers = module.withModifiers;
+      nextTick = module.nextTick;
       renderList = module.renderList;
-      renderSlot = module.renderSlot;
       normalizeClass = module.normalizeClass;
       vModelCheckbox = module.vModelCheckbox;
+      useSlots = module.useSlots;
+      renderSlot = module.renderSlot;
     }, module => {
       useModal = module.u;
-      Modal = module.M;
     }, module => {
       _export_sfc = module._;
       useStorage = module.u;
@@ -8182,35 +8465,73 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
       getSelectedDescriptionTemplate = module.b;
       getSelectedDiscountTemplate = module.c;
       toast = module.t;
+      Modal = module.M;
       withSize = module.w;
       icons = module.i;
       createDefaultItemConfig = module.d;
-      downloadJSON = module.e;
-      triggerFileInput = module.f;
-      readJSONFile = module.r;
-      getSelectedChangelogTemplate = module.h;
+      getSelectedChangelogTemplate = module.e;
       TabBar = module.T;
     }],
     execute: (function () {
 
-      const _hoisted_1$5 = { class: "draggable-card-list" };
-      const _hoisted_2$5 = ["onDragstart", "onDrop"];
-      const _hoisted_3$5 = { class: "card-header" };
-      const _hoisted_4$5 = ["innerHTML"];
-      const _hoisted_5$5 = { class: "card-number" };
-      const _hoisted_6$5 = { class: "header-content" };
-      const _hoisted_7$5 = ["onClick"];
-      const _hoisted_8$5 = ["innerHTML"];
-      const _hoisted_9$5 = { class: "card-body" };
-      const _hoisted_10$5 = {
+      const _hoisted_1$8 = {
         key: 0,
-        class: "card-footer"
+        class: "section-header"
       };
-      const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+      const _hoisted_2$8 = {
+        key: 0,
+        class: "be-text-base be-font-bold"
+      };
+      const _hoisted_3$8 = {
+        key: 1,
+        class: "actions"
+      };
+      const _hoisted_4$8 = { class: "section-content" };
+      const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+        __name: "SectionHeader",
+        props: {
+          title: { default: "" },
+          noBorder: { type: Boolean, default: false }
+        },
+        setup(__props) {
+          const props = __props;
+          const slots = useSlots();
+          const hasHeader = computed(() => props.title || slots.title || slots.actions);
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("section", {
+              class: normalizeClass(["section-header-container", { "no-header": !hasHeader.value, "no-border": _ctx.noBorder }])
+            }, [
+              hasHeader.value ? (openBlock(), createElementBlock("div", _hoisted_1$8, [
+                _ctx.title || _ctx.$slots.title ? (openBlock(), createElementBlock("div", _hoisted_2$8, [
+                  renderSlot(_ctx.$slots, "title", {}, () => [
+                    createTextVNode(toDisplayString(_ctx.title), 1)
+                  ], true)
+                ])) : createCommentVNode("", true),
+                _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_3$8, [
+                  renderSlot(_ctx.$slots, "actions", {}, void 0, true)
+                ])) : createCommentVNode("", true)
+              ])) : createCommentVNode("", true),
+              createElementVNode("div", _hoisted_4$8, [
+                renderSlot(_ctx.$slots, "default", {}, void 0, true)
+              ])
+            ], 2);
+          };
+        }
+      });
+      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-bd8a2399"]]);
+      const _hoisted_1$7 = { class: "draggable-card-list" };
+      const _hoisted_2$7 = ["onDragstart", "onDrop"];
+      const _hoisted_3$7 = { class: "card-actions" };
+      const _hoisted_4$7 = ["innerHTML"];
+      const _hoisted_5$7 = { class: "card-number" };
+      const _hoisted_6$7 = { class: "actions-content" };
+      const _hoisted_7$7 = ["onClick"];
+      const _hoisted_8$6 = ["innerHTML"];
+      const _hoisted_9$6 = { class: "card-content" };
+      const _sfc_main$7 = /* @__PURE__ */ defineComponent({
         __name: "DraggableCardList",
         props: {
           items: {},
-          showRemoveButton: { type: Boolean, default: true },
           keyExtractor: { type: Function, default: (item, index) => {
             return (item == null ? void 0 : item.id) !== void 0 ? item.id : index;
           } }
@@ -8238,7 +8559,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             emit("remove", index);
           }
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$5, [
+            return openBlock(), createElementBlock("div", _hoisted_1$7, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.items, (item, index) => {
                 return openBlock(), createElementBlock("div", {
                   key: _ctx.keyExtractor(item, index),
@@ -8248,47 +8569,78 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
                   onDragover: onDragOver,
                   onDrop: ($event) => onDrop($event, index)
                 }, [
-                  createElementVNode("div", _hoisted_3$5, [
+                  createElementVNode("div", _hoisted_3$7, [
                     createElementVNode("span", {
                       class: "drag-handle",
                       innerHTML: unref(withSize)(unref(icons).moreVertical, 14)
-                    }, null, 8, _hoisted_4$5),
-                    createElementVNode("span", _hoisted_5$5, "#" + toDisplayString(index + 1), 1),
-                    createElementVNode("div", _hoisted_6$5, [
-                      renderSlot(_ctx.$slots, "header", {
+                    }, null, 8, _hoisted_4$7),
+                    createElementVNode("span", _hoisted_5$7, "#" + toDisplayString(index + 1), 1),
+                    createElementVNode("div", _hoisted_6$7, [
+                      renderSlot(_ctx.$slots, "actions", {
                         item,
                         index
                       }, void 0, true)
                     ]),
-                    _ctx.showRemoveButton ? (openBlock(), createElementBlock("button", {
-                      key: 0,
+                    createElementVNode("button", {
                       class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
-                      onClick: ($event) => handleRemove(index)
+                      onClick: ($event) => handleRemove(index),
+                      title: "删除"
                     }, [
                       createElementVNode("span", {
                         innerHTML: unref(withSize)(unref(icons).trash, 14)
-                      }, null, 8, _hoisted_8$5)
-                    ], 8, _hoisted_7$5)) : createCommentVNode("", true)
+                      }, null, 8, _hoisted_8$6)
+                    ], 8, _hoisted_7$7)
                   ]),
-                  createElementVNode("div", _hoisted_9$5, [
+                  createElementVNode("div", _hoisted_9$6, [
                     renderSlot(_ctx.$slots, "content", {
                       item,
                       index
                     }, void 0, true)
-                  ]),
-                  _ctx.$slots.footer ? (openBlock(), createElementBlock("div", _hoisted_10$5, [
-                    renderSlot(_ctx.$slots, "footer", {
-                      item,
-                      index
-                    }, void 0, true)
-                  ])) : createCommentVNode("", true)
-                ], 40, _hoisted_2$5);
+                  ])
+                ], 40, _hoisted_2$7);
               }), 128))
             ]);
           };
         }
       });
-      const DraggableCardList = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-8988ff8e"]]);
+      const DraggableCardList = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-b9ebef1f"]]);
+      function useTemplateManager(options) {
+        const { templates, defaultTemplate, minTemplates = 1 } = options;
+        function addTemplate() {
+          const templateArray = templates.value || (templates.value = []);
+          const newTemplate = {
+            id: crypto.randomUUID(),
+            name: `模板 ${templateArray.length + 1}`,
+            isDefault: false,
+            ...defaultTemplate
+          };
+          templateArray.push(newTemplate);
+        }
+        function removeTemplate(index) {
+          const templateArray = templates.value;
+          if (!templateArray || templateArray.length <= minTemplates) return;
+          templateArray.splice(index, 1);
+        }
+        function setDefaultTemplate(index) {
+          const templateArray = templates.value;
+          if (!templateArray) return;
+          templateArray.forEach((t, i) => {
+            t.isDefault = i === index;
+          });
+        }
+        function onReorder(fromIndex, toIndex) {
+          const templateArray = templates.value;
+          if (!templateArray) return;
+          const [removed] = templateArray.splice(fromIndex, 1);
+          templateArray.splice(toIndex, 0, removed);
+        }
+        return {
+          addTemplate,
+          removeTemplate,
+          setDefaultTemplate,
+          onReorder
+        };
+      }
       function applyDiscount(originalPrice, discount) {
         if (!discount.enabled || discount.discountPercent === 0) {
           return originalPrice;
@@ -8344,27 +8696,256 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
         return `${year}/${month}/${day}`;
       }
       function calculateTotalSupport(variations) {
-        return variations.reduce((sum, v) => sum + Number(v.supportCount), 0);
+        return variations.filter((v) => !v.isFullset).reduce((sum, v) => sum + Number(v.supportCount), 0);
       }
-      const _hoisted_1$4 = { class: "modal-content" };
-      const _hoisted_2$4 = { class: "form-group" };
+      const _hoisted_1$6 = ["innerHTML"];
+      const _hoisted_2$6 = ["onUpdate:modelValue"];
+      const _hoisted_3$6 = {
+        class: "booth-toggle",
+        title: "设为默认"
+      };
+      const _hoisted_4$6 = ["checked", "onChange"];
+      const _hoisted_5$6 = { class: "form-group" };
+      const _hoisted_6$6 = ["onUpdate:modelValue"];
+      const _hoisted_7$6 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+        __name: "DescriptionTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get: () => {
+              var _a;
+              return (_a = props.globalTemplates).descriptionTemplates || (_a.descriptionTemplates = []);
+            },
+            set: (value) => {
+              props.globalTemplates.descriptionTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { template: "" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "描述模板配置",
+              width: "600px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$6)
+                ])
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    _cache[4] || (_cache[4] = createElementVNode("p", { class: "form-hint" }, "可用变量: {itemName}, {supportCount}", -1)),
+                    _ctx.globalTemplates.descriptionTemplates && _ctx.globalTemplates.descriptionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.descriptionTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item, index }) => [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => item.name = $event,
+                          type: "text",
+                          placeholder: "输入模板名称",
+                          style: { "flex": "1", "min-width": "0" }
+                        }, null, 8, _hoisted_2$6), [
+                          [vModelText, item.name]
+                        ]),
+                        createElementVNode("label", _hoisted_3$6, [
+                          createElementVNode("input", {
+                            type: "checkbox",
+                            checked: item.isDefault,
+                            onChange: ($event) => unref(setDefaultTemplate)(index)
+                          }, null, 40, _hoisted_4$6),
+                          _cache[2] || (_cache[2] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_5$6, [
+                          _cache[3] || (_cache[3] = createElementVNode("label", null, "模板内容", -1)),
+                          withDirectives(createElementVNode("textarea", {
+                            "onUpdate:modelValue": ($event) => item.template = $event,
+                            rows: "1",
+                            placeholder: "输入模板内容"
+                          }, null, 8, _hoisted_6$6), [
+                            [vModelText, item.template]
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$6, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1,
+                  __: [4]
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$5 = ["innerHTML"];
+      const _hoisted_2$5 = {
+        class: "booth-toggle",
+        title: "设为默认"
+      };
+      const _hoisted_3$5 = ["checked", "onChange"];
+      const _hoisted_4$5 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$5 = { class: "form-group" };
+      const _hoisted_6$5 = ["onUpdate:modelValue"];
+      const _hoisted_7$5 = { class: "form-group" };
+      const _hoisted_8$5 = ["onUpdate:modelValue"];
+      const _hoisted_9$5 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+        __name: "NameTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get: () => {
+              var _a;
+              return (_a = props.globalTemplates).nameTemplates || (_a.nameTemplates = []);
+            },
+            set: (value) => {
+              props.globalTemplates.nameTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { template: "{itemName}" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "商品名模板配置",
+              width: "600px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$5)
+                ])
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    _cache[5] || (_cache[5] = createElementVNode("p", { class: "form-hint" }, "可用变量: {itemName}, {supportCount}", -1)),
+                    _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.nameTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item: template, index }) => [
+                        createElementVNode("label", _hoisted_2$5, [
+                          createElementVNode("input", {
+                            type: "checkbox",
+                            checked: template.isDefault,
+                            onChange: ($event) => unref(setDefaultTemplate)(index)
+                          }, null, 40, _hoisted_3$5),
+                          _cache[2] || (_cache[2] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_4$5, [
+                          createElementVNode("div", _hoisted_5$5, [
+                            _cache[3] || (_cache[3] = createElementVNode("label", null, "模板名称", -1)),
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": ($event) => item.name = $event,
+                              type: "text",
+                              placeholder: "输入模板名称"
+                            }, null, 8, _hoisted_6$5), [
+                              [vModelText, item.name]
+                            ])
+                          ]),
+                          createElementVNode("div", _hoisted_7$5, [
+                            _cache[4] || (_cache[4] = createElementVNode("label", null, "模板内容", -1)),
+                            withDirectives(createElementVNode("textarea", {
+                              "onUpdate:modelValue": ($event) => item.template = $event,
+                              rows: "1",
+                              placeholder: "输入模板内容"
+                            }, null, 8, _hoisted_8$5), [
+                              [vModelText, item.template]
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_9$5, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1,
+                  __: [5]
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$4 = ["innerHTML"];
+      const _hoisted_2$4 = { class: "modal-content" };
       const _hoisted_3$4 = { class: "form-group" };
-      const _hoisted_4$4 = {
+      const _hoisted_4$4 = { class: "be-flex be-justify-between be-align-center" };
+      const _hoisted_5$4 = { class: "be-text-xs be-text-secondary" };
+      const _hoisted_6$4 = { class: "form-group" };
+      const _hoisted_7$4 = {
         key: 0,
         class: "form-group"
       };
-      const _hoisted_5$4 = ["value"];
-      const _hoisted_6$4 = {
+      const _hoisted_8$4 = ["value"];
+      const _hoisted_9$4 = {
         key: 1,
         class: "form-group"
       };
-      const _hoisted_7$4 = ["value"];
-      const _hoisted_8$4 = {
+      const _hoisted_10$4 = ["value"];
+      const _hoisted_11$4 = {
         key: 2,
         class: "empty-hint"
       };
-      const _hoisted_9$4 = { class: "preview-box compact" };
-      const _hoisted_10$4 = { class: "preview-content" };
+      const _hoisted_12$4 = ["innerHTML"];
+      const _hoisted_13$4 = ["innerHTML"];
       const _sfc_main$4 = /* @__PURE__ */ defineComponent({
         __name: "NameModal",
         props: {
@@ -8377,6 +8958,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
         setup(__props, { emit: __emit }) {
           const props = __props;
           const emit = __emit;
+          const showTemplateModal = ref(false);
           const templateVars = computed(() => ({
             itemName: props.itemConfig.itemName,
             supportCount: props.totalSupport
@@ -8388,7 +8970,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             () => parseTemplate(selectedTemplate.value, templateVars.value)
           );
           function updateCurrentTemplate(event) {
-            if (!props.globalTemplates.nameTemplates || !props.itemConfig.selectedTemplates) return;
+            if (!props.globalTemplates.nameTemplates || !props.itemConfig.selectedTemplates || !props.itemConfig.selectedTemplates.nameTemplateId) return;
             const target = event.target;
             const template = props.globalTemplates.nameTemplates.find(
               (t) => t.id === props.itemConfig.selectedTemplates.nameTemplateId
@@ -8402,364 +8984,320 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             emit("close");
           }
           return (_ctx, _cache) => {
-            return openBlock(), createBlock(Modal, {
-              show: _ctx.show,
-              title: "编辑商品名",
-              "teleport-to": ".booth-enhancer-sidebar",
-              onClose: _cache[5] || (_cache[5] = ($event) => emit("close")),
-              width: "500px"
-            }, {
-              footer: withCtx(() => [
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-secondary",
-                  onClick: _cache[4] || (_cache[4] = ($event) => emit("close"))
-                }, " 取消 "),
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-primary",
-                  onClick: handleSave
-                }, " 保存 ")
-              ]),
-              default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$4, [
-                  createElementVNode("div", _hoisted_2$4, [
-                    _cache[6] || (_cache[6] = createElementVNode("label", null, "商品基础名称", -1)),
-                    withDirectives(createElementVNode("input", {
-                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.itemName = $event),
-                      type: "text",
-                      placeholder: "输入商品名称"
-                    }, null, 512), [
-                      [vModelText, _ctx.itemConfig.itemName]
-                    ])
-                  ]),
-                  createElementVNode("div", _hoisted_3$4, [
-                    _cache[8] || (_cache[8] = createElementVNode("label", null, "商品类型", -1)),
-                    withDirectives(createElementVNode("select", {
-                      "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemType = $event)
-                    }, _cache[7] || (_cache[7] = [
-                      createElementVNode("option", { value: "normal" }, "普通商品", -1),
-                      createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
-                    ]), 512), [
-                      [vModelSelect, _ctx.itemConfig.itemType]
-                    ])
-                  ]),
-                  _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$4, [
-                    _cache[9] || (_cache[9] = createElementVNode("label", null, "选择模板", -1)),
-                    withDirectives(createElementVNode("select", {
-                      "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.selectedTemplates.nameTemplateId = $event)
-                    }, [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.nameTemplates, (template) => {
-                        return openBlock(), createElementBlock("option", {
-                          key: template.id,
-                          value: template.id
-                        }, toDisplayString(template.name), 9, _hoisted_5$4);
-                      }), 128))
-                    ], 512), [
-                      [vModelSelect, _ctx.itemConfig.selectedTemplates.nameTemplateId]
-                    ])
-                  ])) : createCommentVNode("", true),
-                  _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$4, [
-                    _cache[10] || (_cache[10] = createElementVNode("label", null, [
-                      createTextVNode("模板内容 "),
-                      createElementVNode("span", { class: "label-hint" }, "(编辑当前选中模板)")
-                    ], -1)),
-                    _cache[11] || (_cache[11] = createElementVNode("p", { class: "form-hint" }, "支持变量: {itemName}, {supportCount}", -1)),
-                    createElementVNode("input", {
-                      value: selectedTemplate.value,
-                      onInput: _cache[3] || (_cache[3] = ($event) => updateCurrentTemplate($event)),
-                      type: "text",
-                      placeholder: "如: {itemName} ({supportCount}体対応)"
-                    }, null, 40, _hoisted_7$4)
-                  ])) : (openBlock(), createElementBlock("div", _hoisted_8$4, " 请先在全局模板配置中添加商品名模板 ")),
-                  createElementVNode("div", _hoisted_9$4, [
-                    _cache[12] || (_cache[12] = createElementVNode("div", { class: "preview-label" }, "预览", -1)),
-                    createElementVNode("div", _hoisted_10$4, toDisplayString(previewName.value), 1)
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "编辑商品名",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[6] || (_cache[6] = ($event) => emit("close")),
+                width: "500px"
+              }, {
+                "header-actions": withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showTemplateModal.value = true),
+                    title: "模板配置",
+                    type: "button"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                    }, null, 8, _hoisted_1$4)
                   ])
-                ])
-              ]),
-              _: 1
-            }, 8, ["show"]);
+                ]),
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: _cache[5] || (_cache[5] = ($event) => emit("close")),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_12$4)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: handleSave,
+                    title: "保存"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_13$4)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_2$4, [
+                    createElementVNode("div", _hoisted_3$4, [
+                      createElementVNode("div", _hoisted_4$4, [
+                        _cache[8] || (_cache[8] = createElementVNode("label", null, "商品基础名称", -1)),
+                        createElementVNode("span", _hoisted_5$4, toDisplayString(previewName.value), 1)
+                      ]),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemName = $event),
+                        type: "text",
+                        placeholder: "输入商品名称"
+                      }, null, 512), [
+                        [vModelText, _ctx.itemConfig.itemName]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_6$4, [
+                      _cache[10] || (_cache[10] = createElementVNode("label", null, "商品类型", -1)),
+                      withDirectives(createElementVNode("select", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.itemType = $event)
+                      }, _cache[9] || (_cache[9] = [
+                        createElementVNode("option", { value: "normal" }, "普通商品", -1),
+                        createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
+                      ]), 512), [
+                        [vModelSelect, _ctx.itemConfig.itemType]
+                      ])
+                    ]),
+                    _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 && _ctx.itemConfig.selectedTemplates ? (openBlock(), createElementBlock("div", _hoisted_7$4, [
+                      _cache[11] || (_cache[11] = createElementVNode("label", null, "选择模板", -1)),
+                      withDirectives(createElementVNode("select", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.selectedTemplates.nameTemplateId = $event)
+                      }, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.nameTemplates, (template) => {
+                          return openBlock(), createElementBlock("option", {
+                            key: template.id,
+                            value: template.id
+                          }, toDisplayString(template.name), 9, _hoisted_8$4);
+                        }), 128))
+                      ], 512), [
+                        [vModelSelect, _ctx.itemConfig.selectedTemplates.nameTemplateId]
+                      ])
+                    ])) : createCommentVNode("", true),
+                    _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 && _ctx.itemConfig.selectedTemplates ? (openBlock(), createElementBlock("div", _hoisted_9$4, [
+                      _cache[12] || (_cache[12] = createElementVNode("label", null, [
+                        createTextVNode("模板内容 "),
+                        createElementVNode("span", { class: "label-hint" }, "(编辑当前选中模板)")
+                      ], -1)),
+                      _cache[13] || (_cache[13] = createElementVNode("p", { class: "form-hint" }, "支持变量: {itemName}, {supportCount}", -1)),
+                      createElementVNode("input", {
+                        value: selectedTemplate.value,
+                        onInput: _cache[4] || (_cache[4] = ($event) => updateCurrentTemplate($event)),
+                        type: "text",
+                        placeholder: "如: {itemName} ({supportCount}体対応)"
+                      }, null, 40, _hoisted_10$4)
+                    ])) : (openBlock(), createElementBlock("div", _hoisted_11$4, " 请先在全局模板配置中添加商品名模板 "))
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(_sfc_main$5, {
+                show: showTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[7] || (_cache[7] = ($event) => showTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
           };
         }
       });
-      const NameModal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-6e127f16"]]);
-      const _hoisted_1$3 = { class: "price-modal-content" };
-      const _hoisted_2$3 = { class: "config-section" };
-      const _hoisted_3$3 = { class: "section-header" };
-      const _hoisted_4$3 = { class: "action-buttons" };
-      const _hoisted_5$3 = ["innerHTML"];
-      const _hoisted_6$3 = ["innerHTML"];
-      const _hoisted_7$3 = {
+      const _hoisted_1$3 = ["innerHTML"];
+      const _hoisted_2$3 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$3 = {
         key: 0,
+        class: "tab-content"
+      };
+      const _hoisted_4$3 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$3 = { class: "form-group" };
+      const _hoisted_6$3 = ["onUpdate:modelValue"];
+      const _hoisted_7$3 = { class: "form-group" };
+      const _hoisted_8$3 = ["onUpdate:modelValue"];
+      const _hoisted_9$3 = { class: "form-group" };
+      const _hoisted_10$3 = ["onUpdate:modelValue"];
+      const _hoisted_11$3 = {
+        key: 1,
         class: "empty-hint"
       };
-      const _hoisted_8$3 = { class: "variation-fields" };
-      const _hoisted_9$3 = ["onUpdate:modelValue"];
-      const _hoisted_10$3 = ["onUpdate:modelValue", "disabled"];
-      const _hoisted_11$3 = { class: "checkbox-wrapper" };
-      const _hoisted_12$3 = ["onUpdate:modelValue"];
-      const _hoisted_13$3 = { class: "config-section" };
-      const _hoisted_14$3 = { class: "price-row" };
-      const _hoisted_15$3 = { class: "form-group" };
-      const _hoisted_16$3 = { class: "form-group" };
-      const _hoisted_17$3 = { class: "form-hint" };
-      const _hoisted_18$3 = { class: "info-row" };
-      const _hoisted_19$3 = { class: "info-badge" };
-      const _hoisted_20$3 = { class: "config-section" };
-      const _hoisted_21$3 = { class: "section-header" };
-      const _hoisted_22$3 = { class: "booth-toggle" };
-      const _hoisted_23$3 = {
-        key: 0,
-        class: "discount-body"
+      const _hoisted_12$3 = {
+        key: 1,
+        class: "tab-content"
       };
-      const _hoisted_24$3 = { class: "form-group" };
-      const _hoisted_25$3 = { class: "price-preview" };
-      const _hoisted_26$3 = { class: "price-item" };
-      const _hoisted_27$3 = { class: "price-value" };
-      const _hoisted_28$3 = { class: "price-item" };
-      const _hoisted_29$3 = { class: "price-value" };
+      const _hoisted_13$3 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_14$3 = { class: "form-group" };
+      const _hoisted_15$3 = ["onUpdate:modelValue"];
+      const _hoisted_16$3 = { class: "form-group" };
+      const _hoisted_17$3 = ["onUpdate:modelValue"];
+      const _hoisted_18$3 = { class: "be-flex be-align-center be-gap-sm be-pt-xs" };
+      const _hoisted_19$3 = {
+        class: "booth-toggle",
+        title: "设为默认"
+      };
+      const _hoisted_20$3 = ["checked", "onChange"];
+      const _hoisted_21$3 = {
+        key: 1,
+        class: "empty-hint"
+      };
       const _sfc_main$3 = /* @__PURE__ */ defineComponent({
-        __name: "PriceModal",
+        __name: "SectionTemplateModal",
         props: {
           show: { type: Boolean },
-          itemConfig: {}
+          globalTemplates: {}
         },
-        emits: ["close", "save"],
+        emits: ["close"],
         setup(__props, { emit: __emit }) {
           const props = __props;
           const emit = __emit;
-          const totalSupport = computed(() => calculateTotalSupport(props.itemConfig.variations));
-          const suggestedPrice = computed(
-            () => suggestFullsetPrice(
-              props.itemConfig.pricing.normalVariationPrice,
-              totalSupport.value,
-              props.itemConfig.discount
-            )
-          );
-          const normalOriginalPrice = computed(() => props.itemConfig.pricing.normalVariationPrice);
-          const normalDiscountedPrice = computed(
-            () => applyDiscount(props.itemConfig.pricing.normalVariationPrice, props.itemConfig.discount)
-          );
-          const fullsetOriginalPrice = computed(() => props.itemConfig.pricing.fullsetPrice);
-          const fullsetDiscountedPrice = computed(
-            () => applyDiscount(props.itemConfig.pricing.fullsetPrice, props.itemConfig.discount)
-          );
-          function addVariation() {
-            const price = applyDiscount(
-              props.itemConfig.pricing.normalVariationPrice,
-              props.itemConfig.discount
-            );
-            props.itemConfig.variations.push({
-              name: "",
-              supportCount: 1,
-              price,
-              isFullset: false
-            });
-          }
-          function addFullsetVariation() {
-            props.itemConfig.variations.unshift({
-              name: "Fullset",
-              supportCount: totalSupport.value,
-              price: suggestedPrice.value,
-              isFullset: true
-            });
-          }
-          function removeVariation(index) {
-            props.itemConfig.variations.splice(index, 1);
-          }
-          function onVariationReorder(fromIndex, toIndex) {
-            const variations = props.itemConfig.variations;
-            const [removed] = variations.splice(fromIndex, 1);
-            variations.splice(toIndex, 0, removed);
-          }
-          function handleSave() {
-            props.itemConfig.variations.forEach((variation) => {
-              variation.supportCount = Number(variation.supportCount) || 1;
-            });
-            calculateVariationPrices(
-              props.itemConfig.variations,
-              props.itemConfig.pricing,
-              props.itemConfig.discount
-            );
-            emit("save");
-            emit("close");
-          }
+          const activeTab = ref("section");
+          const tabs = [
+            { id: "section", label: "Section" },
+            { id: "changelog", label: "更新日志" }
+          ];
+          const sectionTemplates = computed({
+            get: () => {
+              var _a;
+              return (_a = props.globalTemplates).sectionTemplates || (_a.sectionTemplates = []);
+            },
+            set: (value) => {
+              props.globalTemplates.sectionTemplates = value;
+            }
+          });
+          const sectionManager = useTemplateManager({
+            templates: sectionTemplates,
+            defaultTemplate: { headline: "", body: "" }
+          });
+          const changelogTemplates = computed({
+            get: () => {
+              var _a;
+              return (_a = props.globalTemplates).changelogTemplates || (_a.changelogTemplates = []);
+            },
+            set: (value) => {
+              props.globalTemplates.changelogTemplates = value;
+            }
+          });
+          const changelogManager = useTemplateManager({
+            templates: changelogTemplates,
+            defaultTemplate: { template: "◆ {date}\n{content}" }
+          });
           return (_ctx, _cache) => {
             return openBlock(), createBlock(Modal, {
               show: _ctx.show,
-              title: "价格与打折配置",
+              title: "Section 模板配置",
+              width: "700px",
               "teleport-to": ".booth-enhancer-sidebar",
-              onClose: _cache[5] || (_cache[5] = ($event) => emit("close")),
-              width: "700px"
+              onClose: _cache[2] || (_cache[2] = ($event) => emit("close"))
             }, {
-              footer: withCtx(() => [
+              "header-actions": withCtx(() => [
                 createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-secondary",
-                  onClick: _cache[4] || (_cache[4] = ($event) => emit("close"))
-                }, " 取消 "),
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-primary",
-                  onClick: handleSave
-                }, " 保存 ")
+                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                  onClick: _cache[0] || (_cache[0] = ($event) => activeTab.value === "section" ? unref(sectionManager).addTemplate() : unref(changelogManager).addTemplate()),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$3)
+                ])
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$3, [
-                  createElementVNode("div", _hoisted_2$3, [
-                    createElementVNode("div", _hoisted_3$3, [
-                      _cache[8] || (_cache[8] = createElementVNode("h4", { class: "section-title" }, "Variations 管理", -1)),
-                      createElementVNode("div", _hoisted_4$3, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addFullsetVariation
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_5$3),
-                          _cache[6] || (_cache[6] = createTextVNode(" 添加 Fullset ", -1))
-                        ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-secondary",
-                          onClick: addVariation
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_6$3),
-                          _cache[7] || (_cache[7] = createTextVNode(" 添加 Variation ", -1))
-                        ])
-                      ])
-                    ]),
-                    _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_7$3, " 暂无 Variation，点击上方按钮添加 ")) : (openBlock(), createBlock(unref(DraggableCardList), {
-                      key: 1,
-                      items: _ctx.itemConfig.variations,
-                      onRemove: removeVariation,
-                      onReorder: onVariationReorder
-                    }, {
-                      content: withCtx(({ item: variation }) => [
-                        createElementVNode("div", _hoisted_8$3, [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => variation.name = $event,
-                            type: "text",
-                            class: "variation-name",
-                            placeholder: "Variation 名称"
-                          }, null, 8, _hoisted_9$3), [
-                            [vModelText, variation.name]
+                createElementVNode("div", _hoisted_2$3, [
+                  createVNode(unref(TabBar), {
+                    "active-tab": activeTab.value,
+                    tabs,
+                    "onUpdate:activeTab": _cache[1] || (_cache[1] = ($event) => activeTab.value = $event)
+                  }, null, 8, ["active-tab"]),
+                  activeTab.value === "section" ? (openBlock(), createElementBlock("div", _hoisted_3$3, [
+                    createVNode(unref(SectionHeader), null, {
+                      default: withCtx(() => [
+                        _cache[6] || (_cache[6] = createElementVNode("p", { class: "form-hint" }, "可用变量: {itemName}, {supportCount}", -1)),
+                        _ctx.globalTemplates.sectionTemplates && _ctx.globalTemplates.sectionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                          key: 0,
+                          items: _ctx.globalTemplates.sectionTemplates,
+                          "key-extractor": (item) => item.id,
+                          onRemove: unref(sectionManager).removeTemplate,
+                          onReorder: unref(sectionManager).onReorder
+                        }, {
+                          content: withCtx(({ item }) => [
+                            createElementVNode("div", _hoisted_4$3, [
+                              createElementVNode("div", _hoisted_5$3, [
+                                _cache[3] || (_cache[3] = createElementVNode("label", null, "模板名称", -1)),
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => item.name = $event,
+                                  type: "text",
+                                  placeholder: "输入模板名称"
+                                }, null, 8, _hoisted_6$3), [
+                                  [vModelText, item.name]
+                                ])
+                              ]),
+                              createElementVNode("div", _hoisted_7$3, [
+                                _cache[4] || (_cache[4] = createElementVNode("label", null, "Headline", -1)),
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => item.headline = $event,
+                                  type: "text",
+                                  placeholder: "输入 Headline"
+                                }, null, 8, _hoisted_8$3), [
+                                  [vModelText, item.headline]
+                                ])
+                              ]),
+                              createElementVNode("div", _hoisted_9$3, [
+                                _cache[5] || (_cache[5] = createElementVNode("label", null, "Body", -1)),
+                                withDirectives(createElementVNode("textarea", {
+                                  "onUpdate:modelValue": ($event) => item.body = $event,
+                                  rows: "1",
+                                  placeholder: "输入 Body"
+                                }, null, 8, _hoisted_10$3), [
+                                  [vModelText, item.body]
+                                ])
+                              ])
+                            ])
                           ]),
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => variation.supportCount = $event,
-                            type: "number",
-                            class: "variation-count",
-                            min: "1",
-                            disabled: variation.isFullset,
-                            placeholder: "数量"
-                          }, null, 8, _hoisted_10$3), [
-                            [
-                              vModelText,
-                              variation.supportCount,
-                              void 0,
-                              { number: true }
-                            ]
+                          _: 1
+                        }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_11$3, ' 暂无模板，点击"添加模板"创建 '))
+                      ]),
+                      _: 1,
+                      __: [6]
+                    })
+                  ])) : activeTab.value === "changelog" ? (openBlock(), createElementBlock("div", _hoisted_12$3, [
+                    createVNode(unref(SectionHeader), null, {
+                      default: withCtx(() => [
+                        _cache[10] || (_cache[10] = createElementVNode("p", { class: "form-hint" }, "可用变量: {date}, {content}", -1)),
+                        _ctx.globalTemplates.changelogTemplates && _ctx.globalTemplates.changelogTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                          key: 0,
+                          items: _ctx.globalTemplates.changelogTemplates,
+                          "key-extractor": (item) => item.id,
+                          onRemove: unref(changelogManager).removeTemplate,
+                          onReorder: unref(changelogManager).onReorder
+                        }, {
+                          content: withCtx(({ item, index }) => [
+                            createElementVNode("div", _hoisted_13$3, [
+                              createElementVNode("div", _hoisted_14$3, [
+                                _cache[7] || (_cache[7] = createElementVNode("label", null, "模板名称", -1)),
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => item.name = $event,
+                                  type: "text",
+                                  placeholder: "输入模板名称"
+                                }, null, 8, _hoisted_15$3), [
+                                  [vModelText, item.name]
+                                ])
+                              ]),
+                              createElementVNode("div", _hoisted_16$3, [
+                                _cache[8] || (_cache[8] = createElementVNode("label", null, "模板内容", -1)),
+                                withDirectives(createElementVNode("textarea", {
+                                  "onUpdate:modelValue": ($event) => item.template = $event,
+                                  rows: "1",
+                                  placeholder: "输入模板内容"
+                                }, null, 8, _hoisted_17$3), [
+                                  [vModelText, item.template]
+                                ])
+                              ]),
+                              createElementVNode("div", _hoisted_18$3, [
+                                createElementVNode("label", _hoisted_19$3, [
+                                  createElementVNode("input", {
+                                    type: "checkbox",
+                                    checked: item.isDefault,
+                                    onChange: ($event) => unref(changelogManager).setDefaultTemplate(index)
+                                  }, null, 40, _hoisted_20$3),
+                                  _cache[9] || (_cache[9] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                                ])
+                              ])
+                            ])
                           ]),
-                          createElementVNode("label", _hoisted_11$3, [
-                            withDirectives(createElementVNode("input", {
-                              type: "checkbox",
-                              "onUpdate:modelValue": ($event) => variation.isFullset = $event
-                            }, null, 8, _hoisted_12$3), [
-                              [vModelCheckbox, variation.isFullset]
-                            ]),
-                            _cache[9] || (_cache[9] = createElementVNode("span", null, "Fullset", -1))
-                          ])
-                        ])
+                          _: 1
+                        }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_21$3, ' 暂无模板，点击"添加模板"创建 '))
                       ]),
-                      _: 1
-                    }, 8, ["items"]))
-                  ]),
-                  createElementVNode("div", _hoisted_13$3, [
-                    _cache[13] || (_cache[13] = createElementVNode("h4", { class: "section-title" }, "价格配置", -1)),
-                    createElementVNode("div", _hoisted_14$3, [
-                      createElementVNode("div", _hoisted_15$3, [
-                        _cache[10] || (_cache[10] = createElementVNode("label", null, "普通 Variation 价格 (¥)", -1)),
-                        withDirectives(createElementVNode("input", {
-                          type: "number",
-                          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.pricing.normalVariationPrice = $event),
-                          min: "0",
-                          placeholder: "0"
-                        }, null, 512), [
-                          [
-                            vModelText,
-                            _ctx.itemConfig.pricing.normalVariationPrice,
-                            void 0,
-                            { number: true }
-                          ]
-                        ])
-                      ]),
-                      createElementVNode("div", _hoisted_16$3, [
-                        _cache[11] || (_cache[11] = createElementVNode("label", null, "Fullset 价格 (¥)", -1)),
-                        createElementVNode("p", _hoisted_17$3, "建议: ¥" + toDisplayString(suggestedPrice.value), 1),
-                        withDirectives(createElementVNode("input", {
-                          type: "number",
-                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.pricing.fullsetPrice = $event),
-                          min: "0",
-                          placeholder: "0"
-                        }, null, 512), [
-                          [
-                            vModelText,
-                            _ctx.itemConfig.pricing.fullsetPrice,
-                            void 0,
-                            { number: true }
-                          ]
-                        ])
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_18$3, [
-                      createElementVNode("span", _hoisted_19$3, [
-                        _cache[12] || (_cache[12] = createTextVNode("总支持数: ", -1)),
-                        createElementVNode("strong", null, toDisplayString(totalSupport.value), 1)
-                      ])
-                    ])
-                  ]),
-                  createElementVNode("div", _hoisted_20$3, [
-                    createElementVNode("div", _hoisted_21$3, [
-                      createElementVNode("label", _hoisted_22$3, [
-                        withDirectives(createElementVNode("input", {
-                          type: "checkbox",
-                          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.discount.enabled = $event)
-                        }, null, 512), [
-                          [vModelCheckbox, _ctx.itemConfig.discount.enabled]
-                        ]),
-                        _cache[14] || (_cache[14] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                        _cache[15] || (_cache[15] = createElementVNode("span", { class: "toggle-label" }, "启用打折", -1))
-                      ])
-                    ]),
-                    _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("div", _hoisted_23$3, [
-                      createElementVNode("div", _hoisted_24$3, [
-                        _cache[16] || (_cache[16] = createElementVNode("label", null, "折扣百分比 (%)", -1)),
-                        withDirectives(createElementVNode("input", {
-                          type: "number",
-                          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.discount.discountPercent = $event),
-                          min: "0",
-                          max: "100",
-                          placeholder: "0"
-                        }, null, 512), [
-                          [
-                            vModelText,
-                            _ctx.itemConfig.discount.discountPercent,
-                            void 0,
-                            { number: true }
-                          ]
-                        ])
-                      ]),
-                      createElementVNode("div", _hoisted_25$3, [
-                        _cache[19] || (_cache[19] = createElementVNode("div", { class: "preview-title" }, "价格预览", -1)),
-                        createElementVNode("div", _hoisted_26$3, [
-                          _cache[17] || (_cache[17] = createElementVNode("span", { class: "label" }, "普通 Variation:", -1)),
-                          createElementVNode("span", _hoisted_27$3, " ¥" + toDisplayString(normalOriginalPrice.value) + " → ¥" + toDisplayString(normalDiscountedPrice.value), 1)
-                        ]),
-                        createElementVNode("div", _hoisted_28$3, [
-                          _cache[18] || (_cache[18] = createElementVNode("span", { class: "label" }, "Fullset:", -1)),
-                          createElementVNode("span", _hoisted_29$3, " ¥" + toDisplayString(fullsetOriginalPrice.value) + " → ¥" + toDisplayString(fullsetDiscountedPrice.value), 1)
-                        ])
-                      ])
-                    ])) : createCommentVNode("", true)
-                  ])
+                      _: 1,
+                      __: [10]
+                    })
+                  ])) : createCommentVNode("", true)
                 ])
               ]),
               _: 1
@@ -8767,65 +9305,69 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
           };
         }
       });
-      const PriceModal = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-5c872214"]]);
-      const _hoisted_1$2 = { class: "sections-modal-content" };
-      const _hoisted_2$2 = { class: "tab-nav" };
-      const _hoisted_3$2 = { class: "tab-content" };
-      const _hoisted_4$2 = {
-        key: 0,
-        class: "tab-panel"
+      const _hoisted_1$2 = ["innerHTML"];
+      const _hoisted_2$2 = {
+        class: "be-flex be-flex-column",
+        style: { "min-height": "400px" }
       };
-      const _hoisted_5$2 = { class: "panel-header" };
-      const _hoisted_6$2 = ["innerHTML"];
-      const _hoisted_7$2 = {
+      const _hoisted_3$2 = { class: "tab-nav" };
+      const _hoisted_4$2 = { class: "tab-content" };
+      const _hoisted_5$2 = {
+        key: 0,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _hoisted_6$2 = { class: "be-flex be-justify-end" };
+      const _hoisted_7$2 = ["innerHTML"];
+      const _hoisted_8$2 = {
         key: 0,
         class: "empty-hint"
       };
-      const _hoisted_8$2 = ["onUpdate:modelValue"];
-      const _hoisted_9$2 = { class: "form-group" };
-      const _hoisted_10$2 = ["onUpdate:modelValue"];
-      const _hoisted_11$2 = { class: "form-group" };
-      const _hoisted_12$2 = ["onUpdate:modelValue"];
-      const _hoisted_13$2 = {
-        key: 1,
-        class: "tab-panel"
-      };
+      const _hoisted_9$2 = ["onUpdate:modelValue"];
+      const _hoisted_10$2 = { class: "form-group" };
+      const _hoisted_11$2 = ["onUpdate:modelValue"];
+      const _hoisted_12$2 = { class: "form-group" };
+      const _hoisted_13$2 = ["onUpdate:modelValue"];
       const _hoisted_14$2 = {
-        key: 0,
-        class: "empty-hint"
+        key: 1,
+        class: "be-flex be-flex-column be-gap-sm"
       };
       const _hoisted_15$2 = {
+        key: 0,
+        class: "empty-hint"
+      };
+      const _hoisted_16$2 = {
         key: 1,
-        class: "template-grid"
+        class: "be-grid be-grid-cols-2 be-gap-sm"
       };
-      const _hoisted_16$2 = ["onClick"];
-      const _hoisted_17$2 = { class: "card-name" };
-      const _hoisted_18$2 = { class: "card-preview" };
-      const _hoisted_19$2 = { class: "preview-line" };
-      const _hoisted_20$2 = { class: "preview-line preview-body" };
-      const _hoisted_21$2 = {
+      const _hoisted_17$2 = ["onClick"];
+      const _hoisted_18$2 = { class: "be-text-md be-font-bold be-text-primary be-mb-sm" };
+      const _hoisted_19$2 = { class: "be-text-sm be-text-secondary" };
+      const _hoisted_20$2 = { class: "be-mb-xs be-whitespace-nowrap be-overflow-hidden be-text-ellipsis" };
+      const _hoisted_21$2 = { class: "be-text-muted" };
+      const _hoisted_22$2 = {
         key: 2,
-        class: "tab-panel"
+        class: "be-flex be-flex-column be-gap-sm"
       };
-      const _hoisted_22$2 = { class: "panel-header" };
-      const _hoisted_23$2 = ["innerHTML"];
-      const _hoisted_24$2 = {
+      const _hoisted_23$2 = { class: "be-flex be-justify-end" };
+      const _hoisted_24$2 = ["innerHTML"];
+      const _hoisted_25$2 = {
         key: 0,
         class: "form-group"
       };
-      const _hoisted_25$2 = ["value"];
-      const _hoisted_26$2 = {
+      const _hoisted_26$2 = ["value"];
+      const _hoisted_27$2 = {
         key: 1,
         class: "form-group"
       };
-      const _hoisted_27$2 = ["value"];
-      const _hoisted_28$2 = {
+      const _hoisted_28$2 = ["value"];
+      const _hoisted_29$2 = {
         key: 2,
         class: "empty-hint"
       };
-      const _hoisted_29$2 = ["onUpdate:modelValue"];
-      const _hoisted_30$2 = { class: "entry-date" };
-      const _hoisted_31$2 = ["onUpdate:modelValue"];
+      const _hoisted_30$2 = ["onUpdate:modelValue"];
+      const _hoisted_31$2 = { class: "be-flex-1 be-text-sm be-text-secondary be-text-right" };
+      const _hoisted_32$2 = ["onUpdate:modelValue"];
+      const _hoisted_33$2 = ["innerHTML"];
       const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         __name: "SectionsModal",
         props: {
@@ -8838,6 +9380,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
           const props = __props;
           const emit = __emit;
           const activeTab = ref("templates");
+          const showTemplateModal = ref(false);
           const selectedChangelogTemplate = computed(
             () => getSelectedChangelogTemplate(props.globalTemplates, props.itemConfig)
           );
@@ -8890,734 +9433,719 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             }
           }
           return (_ctx, _cache) => {
-            return openBlock(), createBlock(Modal, {
-              show: _ctx.show,
-              title: "Sections 高级配置",
-              "teleport-to": ".booth-enhancer-sidebar",
-              onClose: _cache[6] || (_cache[6] = ($event) => emit("close")),
-              width: "700px"
-            }, {
-              footer: withCtx(() => [
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-primary",
-                  onClick: _cache[5] || (_cache[5] = ($event) => emit("close"))
-                }, " 关闭 ")
-              ]),
-              default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$2, [
-                  createElementVNode("div", _hoisted_2$2, [
-                    createElementVNode("button", {
-                      class: normalizeClass(["tab-btn", { active: activeTab.value === "templates" }]),
-                      onClick: _cache[0] || (_cache[0] = ($event) => activeTab.value = "templates")
-                    }, " Section 模板库 ", 2),
-                    createElementVNode("button", {
-                      class: normalizeClass(["tab-btn", { active: activeTab.value === "create" }]),
-                      onClick: _cache[1] || (_cache[1] = ($event) => activeTab.value = "create")
-                    }, " 从模板创建 ", 2),
-                    createElementVNode("button", {
-                      class: normalizeClass(["tab-btn", { active: activeTab.value === "changelog" }]),
-                      onClick: _cache[2] || (_cache[2] = ($event) => activeTab.value = "changelog")
-                    }, " 更新日志 ", 2)
-                  ]),
-                  createElementVNode("div", _hoisted_3$2, [
-                    activeTab.value === "templates" ? (openBlock(), createElementBlock("div", _hoisted_4$2, [
-                      createElementVNode("div", _hoisted_5$2, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addSectionTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_6$2),
-                          _cache[7] || (_cache[7] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      _ctx.globalTemplates.sectionTemplates.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_7$2, ' 暂无模板，点击"添加模板"创建 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
-                        key: 1,
-                        items: _ctx.globalTemplates.sectionTemplates,
-                        onRemove: removeSectionTemplate,
-                        onReorder: onTemplateReorder
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_8$2), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_9$2, [
-                            _cache[8] || (_cache[8] = createElementVNode("label", null, "Headline", -1)),
-                            withDirectives(createElementVNode("input", {
-                              "onUpdate:modelValue": ($event) => template.headline = $event,
-                              type: "text",
-                              placeholder: "支持变量: {itemName}, {supportCount}"
-                            }, null, 8, _hoisted_10$2), [
-                              [vModelText, template.headline]
-                            ])
-                          ]),
-                          createElementVNode("div", _hoisted_11$2, [
-                            _cache[9] || (_cache[9] = createElementVNode("label", null, "Body", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => template.body = $event,
-                              rows: "2",
-                              placeholder: "支持变量: {itemName}, {supportCount}"
-                            }, null, 8, _hoisted_12$2), [
-                              [vModelText, template.body]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items"]))
-                    ])) : createCommentVNode("", true),
-                    activeTab.value === "create" ? (openBlock(), createElementBlock("div", _hoisted_13$2, [
-                      _cache[10] || (_cache[10] = createElementVNode("p", { class: "panel-hint" }, "选择一个模板来创建 Section 实例", -1)),
-                      _ctx.globalTemplates.sectionTemplates.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_14$2, ' 暂无模板，请先在"Section 模板库"中创建模板 ')) : (openBlock(), createElementBlock("div", _hoisted_15$2, [
-                        (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.sectionTemplates, (template) => {
-                          return openBlock(), createElementBlock("div", {
-                            key: template.id,
-                            class: "template-card",
-                            onClick: ($event) => createFromTemplate(template.id)
-                          }, [
-                            createElementVNode("div", _hoisted_17$2, toDisplayString(template.name), 1),
-                            createElementVNode("div", _hoisted_18$2, [
-                              createElementVNode("div", _hoisted_19$2, toDisplayString(template.headline || "(无标题)"), 1),
-                              createElementVNode("div", _hoisted_20$2, toDisplayString(template.body || "(无内容)"), 1)
-                            ])
-                          ], 8, _hoisted_16$2);
-                        }), 128))
-                      ]))
-                    ])) : createCommentVNode("", true),
-                    activeTab.value === "changelog" ? (openBlock(), createElementBlock("div", _hoisted_21$2, [
-                      createElementVNode("div", _hoisted_22$2, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addChangelogEntry
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_23$2),
-                          _cache[11] || (_cache[11] = createTextVNode(" 添加更新 ", -1))
-                        ])
-                      ]),
-                      _ctx.globalTemplates.changelogTemplates && _ctx.globalTemplates.changelogTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_24$2, [
-                        _cache[12] || (_cache[12] = createElementVNode("label", null, "选择模板", -1)),
-                        withDirectives(createElementVNode("select", {
-                          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.selectedTemplates.changelogTemplateId = $event)
-                        }, [
-                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.changelogTemplates, (template) => {
-                            return openBlock(), createElementBlock("option", {
-                              key: template.id,
-                              value: template.id
-                            }, toDisplayString(template.name), 9, _hoisted_25$2);
-                          }), 128))
-                        ], 512), [
-                          [vModelSelect, _ctx.itemConfig.selectedTemplates.changelogTemplateId]
-                        ])
-                      ])) : createCommentVNode("", true),
-                      _ctx.globalTemplates.changelogTemplates && _ctx.globalTemplates.changelogTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_26$2, [
-                        _cache[13] || (_cache[13] = createElementVNode("label", null, [
-                          createTextVNode("模板内容 "),
-                          createElementVNode("span", { class: "label-hint" }, "(编辑当前选中模板)")
-                        ], -1)),
-                        _cache[14] || (_cache[14] = createElementVNode("p", { class: "form-hint" }, "支持变量: {date}, {content}", -1)),
-                        createElementVNode("textarea", {
-                          value: selectedChangelogTemplate.value,
-                          onInput: _cache[4] || (_cache[4] = ($event) => updateChangelogTemplate($event)),
-                          rows: "2",
-                          placeholder: "◆ {date}\n{content}"
-                        }, null, 40, _hoisted_27$2)
-                      ])) : (openBlock(), createElementBlock("div", _hoisted_28$2, " 请先在全局模板配置中添加更新日志模板 ")),
-                      _ctx.itemConfig.changelog.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
-                        key: 3,
-                        items: _ctx.itemConfig.changelog,
-                        onRemove: removeChangelogEntry,
-                        onReorder: onChangelogReorder
-                      }, {
-                        header: withCtx(({ item: entry }) => [
-                          withDirectives(createElementVNode("select", {
-                            "onUpdate:modelValue": ($event) => entry.type = $event,
-                            class: "entry-type-select"
-                          }, _cache[15] || (_cache[15] = [
-                            createElementVNode("option", { value: "release" }, "Released", -1),
-                            createElementVNode("option", { value: "added" }, "Added", -1),
-                            createElementVNode("option", { value: "fixed" }, "Fixed", -1),
-                            createElementVNode("option", { value: "updated" }, "Updated", -1)
-                          ]), 8, _hoisted_29$2), [
-                            [vModelSelect, entry.type]
-                          ]),
-                          createElementVNode("span", _hoisted_30$2, toDisplayString(unref(formatDate)(entry.date)), 1)
-                        ]),
-                        content: withCtx(({ item: entry }) => [
-                          withDirectives(createElementVNode("textarea", {
-                            "onUpdate:modelValue": ($event) => entry.content = $event,
-                            rows: "2",
-                            placeholder: "更新内容"
-                          }, null, 8, _hoisted_31$2), [
-                            [vModelText, entry.content]
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items"])) : createCommentVNode("", true)
-                    ])) : createCommentVNode("", true)
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "Sections 高级配置",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[7] || (_cache[7] = ($event) => emit("close")),
+                width: "700px"
+              }, {
+                "header-actions": withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showTemplateModal.value = true),
+                    title: "模板配置",
+                    type: "button"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                    }, null, 8, _hoisted_1$2)
                   ])
-                ])
-              ]),
-              _: 1
-            }, 8, ["show"]);
+                ]),
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[6] || (_cache[6] = ($event) => emit("close")),
+                    title: "关闭"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_33$2)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_2$2, [
+                    createElementVNode("div", _hoisted_3$2, [
+                      createElementVNode("button", {
+                        class: normalizeClass(["tab-btn", { active: activeTab.value === "templates" }]),
+                        onClick: _cache[1] || (_cache[1] = ($event) => activeTab.value = "templates")
+                      }, " Section 模板库 ", 2),
+                      createElementVNode("button", {
+                        class: normalizeClass(["tab-btn", { active: activeTab.value === "create" }]),
+                        onClick: _cache[2] || (_cache[2] = ($event) => activeTab.value = "create")
+                      }, " 从模板创建 ", 2),
+                      createElementVNode("button", {
+                        class: normalizeClass(["tab-btn", { active: activeTab.value === "changelog" }]),
+                        onClick: _cache[3] || (_cache[3] = ($event) => activeTab.value = "changelog")
+                      }, " 更新日志 ", 2)
+                    ]),
+                    createElementVNode("div", _hoisted_4$2, [
+                      activeTab.value === "templates" ? (openBlock(), createElementBlock("div", _hoisted_5$2, [
+                        createElementVNode("div", _hoisted_6$2, [
+                          createElementVNode("button", {
+                            class: "booth-btn booth-btn-sm booth-btn-primary",
+                            onClick: addSectionTemplate,
+                            title: "添加新的 Section 模板"
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(withSize)(unref(icons).plus, 14)
+                            }, null, 8, _hoisted_7$2),
+                            _cache[9] || (_cache[9] = createTextVNode(" 添加模板 ", -1))
+                          ])
+                        ]),
+                        !_ctx.globalTemplates.sectionTemplates || _ctx.globalTemplates.sectionTemplates.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_8$2, ' 暂无模板，点击"添加模板"创建 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                          key: 1,
+                          items: _ctx.globalTemplates.sectionTemplates,
+                          onRemove: removeSectionTemplate,
+                          onReorder: onTemplateReorder
+                        }, {
+                          actions: withCtx(({ item: template }) => [
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": ($event) => template.name = $event,
+                              type: "text",
+                              class: "be-flex-1 be-font-bold be-p-xs be-px-sm be-text-base",
+                              style: { "height": "28px" },
+                              placeholder: "模板名称"
+                            }, null, 8, _hoisted_9$2), [
+                              [vModelText, template.name]
+                            ])
+                          ]),
+                          content: withCtx(({ item: template }) => [
+                            createElementVNode("div", _hoisted_10$2, [
+                              _cache[10] || (_cache[10] = createElementVNode("label", null, "Headline", -1)),
+                              withDirectives(createElementVNode("input", {
+                                "onUpdate:modelValue": ($event) => template.headline = $event,
+                                type: "text",
+                                placeholder: "支持变量: {itemName}, {supportCount}"
+                              }, null, 8, _hoisted_11$2), [
+                                [vModelText, template.headline]
+                              ])
+                            ]),
+                            createElementVNode("div", _hoisted_12$2, [
+                              _cache[11] || (_cache[11] = createElementVNode("label", null, "Body", -1)),
+                              withDirectives(createElementVNode("textarea", {
+                                "onUpdate:modelValue": ($event) => template.body = $event,
+                                rows: "1",
+                                placeholder: "支持变量: {itemName}, {supportCount}"
+                              }, null, 8, _hoisted_13$2), [
+                                [vModelText, template.body]
+                              ])
+                            ])
+                          ]),
+                          _: 1
+                        }, 8, ["items"]))
+                      ])) : createCommentVNode("", true),
+                      activeTab.value === "create" ? (openBlock(), createElementBlock("div", _hoisted_14$2, [
+                        _cache[12] || (_cache[12] = createElementVNode("p", { class: "be-m-0 be-pb-sm be-text-secondary" }, "选择一个模板来创建 Section 实例", -1)),
+                        !_ctx.globalTemplates.sectionTemplates || _ctx.globalTemplates.sectionTemplates.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_15$2, ' 暂无模板，请先在"Section 模板库"中创建模板 ')) : (openBlock(), createElementBlock("div", _hoisted_16$2, [
+                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.sectionTemplates, (template) => {
+                            return openBlock(), createElementBlock("div", {
+                              key: template.id,
+                              class: "be-p-sm be-border be-rounded be-cursor-pointer be-transition",
+                              onClick: ($event) => createFromTemplate(template.id)
+                            }, [
+                              createElementVNode("div", _hoisted_18$2, toDisplayString(template.name), 1),
+                              createElementVNode("div", _hoisted_19$2, [
+                                createElementVNode("div", _hoisted_20$2, toDisplayString(template.headline || "(无标题)"), 1),
+                                createElementVNode("div", _hoisted_21$2, toDisplayString(template.body || "(无内容)"), 1)
+                              ])
+                            ], 8, _hoisted_17$2);
+                          }), 128))
+                        ]))
+                      ])) : createCommentVNode("", true),
+                      activeTab.value === "changelog" ? (openBlock(), createElementBlock("div", _hoisted_22$2, [
+                        createElementVNode("div", _hoisted_23$2, [
+                          createElementVNode("button", {
+                            class: "booth-btn booth-btn-sm booth-btn-primary",
+                            onClick: addChangelogEntry,
+                            title: "添加新的更新日志"
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(withSize)(unref(icons).plus, 14)
+                            }, null, 8, _hoisted_24$2),
+                            _cache[13] || (_cache[13] = createTextVNode(" 添加更新 ", -1))
+                          ])
+                        ]),
+                        _ctx.globalTemplates.changelogTemplates && _ctx.globalTemplates.changelogTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_25$2, [
+                          _cache[14] || (_cache[14] = createElementVNode("label", null, "选择模板", -1)),
+                          withDirectives(createElementVNode("select", {
+                            "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.itemConfig.selectedTemplates.changelogTemplateId = $event)
+                          }, [
+                            (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.changelogTemplates, (template) => {
+                              return openBlock(), createElementBlock("option", {
+                                key: template.id,
+                                value: template.id
+                              }, toDisplayString(template.name), 9, _hoisted_26$2);
+                            }), 128))
+                          ], 512), [
+                            [vModelSelect, _ctx.itemConfig.selectedTemplates.changelogTemplateId]
+                          ])
+                        ])) : createCommentVNode("", true),
+                        _ctx.globalTemplates.changelogTemplates && _ctx.globalTemplates.changelogTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_27$2, [
+                          _cache[15] || (_cache[15] = createElementVNode("label", null, [
+                            createTextVNode("模板内容 "),
+                            createElementVNode("span", { class: "label-hint" }, "(编辑当前选中模板)")
+                          ], -1)),
+                          _cache[16] || (_cache[16] = createElementVNode("p", { class: "form-hint" }, "支持变量: {date}, {content}", -1)),
+                          createElementVNode("textarea", {
+                            value: selectedChangelogTemplate.value,
+                            onInput: _cache[5] || (_cache[5] = ($event) => updateChangelogTemplate($event)),
+                            rows: "2",
+                            placeholder: "◆ {date}\n{content}"
+                          }, null, 40, _hoisted_28$2)
+                        ])) : (openBlock(), createElementBlock("div", _hoisted_29$2, " 请先在全局模板配置中添加更新日志模板 ")),
+                        _ctx.itemConfig.changelog.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                          key: 3,
+                          items: _ctx.itemConfig.changelog,
+                          onRemove: removeChangelogEntry,
+                          onReorder: onChangelogReorder
+                        }, {
+                          actions: withCtx(({ item: entry }) => [
+                            withDirectives(createElementVNode("select", {
+                              "onUpdate:modelValue": ($event) => entry.type = $event,
+                              class: "be-p-xs be-px-sm be-text-sm be-flex-shrink-0",
+                              style: { "height": "24px", "width": "auto" }
+                            }, _cache[17] || (_cache[17] = [
+                              createElementVNode("option", { value: "release" }, "Released", -1),
+                              createElementVNode("option", { value: "added" }, "Added", -1),
+                              createElementVNode("option", { value: "fixed" }, "Fixed", -1),
+                              createElementVNode("option", { value: "updated" }, "Updated", -1)
+                            ]), 8, _hoisted_30$2), [
+                              [vModelSelect, entry.type]
+                            ]),
+                            createElementVNode("span", _hoisted_31$2, toDisplayString(unref(formatDate)(entry.date)), 1)
+                          ]),
+                          content: withCtx(({ item: entry }) => [
+                            withDirectives(createElementVNode("textarea", {
+                              "onUpdate:modelValue": ($event) => entry.content = $event,
+                              rows: "1",
+                              placeholder: "更新内容"
+                            }, null, 8, _hoisted_32$2), [
+                              [vModelText, entry.content]
+                            ])
+                          ]),
+                          _: 1
+                        }, 8, ["items"])) : createCommentVNode("", true)
+                      ])) : createCommentVNode("", true)
+                    ])
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(_sfc_main$3, {
+                show: showTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[8] || (_cache[8] = ($event) => showTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
           };
         }
       });
-      const SectionsModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-59f93226"]]);
-      const _hoisted_1$1 = { class: "template-config-modal" };
-      const _hoisted_2$1 = { class: "template-content" };
+      const _hoisted_1$1 = ["innerHTML"];
+      const _hoisted_2$1 = { class: "be-flex be-flex-column be-gap-md" };
       const _hoisted_3$1 = {
         key: 0,
-        class: "template-section"
-      };
-      const _hoisted_4$1 = { class: "section-header" };
-      const _hoisted_5$1 = ["innerHTML"];
-      const _hoisted_6$1 = ["onUpdate:modelValue"];
-      const _hoisted_7$1 = { class: "form-group" };
-      const _hoisted_8$1 = ["onUpdate:modelValue"];
-      const _hoisted_9$1 = {
-        key: 1,
-        class: "template-section"
-      };
-      const _hoisted_10$1 = { class: "section-header" };
-      const _hoisted_11$1 = ["innerHTML"];
-      const _hoisted_12$1 = ["onUpdate:modelValue"];
-      const _hoisted_13$1 = { class: "form-group" };
-      const _hoisted_14$1 = ["onUpdate:modelValue"];
-      const _hoisted_15$1 = {
-        key: 2,
-        class: "template-section"
-      };
-      const _hoisted_16$1 = { class: "section-header" };
-      const _hoisted_17$1 = ["innerHTML"];
-      const _hoisted_18$1 = ["onUpdate:modelValue"];
-      const _hoisted_19$1 = { class: "form-group" };
-      const _hoisted_20$1 = ["onUpdate:modelValue"];
-      const _hoisted_21$1 = {
-        key: 3,
-        class: "template-section"
-      };
-      const _hoisted_22$1 = { class: "section-header" };
-      const _hoisted_23$1 = ["innerHTML"];
-      const _hoisted_24$1 = ["onUpdate:modelValue"];
-      const _hoisted_25$1 = { class: "form-group" };
-      const _hoisted_26$1 = ["onUpdate:modelValue"];
-      const _hoisted_27$1 = {
-        key: 4,
-        class: "template-section"
-      };
-      const _hoisted_28$1 = { class: "section-header" };
-      const _hoisted_29$1 = ["innerHTML"];
-      const _hoisted_30$1 = ["onUpdate:modelValue"];
-      const _hoisted_31$1 = { class: "form-group" };
-      const _hoisted_32$1 = ["onUpdate:modelValue"];
-      const _hoisted_33$1 = {
-        key: 5,
-        class: "template-section"
-      };
-      const _hoisted_34$1 = { class: "section-header" };
-      const _hoisted_35$1 = ["innerHTML"];
-      const _hoisted_36$1 = ["onUpdate:modelValue"];
-      const _hoisted_37$1 = { class: "form-group" };
-      const _hoisted_38$1 = ["onUpdate:modelValue"];
-      const _hoisted_39$1 = { class: "form-group" };
-      const _hoisted_40$1 = ["onUpdate:modelValue"];
-      const _hoisted_41$1 = {
-        key: 1,
         class: "empty-hint"
       };
+      const _hoisted_4$1 = {
+        class: "be-flex be-align-center be-gap-sm",
+        style: { "flex": "1" }
+      };
+      const _hoisted_5$1 = ["onUpdate:modelValue"];
+      const _hoisted_6$1 = {
+        key: 0,
+        class: "booth-toggle",
+        title: "将此 Variation 设为 Fullset（合集包）"
+      };
+      const _hoisted_7$1 = ["checked", "onChange"];
+      const _hoisted_8$1 = { class: "be-flex be-align-center be-gap-sm" };
+      const _hoisted_9$1 = {
+        key: 0,
+        class: "be-text-base be-text-primary"
+      };
+      const _hoisted_10$1 = { class: "be-text-base be-text-primary be-flex-shrink-0" };
+      const _hoisted_11$1 = {
+        class: "booth-toggle be-flex-shrink-0",
+        title: "自定义此 Variation 的价格"
+      };
+      const _hoisted_12$1 = ["onUpdate:modelValue"];
+      const _hoisted_13$1 = ["onUpdate:modelValue"];
+      const _hoisted_14$1 = ["onUpdate:modelValue"];
+      const _hoisted_15$1 = { class: "form-group" };
+      const _hoisted_16$1 = { class: "form-group" };
+      const _hoisted_17$1 = { class: "form-hint" };
+      const _hoisted_18$1 = { class: "be-flex be-gap-sm be-flex-wrap" };
+      const _hoisted_19$1 = { class: "be-p-xs be-px-sm be-text-sm be-text-secondary" };
+      const _hoisted_20$1 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_21$1 = {
+        class: "booth-toggle",
+        title: "启用打折功能"
+      };
+      const _hoisted_22$1 = {
+        key: 0,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _hoisted_23$1 = { class: "form-group" };
+      const _hoisted_24$1 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_25$1 = { class: "be-flex be-justify-between be-align-center be-text-base" };
+      const _hoisted_26$1 = { class: "be-text-primary be-font-bold" };
+      const _hoisted_27$1 = { class: "be-flex be-justify-between be-align-center be-text-base" };
+      const _hoisted_28$1 = { class: "be-text-primary be-font-bold" };
+      const _hoisted_29$1 = ["innerHTML"];
+      const _hoisted_30$1 = ["innerHTML"];
+      const _hoisted_31$1 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_32$1 = { class: "be-m-0 be-text-base" };
+      const _hoisted_33$1 = { class: "be-m-0 be-text-sm be-text-secondary" };
+      const _hoisted_34$1 = ["innerHTML"];
+      const _hoisted_35$1 = ["innerHTML"];
       const _sfc_main$1 = /* @__PURE__ */ defineComponent({
-        __name: "TemplateConfigModal",
+        __name: "VariationsModal",
         props: {
           show: { type: Boolean },
-          globalTemplates: {}
+          itemConfig: {}
         },
         emits: ["close", "save"],
         setup(__props, { emit: __emit }) {
           const props = __props;
           const emit = __emit;
-          function initializeTemplates(templates) {
-            const result = JSON.parse(JSON.stringify(templates));
-            if (!result.nameTemplates) result.nameTemplates = [];
-            if (!result.descriptionTemplates) result.descriptionTemplates = [];
-            if (!result.discountTemplates) result.discountTemplates = [];
-            if (!result.changelogTemplates) result.changelogTemplates = [];
-            if (!result.itemInfoTemplates) result.itemInfoTemplates = [];
-            if (!result.sectionTemplates) result.sectionTemplates = [];
-            return result;
+          const showFullsetConfirm = ref(false);
+          const totalSupport = computed(() => calculateTotalSupport(props.itemConfig.variations));
+          const hasFullset = computed(
+            () => props.itemConfig.variations.some((v) => v.isFullset)
+          );
+          const suggestedPrice = computed(
+            () => suggestFullsetPrice(
+              props.itemConfig.pricing.normalVariationPrice,
+              totalSupport.value,
+              props.itemConfig.discount
+            )
+          );
+          const normalOriginalPrice = computed(() => props.itemConfig.pricing.normalVariationPrice);
+          const normalDiscountedPrice = computed(
+            () => applyDiscount(normalOriginalPrice.value, props.itemConfig.discount)
+          );
+          const fullsetOriginalPrice = computed(() => props.itemConfig.pricing.fullsetPrice);
+          const fullsetDiscountedPrice = computed(
+            () => applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount)
+          );
+          function getVariationPrice(variation) {
+            if (variation.isFullset) {
+              return applyDiscount(props.itemConfig.pricing.fullsetPrice, props.itemConfig.discount);
+            }
+            if (variation.useCustomPrice && variation.customPrice !== void 0) {
+              return applyDiscount(variation.customPrice, props.itemConfig.discount);
+            }
+            return applyDiscount(props.itemConfig.pricing.normalVariationPrice, props.itemConfig.discount);
           }
-          const localTemplates = ref(initializeTemplates(props.globalTemplates));
-          const tabs = [
-            { id: "name", label: "商品名" },
-            { id: "description", label: "描述" },
-            { id: "discount", label: "打折" },
-            { id: "changelog", label: "更新日志" },
-            { id: "itemInfo", label: "商品信息" },
-            { id: "sections", label: "Section" }
-          ];
-          const activeTab = ref("name");
-          function handleClose() {
-            localTemplates.value = initializeTemplates(props.globalTemplates);
-            emit("close");
-          }
-          function handleSave() {
-            emit("save", JSON.parse(JSON.stringify(localTemplates.value)));
-            emit("close");
-          }
-          function addTemplate(list, defaultName, defaultTemplate) {
-            list.push({
-              id: crypto.randomUUID(),
-              name: defaultName,
-              template: defaultTemplate
+          function addVariation() {
+            const price = applyDiscount(
+              props.itemConfig.pricing.normalVariationPrice,
+              props.itemConfig.discount
+            );
+            props.itemConfig.variations.push({
+              name: "",
+              supportCount: 1,
+              price,
+              isFullset: false,
+              useCustomPrice: false
             });
           }
-          function removeTemplate(list, index) {
-            if (list.length > 1) {
-              list.splice(index, 1);
+          function addFullsetVariation() {
+            const existingFullsetIndex = props.itemConfig.variations.findIndex((v) => v.isFullset);
+            if (existingFullsetIndex !== -1) {
+              props.itemConfig.variations.splice(existingFullsetIndex, 1);
+            }
+            props.itemConfig.variations.unshift({
+              name: "Fullset",
+              supportCount: 0,
+              price: suggestedPrice.value,
+              isFullset: true
+            });
+          }
+          function toggleFullset(variation, index) {
+            if (variation.isFullset) {
+              variation.isFullset = false;
+              variation.supportCount = 1;
+            } else {
+              const existingFullsetIndex = props.itemConfig.variations.findIndex((v, i) => v.isFullset && i !== index);
+              if (existingFullsetIndex !== -1) {
+                const existingFullset = props.itemConfig.variations[existingFullsetIndex];
+                existingFullset.isFullset = false;
+                existingFullset.supportCount = 1;
+              }
+              variation.isFullset = true;
+              variation.supportCount = 0;
             }
           }
-          function addNameTemplate() {
-            addTemplate(localTemplates.value.nameTemplates, "新商品名模板", "{itemName}");
+          function handleAddVariation() {
+            if (props.itemConfig.variations.length === 0 || !hasFullset.value) {
+              showFullsetConfirm.value = true;
+              return;
+            }
+            addVariation();
           }
-          function addDescriptionTemplate() {
-            addTemplate(localTemplates.value.descriptionTemplates, "新描述模板", "");
+          function confirmCreateFullset() {
+            addFullsetVariation();
+            showFullsetConfirm.value = false;
           }
-          function addDiscountTemplate() {
-            addTemplate(
-              localTemplates.value.discountTemplates,
-              "新打折模板",
-              "【セール中】\n通常価格: ¥{originalPrice} → セール価格: ¥{discountedPrice} ({discountPercent}% OFF)"
-            );
+          function cancelCreateFullset() {
+            addVariation();
+            showFullsetConfirm.value = false;
           }
-          function addChangelogTemplate() {
-            addTemplate(localTemplates.value.changelogTemplates, "新更新日志模板", "◆ {date}\n{content}");
+          function removeVariation(index) {
+            props.itemConfig.variations.splice(index, 1);
           }
-          function addItemInfoTemplate() {
-            addTemplate(localTemplates.value.itemInfoTemplates, "新商品信息模板", "{authorName} - {itemName}");
+          function onVariationReorder(fromIndex, toIndex) {
+            const variations = props.itemConfig.variations;
+            const [removed] = variations.splice(fromIndex, 1);
+            variations.splice(toIndex, 0, removed);
           }
-          function addSectionTemplate() {
-            localTemplates.value.sectionTemplates.push({
-              id: crypto.randomUUID(),
-              name: "新 Section 模板",
-              headline: "",
-              body: ""
+          function updateVariationPrice(variation) {
+            if (variation.isFullset) {
+              variation.price = applyDiscount(props.itemConfig.pricing.fullsetPrice, props.itemConfig.discount);
+            } else if (variation.useCustomPrice && variation.customPrice !== void 0) {
+              variation.price = applyDiscount(variation.customPrice, props.itemConfig.discount);
+            } else {
+              variation.price = applyDiscount(props.itemConfig.pricing.normalVariationPrice, props.itemConfig.discount);
+            }
+          }
+          function handleSave() {
+            props.itemConfig.variations.forEach((variation) => {
+              variation.supportCount = Number(variation.supportCount) || 1;
+              updateVariationPrice(variation);
             });
+            emit("save");
+            emit("close");
           }
-          function removeSectionTemplate(index) {
-            localTemplates.value.sectionTemplates.splice(index, 1);
-          }
-          function onTemplateReorder(list, fromIndex, toIndex) {
-            const [removed] = list.splice(fromIndex, 1);
-            list.splice(toIndex, 0, removed);
-          }
-          watch(() => props.globalTemplates, (newVal) => {
-            localTemplates.value = initializeTemplates(newVal);
-          }, { deep: true });
           return (_ctx, _cache) => {
-            return openBlock(), createBlock(unref(Modal), {
-              show: _ctx.show,
-              title: "全局模板配置",
-              "teleport-to": ".booth-enhancer-sidebar",
-              onClose: handleClose,
-              width: "700px"
-            }, {
-              footer: withCtx(() => [
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-secondary",
-                  onClick: handleClose
-                }, " 取消 "),
-                createElementVNode("button", {
-                  class: "booth-btn booth-btn-md booth-btn-primary",
-                  onClick: handleSave
-                }, " 保存 ")
-              ]),
-              default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$1, [
-                  createVNode(TabBar, {
-                    tabs,
-                    "active-tab": activeTab.value,
-                    "onUpdate:activeTab": _cache[0] || (_cache[0] = ($event) => activeTab.value = $event)
-                  }, null, 8, ["active-tab"]),
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "Variation 配置",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[5] || (_cache[5] = ($event) => emit("close")),
+                width: "700px"
+              }, {
+                "header-actions": withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                    onClick: handleAddVariation,
+                    title: "添加",
+                    type: "button"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).plus, 18)
+                    }, null, 8, _hoisted_1$1)
+                  ])
+                ]),
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: _cache[4] || (_cache[4] = ($event) => emit("close")),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_29$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: handleSave,
+                    title: "保存"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_30$1)
+                  ])
+                ]),
+                default: withCtx(() => [
                   createElementVNode("div", _hoisted_2$1, [
-                    activeTab.value === "name" ? (openBlock(), createElementBlock("div", _hoisted_3$1, [
-                      createElementVNode("div", _hoisted_4$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addNameTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_5$1),
-                          _cache[12] || (_cache[12] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      createVNode(unref(DraggableCardList), {
-                        items: localTemplates.value.nameTemplates,
-                        "show-remove-button": localTemplates.value.nameTemplates.length > 1,
-                        onRemove: _cache[1] || (_cache[1] = (index) => removeTemplate(localTemplates.value.nameTemplates, index)),
-                        onReorder: _cache[2] || (_cache[2] = (from, to) => onTemplateReorder(localTemplates.value.nameTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_6$1), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_7$1, [
-                            _cache[13] || (_cache[13] = createElementVNode("label", null, "模板内容", -1)),
-                            _cache[14] || (_cache[14] = createElementVNode("p", { class: "form-hint" }, "可用变量：{itemName}, {supportCount}", -1)),
-                            withDirectives(createElementVNode("input", {
-                              "onUpdate:modelValue": ($event) => template.template = $event,
-                              type: "text",
-                              placeholder: "例如：{itemName}"
-                            }, null, 8, _hoisted_8$1), [
-                              [vModelText, template.template]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items", "show-remove-button"])
-                    ])) : activeTab.value === "description" ? (openBlock(), createElementBlock("div", _hoisted_9$1, [
-                      createElementVNode("div", _hoisted_10$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addDescriptionTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_11$1),
-                          _cache[15] || (_cache[15] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      createVNode(unref(DraggableCardList), {
-                        items: localTemplates.value.descriptionTemplates,
-                        "show-remove-button": localTemplates.value.descriptionTemplates.length > 1,
-                        onRemove: _cache[3] || (_cache[3] = (index) => removeTemplate(localTemplates.value.descriptionTemplates, index)),
-                        onReorder: _cache[4] || (_cache[4] = (from, to) => onTemplateReorder(localTemplates.value.descriptionTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_12$1), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_13$1, [
-                            _cache[16] || (_cache[16] = createElementVNode("label", null, "模板内容", -1)),
-                            _cache[17] || (_cache[17] = createElementVNode("p", { class: "form-hint" }, "可用变量：{itemName}, {supportCount}", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => template.template = $event,
-                              rows: "8",
-                              placeholder: "输入描述模板..."
-                            }, null, 8, _hoisted_14$1), [
-                              [vModelText, template.template]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items", "show-remove-button"])
-                    ])) : activeTab.value === "discount" ? (openBlock(), createElementBlock("div", _hoisted_15$1, [
-                      createElementVNode("div", _hoisted_16$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addDiscountTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_17$1),
-                          _cache[18] || (_cache[18] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      createVNode(unref(DraggableCardList), {
-                        items: localTemplates.value.discountTemplates,
-                        "show-remove-button": localTemplates.value.discountTemplates.length > 1,
-                        onRemove: _cache[5] || (_cache[5] = (index) => removeTemplate(localTemplates.value.discountTemplates, index)),
-                        onReorder: _cache[6] || (_cache[6] = (from, to) => onTemplateReorder(localTemplates.value.discountTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_18$1), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_19$1, [
-                            _cache[19] || (_cache[19] = createElementVNode("label", null, "模板内容", -1)),
-                            _cache[20] || (_cache[20] = createElementVNode("p", { class: "form-hint" }, "可用变量：{originalPrice}, {discountedPrice}, {discountPercent}", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => template.template = $event,
-                              rows: "4",
-                              placeholder: "例如：【セール中】\n通常価格: ¥{originalPrice} → セール価格: ¥{discountedPrice} ({discountPercent}% OFF)"
-                            }, null, 8, _hoisted_20$1), [
-                              [vModelText, template.template]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items", "show-remove-button"])
-                    ])) : activeTab.value === "changelog" ? (openBlock(), createElementBlock("div", _hoisted_21$1, [
-                      createElementVNode("div", _hoisted_22$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addChangelogTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_23$1),
-                          _cache[21] || (_cache[21] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      createVNode(unref(DraggableCardList), {
-                        items: localTemplates.value.changelogTemplates,
-                        "show-remove-button": localTemplates.value.changelogTemplates.length > 1,
-                        onRemove: _cache[7] || (_cache[7] = (index) => removeTemplate(localTemplates.value.changelogTemplates, index)),
-                        onReorder: _cache[8] || (_cache[8] = (from, to) => onTemplateReorder(localTemplates.value.changelogTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_24$1), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_25$1, [
-                            _cache[22] || (_cache[22] = createElementVNode("label", null, "模板内容", -1)),
-                            _cache[23] || (_cache[23] = createElementVNode("p", { class: "form-hint" }, "可用变量：{date}, {content}", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => template.template = $event,
-                              rows: "3",
-                              placeholder: "例如：◆ {date}\n{content}"
-                            }, null, 8, _hoisted_26$1), [
-                              [vModelText, template.template]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items", "show-remove-button"])
-                    ])) : activeTab.value === "itemInfo" ? (openBlock(), createElementBlock("div", _hoisted_27$1, [
-                      createElementVNode("div", _hoisted_28$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addItemInfoTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_29$1),
-                          _cache[24] || (_cache[24] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      _cache[27] || (_cache[27] = createElementVNode("p", { class: "hint-text" }, "商品信息模板用于格式化 ItemTab 中的商品数据显示", -1)),
-                      createVNode(unref(DraggableCardList), {
-                        items: localTemplates.value.itemInfoTemplates,
-                        "show-remove-button": localTemplates.value.itemInfoTemplates.length > 1,
-                        onRemove: _cache[9] || (_cache[9] = (index) => removeTemplate(localTemplates.value.itemInfoTemplates, index)),
-                        onReorder: _cache[10] || (_cache[10] = (from, to) => onTemplateReorder(localTemplates.value.itemInfoTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: template }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => template.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_30$1), [
-                            [vModelText, template.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: template }) => [
-                          createElementVNode("div", _hoisted_31$1, [
-                            _cache[25] || (_cache[25] = createElementVNode("label", null, "模板内容", -1)),
-                            _cache[26] || (_cache[26] = createElementVNode("p", { class: "form-hint" }, "可用变量：{authorName}, {itemName}, {itemUrl}", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => template.template = $event,
-                              rows: "3",
-                              placeholder: "例如：{authorName} - {itemName}"
-                            }, null, 8, _hoisted_32$1), [
-                              [vModelText, template.template]
-                            ])
-                          ])
-                        ]),
-                        _: 1
-                      }, 8, ["items", "show-remove-button"])
-                    ])) : activeTab.value === "sections" ? (openBlock(), createElementBlock("div", _hoisted_33$1, [
-                      createElementVNode("div", _hoisted_34$1, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: addSectionTemplate
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_35$1),
-                          _cache[28] || (_cache[28] = createTextVNode(" 添加模板 ", -1))
-                        ])
-                      ]),
-                      localTemplates.value.sectionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
-                        key: 0,
-                        items: localTemplates.value.sectionTemplates,
-                        onRemove: removeSectionTemplate,
-                        onReorder: _cache[11] || (_cache[11] = (from, to) => onTemplateReorder(localTemplates.value.sectionTemplates, from, to))
-                      }, {
-                        header: withCtx(({ item: section }) => [
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": ($event) => section.name = $event,
-                            type: "text",
-                            class: "template-name-input",
-                            placeholder: "模板名称"
-                          }, null, 8, _hoisted_36$1), [
-                            [vModelText, section.name]
-                          ])
-                        ]),
-                        content: withCtx(({ item: section }) => [
-                          createElementVNode("div", _hoisted_37$1, [
-                            _cache[29] || (_cache[29] = createElementVNode("label", null, "Headline", -1)),
-                            _cache[30] || (_cache[30] = createElementVNode("p", { class: "form-hint" }, "可用变量：{itemName}, {supportCount}", -1)),
-                            withDirectives(createElementVNode("input", {
-                              "onUpdate:modelValue": ($event) => section.headline = $event,
-                              type: "text",
-                              placeholder: "Section headline"
-                            }, null, 8, _hoisted_38$1), [
-                              [vModelText, section.headline]
+                    createVNode(unref(SectionHeader), { title: "Variations 管理" }, {
+                      default: withCtx(() => [
+                        _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3$1, ' 暂无 Variation，点击标题栏"添加"按钮添加 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                          key: 1,
+                          items: _ctx.itemConfig.variations,
+                          onRemove: removeVariation,
+                          onReorder: onVariationReorder
+                        }, {
+                          actions: withCtx(({ item: variation, index }) => [
+                            createElementVNode("div", _hoisted_4$1, [
+                              withDirectives(createElementVNode("input", {
+                                "onUpdate:modelValue": ($event) => variation.name = $event,
+                                type: "text",
+                                class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                                style: { "height": "28px" },
+                                placeholder: "Variation 名称"
+                              }, null, 8, _hoisted_5$1), [
+                                [vModelText, variation.name]
+                              ]),
+                              !hasFullset.value || variation.isFullset ? (openBlock(), createElementBlock("label", _hoisted_6$1, [
+                                createElementVNode("input", {
+                                  type: "checkbox",
+                                  checked: variation.isFullset,
+                                  onChange: ($event) => toggleFullset(variation, index)
+                                }, null, 40, _hoisted_7$1),
+                                _cache[7] || (_cache[7] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                                _cache[8] || (_cache[8] = createElementVNode("span", { class: "toggle-label" }, "Fullset", -1))
+                              ])) : createCommentVNode("", true)
                             ])
                           ]),
-                          createElementVNode("div", _hoisted_39$1, [
-                            _cache[31] || (_cache[31] = createElementVNode("label", null, "Body", -1)),
-                            _cache[32] || (_cache[32] = createElementVNode("p", { class: "form-hint" }, "可用变量：{itemName}, {supportCount}", -1)),
-                            withDirectives(createElementVNode("textarea", {
-                              "onUpdate:modelValue": ($event) => section.body = $event,
-                              rows: "4",
-                              placeholder: "Section body"
-                            }, null, 8, _hoisted_40$1), [
-                              [vModelText, section.body]
+                          content: withCtx(({ item: variation }) => [
+                            createElementVNode("div", _hoisted_8$1, [
+                              variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_9$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                                createElementVNode("span", _hoisted_10$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1),
+                                createElementVNode("label", _hoisted_11$1, [
+                                  withDirectives(createElementVNode("input", {
+                                    type: "checkbox",
+                                    "onUpdate:modelValue": ($event) => variation.useCustomPrice = $event
+                                  }, null, 8, _hoisted_12$1), [
+                                    [vModelCheckbox, variation.useCustomPrice]
+                                  ]),
+                                  _cache[9] || (_cache[9] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                                ]),
+                                variation.useCustomPrice ? withDirectives((openBlock(), createElementBlock("input", {
+                                  key: 0,
+                                  "onUpdate:modelValue": ($event) => variation.customPrice = $event,
+                                  type: "number",
+                                  class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                                  style: { "height": "28px", "min-width": "80px" },
+                                  min: "0",
+                                  placeholder: "价格"
+                                }, null, 8, _hoisted_13$1)), [
+                                  [
+                                    vModelText,
+                                    variation.customPrice,
+                                    void 0,
+                                    { number: true }
+                                  ]
+                                ]) : createCommentVNode("", true),
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => variation.supportCount = $event,
+                                  type: "number",
+                                  class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                                  style: { "height": "28px", "min-width": "60px" },
+                                  min: "1",
+                                  placeholder: "数量"
+                                }, null, 8, _hoisted_14$1), [
+                                  [
+                                    vModelText,
+                                    variation.supportCount,
+                                    void 0,
+                                    { number: true }
+                                  ]
+                                ])
+                              ], 64))
                             ])
+                          ]),
+                          _: 1
+                        }, 8, ["items"]))
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(unref(SectionHeader), { title: "价格配置" }, {
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_15$1, [
+                          _cache[10] || (_cache[10] = createElementVNode("label", null, "普通 Variation 价格 (¥)", -1)),
+                          withDirectives(createElementVNode("input", {
+                            type: "number",
+                            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.pricing.normalVariationPrice = $event),
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.normalVariationPrice,
+                              void 0,
+                              { number: true }
+                            ]
                           ])
                         ]),
-                        _: 1
-                      }, 8, ["items"])) : (openBlock(), createElementBlock("div", _hoisted_41$1, " 暂无 Section 模板，点击上方按钮添加 "))
-                    ])) : createCommentVNode("", true)
+                        createElementVNode("div", _hoisted_16$1, [
+                          _cache[11] || (_cache[11] = createElementVNode("label", null, "Fullset 价格 (¥)", -1)),
+                          createElementVNode("p", _hoisted_17$1, "建议: ¥" + toDisplayString(suggestedPrice.value), 1),
+                          withDirectives(createElementVNode("input", {
+                            type: "number",
+                            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.pricing.fullsetPrice = $event),
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.fullsetPrice,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_18$1, [
+                          createElementVNode("span", _hoisted_19$1, [
+                            _cache[12] || (_cache[12] = createTextVNode("总支持数: ", -1)),
+                            createElementVNode("strong", null, toDisplayString(totalSupport.value), 1)
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createElementVNode("div", _hoisted_20$1, [
+                      createElementVNode("label", _hoisted_21$1, [
+                        withDirectives(createElementVNode("input", {
+                          type: "checkbox",
+                          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.discount.enabled = $event)
+                        }, null, 512), [
+                          [vModelCheckbox, _ctx.itemConfig.discount.enabled]
+                        ]),
+                        _cache[13] || (_cache[13] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                        _cache[14] || (_cache[14] = createElementVNode("span", { class: "toggle-label" }, "启用打折", -1))
+                      ]),
+                      _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("div", _hoisted_22$1, [
+                        createElementVNode("div", _hoisted_23$1, [
+                          _cache[15] || (_cache[15] = createElementVNode("label", null, "折扣百分比 (%)", -1)),
+                          withDirectives(createElementVNode("input", {
+                            type: "number",
+                            "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.discount.discountPercent = $event),
+                            min: "0",
+                            max: "100",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.discount.discountPercent,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_24$1, [
+                          _cache[18] || (_cache[18] = createElementVNode("div", { class: "be-text-sm be-font-bold be-text-secondary" }, "价格预览", -1)),
+                          createElementVNode("div", _hoisted_25$1, [
+                            _cache[16] || (_cache[16] = createElementVNode("span", { class: "be-text-secondary be-font-medium" }, "普通 Variation:", -1)),
+                            createElementVNode("span", _hoisted_26$1, " ¥" + toDisplayString(normalOriginalPrice.value) + " → ¥" + toDisplayString(normalDiscountedPrice.value), 1)
+                          ]),
+                          createElementVNode("div", _hoisted_27$1, [
+                            _cache[17] || (_cache[17] = createElementVNode("span", { class: "be-text-secondary be-font-medium" }, "Fullset:", -1)),
+                            createElementVNode("span", _hoisted_28$1, " ¥" + toDisplayString(fullsetOriginalPrice.value) + " → ¥" + toDisplayString(fullsetDiscountedPrice.value), 1)
+                          ])
+                        ])
+                      ])) : createCommentVNode("", true)
+                    ])
                   ])
-                ])
-              ]),
-              _: 1
-            }, 8, ["show"]);
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(Modal, {
+                show: showFullsetConfirm.value,
+                title: "创建 Fullset",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[6] || (_cache[6] = ($event) => showFullsetConfirm.value = false),
+                width: "400px"
+              }, {
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: cancelCreateFullset,
+                    title: "创建普通 Variation"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_34$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: confirmCreateFullset,
+                    title: "创建 Fullset"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_35$1)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_31$1, [
+                    createElementVNode("p", _hoisted_32$1, toDisplayString(_ctx.itemConfig.variations.length === 0 ? "这是第一个 Variation，是否创建 Fullset？" : "当前没有 Fullset，是否创建 Fullset？"), 1),
+                    createElementVNode("p", _hoisted_33$1, " Fullset 将包含所有支持的商品，建议价格为 ¥" + toDisplayString(suggestedPrice.value), 1)
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"])
+            ], 64);
           };
         }
       });
-      const TemplateConfigModal = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-f4a0a369"]]);
-      const _hoisted_1 = { key: 0 };
-      const _hoisted_2 = { class: "form-group" };
+      const _hoisted_1 = ["innerHTML"];
+      const _hoisted_2 = { key: 0 };
       const _hoisted_3 = { class: "form-group" };
-      const _hoisted_4 = { key: 1 };
-      const _hoisted_5 = { class: "form-group" };
-      const _hoisted_6 = { class: "form-group" };
-      const _hoisted_7 = { class: "preview-box" };
-      const _hoisted_8 = { class: "preview-content text" };
-      const _hoisted_9 = ["disabled"];
-      const _hoisted_10 = {
-        key: 0,
-        class: "empty-state"
-      };
-      const _hoisted_11 = ["innerHTML"];
-      const _hoisted_12 = {
+      const _hoisted_4 = { class: "form-group" };
+      const _hoisted_5 = { key: 1 };
+      const _hoisted_6 = { class: "be-text-base be-font-normal be-whitespace-pre-wrap be-break-words be-m-0" };
+      const _hoisted_7 = ["innerHTML"];
+      const _hoisted_8 = ["disabled"];
+      const _hoisted_9 = ["innerHTML"];
+      const _hoisted_10 = ["innerHTML"];
+      const _hoisted_11 = {
         key: 1,
         class: "empty-state"
       };
-      const _hoisted_13 = ["innerHTML"];
-      const _hoisted_14 = ["innerHTML"];
-      const _hoisted_15 = {
+      const _hoisted_12 = ["innerHTML"];
+      const _hoisted_13 = {
         key: 2,
+        class: "empty-state"
+      };
+      const _hoisted_14 = ["innerHTML"];
+      const _hoisted_15 = ["innerHTML"];
+      const _hoisted_16 = {
+        key: 3,
         class: "edit-tab"
       };
-      const _hoisted_16 = { class: "edit-tab-header" };
-      const _hoisted_17 = ["innerHTML"];
+      const _hoisted_17 = { class: "edit-tab-scrollable" };
       const _hoisted_18 = ["innerHTML"];
       const _hoisted_19 = ["innerHTML"];
-      const _hoisted_20 = { class: "edit-tab-scrollable" };
-      const _hoisted_21 = { class: "edit-section" };
-      const _hoisted_22 = { class: "section-header" };
-      const _hoisted_23 = { class: "actions" };
+      const _hoisted_20 = { class: "form-group" };
+      const _hoisted_21 = { class: "be-flex be-justify-between be-align-center" };
+      const _hoisted_22 = { class: "be-text-xs be-text-secondary" };
+      const _hoisted_23 = ["innerHTML"];
       const _hoisted_24 = ["innerHTML"];
-      const _hoisted_25 = { class: "form-group" };
-      const _hoisted_26 = { class: "preview-box" };
-      const _hoisted_27 = { class: "preview-content" };
-      const _hoisted_28 = { class: "preview-section" };
-      const _hoisted_29 = { class: "section-header" };
-      const _hoisted_30 = { class: "actions" };
+      const _hoisted_25 = {
+        key: 0,
+        class: "empty-hint"
+      };
+      const _hoisted_26 = {
+        key: 1,
+        class: "be-mt-xs"
+      };
+      const _hoisted_27 = { class: "be-text-base be-font-normal be-whitespace-pre-wrap be-break-words be-m-0" };
+      const _hoisted_28 = ["innerHTML"];
+      const _hoisted_29 = ["innerHTML"];
+      const _hoisted_30 = ["innerHTML"];
       const _hoisted_31 = ["innerHTML"];
-      const _hoisted_32 = { class: "preview-content" };
-      const _hoisted_33 = { class: "preview-text" };
-      const _hoisted_34 = { class: "list-section" };
-      const _hoisted_35 = { class: "section-header" };
-      const _hoisted_36 = { class: "actions" };
-      const _hoisted_37 = ["innerHTML"];
+      const _hoisted_32 = {
+        key: 0,
+        class: "empty-hint"
+      };
+      const _hoisted_33 = ["onUpdate:modelValue"];
+      const _hoisted_34 = ["onClick"];
+      const _hoisted_35 = ["innerHTML"];
+      const _hoisted_36 = { class: "form-group" };
+      const _hoisted_37 = ["onUpdate:modelValue"];
       const _hoisted_38 = ["innerHTML"];
       const _hoisted_39 = ["innerHTML"];
-      const _hoisted_40 = {
+      const _hoisted_40 = ["innerHTML"];
+      const _hoisted_41 = {
         key: 0,
         class: "empty-hint"
       };
-      const _hoisted_41 = { class: "form-group" };
       const _hoisted_42 = ["onUpdate:modelValue"];
-      const _hoisted_43 = { class: "form-group" };
-      const _hoisted_44 = ["onUpdate:modelValue"];
-      const _hoisted_45 = { class: "section-preview" };
-      const _hoisted_46 = { class: "preview-headline" };
-      const _hoisted_47 = { class: "preview-body" };
-      const _hoisted_48 = {
-        key: 2,
-        class: "section-footer"
-      };
-      const _hoisted_49 = { class: "list-section" };
-      const _hoisted_50 = { class: "section-header" };
-      const _hoisted_51 = { class: "actions" };
-      const _hoisted_52 = ["innerHTML"];
-      const _hoisted_53 = ["innerHTML"];
-      const _hoisted_54 = {
-        key: 0,
-        class: "empty-hint"
-      };
-      const _hoisted_55 = {
-        key: 1,
-        class: "variations-list"
-      };
-      const _hoisted_56 = ["onDragstart", "onDrop"];
-      const _hoisted_57 = ["innerHTML"];
-      const _hoisted_58 = { class: "number" };
-      const _hoisted_59 = { class: "name" };
-      const _hoisted_60 = { class: "support" };
-      const _hoisted_61 = { class: "price" };
-      const _hoisted_62 = {
+      const _hoisted_43 = { class: "variation-info" };
+      const _hoisted_44 = { class: "variation-details" };
+      const _hoisted_45 = { class: "support" };
+      const _hoisted_46 = { class: "price" };
+      const _hoisted_47 = {
         key: 0,
         class: "badge"
       };
-      const _hoisted_63 = {
-        key: 2,
-        class: "section-footer"
-      };
-      const _hoisted_64 = { class: "modal-content" };
+      const _hoisted_48 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_49 = { class: "be-text-base be-font-bold be-text-primary" };
+      const _hoisted_50 = { class: "be-text-base be-text-secondary be-whitespace-pre-wrap be-break-words be-m-0" };
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "EditTab",
         props: {
@@ -9625,8 +10153,21 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
         },
         setup(__props) {
           const props = __props;
-          const { data, exportSingleItem, importSingleItem } = useStorage();
+          const { data } = useStorage();
           const modal = useModal();
+          const modalState = computed(() => modal.state.value);
+          const isPreviewModal = computed(
+            () => {
+              var _a;
+              return modalState.value.type === "alert" && ((_a = modalState.value.formData) == null ? void 0 : _a.sectionIndex) !== void 0;
+            }
+          );
+          const previewSectionIndex = computed(
+            () => {
+              var _a;
+              return (_a = modalState.value.formData) == null ? void 0 : _a.sectionIndex;
+            }
+          );
           const currentItemId = computed(() => {
             const match = window.location.pathname.match(/\/items\/(\d+)\/edit/);
             return match ? match[1] : null;
@@ -9695,9 +10236,7 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
           const showNameModal = ref(false);
           const showSectionsModal = ref(false);
           const showPriceModal = ref(false);
-          const showTemplateModal = ref(false);
-          const showImportConflictDialog = ref(false);
-          const pendingImportConfig = ref(null);
+          const showDescTemplateModal = ref(false);
           async function handleCreateItem() {
             var _a;
             const result = await modal.openModal({
@@ -9715,6 +10254,14 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
               data.value.itemConfigs[currentItemId.value] = config;
               toast.success("已创建商品配置");
             }
+          }
+          async function handlePreviewSection(index) {
+            modal.state.value.formData = { sectionIndex: index };
+            modal.state.value.type = "alert";
+            modal.state.value.title = "Section 预览";
+            modal.state.value.show = false;
+            await nextTick();
+            modal.state.value.show = true;
           }
           async function handleEditDescription() {
             if (!currentItemConfig.value) return;
@@ -9749,10 +10296,11 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
               body: ""
             }));
             pageSections.forEach((section, index) => {
-              var _a, _b;
-              if (currentItemConfig.value.sections[index]) {
-                currentItemConfig.value.sections[index].headline = ((_a = section.headlineInput) == null ? void 0 : _a.value) || "";
-                currentItemConfig.value.sections[index].body = ((_b = section.bodyTextarea) == null ? void 0 : _b.value) || "";
+              var _a, _b, _c;
+              const targetSection = (_a = currentItemConfig.value) == null ? void 0 : _a.sections[index];
+              if (targetSection) {
+                targetSection.headline = ((_b = section.headlineInput) == null ? void 0 : _b.value) || "";
+                targetSection.body = ((_c = section.bodyTextarea) == null ? void 0 : _c.value) || "";
               }
             });
             toast.success(`已导入 ${pageSections.length} 个 Sections`);
@@ -9821,34 +10369,19 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             });
             toast.success(`已应用 ${currentItemConfig.value.variations.length} 个 Variations`);
           }
-          function applyAll() {
-            applyName();
-            applyDescription();
-            applySections();
-            applyVariations();
-            toast.success("已应用所有更改到页面");
-          }
           function onSectionReorder(fromIndex, toIndex) {
             if (!currentItemConfig.value) return;
-            const sections = currentItemConfig.value.sections;
-            const [removed] = sections.splice(fromIndex, 1);
-            sections.splice(toIndex, 0, removed);
+            const [removed] = currentItemConfig.value.sections.splice(fromIndex, 1);
+            currentItemConfig.value.sections.splice(toIndex, 0, removed);
           }
-          const draggedVariationIndex = ref(null);
-          function onVariationDragStart(index) {
-            draggedVariationIndex.value = index;
+          function removeVariation(index) {
+            if (!currentItemConfig.value) return;
+            currentItemConfig.value.variations.splice(index, 1);
           }
-          function onVariationDragOver(event) {
-            event.preventDefault();
-          }
-          function onVariationDrop(event, targetIndex) {
-            event.preventDefault();
-            if (!currentItemConfig.value || draggedVariationIndex.value === null) return;
-            const variations = currentItemConfig.value.variations;
-            const draggedItem = variations[draggedVariationIndex.value];
-            variations.splice(draggedVariationIndex.value, 1);
-            variations.splice(targetIndex, 0, draggedItem);
-            draggedVariationIndex.value = null;
+          function onVariationReorder(fromIndex, toIndex) {
+            if (!currentItemConfig.value) return;
+            const [removed] = currentItemConfig.value.variations.splice(fromIndex, 1);
+            currentItemConfig.value.variations.splice(toIndex, 0, removed);
           }
           watch(
             () => {
@@ -9866,58 +10399,6 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
             },
             { deep: true }
           );
-          function exportCurrentItem() {
-            if (!currentItemId.value) {
-              toast.error("无法获取当前商品ID");
-              return;
-            }
-            try {
-              const config = exportSingleItem(currentItemId.value);
-              if (!config) {
-                toast.error("当前商品没有配置数据");
-                return;
-              }
-              const timestamp = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
-              downloadJSON(config, `booth-item-${currentItemId.value}-${timestamp}.json`);
-              toast.success("导出成功");
-            } catch (error) {
-              console.error("导出失败:", error);
-              toast.error("导出失败：" + error.message);
-            }
-          }
-          function importItemConfig() {
-            triggerFileInput("application/json", async (file) => {
-              try {
-                const config = await readJSONFile(file);
-                const success = importSingleItem(config, { replace: false });
-                if (!success) {
-                  pendingImportConfig.value = config;
-                  showImportConflictDialog.value = true;
-                } else {
-                  toast.success("导入成功");
-                }
-              } catch (error) {
-                console.error("导入失败:", error);
-                toast.error("导入失败：" + error.message);
-              }
-            });
-          }
-          function confirmReplaceConfig() {
-            if (pendingImportConfig.value) {
-              importSingleItem(pendingImportConfig.value, { replace: true });
-              toast.success("导入成功");
-            }
-            showImportConflictDialog.value = false;
-            pendingImportConfig.value = null;
-          }
-          function cancelImport() {
-            showImportConflictDialog.value = false;
-            pendingImportConfig.value = null;
-          }
-          function handleSaveTemplates(templates) {
-            data.value.globalTemplates = templates;
-            toast.success("模板配置已保存");
-          }
           watch(
             () => {
               var _a;
@@ -9941,347 +10422,369 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
           });
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock(Fragment, null, [
-              createVNode(unref(Modal), {
-                show: unref(modal).state.value.show,
-                title: unref(modal).state.value.title,
+              !isPreviewModal.value ? (openBlock(), createBlock(unref(Modal), {
+                key: 0,
+                show: modalState.value.show,
+                title: modalState.value.title,
                 "teleport-to": ".booth-enhancer-sidebar",
                 onClose: unref(modal).closeModal,
                 width: "500px"
               }, {
+                "header-actions": withCtx(() => [
+                  modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
+                    key: 0,
+                    class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showDescTemplateModal.value = true),
+                    title: "模板配置",
+                    type: "button"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                    }, null, 8, _hoisted_1)
+                  ])) : createCommentVNode("", true)
+                ]),
                 footer: withCtx(() => {
                   var _a;
                   return [
                     createElementVNode("button", {
-                      class: "booth-btn booth-btn-md booth-btn-secondary",
-                      onClick: _cache[5] || (_cache[5] = //@ts-ignore
-                      (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
-                    }, " 取消 "),
-                    unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                      onClick: _cache[6] || (_cache[6] = //@ts-ignore
+                      (...args) => unref(modal).closeModal && unref(modal).closeModal(...args)),
+                      title: "取消"
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).close, 18)
+                      }, null, 8, _hoisted_7)
+                    ]),
+                    modalState.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
                       key: 0,
-                      class: "booth-btn booth-btn-md booth-btn-primary",
-                      onClick: _cache[6] || (_cache[6] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData)),
-                      disabled: !((_a = unref(modal).state.value.formData.itemName) == null ? void 0 : _a.trim())
-                    }, " 创建配置 ", 8, _hoisted_9)) : unref(modal).state.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      onClick: _cache[7] || (_cache[7] = ($event) => unref(modal).confirmModal(modalState.value.formData)),
+                      disabled: !((_a = modalState.value.formData.itemName) == null ? void 0 : _a.trim()),
+                      title: "创建配置"
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_9)
+                    ], 8, _hoisted_8)) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
                       key: 1,
-                      class: "booth-btn booth-btn-md booth-btn-primary",
-                      onClick: _cache[7] || (_cache[7] = ($event) => unref(modal).confirmModal(unref(modal).state.value.formData))
-                    }, " 保存 ")) : createCommentVNode("", true)
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      onClick: _cache[8] || (_cache[8] = ($event) => unref(modal).confirmModal(modalState.value.formData)),
+                      title: "保存"
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_10)
+                    ])) : createCommentVNode("", true)
                   ];
                 }),
                 default: withCtx(() => [
-                  unref(modal).state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_1, [
+                  modalState.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_2, [
                     _cache[22] || (_cache[22] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
-                    createElementVNode("div", _hoisted_2, [
+                    createElementVNode("div", _hoisted_3, [
                       _cache[19] || (_cache[19] = createElementVNode("label", null, [
                         createTextVNode("商品名称 "),
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
                       withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(modal).state.value.formData.itemName = $event),
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => modalState.value.formData.itemName = $event),
                         type: "text",
                         placeholder: "输入商品名称",
-                        onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(modal).confirmModal(unref(modal).state.value.formData), ["enter"]))
+                        onKeyup: _cache[2] || (_cache[2] = withKeys(($event) => unref(modal).confirmModal(modalState.value.formData), ["enter"]))
                       }, null, 544), [
-                        [vModelText, unref(modal).state.value.formData.itemName]
+                        [vModelText, modalState.value.formData.itemName]
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_3, [
+                    createElementVNode("div", _hoisted_4, [
                       _cache[21] || (_cache[21] = createElementVNode("label", null, "商品类型", -1)),
                       withDirectives(createElementVNode("select", {
-                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(modal).state.value.formData.itemType = $event)
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => modalState.value.formData.itemType = $event)
                       }, _cache[20] || (_cache[20] = [
                         createElementVNode("option", { value: "normal" }, "普通商品", -1),
                         createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
                       ]), 512), [
-                        [vModelSelect, unref(modal).state.value.formData.itemType]
+                        [vModelSelect, modalState.value.formData.itemType]
                       ])
                     ])
-                  ])) : unref(modal).state.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_4, [
-                    createElementVNode("div", _hoisted_5, [
-                      _cache[23] || (_cache[23] = createElementVNode("label", null, [
-                        createTextVNode("描述模板 "),
-                        createElementVNode("span", { class: "label-hint" }, "(全局)")
-                      ], -1)),
-                      _cache[24] || (_cache[24] = createElementVNode("p", { class: "form-hint" }, "支持变量: {itemName}, {supportCount}", -1)),
-                      withDirectives(createElementVNode("textarea", {
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(modal).state.value.formData.descriptionTemplate = $event),
-                        rows: "3",
-                        placeholder: "全局描述模板"
-                      }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.descriptionTemplate]
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_6, [
-                      _cache[25] || (_cache[25] = createElementVNode("label", null, [
-                        createTextVNode("自定义描述 "),
-                        createElementVNode("span", { class: "label-hint" }, "(此商品专属)")
-                      ], -1)),
-                      withDirectives(createElementVNode("textarea", {
-                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(modal).state.value.formData.customDescription = $event),
-                        rows: "6",
-                        placeholder: "输入此商品的特殊说明..."
-                      }, null, 512), [
-                        [vModelText, unref(modal).state.value.formData.customDescription]
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_7, [
-                      _cache[26] || (_cache[26] = createElementVNode("div", { class: "preview-label" }, "最终描述预览", -1)),
-                      createElementVNode("pre", _hoisted_8, toDisplayString(previewDescription.value), 1)
-                    ])
+                  ])) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_5, [
+                    createVNode(unref(SectionHeader), { title: "描述模板 (全局)" }, {
+                      default: withCtx(() => [
+                        _cache[23] || (_cache[23] = createElementVNode("p", { class: "form-hint" }, "支持变量: {itemName}, {supportCount}", -1)),
+                        withDirectives(createElementVNode("textarea", {
+                          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => modalState.value.formData.descriptionTemplate = $event),
+                          rows: "2",
+                          placeholder: "全局描述模板"
+                        }, null, 512), [
+                          [vModelText, modalState.value.formData.descriptionTemplate]
+                        ])
+                      ]),
+                      _: 1,
+                      __: [23]
+                    }),
+                    createVNode(unref(SectionHeader), { title: "自定义描述 (此商品专属)" }, {
+                      default: withCtx(() => [
+                        withDirectives(createElementVNode("textarea", {
+                          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => modalState.value.formData.customDescription = $event),
+                          rows: "3",
+                          placeholder: "输入此商品的特殊说明..."
+                        }, null, 512), [
+                          [vModelText, modalState.value.formData.customDescription]
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(unref(SectionHeader), { title: "最终描述预览" }, {
+                      default: withCtx(() => [
+                        createElementVNode("pre", _hoisted_6, toDisplayString(previewDescription.value), 1)
+                      ]),
+                      _: 1
+                    })
                   ])) : createCommentVNode("", true)
                 ]),
                 _: 1
-              }, 8, ["show", "title", "onClose"]),
-              !currentItemId.value ? (openBlock(), createElementBlock("div", _hoisted_10, [
+              }, 8, ["show", "title", "onClose"])) : createCommentVNode("", true),
+              !currentItemId.value ? (openBlock(), createElementBlock("div", _hoisted_11, [
                 createElementVNode("div", {
                   class: "empty-icon",
                   innerHTML: unref(withSize)(unref(icons).alertCircle, 48)
-                }, null, 8, _hoisted_11),
-                _cache[27] || (_cache[27] = createElementVNode("h3", null, "无法获取商品 ID", -1)),
-                _cache[28] || (_cache[28] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
-              ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_12, [
+                }, null, 8, _hoisted_12),
+                _cache[24] || (_cache[24] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "无法获取商品 ID", -1)),
+                _cache[25] || (_cache[25] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
+              ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_13, [
                 createElementVNode("div", {
                   class: "empty-icon",
                   innerHTML: unref(withSize)(unref(icons).file, 64)
-                }, null, 8, _hoisted_13),
-                _cache[30] || (_cache[30] = createElementVNode("h3", null, "未配置此商品", -1)),
-                _cache[31] || (_cache[31] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
+                }, null, 8, _hoisted_14),
+                _cache[27] || (_cache[27] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "未配置此商品", -1)),
+                _cache[28] || (_cache[28] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-lg booth-btn-primary",
                   onClick: handleCreateItem
                 }, [
                   createElementVNode("span", {
                     innerHTML: unref(withSize)(unref(icons).plus, 16)
-                  }, null, 8, _hoisted_14),
-                  _cache[29] || (_cache[29] = createTextVNode(" 创建商品配置 ", -1))
+                  }, null, 8, _hoisted_15),
+                  _cache[26] || (_cache[26] = createTextVNode(" 创建商品配置 ", -1))
                 ])
-              ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_15, [
-                createElementVNode("div", _hoisted_16, [
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-md booth-btn-primary",
-                    onClick: _cache[8] || (_cache[8] = ($event) => showTemplateModal.value = true)
-                  }, [
-                    createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).settings, 14)
-                    }, null, 8, _hoisted_17),
-                    _cache[32] || (_cache[32] = createTextVNode(" 配置模板 ", -1))
-                  ]),
-                  _cache[35] || (_cache[35] = createElementVNode("div", { class: "header-spacer" }, null, -1)),
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-sm booth-btn-secondary",
-                    onClick: exportCurrentItem
-                  }, [
-                    createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).upload, 14)
-                    }, null, 8, _hoisted_18),
-                    _cache[33] || (_cache[33] = createTextVNode(" 导出商品 ", -1))
-                  ]),
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-sm booth-btn-secondary",
-                    onClick: importItemConfig
-                  }, [
-                    createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).download, 14)
-                    }, null, 8, _hoisted_19),
-                    _cache[34] || (_cache[34] = createTextVNode(" 导入商品 ", -1))
-                  ])
-                ]),
-                createElementVNode("div", _hoisted_20, [
-                  createElementVNode("section", _hoisted_21, [
-                    createElementVNode("div", _hoisted_22, [
-                      _cache[37] || (_cache[37] = createElementVNode("h3", null, "商品名称", -1)),
-                      createElementVNode("div", _hoisted_23, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-secondary",
-                          onClick: _cache[9] || (_cache[9] = ($event) => showNameModal.value = true)
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).settings, 14)
-                          }, null, 8, _hoisted_24),
-                          _cache[36] || (_cache[36] = createTextVNode(" 模板设置 ", -1))
-                        ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: applyName
-                        }, " 应用到页面 ")
+              ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                createElementVNode("div", _hoisted_17, [
+                  createVNode(unref(SectionHeader), { title: "商品名称" }, {
+                    actions: withCtx(() => [
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-secondary",
+                        onClick: _cache[9] || (_cache[9] = ($event) => showNameModal.value = true),
+                        title: "模板设置"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_18)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-primary",
+                        onClick: applyName,
+                        title: "应用到页面"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).send, 14)
+                        }, null, 8, _hoisted_19)
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_25, [
-                      _cache[38] || (_cache[38] = createElementVNode("label", null, "商品基础名称", -1)),
-                      withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => currentItemConfig.value.itemName = $event),
-                        type: "text",
-                        placeholder: "输入商品名称"
-                      }, null, 512), [
-                        [vModelText, currentItemConfig.value.itemName]
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_26, [
-                      _cache[39] || (_cache[39] = createElementVNode("div", { class: "preview-label" }, "预览", -1)),
-                      createElementVNode("div", _hoisted_27, toDisplayString(previewName.value || "(未设置)"), 1)
-                    ])
-                  ]),
-                  createElementVNode("section", _hoisted_28, [
-                    createElementVNode("div", _hoisted_29, [
-                      _cache[41] || (_cache[41] = createElementVNode("h3", null, "商品描述", -1)),
-                      createElementVNode("div", _hoisted_30, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-secondary",
-                          onClick: handleEditDescription
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).edit, 14)
-                          }, null, 8, _hoisted_31),
-                          _cache[40] || (_cache[40] = createTextVNode(" 编辑描述 ", -1))
+                    default: withCtx(() => [
+                      createElementVNode("div", _hoisted_20, [
+                        createElementVNode("div", _hoisted_21, [
+                          _cache[29] || (_cache[29] = createElementVNode("label", null, "商品基础名称", -1)),
+                          createElementVNode("span", _hoisted_22, toDisplayString(previewName.value || "(未设置)"), 1)
                         ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: applyDescription
-                        }, " 应用到页面 ")
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_32, [
-                      createElementVNode("pre", _hoisted_33, toDisplayString(previewDescription.value || "(未设置)"), 1)
-                    ])
-                  ]),
-                  createElementVNode("section", _hoisted_34, [
-                    createElementVNode("div", _hoisted_35, [
-                      createElementVNode("h3", null, "Sections (" + toDisplayString(currentItemConfig.value.sections.length) + ")", 1),
-                      createElementVNode("div", _hoisted_36, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-ghost",
-                          onClick: importSections
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).download, 14)
-                          }, null, 8, _hoisted_37),
-                          _cache[42] || (_cache[42] = createTextVNode(" 从页面导入 ", -1))
-                        ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-secondary",
-                          onClick: addSection
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).plus, 14)
-                          }, null, 8, _hoisted_38),
-                          _cache[43] || (_cache[43] = createTextVNode(" 添加 ", -1))
-                        ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-secondary",
-                          onClick: _cache[11] || (_cache[11] = ($event) => showSectionsModal.value = true)
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).settings, 14)
-                          }, null, 8, _hoisted_39),
-                          _cache[44] || (_cache[44] = createTextVNode(" 高级配置 ", -1))
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => currentItemConfig.value.itemName = $event),
+                          type: "text",
+                          placeholder: "输入商品名称"
+                        }, null, 512), [
+                          [vModelText, currentItemConfig.value.itemName]
                         ])
                       ])
                     ]),
-                    currentItemConfig.value.sections.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_40, ' 暂无 Sections，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
-                      key: 1,
-                      items: currentItemConfig.value.sections,
-                      onRemove: removeSection,
-                      onReorder: onSectionReorder
-                    }, {
-                      content: withCtx(({ item: section }) => [
-                        createElementVNode("div", _hoisted_41, [
-                          _cache[45] || (_cache[45] = createElementVNode("label", null, "Headline", -1)),
+                    _: 1
+                  }),
+                  createVNode(unref(SectionHeader), { title: "商品描述" }, {
+                    actions: withCtx(() => [
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-secondary",
+                        onClick: handleEditDescription,
+                        title: "编辑描述"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_23)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-primary",
+                        onClick: applyDescription,
+                        title: "应用到页面"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).send, 14)
+                        }, null, 8, _hoisted_24)
+                      ])
+                    ]),
+                    default: withCtx(() => [
+                      !previewDescription.value ? (openBlock(), createElementBlock("div", _hoisted_25, ' 暂无描述，点击"编辑描述"添加 ')) : (openBlock(), createElementBlock("div", _hoisted_26, [
+                        createElementVNode("pre", _hoisted_27, toDisplayString(previewDescription.value), 1)
+                      ]))
+                    ]),
+                    _: 1
+                  }),
+                  createVNode(unref(SectionHeader), {
+                    title: `Sections (${currentItemConfig.value.sections.length})`
+                  }, {
+                    actions: withCtx(() => [
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-ghost",
+                        onClick: importSections,
+                        title: "从页面导入"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).download, 14)
+                        }, null, 8, _hoisted_28)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-secondary",
+                        onClick: addSection,
+                        title: "添加"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).plus, 14)
+                        }, null, 8, _hoisted_29)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-secondary",
+                        onClick: _cache[11] || (_cache[11] = ($event) => showSectionsModal.value = true),
+                        title: "高级配置"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_30)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-primary",
+                        onClick: applySections,
+                        title: "应用到页面"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).send, 14)
+                        }, null, 8, _hoisted_31)
+                      ])
+                    ]),
+                    default: withCtx(() => [
+                      currentItemConfig.value.sections.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_32, ' 暂无 Sections，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                        key: 1,
+                        items: currentItemConfig.value.sections,
+                        onRemove: removeSection,
+                        onReorder: onSectionReorder
+                      }, {
+                        actions: withCtx(({ item: section, index }) => [
                           withDirectives(createElementVNode("input", {
                             "onUpdate:modelValue": ($event) => section.headline = $event,
                             type: "text",
+                            class: "be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0",
+                            style: { "height": "28px" },
                             placeholder: "输入 Headline"
-                          }, null, 8, _hoisted_42), [
+                          }, null, 8, _hoisted_33), [
                             [vModelText, section.headline]
+                          ]),
+                          createElementVNode("button", {
+                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                            onClick: withModifiers(($event) => handlePreviewSection(index), ["stop", "prevent"]),
+                            title: "预览",
+                            type: "button"
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(withSize)(unref(icons).eye, 14)
+                            }, null, 8, _hoisted_35)
+                          ], 8, _hoisted_34)
+                        ]),
+                        content: withCtx(({ item: section }) => [
+                          createElementVNode("div", _hoisted_36, [
+                            withDirectives(createElementVNode("textarea", {
+                              "onUpdate:modelValue": ($event) => section.body = $event,
+                              rows: "1",
+                              placeholder: "输入 Body"
+                            }, null, 8, _hoisted_37), [
+                              [vModelText, section.body]
+                            ])
                           ])
                         ]),
-                        createElementVNode("div", _hoisted_43, [
-                          _cache[46] || (_cache[46] = createElementVNode("label", null, "Body", -1)),
-                          withDirectives(createElementVNode("textarea", {
-                            "onUpdate:modelValue": ($event) => section.body = $event,
-                            rows: "3",
-                            placeholder: "输入 Body"
-                          }, null, 8, _hoisted_44), [
-                            [vModelText, section.body]
-                          ])
-                        ])
-                      ]),
-                      footer: withCtx(({ index }) => [
-                        createElementVNode("div", _hoisted_45, [
-                          _cache[47] || (_cache[47] = createElementVNode("div", { class: "preview-label" }, "预览", -1)),
-                          createElementVNode("div", _hoisted_46, toDisplayString(resolvedSections.value[index].headline), 1),
-                          createElementVNode("div", _hoisted_47, toDisplayString(resolvedSections.value[index].body), 1)
-                        ])
-                      ]),
-                      _: 1
-                    }, 8, ["items"])),
-                    currentItemConfig.value.sections.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_48, [
+                        _: 1
+                      }, 8, ["items"]))
+                    ]),
+                    _: 1
+                  }, 8, ["title"]),
+                  createVNode(unref(SectionHeader), {
+                    title: `Variations (${currentItemConfig.value.variations.length})`
+                  }, {
+                    actions: withCtx(() => [
                       createElementVNode("button", {
-                        class: "booth-btn booth-btn-md booth-btn-primary",
-                        onClick: applySections
-                      }, " 应用 Sections 到页面 ")
-                    ])) : createCommentVNode("", true)
-                  ]),
-                  createElementVNode("section", _hoisted_49, [
-                    createElementVNode("div", _hoisted_50, [
-                      createElementVNode("h3", null, "Variations (" + toDisplayString(currentItemConfig.value.variations.length) + ")", 1),
-                      createElementVNode("div", _hoisted_51, [
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-ghost",
-                          onClick: importVariations
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).download, 14)
-                          }, null, 8, _hoisted_52),
-                          _cache[48] || (_cache[48] = createTextVNode(" 从页面导入 ", -1))
-                        ]),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-sm booth-btn-primary",
-                          onClick: _cache[12] || (_cache[12] = ($event) => showPriceModal.value = true)
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(withSize)(unref(icons).settings, 14)
-                          }, null, 8, _hoisted_53),
-                          _cache[49] || (_cache[49] = createTextVNode(" 价格与打折 ", -1))
-                        ])
+                        class: "booth-btn booth-btn-sm booth-btn-ghost",
+                        onClick: importVariations,
+                        title: "从页面导入"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).download, 14)
+                        }, null, 8, _hoisted_38)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-secondary",
+                        onClick: _cache[12] || (_cache[12] = ($event) => showPriceModal.value = true),
+                        title: "Variation 配置"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_39)
+                      ]),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-sm booth-btn-primary",
+                        onClick: applyVariations,
+                        title: "应用到页面"
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).send, 14)
+                        }, null, 8, _hoisted_40)
                       ])
                     ]),
-                    currentItemConfig.value.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_54, ' 暂无 Variations，点击"编辑价格"添加 ')) : (openBlock(), createElementBlock("div", _hoisted_55, [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(currentItemConfig.value.variations, (variation, index) => {
-                        return openBlock(), createElementBlock("div", {
-                          key: index,
-                          class: "variation-card",
-                          draggable: "true",
-                          onDragstart: ($event) => onVariationDragStart(index),
-                          onDragover: onVariationDragOver,
-                          onDrop: ($event) => onVariationDrop($event, index)
-                        }, [
-                          createElementVNode("span", {
-                            class: "drag-handle",
-                            innerHTML: unref(withSize)(unref(icons).moreVertical, 14)
-                          }, null, 8, _hoisted_57),
-                          createElementVNode("span", _hoisted_58, "#" + toDisplayString(index + 1), 1),
-                          createElementVNode("span", _hoisted_59, toDisplayString(variation.name || "(未命名)"), 1),
-                          createElementVNode("span", _hoisted_60, "x" + toDisplayString(variation.supportCount), 1),
-                          createElementVNode("span", _hoisted_61, "¥" + toDisplayString(variation.price), 1),
-                          variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_62, "Fullset")) : createCommentVNode("", true)
-                        ], 40, _hoisted_56);
-                      }), 128))
-                    ])),
-                    currentItemConfig.value.variations.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_63, [
-                      createElementVNode("button", {
-                        class: "booth-btn booth-btn-md booth-btn-primary",
-                        onClick: applyVariations
-                      }, " 应用 Variations 到页面 ")
-                    ])) : createCommentVNode("", true)
-                  ])
+                    default: withCtx(() => [
+                      currentItemConfig.value.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_41, ' 暂无 Variations，点击"编辑价格"添加 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                        key: 1,
+                        items: currentItemConfig.value.variations,
+                        onRemove: removeVariation,
+                        onReorder: onVariationReorder
+                      }, {
+                        actions: withCtx(({ item: variation }) => [
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": ($event) => variation.name = $event,
+                            type: "text",
+                            class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                            style: { "height": "28px" },
+                            placeholder: "Variation 名称"
+                          }, null, 8, _hoisted_42), [
+                            [vModelText, variation.name]
+                          ])
+                        ]),
+                        content: withCtx(({ item: variation }) => [
+                          createElementVNode("div", _hoisted_43, [
+                            createElementVNode("div", _hoisted_44, [
+                              createElementVNode("span", _hoisted_45, "x" + toDisplayString(variation.supportCount), 1),
+                              createElementVNode("span", _hoisted_46, "¥" + toDisplayString(variation.price), 1),
+                              variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_47, "Fullset")) : createCommentVNode("", true)
+                            ])
+                          ])
+                        ]),
+                        _: 1
+                      }, 8, ["items"]))
+                    ]),
+                    _: 1
+                  }, 8, ["title"])
                 ]),
-                createElementVNode("div", { class: "action-bar" }, [
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-lg booth-btn-primary",
-                    onClick: applyAll
-                  }, " 应用所有到页面 ")
-                ]),
-                createVNode(NameModal, {
+                createVNode(_sfc_main$4, {
                   show: showNameModal.value,
                   "item-config": currentItemConfig.value,
                   "global-templates": globalTemplates.value,
@@ -10289,199 +10792,74 @@ System.register("./EditTab-BnHsFbrX-BYY1YA_h.js", ['vue', './useModal-OGcRyhnf-D
                   onClose: _cache[13] || (_cache[13] = ($event) => showNameModal.value = false),
                   onSave: _cache[14] || (_cache[14] = ($event) => showNameModal.value = false)
                 }, null, 8, ["show", "item-config", "global-templates", "total-support"]),
-                createVNode(SectionsModal, {
+                createVNode(_sfc_main$2, {
                   show: showSectionsModal.value,
                   "item-config": currentItemConfig.value,
                   "global-templates": globalTemplates.value,
                   onClose: _cache[15] || (_cache[15] = ($event) => showSectionsModal.value = false)
                 }, null, 8, ["show", "item-config", "global-templates"]),
-                createVNode(PriceModal, {
+                createVNode(_sfc_main$1, {
                   show: showPriceModal.value,
                   "item-config": currentItemConfig.value,
                   onClose: _cache[16] || (_cache[16] = ($event) => showPriceModal.value = false),
                   onSave: _cache[17] || (_cache[17] = ($event) => showPriceModal.value = false)
                 }, null, 8, ["show", "item-config"]),
-                createVNode(TemplateConfigModal, {
-                  show: showTemplateModal.value,
-                  "global-templates": globalTemplates.value,
-                  onClose: _cache[18] || (_cache[18] = ($event) => showTemplateModal.value = false),
-                  onSave: handleSaveTemplates
-                }, null, 8, ["show", "global-templates"]),
-                createVNode(unref(Modal), {
-                  show: showImportConflictDialog.value,
-                  title: "导入确认",
+                isPreviewModal.value ? (openBlock(), createBlock(unref(Modal), {
+                  key: 0,
+                  show: modalState.value.show,
+                  title: modalState.value.title,
+                  width: "500px",
                   "teleport-to": ".booth-enhancer-sidebar",
-                  onClose: cancelImport,
-                  width: "400px"
+                  onClose: unref(modal).closeModal
                 }, {
-                  footer: withCtx(() => [
-                    createElementVNode("button", {
-                      class: "booth-btn booth-btn-md booth-btn-secondary",
-                      onClick: cancelImport
-                    }, " 取消 "),
-                    createElementVNode("button", {
-                      class: "booth-btn booth-btn-md booth-btn-danger",
-                      onClick: confirmReplaceConfig
-                    }, " 替换 ")
+                  default: withCtx(() => [
+                    previewSectionIndex.value !== void 0 && resolvedSections.value[previewSectionIndex.value] ? (openBlock(), createBlock(unref(SectionHeader), {
+                      key: 0,
+                      "no-border": ""
+                    }, {
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_48, [
+                          createElementVNode("div", null, [
+                            _cache[30] || (_cache[30] = createElementVNode("div", { class: "be-text-xs be-font-medium be-text-secondary be-mb-xs" }, "Headline", -1)),
+                            createElementVNode("div", _hoisted_49, toDisplayString(resolvedSections.value[previewSectionIndex.value].headline), 1)
+                          ]),
+                          createElementVNode("div", null, [
+                            createElementVNode("pre", _hoisted_50, toDisplayString(resolvedSections.value[previewSectionIndex.value].body), 1)
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    })) : createCommentVNode("", true)
                   ]),
-                  default: withCtx(() => {
-                    var _a;
-                    return [
-                      createElementVNode("div", _hoisted_64, [
-                        createElementVNode("p", null, [
-                          _cache[50] || (_cache[50] = createTextVNode("商品 ID ", -1)),
-                          createElementVNode("strong", null, toDisplayString((_a = pendingImportConfig.value) == null ? void 0 : _a.itemId), 1),
-                          _cache[51] || (_cache[51] = createTextVNode(" 已存在配置。", -1))
-                        ]),
-                        _cache[52] || (_cache[52] = createElementVNode("p", null, "是否要替换现有配置？", -1))
-                      ])
-                    ];
-                  }),
                   _: 1
-                }, 8, ["show"])
+                }, 8, ["show", "title", "onClose"])) : createCommentVNode("", true),
+                createVNode(_sfc_main$6, {
+                  show: showDescTemplateModal.value,
+                  "global-templates": globalTemplates.value,
+                  onClose: _cache[18] || (_cache[18] = ($event) => showDescTemplateModal.value = false)
+                }, null, 8, ["show", "global-templates"])
               ])) : createCommentVNode("", true)
             ], 64);
           };
         }
       });
-      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f2136b48"]]));
+      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f59e0ed0"]]));
 
     })
   };
 }));
 
-System.register("./useModal-OGcRyhnf-Dmj4t9GW.js", ['vue', './__monkey.entry-BqCU_ghY.js'], (function (exports, module) {
+System.register("./useModal-Cv530RMh-DbZQZjC8.js", ['vue'], (function (exports, module) {
   'use strict';
-  var ref, defineComponent, onMounted, onUnmounted, createBlock, openBlock, Teleport, createVNode, Transition, withCtx, createElementBlock, createCommentVNode, normalizeClass, createElementVNode, normalizeStyle, toDisplayString, unref, renderSlot, Fragment, renderList, _export_sfc, icons;
+  var ref;
   return {
     setters: [module => {
       ref = module.ref;
-      defineComponent = module.defineComponent;
-      onMounted = module.onMounted;
-      onUnmounted = module.onUnmounted;
-      createBlock = module.createBlock;
-      openBlock = module.openBlock;
-      Teleport = module.Teleport;
-      createVNode = module.createVNode;
-      Transition = module.Transition;
-      withCtx = module.withCtx;
-      createElementBlock = module.createElementBlock;
-      createCommentVNode = module.createCommentVNode;
-      normalizeClass = module.normalizeClass;
-      createElementVNode = module.createElementVNode;
-      normalizeStyle = module.normalizeStyle;
-      toDisplayString = module.toDisplayString;
-      unref = module.unref;
-      renderSlot = module.renderSlot;
-      Fragment = module.Fragment;
-      renderList = module.renderList;
-    }, module => {
-      _export_sfc = module._;
-      icons = module.i;
     }],
     execute: (function () {
 
       exports("u", useModal);
 
-      const _hoisted_1 = { class: "modal-header" };
-      const _hoisted_2 = { class: "modal-title" };
-      const _hoisted_3 = ["innerHTML"];
-      const _hoisted_4 = { class: "modal-body" };
-      const _hoisted_5 = {
-        key: 0,
-        class: "modal-footer"
-      };
-      const _hoisted_6 = ["onClick"];
-      const _sfc_main = /* @__PURE__ */ defineComponent({
-        __name: "Modal",
-        props: {
-          show: { type: Boolean },
-          title: {},
-          width: {},
-          buttons: {},
-          closeOnClickOutside: { type: Boolean, default: true },
-          closeOnEsc: { type: Boolean, default: true },
-          teleportTo: { default: "body" }
-        },
-        emits: ["close", "action"],
-        setup(__props, { emit: __emit }) {
-          const props = __props;
-          const emit = __emit;
-          const handleClose = () => {
-            emit("close");
-          };
-          const handleOverlayClick = (e) => {
-            if (props.closeOnClickOutside && e.target === e.currentTarget) {
-              handleClose();
-            }
-          };
-          const handleButtonClick = (action) => {
-            emit("action", action);
-          };
-          const handleKeyDown = (e) => {
-            if (props.closeOnEsc && e.key === "Escape" && props.show) {
-              handleClose();
-            }
-          };
-          onMounted(() => {
-            document.addEventListener("keydown", handleKeyDown);
-          });
-          onUnmounted(() => {
-            document.removeEventListener("keydown", handleKeyDown);
-          });
-          return (_ctx, _cache) => {
-            return openBlock(), createBlock(Teleport, {
-              to: _ctx.teleportTo,
-              disabled: _ctx.teleportTo !== "body"
-            }, [
-              createVNode(Transition, { name: "modal" }, {
-                default: withCtx(() => [
-                  _ctx.show ? (openBlock(), createElementBlock("div", {
-                    key: 0,
-                    class: normalizeClass(["modal-overlay", { "modal-in-sidebar": _ctx.teleportTo !== "body" }]),
-                    onClick: handleOverlayClick
-                  }, [
-                    createElementVNode("div", {
-                      class: "modal-container",
-                      style: normalizeStyle({ width: _ctx.width || "400px" })
-                    }, [
-                      createElementVNode("div", _hoisted_1, [
-                        createElementVNode("h3", _hoisted_2, toDisplayString(_ctx.title || "提示"), 1),
-                        createElementVNode("button", {
-                          class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
-                          onClick: handleClose,
-                          type: "button"
-                        }, [
-                          createElementVNode("span", {
-                            innerHTML: unref(icons).close
-                          }, null, 8, _hoisted_3)
-                        ])
-                      ]),
-                      createElementVNode("div", _hoisted_4, [
-                        renderSlot(_ctx.$slots, "default", {}, void 0, true)
-                      ]),
-                      _ctx.$slots.footer || _ctx.buttons && _ctx.buttons.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_5, [
-                        renderSlot(_ctx.$slots, "footer", {}, () => [
-                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.buttons, (btn) => {
-                            return openBlock(), createElementBlock("button", {
-                              key: btn.action,
-                              class: normalizeClass(["booth-btn booth-btn-md", [`booth-btn-${btn.variant || "secondary"}`]]),
-                              onClick: ($event) => handleButtonClick(btn.action),
-                              type: "button"
-                            }, toDisplayString(btn.text), 11, _hoisted_6);
-                          }), 128))
-                        ], true)
-                      ])) : createCommentVNode("", true)
-                    ], 4)
-                  ], 2)) : createCommentVNode("", true)
-                ]),
-                _: 3
-              })
-            ], 8, ["to", "disabled"]);
-          };
-        }
-      });
-      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-31a51cc2"]]));
       function useModal() {
         const state = ref({
           show: false,
@@ -10505,7 +10883,7 @@ System.register("./useModal-OGcRyhnf-Dmj4t9GW.js", ['vue', './__monkey.entry-BqC
             targetId: options.targetId || "",
             formData: options.formData || {}
           };
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve) => {
             resolvePromise = resolve;
           });
         };

@@ -51,9 +51,8 @@ export function useModal<T = any>() {
     formData: {} as T
   });
 
-  // 用于 Promise 的 resolve/reject
+  // 用于 Promise 的 resolve
   let resolvePromise: ((value: any) => void) | null = null;
-  let rejectPromise: ((reason?: any) => void) | null = null;
 
   /**
    * 打开 Modal
@@ -70,9 +69,8 @@ export function useModal<T = any>() {
       formData: (options.formData || {}) as any
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolvePromise = resolve;
-      rejectPromise = reject;
     });
   };
 
@@ -84,7 +82,6 @@ export function useModal<T = any>() {
     if (resolvePromise) {
       resolvePromise(undefined);
       resolvePromise = null;
-      rejectPromise = null;
     }
   };
 
@@ -96,7 +93,6 @@ export function useModal<T = any>() {
     if (resolvePromise) {
       resolvePromise(result !== undefined ? result : state.value.inputValue);
       resolvePromise = null;
-      rejectPromise = null;
     }
   };
 

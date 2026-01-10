@@ -68,10 +68,13 @@ onUnmounted(() => {
         <div class="modal-container" :style="{ width: width || '400px' }">
           <!-- Header -->
           <div class="modal-header">
-            <h3 class="modal-title">{{ title || '提示' }}</h3>
-            <button class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" @click="handleClose" type="button">
+            <div class="modal-title">{{ title || '提示' }}</div>
+            <div class="modal-header-actions">
+              <slot name="header-actions"></slot>
+            <button class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" @click="handleClose" type="button" title="关闭">
               <span v-html="icons.close"></span>
             </button>
+            </div>
           </div>
 
           <!-- Body -->
@@ -125,14 +128,19 @@ onUnmounted(() => {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 500px;
-  max-height: 80vh;
+  max-height: 70vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
+/* Modal 在侧边栏中时，使用侧边栏高度的 70% */
+.modal-overlay.modal-in-sidebar .modal-container {
+  max-height: 70%;
+}
+
 .modal-header {
-  padding: 16px 20px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
@@ -143,12 +151,18 @@ onUnmounted(() => {
 
 .modal-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #374151;
 }
 
-/* Modal 头部关闭按钮使用 booth-btn 体系，这里只定义 SVG 大小 */
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Modal 头部按钮使用 booth-btn 体系，这里只定义 SVG 大小 */
 .modal-header .booth-btn :deep(svg) {
   width: 18px;
   height: 18px;
@@ -156,7 +170,7 @@ onUnmounted(() => {
 }
 
 .modal-body {
-  padding: 5px;
+  padding: 8px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
@@ -165,19 +179,25 @@ onUnmounted(() => {
 }
 
 .modal-footer {
-  padding: 16px 20px;
+  padding: 10px 12px;
   border-top: 1px solid #e5e7eb;
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
   flex-shrink: 0;
   background: #f8fafc;
 }
 
+/* Modal 内的 SectionHeader 移除左右 padding，避免双层 padding */
+.modal-body :deep(.section-header-container) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 /* Modal 内的按钮使用 booth-btn 体系，这里只定义布局 */
 .modal-footer .booth-btn {
-  flex: 1;
-  min-width: 80px;
+  width: 100%;
 }
 
 /* 动画 - 从底部滑入 */

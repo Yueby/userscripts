@@ -69,6 +69,8 @@ export interface VariationData {
   supportCount: number; // 支持商品数量，默认1
   price: number; // Variation 价格（根据打折开关自动调整）
   isFullset?: boolean; // 是否为 Fullset variation
+  useCustomPrice?: boolean; // 是否使用自定义价格
+  customPrice?: number; // 自定义价格（覆盖配置的价格）
 }
 
 // 打折配置

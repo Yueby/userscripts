@@ -1,35 +1,41 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../../../api/item-edit';
 import { useModal, useStorage } from '../../composables';
 import {
   createDefaultItemConfig,
   getSelectedDescriptionTemplate,
   getSelectedDiscountTemplate,
-  getSelectedNameTemplate,
-  type GlobalTemplateConfig,
-  type SingleItemConfig
+  getSelectedNameTemplate
 } from '../../config-types';
-import { downloadJSON, readJSONFile, triggerFileInput } from '../../utils/exportHelper';
 import { applyDiscount, calculateVariationPrices } from '../../utils/priceCalculator';
 import { resolveSectionContent } from '../../utils/sectionResolver';
 import { calculateTotalSupport, parseTemplate } from '../../utils/templateParser';
-import { Modal } from '../ui';
+import { Modal, SectionHeader } from '../ui';
 import { icons, withSize } from '../ui/icons';
 import { DraggableCardList } from '../ui/list';
 import { toast } from '../ui/Toast';
 
+import DescriptionTemplateModal from './EditTab/modals/DescriptionTemplateModal.vue';
 import NameModal from './EditTab/modals/NameModal.vue';
-import PriceModal from './EditTab/modals/PriceModal.vue';
 import SectionsModal from './EditTab/modals/SectionsModal.vue';
-import TemplateConfigModal from './EditTab/modals/TemplateConfigModal.vue';
+import VariationsModal from './EditTab/modals/VariationsModal.vue';
 
 const props = defineProps<{
   api: ItemEditAPI;
 }>();
 
-const { data, exportSingleItem, importSingleItem } = useStorage();
+const { data } = useStorage();
 const modal = useModal();
+
+// Modal 状态 computed
+const modalState = computed(() => modal.state.value);
+const isPreviewModal = computed(() => 
+  modalState.value.type === 'alert' && modalState.value.formData?.sectionIndex !== undefined
+);
+const previewSectionIndex = computed(() => 
+  modalState.value.formData?.sectionIndex as number | undefined
+);
 
 // 获取当前商品ID
 const currentItemId = computed(() => {
@@ -121,9 +127,7 @@ const resolvedSections = computed(() => {
 const showNameModal = ref(false);
 const showSectionsModal = ref(false);
 const showPriceModal = ref(false);
-const showTemplateModal = ref(false);
-const showImportConflictDialog = ref(false);
-const pendingImportConfig = ref<SingleItemConfig | null>(null);
+const showDescTemplateModal = ref(false);
 
 // 创建商品配置
 async function handleCreateItem() {
@@ -144,6 +148,21 @@ async function handleCreateItem() {
     data.value.itemConfigs[currentItemId.value] = config;
     toast.success('已创建商品配置');
   }
+}
+
+// 预览 Section
+async function handlePreviewSection(index: number): Promise<void> {
+  // 先设置 formData，确保 isPreviewModal 为 true，Modal 组件被创建
+  modal.state.value.formData = { sectionIndex: index };
+  modal.state.value.type = 'alert';
+  modal.state.value.title = 'Section 预览';
+  modal.state.value.show = false;
+  
+  // 等待下一个 tick，确保 Modal 组件已经创建
+  await nextTick();
+  
+  // 然后设置 show 为 true，触发 Transition 动画
+  modal.state.value.show = true;
 }
 
 // 编辑描述
@@ -174,7 +193,7 @@ async function handleEditDescription() {
 }
 
 // 从页面导入 Sections
-function importSections() {
+function importSections(): void {
   if (!currentItemConfig.value) return;
   
   const pageSections = props.api.sections;
@@ -192,11 +211,10 @@ function importSections() {
   
   // 读取实际内容
   pageSections.forEach((section, index) => {
-    if (currentItemConfig.value!.sections[index]) {
-      currentItemConfig.value!.sections[index].headline = 
-        section.headlineInput?.value || '';
-      currentItemConfig.value!.sections[index].body = 
-        section.bodyTextarea?.value || '';
+    const targetSection = currentItemConfig.value?.sections[index];
+    if (targetSection) {
+      targetSection.headline = section.headlineInput?.value || '';
+      targetSection.body = section.bodyTextarea?.value || '';
     }
   });
   
@@ -204,7 +222,7 @@ function importSections() {
 }
 
 // 从页面导入 Variations
-function importVariations() {
+function importVariations(): void {
   if (!currentItemConfig.value) return;
   
   const pageVariations = props.api.variations;
@@ -232,7 +250,7 @@ function importVariations() {
 }
 
 // 添加 Section
-function addSection() {
+function addSection(): void {
   if (!currentItemConfig.value) return;
   currentItemConfig.value.sections.push({
     id: crypto.randomUUID(),
@@ -242,25 +260,25 @@ function addSection() {
 }
 
 // 删除 Section
-function removeSection(index: number) {
+function removeSection(index: number): void {
   if (!currentItemConfig.value) return;
   currentItemConfig.value.sections.splice(index, 1);
 }
 
 // 应用到页面
-function applyName() {
+function applyName(): void {
   if (!currentItemConfig.value) return;
   props.api.setName(previewName.value);
   toast.success('已应用商品名');
 }
 
-function applyDescription() {
+function applyDescription(): void {
   if (!currentItemConfig.value) return;
   props.api.setDescription(previewDescription.value);
   toast.success('已应用描述');
 }
 
-function applySections() {
+function applySections(): void {
   if (!currentItemConfig.value) return;
   resolvedSections.value.forEach((section, index) => {
     props.api.updateSection(index, {
@@ -271,7 +289,7 @@ function applySections() {
   toast.success(`已应用 ${resolvedSections.value.length} 个 Sections`);
 }
 
-function applyVariations() {
+function applyVariations(): void {
   if (!currentItemConfig.value) return;
   currentItemConfig.value.variations.forEach((variation, index) => {
     props.api.updateVariation(index, {
@@ -282,44 +300,21 @@ function applyVariations() {
   toast.success(`已应用 ${currentItemConfig.value.variations.length} 个 Variations`);
 }
 
-function applyAll() {
-  applyName();
-  applyDescription();
-  applySections();
-  applyVariations();
-  toast.success('已应用所有更改到页面');
-}
-
-// 拖拽相关
-// Section 重排序
 function onSectionReorder(fromIndex: number, toIndex: number): void {
   if (!currentItemConfig.value) return;
-  
-  const sections = currentItemConfig.value.sections;
-  const [removed] = sections.splice(fromIndex, 1);
-  sections.splice(toIndex, 0, removed);
+  const [removed] = currentItemConfig.value.sections.splice(fromIndex, 1);
+  currentItemConfig.value.sections.splice(toIndex, 0, removed);
 }
 
-const draggedVariationIndex = ref<number | null>(null);
-
-function onVariationDragStart(index: number) {
-  draggedVariationIndex.value = index;
+function removeVariation(index: number): void {
+  if (!currentItemConfig.value) return;
+  currentItemConfig.value.variations.splice(index, 1);
 }
 
-function onVariationDragOver(event: DragEvent) {
-  event.preventDefault();
-}
-
-function onVariationDrop(event: DragEvent, targetIndex: number) {
-  event.preventDefault();
-  if (!currentItemConfig.value || draggedVariationIndex.value === null) return;
-  
-  const variations = currentItemConfig.value.variations;
-  const draggedItem = variations[draggedVariationIndex.value];
-  variations.splice(draggedVariationIndex.value, 1);
-  variations.splice(targetIndex, 0, draggedItem);
-  
-  draggedVariationIndex.value = null;
+function onVariationReorder(fromIndex: number, toIndex: number): void {
+  if (!currentItemConfig.value) return;
+  const [removed] = currentItemConfig.value.variations.splice(fromIndex, 1);
+  currentItemConfig.value.variations.splice(toIndex, 0, removed);
 }
 
 // 监听价格和打折变化
@@ -338,71 +333,6 @@ watch(
 );
 
 // === 导入/导出功能 ===
-
-// 导出当前商品配置
-function exportCurrentItem() {
-  if (!currentItemId.value) {
-    toast.error('无法获取当前商品ID');
-    return;
-  }
-  
-  try {
-    const config = exportSingleItem(currentItemId.value);
-    if (!config) {
-      toast.error('当前商品没有配置数据');
-      return;
-    }
-    
-    const timestamp = new Date().toISOString().slice(0, 10);
-    downloadJSON(config, `booth-item-${currentItemId.value}-${timestamp}.json`);
-    toast.success('导出成功');
-  } catch (error) {
-    console.error('导出失败:', error);
-    toast.error('导出失败：' + (error as Error).message);
-  }
-}
-
-// 导入商品配置
-function importItemConfig() {
-  triggerFileInput('application/json', async (file) => {
-    try {
-      const config = await readJSONFile(file) as SingleItemConfig;
-      const success = importSingleItem(config, { replace: false });
-      
-      if (!success) {
-        pendingImportConfig.value = config;
-        showImportConflictDialog.value = true;
-      } else {
-        toast.success('导入成功');
-      }
-    } catch (error) {
-      console.error('导入失败:', error);
-      toast.error('导入失败：' + (error as Error).message);
-    }
-  });
-}
-
-// 确认替换已有配置
-function confirmReplaceConfig() {
-  if (pendingImportConfig.value) {
-    importSingleItem(pendingImportConfig.value, { replace: true });
-    toast.success('导入成功');
-  }
-  showImportConflictDialog.value = false;
-  pendingImportConfig.value = null;
-};
-
-// 取消导入
-function cancelImport() {
-  showImportConflictDialog.value = false;
-  pendingImportConfig.value = null;
-}
-
-// 保存模板配置
-function handleSaveTemplates(templates: GlobalTemplateConfig) {
-  data.value.globalTemplates = templates;
-  toast.success('模板配置已保存');
-}
 
 // === 价格监听 ===
 
@@ -430,14 +360,28 @@ onMounted(() => {
 <template>
   <!-- Modals（放在最外层，确保任何状态下都能显示） -->
   <Modal
-    :show="modal.state.value.show"
-    :title="modal.state.value.title"
+    v-if="!isPreviewModal"
+    :show="modalState.show"
+    :title="modalState.title"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="modal.closeModal"
     width="500px"
   >
+    <!-- Header Actions -->
+    <template #header-actions>
+      <button 
+        v-if="modalState.type === 'editDescription'"
+        class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
+        @click="showDescTemplateModal = true"
+        title="模板配置"
+        type="button"
+      >
+        <span v-html="withSize(icons.settings, 18)"></span>
+      </button>
+    </template>
+
     <!-- 创建商品配置 -->
-    <div v-if="modal.state.value.type === 'createItem'">
+    <div v-if="modalState.type === 'createItem'">
       <p class="hint-text">
         为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。
       </p>
@@ -445,16 +389,16 @@ onMounted(() => {
       <div class="form-group">
         <label>商品名称 <span class="required">*</span></label>
         <input 
-          v-model="modal.state.value.formData.itemName" 
+          v-model="modalState.formData.itemName" 
           type="text" 
           placeholder="输入商品名称"
-          @keyup.enter="modal.confirmModal(modal.state.value.formData)"
+          @keyup.enter="modal.confirmModal(modalState.formData)"
         />
       </div>
 
       <div class="form-group">
         <label>商品类型</label>
-        <select v-model="modal.state.value.formData.itemType">
+        <select v-model="modalState.formData.itemType">
           <option value="normal">普通商品</option>
           <option value="adaptation">适配商品</option>
         </select>
@@ -462,50 +406,49 @@ onMounted(() => {
     </div>
 
     <!-- 编辑描述 -->
-    <div v-else-if="modal.state.value.type === 'editDescription'">
-      <div class="form-group">
-        <label>描述模板 <span class="label-hint">(全局)</span></label>
+    <div v-else-if="modalState.type === 'editDescription'">
+      <SectionHeader title="描述模板 (全局)">
         <p class="form-hint">支持变量: {itemName}, {supportCount}</p>
         <textarea 
-          v-model="modal.state.value.formData.descriptionTemplate" 
-          rows="3"
+          v-model="modalState.formData.descriptionTemplate" 
+          rows="2"
           placeholder="全局描述模板"
         ></textarea>
-      </div>
+      </SectionHeader>
 
-      <div class="form-group">
-        <label>自定义描述 <span class="label-hint">(此商品专属)</span></label>
+      <SectionHeader title="自定义描述 (此商品专属)">
         <textarea 
-          v-model="modal.state.value.formData.customDescription" 
-          rows="6"
+          v-model="modalState.formData.customDescription" 
+          rows="3"
           placeholder="输入此商品的特殊说明..."
         ></textarea>
-      </div>
+      </SectionHeader>
 
-      <div class="preview-box">
-        <div class="preview-label">最终描述预览</div>
-        <pre class="preview-content text">{{ previewDescription }}</pre>
-      </div>
+      <SectionHeader title="最终描述预览">
+        <pre class="be-text-base be-font-normal be-whitespace-pre-wrap be-break-words be-m-0">{{ previewDescription }}</pre>
+      </SectionHeader>
     </div>
 
     <template #footer>
-      <button class="booth-btn booth-btn-md booth-btn-secondary" @click="modal.closeModal">
-        取消
+      <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary" @click="modal.closeModal" title="取消">
+        <span v-html="withSize(icons.close, 18)"></span>
       </button>
       <button 
-        v-if="modal.state.value.type === 'createItem'"
-        class="booth-btn booth-btn-md booth-btn-primary" 
-        @click="modal.confirmModal(modal.state.value.formData)"
-        :disabled="!modal.state.value.formData.itemName?.trim()"
+        v-if="modalState.type === 'createItem'"
+        class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary" 
+        @click="modal.confirmModal(modalState.formData)"
+        :disabled="!modalState.formData.itemName?.trim()"
+        title="创建配置"
       >
-        创建配置
+        <span v-html="withSize(icons.check, 18)"></span>
       </button>
       <button 
-        v-else-if="modal.state.value.type === 'editDescription'"
-        class="booth-btn booth-btn-md booth-btn-primary" 
-        @click="modal.confirmModal(modal.state.value.formData)"
+        v-else-if="modalState.type === 'editDescription'"
+        class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary" 
+        @click="modal.confirmModal(modalState.formData)"
+        title="保存"
       >
-        保存
+        <span v-html="withSize(icons.check, 18)"></span>
       </button>
     </template>
   </Modal>
@@ -513,14 +456,14 @@ onMounted(() => {
   <!-- 无法获取商品 ID -->
   <div v-if="!currentItemId" class="empty-state">
     <div class="empty-icon" v-html="withSize(icons.alertCircle, 48)"></div>
-    <h3>无法获取商品 ID</h3>
+    <div class="be-text-lg be-font-bold">无法获取商品 ID</div>
     <p>请确保在商品编辑页面使用此功能</p>
   </div>
 
   <!-- 未创建配置 - 显示创建按钮 -->
   <div v-else-if="!hasConfig" class="empty-state">
     <div class="empty-icon" v-html="withSize(icons.file, 64)"></div>
-    <h3>未配置此商品</h3>
+    <div class="be-text-lg be-font-bold">未配置此商品</div>
     <p>为当前商品创建编辑配置，开始管理商品信息</p>
     <button class="booth-btn booth-btn-lg booth-btn-primary" @click="handleCreateItem">
       <span v-html="withSize(icons.plus, 16)"></span>
@@ -530,92 +473,77 @@ onMounted(() => {
 
   <!-- 已有配置 - 显示完整编辑界面 -->
   <div v-else-if="currentItemConfig" class="edit-tab">
-    <!-- 顶部操作栏 -->
-    <div class="edit-tab-header">
-      <button class="booth-btn booth-btn-md booth-btn-primary" @click="showTemplateModal = true">
-        <span v-html="withSize(icons.settings, 14)"></span>
-        配置模板
-      </button>
-      <div class="header-spacer"></div>
-      <button class="booth-btn booth-btn-sm booth-btn-secondary" @click="exportCurrentItem">
-        <span v-html="withSize(icons.upload, 14)"></span>
-        导出商品
-      </button>
-      <button class="booth-btn booth-btn-sm booth-btn-secondary" @click="importItemConfig">
-        <span v-html="withSize(icons.download, 14)"></span>
-        导入商品
-      </button>
-    </div>
-
     <div class="edit-tab-scrollable">
       <!-- 1. 商品名编辑区 -->
-      <section class="edit-section">
-        <div class="section-header">
-          <h3>商品名称</h3>
-          <div class="actions">
-            <button class="booth-btn booth-btn-sm booth-btn-secondary" 
-              @click="showNameModal = true">
-              <span v-html="withSize(icons.settings, 14)"></span>
-              模板设置
-            </button>
-            <button class="booth-btn booth-btn-sm booth-btn-primary" @click="applyName">
-              应用到页面
-            </button>
-          </div>
-        </div>
+      <SectionHeader title="商品名称">
+        <template #actions>
+          <button class="booth-btn booth-btn-sm booth-btn-secondary" 
+            @click="showNameModal = true"
+            title="模板设置">
+            <span v-html="withSize(icons.edit, 14)"></span>
+          </button>
+          <button class="booth-btn booth-btn-sm booth-btn-primary" 
+            @click="applyName"
+            title="应用到页面">
+            <span v-html="withSize(icons.send, 14)"></span>
+          </button>
+        </template>
         <div class="form-group">
-          <label>商品基础名称</label>
+          <div class="be-flex be-justify-between be-align-center">
+            <label>商品基础名称</label>
+            <span class="be-text-xs be-text-secondary">{{ previewName || '(未设置)' }}</span>
+          </div>
           <input v-model="currentItemConfig.itemName" type="text" 
             placeholder="输入商品名称" />
         </div>
-        <div class="preview-box">
-          <div class="preview-label">预览</div>
-          <div class="preview-content">{{ previewName || '(未设置)' }}</div>
-        </div>
-      </section>
+      </SectionHeader>
 
       <!-- 2. 描述预览区 -->
-      <section class="preview-section">
-        <div class="section-header">
-          <h3>商品描述</h3>
-          <div class="actions">
-            <button class="booth-btn booth-btn-sm booth-btn-secondary" 
-              @click="handleEditDescription">
-              <span v-html="withSize(icons.edit, 14)"></span>
-              编辑描述
-            </button>
-            <button class="booth-btn booth-btn-sm booth-btn-primary" @click="applyDescription">
-              应用到页面
-            </button>
-          </div>
+      <SectionHeader title="商品描述">
+        <template #actions>
+          <button class="booth-btn booth-btn-sm booth-btn-secondary" 
+            @click="handleEditDescription"
+            title="编辑描述">
+            <span v-html="withSize(icons.edit, 14)"></span>
+          </button>
+          <button class="booth-btn booth-btn-sm booth-btn-primary" 
+            @click="applyDescription"
+            title="应用到页面">
+            <span v-html="withSize(icons.send, 14)"></span>
+          </button>
+        </template>
+        <div v-if="!previewDescription" class="empty-hint">
+          暂无描述，点击"编辑描述"添加
         </div>
-        <div class="preview-content">
-          <pre class="preview-text">{{ previewDescription || '(未设置)' }}</pre>
+        <div v-else class="be-mt-xs">
+          <pre class="be-text-base be-font-normal be-whitespace-pre-wrap be-break-words be-m-0">{{ previewDescription }}</pre>
         </div>
-      </section>
+      </SectionHeader>
 
     <!-- 3. Sections 列表区 -->
-    <section class="list-section">
-      <div class="section-header">
-        <h3>Sections ({{ currentItemConfig.sections.length }})</h3>
-        <div class="actions">
-          <button class="booth-btn booth-btn-sm booth-btn-ghost" 
-            @click="importSections">
-            <span v-html="withSize(icons.download, 14)"></span>
-            从页面导入
-          </button>
-          <button class="booth-btn booth-btn-sm booth-btn-secondary" 
-            @click="addSection">
-            <span v-html="withSize(icons.plus, 14)"></span>
-            添加
-          </button>
-          <button class="booth-btn booth-btn-sm booth-btn-secondary" 
-            @click="showSectionsModal = true">
-            <span v-html="withSize(icons.settings, 14)"></span>
-            高级配置
-          </button>
-        </div>
-      </div>
+    <SectionHeader :title="`Sections (${currentItemConfig.sections.length})`">
+      <template #actions>
+        <button class="booth-btn booth-btn-sm booth-btn-ghost" 
+          @click="importSections"
+          title="从页面导入">
+          <span v-html="withSize(icons.download, 14)"></span>
+        </button>
+        <button class="booth-btn booth-btn-sm booth-btn-secondary" 
+          @click="addSection"
+          title="添加">
+          <span v-html="withSize(icons.plus, 14)"></span>
+        </button>
+        <button class="booth-btn booth-btn-sm booth-btn-secondary" 
+          @click="showSectionsModal = true"
+          title="高级配置">
+          <span v-html="withSize(icons.edit, 14)"></span>
+        </button>
+        <button class="booth-btn booth-btn-sm booth-btn-primary" 
+          @click="applySections"
+          title="应用到页面">
+          <span v-html="withSize(icons.send, 14)"></span>
+        </button>
+      </template>
 
       <div v-if="currentItemConfig.sections.length === 0" class="empty-hint">
         暂无 Sections，点击"添加"或"从页面导入"
@@ -627,89 +555,76 @@ onMounted(() => {
         @remove="removeSection"
         @reorder="onSectionReorder"
       >
+        <template #actions="{ item: section, index }">
+          <input v-model="section.headline" type="text" 
+            class="be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0"
+            style="height: 28px;" 
+            placeholder="输入 Headline" />
+          <button 
+            class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
+            @click.stop.prevent="handlePreviewSection(index)"
+            title="预览"
+            type="button"
+          >
+            <span v-html="withSize(icons.eye, 14)"></span>
+          </button>
+        </template>
         <template #content="{ item: section }">
           <div class="form-group">
-            <label>Headline</label>
-            <input v-model="section.headline" type="text" 
-              placeholder="输入 Headline" />
-          </div>
-          <div class="form-group">
-            <label>Body</label>
-            <textarea v-model="section.body" rows="3"
+            <textarea v-model="section.body" rows="1"
               placeholder="输入 Body"></textarea>
           </div>
         </template>
-
-        <template #footer="{ index }">
-          <div class="section-preview">
-            <div class="preview-label">预览</div>
-            <div class="preview-headline">{{ resolvedSections[index].headline }}</div>
-            <div class="preview-body">{{ resolvedSections[index].body }}</div>
-          </div>
-        </template>
       </DraggableCardList>
-
-      <div v-if="currentItemConfig.sections.length > 0" class="section-footer">
-        <button class="booth-btn booth-btn-md booth-btn-primary" @click="applySections">
-          应用 Sections 到页面
-        </button>
-      </div>
-    </section>
+    </SectionHeader>
 
     <!-- 4. Variations 列表区 -->
-    <section class="list-section">
-      <div class="section-header">
-        <h3>Variations ({{ currentItemConfig.variations.length }})</h3>
-        <div class="actions">
-          <button class="booth-btn booth-btn-sm booth-btn-ghost" 
-            @click="importVariations">
-            <span v-html="withSize(icons.download, 14)"></span>
-            从页面导入
-          </button>
-          <button class="booth-btn booth-btn-sm booth-btn-primary" 
-            @click="showPriceModal = true">
-            <span v-html="withSize(icons.settings, 14)"></span>
-            价格与打折
-          </button>
-        </div>
-      </div>
+    <SectionHeader :title="`Variations (${currentItemConfig.variations.length})`">
+      <template #actions>
+        <button class="booth-btn booth-btn-sm booth-btn-ghost" 
+          @click="importVariations"
+          title="从页面导入">
+          <span v-html="withSize(icons.download, 14)"></span>
+        </button>
+        <button class="booth-btn booth-btn-sm booth-btn-secondary" 
+          @click="showPriceModal = true"
+          title="Variation 配置">
+          <span v-html="withSize(icons.edit, 14)"></span>
+        </button>
+        <button class="booth-btn booth-btn-sm booth-btn-primary" 
+          @click="applyVariations"
+          title="应用到页面">
+          <span v-html="withSize(icons.send, 14)"></span>
+        </button>
+      </template>
 
       <div v-if="currentItemConfig.variations.length === 0" class="empty-hint">
         暂无 Variations，点击"编辑价格"添加
       </div>
 
-      <div v-else class="variations-list">
-        <div 
-          v-for="(variation, index) in currentItemConfig.variations" 
-          :key="index"
-          class="variation-card"
-          draggable="true"
-          @dragstart="onVariationDragStart(index)"
-          @dragover="onVariationDragOver"
-          @drop="onVariationDrop($event, index)"
-        >
-          <span class="drag-handle" v-html="withSize(icons.moreVertical, 14)"></span>
-          <span class="number">#{{ index + 1 }}</span>
-          <span class="name">{{ variation.name || '(未命名)' }}</span>
-          <span class="support">x{{ variation.supportCount }}</span>
-          <span class="price">¥{{ variation.price }}</span>
-          <span v-if="variation.isFullset" class="badge">Fullset</span>
-        </div>
-      </div>
-
-      <div v-if="currentItemConfig.variations.length > 0" class="section-footer">
-        <button class="booth-btn booth-btn-md booth-btn-primary" @click="applyVariations">
-          应用 Variations 到页面
-        </button>
-      </div>
-    </section>
-    </div>
-
-    <!-- 底部操作栏 -->
-    <div class="action-bar">
-      <button class="booth-btn booth-btn-lg booth-btn-primary" @click="applyAll">
-        应用所有到页面
-      </button>
+      <DraggableCardList
+        v-else
+        :items="currentItemConfig.variations"
+        @remove="removeVariation"
+        @reorder="onVariationReorder"
+      >
+        <template #actions="{ item: variation }">
+          <input v-model="variation.name" type="text" 
+            class="be-flex-1 be-p-xs be-px-sm be-text-base"
+            style="height: 28px;" 
+            placeholder="Variation 名称" />
+        </template>
+        <template #content="{ item: variation }">
+          <div class="variation-info">
+            <div class="variation-details">
+              <span class="support">x{{ variation.supportCount }}</span>
+              <span class="price">¥{{ variation.price }}</span>
+              <span v-if="variation.isFullset" class="badge">Fullset</span>
+            </div>
+          </div>
+        </template>
+      </DraggableCardList>
+    </SectionHeader>
     </div>
 
     <NameModal
@@ -728,43 +643,41 @@ onMounted(() => {
       @close="showSectionsModal = false"
     />
 
-    <PriceModal
+    <VariationsModal
       :show="showPriceModal"
       :item-config="currentItemConfig"
       @close="showPriceModal = false"
       @save="showPriceModal = false"
     />
 
-    <!-- 模板配置 Modal -->
-    <TemplateConfigModal
-      :show="showTemplateModal"
-      :global-templates="globalTemplates"
-      @close="showTemplateModal = false"
-      @save="handleSaveTemplates"
-    />
-
-    <!-- 导入冲突确认 Modal -->
+    <!-- Section 预览 Modal -->
     <Modal
-      :show="showImportConflictDialog"
-      title="导入确认"
+      v-if="isPreviewModal"
+      :show="modalState.show"
+      :title="modalState.title"
+      width="500px"
       :teleport-to="'.booth-enhancer-sidebar'"
-      @close="cancelImport"
-      width="400px"
+      @close="modal.closeModal"
     >
-      <div class="modal-content">
-        <p>商品 ID <strong>{{ pendingImportConfig?.itemId }}</strong> 已存在配置。</p>
-        <p>是否要替换现有配置？</p>
-      </div>
-
-      <template #footer>
-        <button class="booth-btn booth-btn-md booth-btn-secondary" @click="cancelImport">
-          取消
-        </button>
-        <button class="booth-btn booth-btn-md booth-btn-danger" @click="confirmReplaceConfig">
-          替换
-        </button>
-      </template>
+      <SectionHeader v-if="previewSectionIndex !== undefined && resolvedSections[previewSectionIndex]" no-border>
+        <div class="be-flex be-flex-column be-gap-sm">
+          <div>
+            <div class="be-text-xs be-font-medium be-text-secondary be-mb-xs">Headline</div>
+            <div class="be-text-base be-font-bold be-text-primary">{{ resolvedSections[previewSectionIndex].headline }}</div>
+          </div>
+          <div>
+            <pre class="be-text-base be-text-secondary be-whitespace-pre-wrap be-break-words be-m-0">{{ resolvedSections[previewSectionIndex].body }}</pre>
+          </div>
+        </div>
+      </SectionHeader>
     </Modal>
+
+    <!-- 描述模板配置 Modal -->
+    <DescriptionTemplateModal
+      :show="showDescTemplateModal"
+      :global-templates="globalTemplates"
+      @close="showDescTemplateModal = false"
+    />
   </div>
 </template>
 
@@ -800,18 +713,20 @@ onMounted(() => {
   opacity: 0.5;
 }
 
-.empty-state h3 {
-  margin: 0 0 var(--be-space-sm);
-  font-size: var(--be-font-size-xl);
-  font-weight: 600;
-  color: var(--be-color-text);
-}
-
 .empty-state p {
   margin: 0 0 var(--be-space-lg);
   font-size: var(--be-font-size-base);
   color: var(--be-color-text-secondary);
   max-width: 400px;
+}
+
+.empty-hint {
+  padding: var(--be-space-md);
+  text-align: center;
+  color: var(--be-color-text-secondary);
+  font-size: var(--be-font-size-md);
+  background: var(--be-color-bg-secondary);
+  border-radius: var(--be-radius);
 }
 
 /* 编辑区域 */
@@ -825,110 +740,15 @@ onMounted(() => {
 .edit-tab-scrollable {
   flex: 1;
   overflow-y: auto;
-  padding: 6px;
-  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
-/* 编辑区域 */
-.edit-section {
-  background: var(--be-color-bg);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius-md);
-  padding: var(--be-space-md);
-}
-
-/* 预览区域 */
-.preview-section {
-  background: var(--be-color-bg);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius-md);
-  padding: var(--be-space-md);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.section-header h3 {
-  margin: 0;
-  font-size: var(--be-font-size-lg);
-  font-weight: 600;
-  color: var(--be-color-text);
-}
-
-.actions {
-  display: flex;
-  gap: var(--be-space-sm);
-}
-
-.preview-content {
-  margin-top: var(--be-space-sm);
-}
-
-.preview-box {
-  margin-top: var(--be-space-sm);
-  padding: 12px;
-  background: var(--be-color-bg-secondary);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius);
-}
-
-.preview-label {
-  font-size: var(--be-font-size-xs);
-  font-weight: 500;
-  color: var(--be-color-text-muted);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.preview-box .preview-content {
-  font-size: var(--be-font-size-md);
-  color: var(--be-color-text);
-  font-weight: 500;
-  margin-top: 0;
-}
-
-.preview-text {
-  padding: 12px;
-  background: var(--be-color-bg-secondary);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius);
-  font-size: var(--be-font-size-base);
-  color: var(--be-color-text);
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 80px;
-  margin: 0;
-  font-family: inherit;
-}
-
-/* 列表区域 */
-.list-section {
-  background: var(--be-color-bg);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius-md);
-  padding: var(--be-space-md);
-}
-
-.empty-hint {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--be-color-text-muted);
-  font-size: var(--be-font-size-base);
-  font-style: italic;
-}
+/* section-header 和 empty-hint 样式已移至通用组件 */
 
 /* Section 预览区样式（DraggableCardList footer 插槽内容） */
 .section-preview {
-  padding: 10px;
+  padding: var(--be-space-sm);
   background: var(--be-color-bg);
   border: 1px solid var(--be-color-border);
   border-radius: var(--be-radius-sm);
@@ -938,7 +758,7 @@ onMounted(() => {
   font-size: var(--be-font-size-xs);
   font-weight: 500;
   color: var(--be-color-text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .preview-headline {
@@ -956,43 +776,19 @@ onMounted(() => {
 }
 
 /* Variations 列表 */
-.variations-list {
+.variation-info {
   display: flex;
   flex-direction: column;
   gap: var(--be-space-sm);
 }
 
-.variation-card {
+.variation-details {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  background: var(--be-color-bg-secondary);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius);
-  cursor: move;
-  transition: var(--be-transition-normal);
+  gap: var(--be-space-sm);
 }
 
-.variation-card:hover {
-  border-color: var(--be-color-border-hover);
-  box-shadow: var(--be-shadow-sm);
-}
-
-.variation-card .number {
-  font-size: var(--be-font-size-sm);
-  font-weight: 600;
-  color: var(--be-color-text-secondary);
-}
-
-.variation-card .name {
-  flex: 1;
-  font-size: var(--be-font-size-base);
-  font-weight: 500;
-  color: var(--be-color-text);
-}
-
-.variation-card .support {
+.variation-details .support {
   font-size: var(--be-font-size-sm);
   color: var(--be-color-text-secondary);
   padding: 2px 6px;
@@ -1000,39 +796,19 @@ onMounted(() => {
   border-radius: var(--be-radius-sm);
 }
 
-.variation-card .price {
+.variation-details .price {
   font-size: var(--be-font-size-base);
   font-weight: 600;
   color: var(--be-color-success);
 }
 
-.variation-card .badge {
+.variation-details .badge {
   font-size: var(--be-font-size-xs);
   font-weight: 600;
   color: var(--be-color-primary);
   background: #dbeafe;
   padding: 2px var(--be-space-sm);
   border-radius: var(--be-radius-full);
-}
-
-.section-footer {
-  margin-top: 12px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* 底部操作栏 */
-.action-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: var(--be-space-md);
-  background: var(--be-color-bg);
-  border-top: 1px solid var(--be-color-border);
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* 错误状态 */
