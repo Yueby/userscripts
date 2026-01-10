@@ -506,41 +506,16 @@
 }
 
 /* Modal 内容样式 */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--be-space-md);
+}
+
 .modal-content p {
   margin: 0;
   line-height: 1.6;
   color: #6b7280;
-}
-
-.modal-input {
-  width: 100%;
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #374151;
-  background: white;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  outline: none;
-  box-sizing: border-box;
-  line-height: 1.5;
-  transition: all 0.15s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.modal-input:hover {
-  border-color: #9ca3af;
-}
-
-.modal-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.modal-input::placeholder {
-  color: #9ca3af;
 }
 
 /* 表单组 */
@@ -563,6 +538,65 @@
 .form-group .required {
   color: #ef4444;
   margin-left: 4px;
+}
+
+/* 标签提示和表单提示 */
+.label-hint {
+  font-size: var(--be-font-size-xs);
+  color: var(--be-color-text-muted);
+  font-weight: normal;
+  font-style: italic;
+}
+
+.form-hint {
+  margin: 4px 0 0;
+  font-size: var(--be-font-size-xs);
+  color: var(--be-color-text-secondary);
+}
+
+/* 预览框样式 */
+.preview-box {
+  padding: 12px;
+  background: var(--be-color-bg-secondary);
+  border: 1px solid var(--be-color-border);
+  border-radius: var(--be-radius);
+}
+
+.preview-box.compact {
+  margin-top: var(--be-space-sm);
+}
+
+.preview-label {
+  font-size: var(--be-font-size-sm);
+  font-weight: 500;
+  color: var(--be-color-text-secondary);
+  margin-bottom: var(--be-space-sm);
+}
+
+.preview-content {
+  font-size: var(--be-font-size-md);
+  color: var(--be-color-text);
+  font-weight: 500;
+}
+
+.preview-content.text {
+  font-size: var(--be-font-size-base);
+  font-weight: normal;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  font-family: inherit;
+}
+
+/* 空状态提示 */
+.empty-hint {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--be-color-text-muted);
+  font-size: var(--be-font-size-base);
+  font-style: italic;
+  background: var(--be-color-bg-secondary);
+  border-radius: var(--be-radius);
 }
 
 .form-group input,

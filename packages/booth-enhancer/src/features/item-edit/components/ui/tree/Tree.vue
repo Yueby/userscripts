@@ -135,75 +135,89 @@ const targetNode = computed(() => {
   return props.tree.nodes[contextMenu.value.targetId];
 });
 
-// 计算可见的自定义菜单项（用于节点右键）
-const visibleCustomMenuItems = computed(() => {
+// 获取可见的自定义菜单项
+function getVisibleCustomMenuItems(node: Node | null): ContextMenuItem[] {
   if (!props.customMenuItems || props.customMenuItems.length === 0) {
     return [];
   }
   const selectedNodes = getSelectedNodes();
   return props.customMenuItems.filter(item => 
-    !item.show || item.show(targetNode.value, selectedNodes)
+    !item.show || item.show(node, selectedNodes)
   );
-});
+}
+
+// 计算可见的自定义菜单项（用于节点右键）
+const visibleCustomMenuItems = computed(() => 
+  getVisibleCustomMenuItems(targetNode.value)
+);
 
 // 计算可见的自定义菜单项（用于空白处右键）
-const visibleCustomMenuItemsForRoot = computed(() => {
-  if (!props.customMenuItems || props.customMenuItems.length === 0) {
-    return [];
+const visibleCustomMenuItemsForRoot = computed(() => 
+  getVisibleCustomMenuItems(null)
+);
+
+// 添加自定义菜单项到列表
+function appendCustomMenuItems(
+  items: MenuItem[],
+  customItems: ContextMenuItem[],
+  node: Node | null,
+  selectedNodes: Node[]
+): void {
+  if (customItems.length === 0) return;
+  
+  if (items.length > 0) {
+    items[items.length - 1].separator = true;
   }
-  const selectedNodes = getSelectedNodes();
-  return props.customMenuItems.filter(item => 
-    !item.show || item.show(null, selectedNodes)
-  );
-});
+  
+  customItems.forEach(item => {
+    items.push({
+      label: item.label,
+      action: () => item.action(node, selectedNodes),
+      danger: item.danger,
+      separator: item.separator
+    });
+  });
+}
+
+// 添加基础创建菜单项
+function addBaseCreateItems(items: MenuItem[]): void {
+  if (props.mode === 'tree') {
+    items.push({
+      label: '新建文件夹节点',
+      action: handleCreateFolder
+    });
+  }
+  items.push({
+    label: '新建数据节点',
+    action: handleCreateItem,
+    separator: true
+  });
+}
 
 // 构建菜单项列表（转换为通用 MenuItem 格式）
 const menuItems = computed<MenuItem[]>(() => {
   const items: MenuItem[] = [];
   const selectedNodes = getSelectedNodes();
   
-  // 节点右键菜单
+  // 添加基础创建菜单
+  addBaseCreateItems(items);
+  
   if (targetNode.value) {
-    // Unity 风格基础菜单
-    if (props.mode === 'tree') {
-      items.push({
-        label: '新建文件夹节点',
-        action: handleCreateFolder
-      });
-    }
-    items.push({
-      label: '新建数据节点',
-      action: handleCreateItem,
-      separator: true
-    });
+    // 节点右键菜单
     items.push({
       label: '重命名',
       action: handleRename
     });
+    
     if (targetNode.value.data && props.onEdit) {
       items.push({
-        label: '编辑数据',
+        label: '编辑',
         action: handleEdit
       });
     }
     
     // 自定义菜单项
-    if (visibleCustomMenuItems.value.length > 0) {
-      // 在最后一个已有项上添加分隔线
-      if (items.length > 0) {
-        items[items.length - 1].separator = true;
-      }
-      visibleCustomMenuItems.value.forEach(item => {
-        items.push({
-          label: item.label,
-          action: () => {
-            item.action(targetNode.value, selectedNodes);
-          },
-          danger: item.danger,
-          separator: item.separator
-        });
-      });
-    }
+    appendCustomMenuItems(items, visibleCustomMenuItems.value, targetNode.value, selectedNodes);
     
     // 删除按钮
     if (items.length > 0) {
@@ -214,37 +228,9 @@ const menuItems = computed<MenuItem[]>(() => {
       action: handleDelete,
       danger: true
     });
-  } 
-  // 空白处右键菜单
-  else {
-    if (props.mode === 'tree') {
-      items.push({
-        label: '新建文件夹节点',
-        action: handleCreateFolder
-      });
-    }
-    items.push({
-      label: '新建数据节点',
-      action: handleCreateItem
-    });
-    
-    // 自定义菜单项（空白处）
-    if (visibleCustomMenuItemsForRoot.value.length > 0) {
-      // 在最后一个已有项上添加分隔线
-      if (items.length > 0) {
-        items[items.length - 1].separator = true;
-      }
-      visibleCustomMenuItemsForRoot.value.forEach(item => {
-        items.push({
-          label: item.label,
-          action: () => {
-            item.action(null, selectedNodes);
-          },
-          danger: item.danger,
-          separator: item.separator
-        });
-      });
-    }
+  } else {
+    // 空白处右键菜单 - 只有自定义菜单项
+    appendCustomMenuItems(items, visibleCustomMenuItemsForRoot.value, null, selectedNodes);
   }
   
   return items;
@@ -575,11 +561,11 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
     <!-- 根节点列表 -->
       <div v-else class="tree-content">
         <TreeNode
-          v-for="node in rootNodes"
-          :key="node.id"
-          :node="node"
-          :tree="tree"
-          :level="0"
+        v-for="node in rootNodes"
+        :key="node.id"
+        :node="node"
+        :tree="tree"
+        :level="0"
           :editing-node-id="editingNodeId"
           :show-children="mode === 'tree'"
           :selection="selection"
@@ -587,9 +573,9 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
           :selectable="selectable"
           :selectable-filter="selectableFilter"
           @select="handleSelection"
-          @contextmenu="handleContextmenu"
+        @contextmenu="handleContextmenu"
           @rename="handleNodeRename"
-        >
+      >
         <!-- 转发所有插槽 -->
         <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
           <slot :name="name" v-bind="slotData || {}"></slot>

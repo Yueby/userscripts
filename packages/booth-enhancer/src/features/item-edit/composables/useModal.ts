@@ -9,6 +9,7 @@ export type ModalType =
   | 'createFolder' 
   | 'createTag' 
   | 'createItem' 
+  | 'editDescription'
   | 'rename' 
   | 'delete' 
   | 'template'

@@ -554,18 +554,27 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   }
 
   /**
+   * 为元素添加输入监听器
+   */
+  private addInputListeners(elements: (HTMLElement | null | undefined)[], callback: () => void): void {
+    elements.forEach(element => {
+      element?.addEventListener('input', () => callback());
+    });
+  }
+
+  /**
    * 监听 Section 列表变化
    */
   onSectionsChange(callback: () => void): void {
     this._sectionsChangeCallback = callback;
+    
     this._data.sections.forEach(section => {
-      section.headlineInput?.addEventListener('input', () => callback());
-      section.bodyTextarea?.addEventListener('input', () => callback());
+      this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
     });
+    
     const originalCallback = this._newSectionCallback;
     this._newSectionCallback = (section) => {
-      section.headlineInput?.addEventListener('input', () => callback());
-      section.bodyTextarea?.addEventListener('input', () => callback());
+      this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
       originalCallback?.(section);
       callback();
     };
@@ -576,14 +585,14 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
    */
   onVariationsChange(callback: () => void): void {
     this._variationsChangeCallback = callback;
+    
     this._data.variations.forEach(variation => {
-      variation.nameInput?.addEventListener('input', () => callback());
-      variation.priceInput?.addEventListener('input', () => callback());
+      this.addInputListeners([variation.nameInput, variation.priceInput], callback);
     });
+    
     const originalCallback = this._newVariationCallback;
     this._newVariationCallback = (variation) => {
-      variation.nameInput?.addEventListener('input', () => callback());
-      variation.priceInput?.addEventListener('input', () => callback());
+      this.addInputListeners([variation.nameInput, variation.priceInput], callback);
       originalCallback?.(variation);
       callback();
     };

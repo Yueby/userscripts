@@ -2,16 +2,15 @@
   "name": "userscripts",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean",
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "dev": "pnpm -r --filter \"./packages/*\" run dev",
+    "lint": "pnpm -r --filter \"./packages/*\" run lint",
+    "clean": "pnpm -r --filter \"./packages/*\" run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "pnpm -r --filter \"./packages/*\" run check-types"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
-    "turbo": "^2.4.2",
     "typescript": "5.7.3"
   },
   "packageManager": "pnpm@10.27.0",

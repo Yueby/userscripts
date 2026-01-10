@@ -7,6 +7,7 @@ export interface MenuItem {
   action: () => void;
   danger?: boolean;
   separator?: boolean; // 在此项后显示分隔线
+  disabled?: boolean; // 禁用状态
 }
 
 const props = defineProps<{
@@ -103,6 +104,7 @@ watch(() => [props.show, props.x, props.y], ([newShow]) => {
 
 // 处理菜单项点击
 const handleItemClick = (item: MenuItem) => {
+  if (item.disabled) return;
   item.action();
   emit('close');
 };
@@ -141,9 +143,15 @@ onUnmounted(() => {
         :style="{ left: adjustedPosition.x + 'px', top: adjustedPosition.y + 'px' }"
       >
         <template v-for="(item, index) in items" :key="index">
+          <!-- 分隔符 -->
+          <div v-if="item.label === '-'" class="menu-separator"></div>
+          <!-- 菜单项 -->
           <div 
-            v-if="item.label"
-            :class="['menu-item', { 'menu-item-danger': item.danger }]"
+            v-else
+            :class="['menu-item', { 
+              'menu-item-danger': item.danger,
+              'menu-item-disabled': item.disabled
+            }]"
             @click="handleItemClick(item)"
           >
             <span v-if="item.icon" class="menu-icon" v-html="item.icon"></span>
@@ -215,6 +223,12 @@ onUnmounted(() => {
 
 .menu-item-danger:hover {
   background: #fef2f2;
+}
+
+.menu-item-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .menu-icon {

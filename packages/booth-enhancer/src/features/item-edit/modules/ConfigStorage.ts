@@ -4,10 +4,14 @@ import {
   AppData,
   createDefaultData,
   Node,
-  NodeTree
+  NodeTree,
+  type ItemsData,
+  type SingleItemConfig,
+  type TagsData,
+  type TemplatesData
 } from '../config-types';
 
-const STORAGE_KEY = 'booth-enhancer-config-v2';
+const STORAGE_KEY = 'booth-enhancer-config-v4';
 const SAVE_DEBOUNCE = 500;
 
 export class ConfigStorage {
@@ -47,7 +51,6 @@ export class ConfigStorage {
       console.error('Failed to load config:', e);
     }
     
-    // 加载失败，返回默认数据
     return createDefaultData();
   }
 
@@ -227,15 +230,121 @@ export class ConfigStorage {
     this.saveWithDebounce();
   }
 
+  // ===== 导出方法 =====
+
+  exportTags(): TagsData {
+    return { tagTree: this._data.value.tagTree };
+  }
+
+  exportItems(): ItemsData {
+    return { itemTree: this._data.value.itemTree };
+  }
+
+  exportTemplates(): TemplatesData {
+    return { globalTemplates: this._data.value.globalTemplates };
+  }
+
+  exportSingleItem(itemId: string): SingleItemConfig | null {
+    const config = this._data.value.itemConfigs[itemId];
+    return config || null;
+  }
+
+  exportAllItems(): Record<string, SingleItemConfig> {
+    return { ...this._data.value.itemConfigs };
+  }
+
+  // ===== 导入方法 =====
+
+  importTags(data: TagsData): void {
+    if (!data.tagTree || !data.tagTree.nodes) {
+      throw new Error('无效的标签数据格式');
+    }
+    this._data.value.tagTree = data.tagTree;
+  }
+
+  importItems(data: ItemsData): void {
+    if (!data.itemTree || !data.itemTree.nodes) {
+      throw new Error('无效的商品数据格式');
+    }
+    this._data.value.itemTree = data.itemTree;
+  }
+
+  importTemplates(data: TemplatesData): void {
+    if (!data.globalTemplates) {
+      throw new Error('无效的模板数据格式');
+    }
+    this._data.value.globalTemplates = data.globalTemplates;
+  }
+
+  importSingleItem(config: SingleItemConfig, options?: { replace?: boolean }): boolean {
+    if (!config.itemId) {
+      throw new Error('商品配置缺少 itemId');
+    }
+    
+    const exists = !!this._data.value.itemConfigs[config.itemId];
+    
+    // 如果已存在且不强制替换，返回 false 让调用方处理
+    if (exists && !options?.replace) {
+      return false;
+    }
+    
+    this._data.value.itemConfigs[config.itemId] = config;
+    return true;
+  }
+
+  importAllFromZip(files: Record<string, any>): void {
+    const errors: string[] = [];
+    
+    // 导入全局数据
+    if (files['tags.json']) {
+      try {
+        this.importTags(files['tags.json']);
+      } catch (e) {
+        errors.push('标签数据');
+      }
+    }
+    
+    if (files['items.json']) {
+      try {
+        this.importItems(files['items.json']);
+      } catch (e) {
+        errors.push('商品列表');
+      }
+    }
+    
+    if (files['templates.json']) {
+      try {
+        this.importTemplates(files['templates.json']);
+      } catch (e) {
+        errors.push('全局模板');
+      }
+    }
+    
+    // 导入所有商品配置（item-*.json）
+    for (const [filename, data] of Object.entries(files)) {
+      if (filename.startsWith('item-') && filename.endsWith('.json')) {
+        try {
+          this.importSingleItem(data as SingleItemConfig, { replace: true });
+        } catch (e) {
+          errors.push(`商品配置 ${filename}`);
+        }
+      }
+    }
+    
+    if (errors.length > 0) {
+      throw new Error(`以下数据导入失败: ${errors.join('、')}`);
+    }
+  }
+
   /**
-   * 导出数据为 JSON
+   * 导出数据为 JSON（保留用于向后兼容）
    */
   exportData(): string {
     return JSON.stringify(this._data.value, null, 2);
   }
 
   /**
-   * 导入数据从 JSON
+   * 导入数据从 JSON（保留用于向后兼容）
    */
   importData(jsonString: string): boolean {
     try {

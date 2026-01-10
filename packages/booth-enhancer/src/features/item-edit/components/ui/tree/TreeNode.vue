@@ -196,33 +196,29 @@ const isDescendant = (ancestorId: string, targetId: string): boolean => {
   return false;
 };
 
+// 聚焦并选中输入框
+async function focusAndSelectInput(): Promise<void> {
+  editingName.value = props.node.name;
+  await nextTick();
+  setTimeout(() => {
+    if (inputRef.value) {
+      inputRef.value.focus();
+      inputRef.value.select();
+    }
+  }, 0);
+}
+
 // 监听编辑状态变化
-// 监听编辑状态变化（包括初始状态）
 watch(isEditing, async (newValue) => {
   if (newValue) {
-    editingName.value = props.node.name;
-    await nextTick();
-    // 确保输入框已经渲染并可见
-    setTimeout(() => {
-      if (inputRef.value) {
-        inputRef.value.focus();
-        inputRef.value.select();
-      }
-    }, 0);
+    await focusAndSelectInput();
   }
 }, { immediate: true });
 
 // 同时监听 editingNodeId 的变化（处理新创建节点的情况）
 watch(() => props.editingNodeId, async (newId) => {
   if (newId === props.node.id) {
-    editingName.value = props.node.name;
-    await nextTick();
-    setTimeout(() => {
-      if (inputRef.value) {
-        inputRef.value.focus();
-        inputRef.value.select();
-      }
-    }, 0);
+    await focusAndSelectInput();
   }
 });
 
@@ -344,15 +340,15 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
         >
           <!-- 编辑模式 -->
           <template v-if="isEditing">
-            <!-- 展开/折叠箭头（有子节点时显示） -->
-            <span 
-              v-if="showChildren && hasChildren"
-              class="expand-icon" 
+          <!-- 展开/折叠箭头（有子节点时显示） -->
+          <span 
+            v-if="showChildren && hasChildren"
+            class="expand-icon" 
               @click.stop="toggleExpanded()"
-              v-html="withSize(node.expanded ? icons.chevronDown : icons.chevronRight, 12)"
-            ></span>
-            <span v-else class="expand-icon placeholder"></span>
-            
+            v-html="withSize(node.expanded ? icons.chevronDown : icons.chevronRight, 12)"
+          ></span>
+          <span v-else class="expand-icon placeholder"></span>
+          
             <span 
               class="icon" 
               v-html="withSize(nodeIcon, 16)"
@@ -389,11 +385,11 @@ const handleContextmenu = (event: MouseEvent, node: Node) => {
             <!-- 无子节点时只显示占位和图标 -->
             <template v-else>
               <span class="expand-icon placeholder"></span>
-              <span 
-                class="icon" 
+            <span 
+              class="icon" 
                 v-html="withSize(nodeIcon, 16)"
-                :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
-              ></span>
+              :style="{ color: node.data ? '#94a3b8' : '#fbbf24' }"
+            ></span>
             </template>
             
             <span class="name">{{ node.name }}</span>

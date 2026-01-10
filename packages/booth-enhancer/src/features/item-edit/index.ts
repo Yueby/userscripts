@@ -1,6 +1,6 @@
 import { App, createApp } from "vue";
 import { ItemEditAPI } from "../../api/item-edit";
-import { FeatureContext } from "../../types";
+import { FeatureContext } from "../base";
 import { PageFeature } from "../PageFeature";
 import { PageModule } from "../PageModule";
 import AppVue from "./App.vue";
@@ -135,6 +135,18 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
                 }
 
     /**
+     * 更新侧边栏状态
+     */
+    private updateSidebarState(isOpen: boolean, chevronRight: string, chevronLeft: string): void {
+        if (this.toggleBtn) {
+            this.toggleBtn.innerHTML = isOpen ? chevronRight : chevronLeft;
+        }
+        if (this.container) {
+            this.container.classList.toggle('panel-open', isOpen);
+        }
+    }
+
+    /**
      * 创建侧边栏触发按钮
      */
     private createToggleButton() {
@@ -150,18 +162,9 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
 
         this.toggleBtn.addEventListener('click', () => {
             const storage = ConfigStorage.getInstance();
-            const isOpen = storage.data.value.ui.sidebarOpen;
-            storage.data.value.ui.sidebarOpen = !isOpen;
-            
-            // 更新按钮图标和面板状态
-            this.toggleBtn!.innerHTML = !isOpen ? chevronRight : chevronLeft;
-            if (this.container) {
-                if (!isOpen) {
-                    this.container.classList.add('panel-open');
-                } else {
-                    this.container.classList.remove('panel-open');
-                }
-            }
+            const isOpen = !storage.data.value.ui.sidebarOpen;
+            storage.data.value.ui.sidebarOpen = isOpen;
+            this.updateSidebarState(isOpen, chevronRight, chevronLeft);
         });
 
         document.body.appendChild(this.toggleBtn);
@@ -176,14 +179,12 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
 
         // 根据初始状态设置面板
         const storage = ConfigStorage.getInstance();
-        const { sidebarOpen } = storage.data.value.ui;
+        const sidebarOpen = storage.data.value.ui.sidebarOpen;
         
-        // 设置打开状态
         if (sidebarOpen) {
-            this.container.classList.add('panel-open');
-            if (this.toggleBtn) {
-                this.toggleBtn.innerHTML = withSize(icons.chevronRight, 20, 2.5);
-            }
+            const chevronRight = withSize(icons.chevronRight, 20, 2.5);
+            const chevronLeft = withSize(icons.chevronLeft, 20, 2.5);
+            this.updateSidebarState(sidebarOpen, chevronRight, chevronLeft);
         }
         
         document.body.appendChild(this.container);

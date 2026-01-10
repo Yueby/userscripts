@@ -5,8 +5,9 @@ import { IconButton, TabBar, toast } from './components/ui';
 import type { MenuItem } from './components/ui/ContextMenu.vue';
 import ContextMenu from './components/ui/ContextMenu.vue';
 import { icons, withSize } from './components/ui/icons';
-import { ConfigStorage } from './modules/ConfigStorage';
+import { useStorage } from './composables';
 import './styles/index.css';
+import { downloadJSON, downloadZIP, readJSONFile, readZIPFile, triggerFileInput } from './utils/exportHelper';
 
 const props = defineProps<{
   api: ItemEditAPI;
@@ -18,8 +19,31 @@ const TagTab = defineAsyncComponent(() => import('./components/tabs/TagTab.vue')
 const ItemTab = defineAsyncComponent(() => import('./components/tabs/ItemTab.vue'));
 const EditTab = defineAsyncComponent(() => import('./components/tabs/EditTab.vue'));
 
-const storage = ConfigStorage.getInstance();
-const uiState = computed(() => storage.data.value.ui);
+const { 
+  data,
+  exportTags, 
+  exportItems, 
+  exportTemplates, 
+  exportAllItems, 
+  importAllFromZip,
+  importTags,
+  importItems
+} = useStorage();
+
+// 获取当前 Tab 组件
+function getTabComponent() {
+  const activeTab = data.value.ui.activeTab;
+  switch (activeTab) {
+    case 'tags':
+      return TagTab;
+    case 'items':
+      return ItemTab;
+    case 'edit':
+      return EditTab;
+    default:
+      return TagTab;
+  }
+}
 
 // 根元素引用（用于 Toast 容器）
 const sidebarRef = ref<HTMLElement | null>(null);
@@ -36,7 +60,7 @@ const tabs = [
 ];
 
 // 监听侧边栏开关状态
-watch(() => uiState.value.sidebarOpen, (isOpen) => {
+watch(() => data.value.ui.sidebarOpen, (isOpen) => {
   const panelRoot = document.getElementById('booth-enhancer-panel-root');
   const toggleBtn = document.querySelector('.booth-enhancer-toggle');
   
@@ -54,53 +78,52 @@ watch(() => uiState.value.sidebarOpen, (isOpen) => {
 });
 
 const closeSidebar = () => {
-  uiState.value.sidebarOpen = false;
+  data.value.ui.sidebarOpen = false;
 };
 
+// 处理 Tab 切换
+const handleTabChange = (tab: string) => {
+  data.value.ui.activeTab = tab as 'tags' | 'items' | 'edit';
+};
+
+// 生成时间戳（用于文件名）
+function generateTimestamp(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 // 导出/导入功能
-const handleExport = () => {
+const handleExport = async () => {
   try {
-    const json = JSON.stringify(storage.data.value, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `booth-enhancer-config-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const files: Record<string, any> = {
+      'tags.json': exportTags(),
+      'items.json': exportItems(),
+      'templates.json': exportTemplates()
+    };
+    
+    const allItems = exportAllItems();
+    for (const [itemId, config] of Object.entries(allItems)) {
+      files[`item-${itemId}.json`] = config;
+    }
+    
+    await downloadZIP(files, `booth-backup-${generateTimestamp()}.zip`);
     toast.success('导出成功');
   } catch (error) {
     console.error('导出失败:', error);
-    toast.error('导出失败');
+    toast.error('导出失败：' + (error as Error).message);
   }
 };
 
 const handleImport = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'application/json';
-  input.onchange = async (e) => {
+  triggerFileInput('.zip,application/zip', async (file) => {
     try {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const text = await file.text();
-      const data = JSON.parse(text);
-      
-      // 验证数据格式
-      if (!data.tagTree || !data.itemTree) {
-        throw new Error('无效的配置文件格式');
-      }
-
-      // 恢复数据
-      storage.data.value = data;
+      const files = await readZIPFile(file);
+      importAllFromZip(files);
       toast.success('导入成功');
     } catch (error) {
       console.error('导入失败:', error);
       toast.error('导入失败：' + (error as Error).message);
     }
-  };
-  input.click();
+  });
 };
 
 // 切换下拉菜单
@@ -119,19 +142,91 @@ const closeMenu = () => {
   showMenu.value = false;
 };
 
-// 菜单项配置
-const menuItems = computed<MenuItem[]>(() => [
-  {
-    label: '导出配置',
-    icon: withSize(icons.upload, 14),
-    action: handleExport
-  },
-  {
-    label: '导入配置',
-    icon: withSize(icons.download, 14),
-    action: handleImport
+// 导出当前 Tab 数据
+function handleTabExport() {
+  const activeTab = data.value.ui.activeTab;
+  if (activeTab === 'edit') return;
+  
+  try {
+    const timestamp = generateTimestamp();
+    const exportData = activeTab === 'tags' ? exportTags() : exportItems();
+    const fileName = `booth-${activeTab}-${timestamp}.json`;
+    
+    downloadJSON(exportData, fileName);
+    toast.success(`${currentTabLabel.value}数据导出成功`);
+  } catch (error) {
+    console.error('导出失败:', error);
+    toast.error('导出失败：' + (error as Error).message);
   }
-]);
+}
+
+// 导入当前 Tab 数据
+function handleTabImport() {
+  const activeTab = data.value.ui.activeTab;
+  if (activeTab === 'edit') return;
+  
+  triggerFileInput('.json,application/json', async (file) => {
+    try {
+      const importData = await readJSONFile(file);
+      
+      if (activeTab === 'tags') {
+        importTags(importData);
+      } else {
+        importItems(importData);
+      }
+      
+      toast.success(`${currentTabLabel.value}数据导入成功`);
+    } catch (error) {
+      console.error('导入失败:', error);
+      toast.error('导入失败：' + (error as Error).message);
+    }
+  });
+}
+
+// 获取当前 Tab 名称
+const currentTabLabel = computed(() => {
+  switch (data.value.ui.activeTab) {
+    case 'tags': return '标签';
+    case 'items': return '商品';
+    case 'edit': return '编辑';
+    default: return '';
+  }
+});
+
+// 菜单项配置
+const menuItems = computed<MenuItem[]>(() => {
+  const isEditTab = data.value.ui.activeTab === 'edit';
+  
+  return [
+    {
+      label: '导出完整备份 (ZIP)',
+      icon: withSize(icons.upload, 14),
+      action: handleExport
+    },
+    {
+      label: '导入完整备份 (ZIP)',
+      icon: withSize(icons.download, 14),
+      action: handleImport
+    },
+    {
+      label: '-',
+      icon: '',
+      action: () => {}
+    },
+    {
+      label: `导出${currentTabLabel.value}数据 (JSON)`,
+      icon: withSize(icons.upload, 14),
+      action: handleTabExport,
+      disabled: isEditTab
+    },
+    {
+      label: `导入${currentTabLabel.value}数据 (JSON)`,
+      icon: withSize(icons.download, 14),
+      action: handleTabImport,
+      disabled: isEditTab
+    }
+  ];
+});
 
 // 设置 Toast 容器
 onMounted(() => {
@@ -149,9 +244,9 @@ onUnmounted(() => {
   <div ref="sidebarRef" class="booth-enhancer-sidebar">
     <!-- 标签栏（包含操作按钮） -->
     <TabBar
-      :active-tab="uiState.activeTab"
+      :active-tab="data.ui.activeTab"
       :tabs="tabs"
-      @update:active-tab="(val) => uiState.activeTab = val as 'tags' | 'items' | 'edit'"
+      @update:active-tab="handleTabChange"
     >
       <template #actions>
         <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
@@ -170,15 +265,11 @@ onUnmounted(() => {
 
     <!-- 内容区 -->
     <div class="sidebar-content">
-      <Transition name="tab-slide" mode="out-in">
-        <KeepAlive>
-          <component
-            :is="uiState.activeTab === 'tags' ? TagTab : uiState.activeTab === 'items' ? ItemTab : EditTab"
-            :key="uiState.activeTab"
-            :api="props.api"
-          />
-        </KeepAlive>
-      </Transition>
+      <component
+        :is="getTabComponent()"
+        :key="data.ui.activeTab + '-' + Date.now()"
+        :api="props.api"
+      />
     </div>
   </div>
 </template>

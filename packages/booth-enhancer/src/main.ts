@@ -1,5 +1,5 @@
 import { ItemEditFeature, ItemManageFeature, SessionFeature } from './features';
-import { FeatureContext } from './types';
+import { FeatureContext } from './features/base';
 import { handleError } from './utils/error';
 
 class BoothEnhancer {

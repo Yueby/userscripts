@@ -1,5 +1,5 @@
 import { ItemManageAPI } from "../../api/item-manage";
-import { FeatureContext } from "../../types";
+import { FeatureContext } from "../base";
 import { PageFeature } from "../PageFeature";
 import { PageModule } from "../PageModule";
 import {

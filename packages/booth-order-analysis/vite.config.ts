@@ -7,7 +7,7 @@ import monkey, { cdn } from 'vite-plugin-monkey';
 export default defineConfig({
 	build: {
 		outDir: resolve(__dirname, '../../dist'),
-		emptyOutDir: true
+		emptyOutDir: false
 	},
 	plugins: [
 		vue(),

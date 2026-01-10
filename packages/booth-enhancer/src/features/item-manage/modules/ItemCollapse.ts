@@ -70,6 +70,46 @@ export class ItemCollapse extends PageModule<ItemManageAPI> {
     }
 
     /**
+     * 设置折叠功能
+     */
+    private setupCollapseToggle(header: HTMLElement, target: HTMLElement): void {
+        const icon = header.querySelector('.item-collapse-icon') as HTMLElement;
+        let isCollapsed = true;
+
+        header.onclick = () => {
+            isCollapsed = !isCollapsed;
+            target.classList.toggle('collapsed', isCollapsed);
+            icon.classList.toggle('collapsed', isCollapsed);
+        };
+    }
+
+    /**
+     * 创建基础折叠标题
+     */
+    private createBaseHeader(title: string, badgesHTML?: string): HTMLElement {
+        const header = document.createElement('div');
+        header.className = 'item-collapse-header';
+
+        const titleSection = document.createElement('div');
+        titleSection.className = 'item-collapse-title';
+        titleSection.innerHTML = `
+            <span class="item-collapse-icon collapsed">▼</span>
+            <span>${title}</span>
+        `;
+
+        header.appendChild(titleSection);
+
+        if (badgesHTML) {
+            const badgesContainer = document.createElement('div');
+            badgesContainer.className = 'item-collapse-badges';
+            badgesContainer.innerHTML = badgesHTML;
+            header.appendChild(badgesContainer);
+        }
+
+        return header;
+    }
+
+    /**
      * 创建变体列表折叠标题（使用 API 数据）
      */
     private createVariationHeader(itemElement: ItemElement): HTMLElement {
@@ -80,44 +120,14 @@ export class ItemCollapse extends PageModule<ItemManageAPI> {
         const totalSales = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
         const totalRevenue = variations.reduce((sum, v) => sum + v.data.revenue, 0);
 
-        // 创建折叠标题
-        const header = document.createElement('div');
-        header.className = 'item-collapse-header';
-
-        // 创建标题部分
-        const titleSection = document.createElement('div');
-        titleSection.className = 'item-collapse-title';
-        titleSection.innerHTML = `
-            <span class="item-collapse-icon collapsed">▼</span>
-            <span>变体列表</span>
-        `;
-
-        // 创建 badges 容器
-        const badgesContainer = document.createElement('div');
-        badgesContainer.className = 'item-collapse-badges';
-        badgesContainer.innerHTML = `
+        const badgesHTML = `
             <span class="item-badge item-badge-count">变体: <strong>${count}</strong></span>
             <span class="item-badge item-badge-sales">销量: <strong>${totalSales}</strong></span>
             <span class="item-badge item-badge-revenue">收益: <strong>${totalRevenue.toLocaleString()}</strong></span>
         `;
 
-        header.appendChild(titleSection);
-        header.appendChild(badgesContainer);
-
-        // 设置折叠状态和事件
-        const icon = header.querySelector('.item-collapse-icon') as HTMLElement;
-        let isCollapsed = true;
-
-        header.onclick = () => {
-            isCollapsed = !isCollapsed;
-            if (isCollapsed) {
-                variationsUl!.classList.add('collapsed');
-                icon.classList.add('collapsed');
-            } else {
-                variationsUl!.classList.remove('collapsed');
-                icon.classList.remove('collapsed');
-            }
-        };
+        const header = this.createBaseHeader('变体列表', badgesHTML);
+        this.setupCollapseToggle(header, variationsUl!);
 
         return header;
     }
@@ -126,33 +136,8 @@ export class ItemCollapse extends PageModule<ItemManageAPI> {
      * 创建标签列表折叠标题
      */
     private createTagHeader(tagsUl: HTMLElement): HTMLElement {
-        const header = document.createElement('div');
-        header.className = 'item-collapse-header';
-
-        // 创建标题部分
-        const titleSection = document.createElement('div');
-        titleSection.className = 'item-collapse-title';
-        titleSection.innerHTML = `
-            <span class="item-collapse-icon collapsed">▼</span>
-            <span>标签列表</span>
-        `;
-
-        header.appendChild(titleSection);
-
-        // 设置折叠状态和事件
-        const icon = header.querySelector('.item-collapse-icon') as HTMLElement;
-        let isCollapsed = true;
-
-        header.onclick = () => {
-            isCollapsed = !isCollapsed;
-            if (isCollapsed) {
-                tagsUl.classList.add('collapsed');
-                icon.classList.add('collapsed');
-            } else {
-                tagsUl.classList.remove('collapsed');
-                icon.classList.remove('collapsed');
-            }
-        };
+        const header = this.createBaseHeader('标签列表');
+        this.setupCollapseToggle(header, tagsUl);
 
         return header;
     }

@@ -1,6 +1,5 @@
 import { BaseAPI } from "../api/BaseAPI";
-import { FeatureContext } from "../types";
-
+import { FeatureContext } from "./base";
 /**
  * 页面功能基类
  * 管理页面级功能，持有API实例和子模块

@@ -11,6 +11,9 @@ export type { MenuItem } from './ContextMenu.vue';
 // 树组件
 export { Tree, TreeNode } from './tree';
 
+// 列表组件
+export { DraggableCardList } from './list';
+
 export { icons, withSize } from './icons';
 export { toast } from './Toast';
 

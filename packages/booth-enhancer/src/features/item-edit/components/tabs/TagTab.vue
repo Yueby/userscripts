@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { ItemEditAPI } from '../../../../api/item-edit';
-import { tagSearchFilter, useModal } from '../../composables';
+import { tagSearchFilter, useModal, useStorage } from '../../composables';
 import { Node } from '../../config-types';
-import { ConfigStorage } from '../../modules/ConfigStorage';
 import Modal from '../ui/Modal.vue';
 import type { ContextMenuItem } from '../ui/tree/Tree.vue';
 import Tree from '../ui/tree/Tree.vue';
@@ -12,15 +11,15 @@ const props = defineProps<{
   api: ItemEditAPI;
 }>();
 
-// 核心状态
-const storage = ConfigStorage.getInstance();
-const selectedNodeId = ref<string | null>(null);
-
 // 使用 Composables
+const { data, createNode, renameNode, deleteNode } = useStorage();
 const modal = useModal();
 
+// 核心状态
+const selectedNodeId = ref<string | null>(null);
+
 // 树形数据
-const tree = computed(() => storage.data.value.tagTree);
+const tree = computed(() => data.value.tagTree);
 
 // 处理节点选择
 const handleSelect = (nodes: Node[]) => {
@@ -29,35 +28,48 @@ const handleSelect = (nodes: Node[]) => {
   }
 };
 
-// 自定义右键菜单项
+// 递归检查节点是否包含标签
+function hasTagsRecursive(node: Node | null): boolean {
+  if (!node) return false;
+  
+  const hasTags = node.data?.tags && Array.isArray(node.data.tags) && node.data.tags.length > 0;
+  if (hasTags) return true;
+  
+  if (!node.children || node.children.length === 0) return false;
+  
+  return node.children.some((childId: string) => {
+    const childNode = tree.value.nodes[childId];
+    return childNode && hasTagsRecursive(childNode);
+  });
+}
+
+// 递归提取节点及其子节点的所有标签
+function extractTagsRecursive(node: Node, tagsSet: Set<string>): void {
+  if (node.data?.tags && Array.isArray(node.data.tags)) {
+    node.data.tags.forEach((tag: string) => tagsSet.add(tag));
+  }
+  
+  if (node.children && node.children.length > 0) {
+    node.children.forEach((childId: string) => {
+      const childNode = tree.value.nodes[childId];
+      if (childNode) {
+        extractTagsRecursive(childNode, tagsSet);
+      }
+    });
+  }
+}
+
+// 自定义右键菜单项（导出/导入功能已移至顶栏菜单）
 const customMenuItems = computed<ContextMenuItem[]>(() => [
   {
     label: '应用标签',
     action: (node, selection) => {
       const tagsToApply = new Set<string>();
-      
-      // 递归提取节点及其所有子节点的标签
-      const extractRecursive = (n: Node) => {
-        // 提取当前节点的标签
-        if (n.data?.tags && Array.isArray(n.data.tags)) {
-          n.data.tags.forEach((t: string) => tagsToApply.add(t));
-        }
-        
-        // 递归提取子节点的标签
-        if (n.children && n.children.length > 0) {
-          n.children.forEach((childId: string) => {
-            const childNode = tree.value.nodes[childId];
-            if (childNode) {
-              extractRecursive(childNode);
-            }
-          });
-        }
-      };
 
       if (selection && selection.length > 0) {
-        selection.forEach(extractRecursive);
+        selection.forEach(n => extractTagsRecursive(n, tagsToApply));
       } else if (node) {
-        extractRecursive(node);
+        extractTagsRecursive(node, tagsToApply);
       }
 
       if (tagsToApply.size > 0) {
@@ -65,26 +77,6 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
       }
     },
     show: (node, selection) => {
-      // 递归检查节点及其所有子节点是否有标签
-      const hasTagsRecursive = (n: Node | null): boolean => {
-        if (!n) return false;
-        
-        // 检查当前节点是否有标签
-        if (n.data?.tags && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
-          return true;
-        }
-        
-        // 检查子节点是否有标签
-        if (n.children && n.children.length > 0) {
-          return n.children.some((childId: string) => {
-            const childNode = tree.value.nodes[childId];
-            return childNode && hasTagsRecursive(childNode);
-          });
-        }
-        
-        return false;
-      };
-      
       if (selection && selection.length > 0) {
         return selection.some(hasTagsRecursive);
       }
@@ -95,29 +87,11 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
     label: '移除标签',
     action: (node, selection) => {
       const tagsToRemove = new Set<string>();
-      
-      // 递归提取节点及其所有子节点的标签
-      const extractRecursive = (n: Node) => {
-        // 提取当前节点的标签
-        if (n.data?.tags && Array.isArray(n.data.tags)) {
-          n.data.tags.forEach((t: string) => tagsToRemove.add(t));
-        }
-        
-        // 递归提取子节点的标签
-        if (n.children && n.children.length > 0) {
-          n.children.forEach((childId: string) => {
-            const childNode = tree.value.nodes[childId];
-            if (childNode) {
-              extractRecursive(childNode);
-            }
-          });
-        }
-      };
 
       if (selection && selection.length > 0) {
-        selection.forEach(extractRecursive);
+        selection.forEach(n => extractTagsRecursive(n, tagsToRemove));
       } else if (node) {
-        extractRecursive(node);
+        extractTagsRecursive(node, tagsToRemove);
       }
 
       if (tagsToRemove.size > 0) {
@@ -125,33 +99,13 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
       }
     },
     show: (node, selection) => {
-      // 递归检查节点及其所有子节点是否有标签
-      const hasTagsRecursive = (n: Node | null): boolean => {
-        if (!n) return false;
-        
-        // 检查当前节点是否有标签
-        if (n.data?.tags && Array.isArray(n.data.tags) && n.data.tags.length > 0) {
-          return true;
-        }
-        
-        // 检查子节点是否有标签
-        if (n.children && n.children.length > 0) {
-          return n.children.some((childId: string) => {
-            const childNode = tree.value.nodes[childId];
-            return childNode && hasTagsRecursive(childNode);
-          });
-        }
-        
-        return false;
-      };
-      
       if (selection && selection.length > 0) {
         return selection.some(hasTagsRecursive);
       }
       return hasTagsRecursive(node);
     },
     danger: true,
-  }
+  },
 ]);
 
 // 删除单个标签
@@ -196,20 +150,20 @@ const parseTags = (tagsText: string): string[] => {
 
 // Unity 风格创建文件夹：直接创建，返回节点ID
 const handleCreateFolder = (parentId: string | null): string => {
-  const newNode = storage.createNode(tree.value, '新建文件夹', undefined, parentId);
+  const newNode = createNode(tree.value, '新建文件夹', undefined, parentId);
   return newNode.id;
 };
 
 // Unity 风格创建 Tag 预设：直接创建，返回节点ID
 const handleCreateTag = (parentId: string | null): string => {
-  const data = { tags: [] }; // 创建空的Tag预设
-  const newNode = storage.createNode(tree.value, '新建 Tag 预设', data, parentId);
+  const tagData = { tags: [] }; // 创建空的Tag预设
+  const newNode = createNode(tree.value, '新建 Tag 预设', tagData, parentId);
   return newNode.id;
 };
 
 // 编辑 Tag 数据
 const handleEditTag = async (nodeId: string) => {
-  const node = storage.data.value.tagTree.nodes[nodeId];
+  const node = data.value.tagTree.nodes[nodeId];
   if (!node || !node.data) return;
   
   const result = await modal.openModal({
@@ -225,9 +179,8 @@ const handleEditTag = async (nodeId: string) => {
     const tags = parseTags(result.tagsText);
     if (tags.length > 0) {
       // 更新节点名称和数据
-      storage.renameNode(tree.value, nodeId, result.name.trim());
+      renameNode(tree.value, nodeId, result.name.trim());
       node.data.tags = tags;
-      storage['saveWithDebounce'](); // 触发保存
     }
   }
 };
@@ -236,13 +189,13 @@ const handleEditTag = async (nodeId: string) => {
 const handleRename = (nodeId: string, newName: string) => {
   const trimmedName = newName.trim();
   if (trimmedName) {
-    storage.renameNode(tree.value, nodeId, trimmedName);
+    renameNode(tree.value, nodeId, trimmedName);
   }
 };
 
 // 删除
 const handleDelete = async (nodeId: string) => {
-  const node = storage.data.value.tagTree.nodes[nodeId];
+  const node = data.value.tagTree.nodes[nodeId];
   if (!node) return; // 节点不存在时直接返回
   
   const confirmed = await modal.openModal({
@@ -252,7 +205,7 @@ const handleDelete = async (nodeId: string) => {
   });
   
   if (confirmed) {
-    storage.deleteNode(tree.value, nodeId);
+    deleteNode(tree.value, nodeId);
   }
   // 取消时直接返回，不抛出错误
 };
@@ -309,7 +262,6 @@ const handleDelete = async (nodeId: string) => {
         <input
           v-model="modal.state.value.inputValue"
           type="text"
-          class="modal-input"
           placeholder="文件夹名称"
           @keyup.enter="modal.confirmModal()"
         />
@@ -345,7 +297,6 @@ const handleDelete = async (nodeId: string) => {
         <input
           v-model="modal.state.value.inputValue"
           type="text"
-          class="modal-input"
           placeholder="新名称"
           @keyup.enter="modal.confirmModal()"
         />
@@ -364,7 +315,6 @@ const handleDelete = async (nodeId: string) => {
         <input
           v-model="modal.state.value.inputValue"
           type="text"
-          class="modal-input"
           :placeholder="modal.state.value.placeholder"
           @keyup.enter="modal.confirmModal()"
         />
@@ -377,7 +327,7 @@ const handleDelete = async (nodeId: string) => {
         </p>
         <textarea
           v-model="modal.state.value.inputValue"
-          class="modal-input modal-textarea-code"
+          class="modal-textarea-code"
           :placeholder="modal.state.value.placeholder"
           rows="8"
         ></textarea>

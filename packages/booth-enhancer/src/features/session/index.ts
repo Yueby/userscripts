@@ -1,6 +1,6 @@
 import { GM_notification, GM_registerMenuCommand, GM_setClipboard } from '$';
 import { SessionAPI } from "../../api/session";
-import { FeatureContext } from "../../types";
+import { FeatureContext } from '../base';
 import { PageFeature } from "../PageFeature";
 
 /**
@@ -26,6 +26,17 @@ export class SessionFeature extends PageFeature<SessionAPI> {
     }
 
     /**
+     * 获取通知文本
+     */
+    private getNotificationText(expiresAt: string | null | undefined): string {
+        if (expiresAt) {
+            const expiryDate = new Date(expiresAt).toLocaleString();
+            return `Session已复制\n过期时间: ${expiryDate}`;
+        }
+        return 'Session已复制到剪贴板';
+    }
+
+    /**
      * 获取 Session 并复制到剪贴板
      */
     private async getSessionAndCopy(): Promise<void> {
@@ -39,9 +50,7 @@ export class SessionFeature extends PageFeature<SessionAPI> {
             GM_setClipboard(jsonData, 'Booth Session');
 
             GM_notification({
-                text: result.data.expires_at
-                    ? `Session已复制\n过期时间: ${new Date(result.data.expires_at).toLocaleString()}`
-                    : 'Session已复制到剪贴板',
+                text: this.getNotificationText(result.data.expires_at),
                 title: '获取成功',
                 timeout: 3000
             });

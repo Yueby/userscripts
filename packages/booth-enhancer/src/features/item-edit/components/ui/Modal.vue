@@ -156,7 +156,7 @@ onUnmounted(() => {
 }
 
 .modal-body {
-  padding: 10px;
+  padding: 5px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
