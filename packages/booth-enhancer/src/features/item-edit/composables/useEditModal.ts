@@ -5,11 +5,7 @@
 
 import { computed, type ComputedRef } from 'vue';
 import type { ItemEditConfig } from '../config-types';
-
-export interface TemplateVariables {
-  itemName: string;
-  supportCount: number;
-}
+import type { TemplateVariables } from '../utils/templateParser';
 
 export interface EditModalEmits {
   (e: 'close'): void;

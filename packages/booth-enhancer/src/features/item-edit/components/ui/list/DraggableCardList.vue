@@ -82,7 +82,18 @@ function handleRemove(index: number): void {
 .draggable-card-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  padding: var(--be-space-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--be-color-border);
+  border-radius: var(--be-radius);
+}
+
+/* 嵌套的 DraggableCardList 不显示背景 */
+.draggable-card-list .draggable-card-list {
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .draggable-card {

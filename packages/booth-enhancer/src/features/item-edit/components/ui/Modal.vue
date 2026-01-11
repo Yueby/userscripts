@@ -174,7 +174,6 @@ onUnmounted(() => {
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-  font-size: 13px;
   color: #374151;
 }
 

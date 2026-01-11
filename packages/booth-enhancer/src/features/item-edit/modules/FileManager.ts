@@ -108,7 +108,7 @@ export class FileManager extends PageModule<ItemEditAPI> {
             const input = checkbox as HTMLInputElement;
             // 只操作状态不一致的复选框
             if (input.checked !== checked) {
-                // 模拟真实的点击操作，确保 React 状态正确更新
+                // 使用 Simulate.click 确保 React 状态正确更新
                 Simulate.click(input);
             }
         });

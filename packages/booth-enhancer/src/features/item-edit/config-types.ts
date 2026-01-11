@@ -55,28 +55,33 @@ export interface TemplatesData {
 // 商品类型
 export type ItemType = 'adaptation' | 'normal';
 
-// 更新日志项
-export interface ChangelogEntry {
+// Section 类型
+export type SectionType = 'normal' | 'log' | 'iteminfo';
+
+// Log 条目
+export interface LogEntry {
   id: string;
   date: number; // 时间戳
-  type: 'release' | 'added' | 'fixed' | 'updated';
   content: string;
 }
 
 // Variation 数据
 export interface VariationData {
   name: string;
-  supportCount: number; // 支持商品数量，默认1
   price: number; // Variation 价格（根据打折开关自动调整）
   isFullset?: boolean; // 是否为 Fullset variation
   useCustomPrice?: boolean; // 是否使用自定义价格
   customPrice?: number; // 自定义价格（覆盖配置的价格）
+  fileIds?: string[]; // 关联的文件 ID 列表
+  fileItemMap?: { [fileId: string]: string }; // 文件ID到商品ID的映射关系
 }
 
 // 打折配置
 export interface DiscountConfig {
   enabled: boolean; // 打折开关
   discountPercent: number; // 折扣百分比
+  startDate?: string; // 折扣开始时间 (ISO 8601 格式)
+  endDate?: string; // 折扣结束时间 (ISO 8601 格式)
 }
 
 // 价格配置
@@ -101,15 +106,16 @@ export interface TextTemplate extends BaseTemplate {
 
 // Section 模板（特殊，有 headline 和 body）
 export interface SectionTemplate extends BaseTemplate {
+  type?: 'normal' | 'iteminfo' | 'log'; // 模板类型，默认 normal
   headline: string; // 可用变量: {itemName}, {supportCount}
-  body: string; // 可用变量: {itemName}, {supportCount}
+  body?: string; // 可用变量: {itemName}, {supportCount}，log 类型不需要 body
 }
 
 // 类型别名（方便理解各个模板的用途和可用变量）
 export type NameTemplate = TextTemplate;         // 可用变量: {itemName}, {supportCount}
 export type DescriptionTemplate = TextTemplate;  // 可用变量: {itemName}, {supportCount}
-export type DiscountTemplate = TextTemplate;     // 可用变量: {originalPrice}, {discountedPrice}, {discountPercent}
-export type ChangelogTemplate = TextTemplate;    // 可用变量: {date}, {content}
+export type DiscountTemplate = TextTemplate;     // 可用变量: {originalPrice}, {discountedPrice}, {discountPercent}, {fullsetOriginalPrice}, {fullsetDiscountedPrice}, {startDate}, {endDate}
+export type LogTemplate = TextTemplate;          // 可用变量: {date}, {content}
 export type ItemInfoTemplate = TextTemplate;     // 可用变量: {authorName}, {itemName}, {itemUrl}
 
 // 全局模板配置
@@ -117,32 +123,60 @@ export interface GlobalTemplateConfig {
   nameTemplates: NameTemplate[];
   descriptionTemplates: DescriptionTemplate[];
   discountTemplates: DiscountTemplate[];
-  changelogTemplates: ChangelogTemplate[];
+  logTemplates: LogTemplate[];
   itemInfoTemplates: ItemInfoTemplate[];
   sectionTemplates: SectionTemplate[];
 }
 
-// Section 实例（引用全局模板或自定义）
-export interface SectionInstance {
+// Section 实例基础接口
+interface BaseSectionInstance {
   id: string;
+  type: SectionType;
+}
+
+// 普通 Section（引用全局模板或自定义）
+export interface NormalSectionInstance extends BaseSectionInstance {
+  type: 'normal';
   templateId?: string; // 如果引用全局模板，存储模板ID
   // 覆盖字段（如果为空则使用模板的值）
   headline?: string;
   body?: string;
 }
 
+// 日志 Section
+export interface LogSectionInstance extends BaseSectionInstance {
+  type: 'log';
+  headline?: string; // Section 标题
+  logEntries: LogEntry[];
+  logTemplateId: string; // 实例级别的模板选择
+}
+
+// 商品信息 Section
+export interface ItemInfoSectionInstance extends BaseSectionInstance {
+  type: 'iteminfo';
+  headline?: string; // Section 标题
+  itemInfoTemplateId: string; // 使用哪个全局模板
+}
+
+// Section 实例联合类型
+export type SectionInstance = 
+  | NormalSectionInstance 
+  | LogSectionInstance 
+  | ItemInfoSectionInstance;
+
 // 单商品配置（完整的独立配置）
 export interface SingleItemConfig {
   itemId: string; // 商品ID（从URL提取）
   itemName: string; // 商品基础名称
   itemType: ItemType; // 商品类型
+  itemTypeName: string; // 商品类型名称（如 "Avatar", "Model"）
+  useSmartLogic: boolean; // 是否启用智能逻辑
   
   // 选择的模板ID
   selectedTemplates: {
     nameTemplateId: string;
     descriptionTemplateId: string;
     discountTemplateId: string;
-    changelogTemplateId: string;
   };
   
   customDescription: string; // 自定义描述内容
@@ -150,7 +184,8 @@ export interface SingleItemConfig {
   pricing: PriceConfig; // 价格配置
   sections: SectionInstance[]; // Section 实例列表
   variations: VariationData[]; // Variation 列表
-  changelog: ChangelogEntry[]; // 更新日志列表
+  commonFiles?: string[]; // 全局通用文件 ID 列表（所有 variation 共享）
+  tagNodeIds: string[]; // 关联的 tag 节点 ID 列表
 }
 
 // 兼容旧名称
@@ -175,8 +210,26 @@ export function createDefaultGlobalTemplates(): GlobalTemplateConfig {
       {
         id: 'default-name',
         name: '默认商品名',
-        template: '{itemName}',
+        template: '{商品名}',
         isDefault: true
+      },
+      {
+        id: 'smart-auto',
+        name: '智能商品名（推荐）',
+        template: '{智能标题}',
+        isDefault: false
+      },
+      {
+        id: 'smart-with-discount',
+        name: '智能商品名（含折扣标识）',
+        template: '{折扣标识}{智能标题}',
+        isDefault: false
+      },
+      {
+        id: 'always-show-count',
+        name: '总是显示数量',
+        template: '{支持数} {商品类型复数} | {首个变体名}',
+        isDefault: false
       }
     ],
     descriptionTemplates: [
@@ -191,15 +244,21 @@ export function createDefaultGlobalTemplates(): GlobalTemplateConfig {
       {
         id: 'default-discount',
         name: '默认打折',
-        template: '【セール中】\n通常価格: ¥{originalPrice} → セール価格: ¥{discountedPrice} ({discountPercent}% OFF)',
+        template: '【セール中】\n通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)',
         isDefault: true
+      },
+      {
+        id: 'fullset-discount',
+        name: '含 Fullset',
+        template: '◆[セール開催中]◆\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY\n⏰ {折扣开始时间} - {折扣结束时间}\n({折扣百分比}% OFF)',
+        isDefault: false
       }
     ],
-    changelogTemplates: [
+    logTemplates: [
       {
-        id: 'default-changelog',
-        name: '默认更新日志',
-        template: '◆ {date}\n{content}',
+        id: 'default-log',
+        name: '默认日志',
+        template: '⟡ {日期}\n　・ {内容}',
         isDefault: true
       }
     ],
@@ -207,7 +266,7 @@ export function createDefaultGlobalTemplates(): GlobalTemplateConfig {
       {
         id: 'default-item-info',
         name: '默认商品信息',
-        template: '{authorName} - {itemName}',
+        template: '⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -',
         isDefault: true
       }
     ],
@@ -236,11 +295,12 @@ export function createDefaultSingleItemConfig(itemId: string): SingleItemConfig 
     itemId,
     itemName: '',
     itemType: 'normal',
+    itemTypeName: 'Item',
+    useSmartLogic: true,
     selectedTemplates: {
       nameTemplateId: 'default-name',
       descriptionTemplateId: 'default-desc',
-      discountTemplateId: 'default-discount',
-      changelogTemplateId: 'default-changelog'
+      discountTemplateId: 'default-discount'
     },
     customDescription: '',
     discount: {
@@ -253,7 +313,7 @@ export function createDefaultSingleItemConfig(itemId: string): SingleItemConfig 
     },
     sections: [],
     variations: [],
-    changelog: []
+    tagNodeIds: []
   };
 }
 
@@ -331,19 +391,6 @@ export function getSelectedDiscountTemplate(
   return getSelectedTemplate(
     config.discountTemplates,
     itemConfig.selectedTemplates?.discountTemplateId
-  );
-}
-
-/**
- * 获取选中的更新日志模板
- */
-export function getSelectedChangelogTemplate(
-  config: GlobalTemplateConfig,
-  itemConfig: SingleItemConfig
-): string {
-  return getSelectedTemplate(
-    config.changelogTemplates,
-    itemConfig.selectedTemplates?.changelogTemplateId
   );
 }
 

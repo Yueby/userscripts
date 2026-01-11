@@ -6,6 +6,7 @@ import { SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
 import Modal from '../../../ui/Modal.vue';
+import { BUTTON_CLASSES, TEMPLATE_HINTS } from './template-hints';
 
 const props = defineProps<{
   show: boolean;
@@ -17,13 +18,17 @@ const emit = defineEmits<{
 }>();
 
 const templates = computed({
-  get: () => props.globalTemplates.nameTemplates ||= [],
-  set: (value) => { props.globalTemplates.nameTemplates = value; }
+  get(): NameTemplate[] {
+    return props.globalTemplates.nameTemplates ||= [];
+  },
+  set(value: NameTemplate[]): void {
+    props.globalTemplates.nameTemplates = value;
+  }
 });
 
-const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTemplateManager({
+const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
   templates,
-  defaultTemplate: { template: '{itemName}' }
+  defaultTemplate: { template: '{smartTitle}' }
 });
 </script>
 
@@ -37,7 +42,7 @@ const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTempla
   >
     <template #header-actions>
       <button 
-        class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
+        :class="BUTTON_CLASSES.addButton" 
         @click="addTemplate"
         title="添加模板"
         type="button"
@@ -47,7 +52,7 @@ const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTempla
     </template>
 
     <SectionHeader>
-      <p class="form-hint">可用变量: {itemName}, {supportCount}</p>
+      <p class="form-hint" v-html="TEMPLATE_HINTS.full.replace('\n', '<br>')"></p>
       <DraggableCardList
         v-if="globalTemplates.nameTemplates && globalTemplates.nameTemplates.length > 0"
         :items="globalTemplates.nameTemplates"
@@ -55,22 +60,16 @@ const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTempla
         @remove="removeTemplate"
         @reorder="onReorder"
       >
-                <template #actions="{ item: template, index }">
-                  <label class="booth-toggle" title="设为默认">
-                    <input 
-                      type="checkbox" 
-                      :checked="template.isDefault"
-                      @change="setDefaultTemplate(index)"
-                    />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </template>
+        <template #actions="{ item: template }">
+          <input 
+            v-model="template.name" 
+            type="text" 
+            placeholder="输入模板名称" 
+            style="flex: 1; min-width: 0;" 
+          />
+        </template>
         <template #content="{ item }">
           <div class="be-flex be-flex-column be-gap-sm">
-            <div class="form-group">
-              <label>模板名称</label>
-              <input v-model="item.name" type="text" placeholder="输入模板名称" />
-            </div>
             <div class="form-group">
               <label>模板内容</label>
               <textarea v-model="item.template" rows="1" placeholder="输入模板内容"></textarea>
@@ -85,4 +84,3 @@ const { addTemplate, removeTemplate, setDefaultTemplate, onReorder } = useTempla
     </SectionHeader>
   </Modal>
 </template>
-

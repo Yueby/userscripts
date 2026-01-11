@@ -7,7 +7,32 @@ import monkey, { cdn } from 'vite-plugin-monkey';
 export default defineConfig({
 	build: {
 		outDir: resolve(__dirname, '../../dist'),
-		emptyOutDir: false
+		emptyOutDir: false,
+		minify: 'terser',
+		terserOptions: {
+			compress: {
+				drop_console: true,
+				drop_debugger: true,
+				pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+				passes: 3,
+				unsafe: true,
+				unsafe_arrows: true,
+				unsafe_comps: true,
+				unsafe_math: true,
+				unsafe_methods: true,
+				unsafe_proto: true,
+				unsafe_regexp: true,
+				unsafe_undefined: true
+			},
+			mangle: {
+				properties: {
+					regex: /^_/
+				}
+			},
+			format: {
+				comments: false
+			}
+		}
 	},
 	plugins: [
 		vue(),
@@ -26,7 +51,7 @@ export default defineConfig({
 					'zh-CN': 'Booth 订单和销售数据分析工具，提供数据可视化和管理功能'
 				},
 				author: 'Yueby',
-				version: '0.1.14',
+				version: '0.1.15',
 				connect: ['raw.githubusercontent.com', 'api.exchangerate-api.com', 'manage.booth.pm'],
 				grant: ['GM_xmlhttpRequest', 'GM_setClipboard', 'GM_notification', 'GM_registerMenuCommand', 'GM_getValue', 'GM_setValue']
 			},

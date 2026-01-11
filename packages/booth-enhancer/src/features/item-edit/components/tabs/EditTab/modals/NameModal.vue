@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
 import { getSelectedNameTemplate } from '../../../../config-types';
-import { parseTemplate } from '../../../../utils/templateParser';
 import { icons, withSize } from '../../../ui/icons';
 import Modal from '../../../ui/Modal.vue';
+import TemplateSelector from '../../../ui/TemplateSelector.vue';
 import NameTemplateModal from './NameTemplateModal.vue';
+import { BUTTON_CLASSES, TEMPLATE_HINTS } from './template-hints';
 
 const props = defineProps<{
   show: boolean;
@@ -19,35 +20,37 @@ const emit = defineEmits<{
   save: [];
 }>();
 
+// 初始化 selectedTemplates（如果不存在）
+function initializeSelectedTemplates(): void {
+  if (!props.itemConfig.selectedTemplates) {
+    props.itemConfig.selectedTemplates = {
+      nameTemplateId: props.globalTemplates.nameTemplates?.[0]?.id || '',
+      descriptionTemplateId: props.globalTemplates.descriptionTemplates?.[0]?.id || '',
+      discountTemplateId: props.globalTemplates.discountTemplates?.[0]?.id || ''
+    };
+  }
+}
+
+onMounted(initializeSelectedTemplates);
+
 // 模板配置 Modal 状态
 const showTemplateModal = ref(false);
 
-// 模板变量
-const templateVars = computed(() => ({
-  itemName: props.itemConfig.itemName,
-  supportCount: props.totalSupport
-}));
-
 // 获取选中的模板内容
-const selectedTemplate = computed(() => 
+const selectedTemplate = computed((): string => 
   getSelectedNameTemplate(props.globalTemplates, props.itemConfig)
-);
-
-// 预览最终商品名
-const previewName = computed(() => 
-  parseTemplate(selectedTemplate.value, templateVars.value)
 );
 
 // 更新当前选中的模板内容
 function updateCurrentTemplate(event: Event): void {
-  if (!props.globalTemplates.nameTemplates || 
-      !props.itemConfig.selectedTemplates ||
-      !props.itemConfig.selectedTemplates.nameTemplateId) return;
+  const templates = props.globalTemplates.nameTemplates;
+  const selectedId = props.itemConfig.selectedTemplates?.nameTemplateId;
+  
+  if (!templates || !selectedId) return;
   
   const target = event.target as HTMLInputElement;
-  const template = props.globalTemplates.nameTemplates.find(
-    t => t.id === props.itemConfig.selectedTemplates.nameTemplateId
-  );
+  const template = templates.find(t => t.id === selectedId);
+  
   if (template) {
     template.template = target.value;
   }
@@ -70,7 +73,7 @@ function handleSave(): void {
   >
     <template #header-actions>
       <button 
-        class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
+        :class="BUTTON_CLASSES.addButton" 
         @click="showTemplateModal = true"
         title="模板配置"
         type="button"
@@ -80,10 +83,7 @@ function handleSave(): void {
     </template>
     <div class="modal-content">
       <div class="form-group">
-        <div class="be-flex be-justify-between be-align-center">
-          <label>商品基础名称</label>
-          <span class="be-text-xs be-text-secondary">{{ previewName }}</span>
-        </div>
+        <label>商品基础名称</label>
         <input v-model="itemConfig.itemName" type="text" 
           placeholder="输入商品名称" />
       </div>
@@ -96,36 +96,39 @@ function handleSave(): void {
         </select>
       </div>
 
-      <div class="form-group" v-if="globalTemplates.nameTemplates && globalTemplates.nameTemplates.length > 0 && itemConfig.selectedTemplates">
-        <label>选择模板</label>
-        <select v-model="itemConfig.selectedTemplates.nameTemplateId">
-          <option v-for="template in globalTemplates.nameTemplates" :key="template.id" :value="template.id">
-            {{ template.name }}
-          </option>
-        </select>
+      <div class="form-group">
+        <label>商品类型名称 <span class="label-hint">(用于生成复数形式，如 Avatar → Avatars)</span></label>
+        <input 
+          v-model="itemConfig.itemTypeName" 
+          type="text" 
+          placeholder="如: Avatar, Model, Texture" 
+        />
       </div>
 
-      <div class="form-group" v-if="globalTemplates.nameTemplates && globalTemplates.nameTemplates.length > 0 && itemConfig.selectedTemplates">
+      <TemplateSelector
+        v-model="itemConfig.selectedTemplates.nameTemplateId"
+        :templates="globalTemplates.nameTemplates"
+        label="选择模板"
+        empty-hint="请先在全局模板配置中添加商品名模板"
+      />
+
+      <div v-if="globalTemplates.nameTemplates && globalTemplates.nameTemplates.length > 0" class="form-group">
         <label>模板内容 <span class="label-hint">(编辑当前选中模板)</span></label>
-        <p class="form-hint">支持变量: {itemName}, {supportCount}</p>
+        <p class="form-hint" v-html="TEMPLATE_HINTS.full.replace('\n', '<br>')"></p>
         <input 
           :value="selectedTemplate" 
           @input="updateCurrentTemplate($event)"
           type="text" 
-          placeholder="如: {itemName} ({supportCount}体対応)" 
+          placeholder="如: {智能标题}" 
         />
-      </div>
-      
-      <div v-else class="empty-hint">
-        请先在全局模板配置中添加商品名模板
       </div>
     </div>
 
     <template #footer>
-      <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary" @click="emit('close')" title="取消">
+      <button :class="BUTTON_CLASSES.closeButton" @click="emit('close')" title="取消">
         <span v-html="withSize(icons.close, 18)"></span>
       </button>
-      <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary" @click="handleSave" title="保存">
+      <button :class="BUTTON_CLASSES.saveButton" @click="handleSave" title="保存">
         <span v-html="withSize(icons.check, 18)"></span>
       </button>
     </template>

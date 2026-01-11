@@ -147,6 +147,13 @@ export const icons = {
     <line x1="12" y1="8" x2="12.01" y2="8"></line>
   </svg>`,
   
+  // 魔法/自动化
+  magic: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>
+    <path d="M7.5 4.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5L5.5 6.5l1.5-.5.5-1.5z"></path>
+    <path d="M18.5 14.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5.5-1.5z"></path>
+  </svg>`,
+  
   // 其他
   moreVertical: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="1"></circle>

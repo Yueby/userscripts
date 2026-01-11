@@ -44,7 +44,7 @@ function extractTagsRecursive(node: Node, tagsSet: Set<string>): void {
       const childNode = tree.value.nodes[childId];
       if (childNode) {
         extractTagsRecursive(childNode, tagsSet);
-      }
+  }
     });
   }
 }
@@ -142,33 +142,33 @@ const treeTab = useTreeTab({
   tree: () => data.value.tagTree,
   onCreateFolder: (parentId) => {
     const newNode = createNode(tree.value, '新建文件夹', undefined, parentId);
-    return newNode.id;
+  return newNode.id;
   },
   onCreateItem: (parentId) => {
     const tagData = { tags: [] };
     const newNode = createNode(tree.value, '新建 Tag 预设', tagData, parentId);
-    return newNode.id;
+  return newNode.id;
   },
   onEditItem: async (nodeId) => {
     const node = data.value.tagTree.nodes[nodeId];
-    if (!node || !node.data) return;
-    
+  if (!node || !node.data) return;
+  
     const result = await treeTab.modal.openModal({
-      type: 'createTag',
-      title: '编辑 Tag 预设',
-      formData: {
-        name: node.name,
-        tagsText: node.data.tags.join('\n')
-      }
-    });
-    
-    if (result && result.name && result.tagsText) {
-      const tags = parseTags(result.tagsText);
-      if (tags.length > 0) {
-        renameNode(tree.value, nodeId, result.name.trim());
-        node.data.tags = tags;
-      }
+    type: 'createTag',
+    title: '编辑 Tag 预设',
+    formData: {
+      name: node.name,
+      tagsText: node.data.tags.join('\n')
     }
+  });
+  
+  if (result && result.name && result.tagsText) {
+    const tags = parseTags(result.tagsText);
+    if (tags.length > 0) {
+        renameNode(tree.value, nodeId, result.name.trim());
+      node.data.tags = tags;
+    }
+  }
   }
 });
 </script>
@@ -204,7 +204,7 @@ const treeTab = useTreeTab({
                   @click.stop="handleDeleteTag(node, index as number)"
                   title="删除此标签"
                 >
-                  ×
+                  <span v-html="withSize(icons.close, 12)"></span>
                 </button>
               </span>
             </div>
@@ -466,12 +466,9 @@ const treeTab = useTreeTab({
   border: none;
   border-radius: 50%;
   color: #3b82f6;
-  font-size: 16px;
-  line-height: 0;
   cursor: pointer;
   transition: all 0.15s ease;
   opacity: 0.7;
-  font-family: Arial, sans-serif;
 }
 
 .tag-delete-btn:hover {

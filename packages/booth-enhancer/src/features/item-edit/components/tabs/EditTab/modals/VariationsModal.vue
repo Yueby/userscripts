@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import type { ItemEditConfig, VariationData } from '../../../../config-types';
 import { applyDiscount, suggestFullsetPrice } from '../../../../utils/priceCalculator';
 import { calculateTotalSupport } from '../../../../utils/templateParser';
-import { SectionHeader } from '../../../ui';
+import { PreviewBox, SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
 import Modal from '../../../ui/Modal.vue';
@@ -20,13 +20,15 @@ const emit = defineEmits<{
 
 const showFullsetConfirm = ref(false);
 
-const totalSupport = computed(() => calculateTotalSupport(props.itemConfig.variations));
+const totalSupport = computed((): number => 
+  calculateTotalSupport(props.itemConfig.variations)
+);
 
-const hasFullset = computed(() => 
+const hasFullset = computed((): boolean => 
   props.itemConfig.variations.some(v => v.isFullset)
 );
 
-const suggestedPrice = computed(() => 
+const suggestedPrice = computed((): number => 
   suggestFullsetPrice(
     props.itemConfig.pricing.normalVariationPrice,
     totalSupport.value,
@@ -34,13 +36,19 @@ const suggestedPrice = computed(() =>
   )
 );
 
-const normalOriginalPrice = computed(() => props.itemConfig.pricing.normalVariationPrice);
-const normalDiscountedPrice = computed(() => 
+const normalOriginalPrice = computed((): number => 
+  props.itemConfig.pricing.normalVariationPrice
+);
+
+const normalDiscountedPrice = computed((): number => 
   applyDiscount(normalOriginalPrice.value, props.itemConfig.discount)
 );
 
-const fullsetOriginalPrice = computed(() => props.itemConfig.pricing.fullsetPrice);
-const fullsetDiscountedPrice = computed(() => 
+const fullsetOriginalPrice = computed((): number => 
+  props.itemConfig.pricing.fullsetPrice
+);
+
+const fullsetDiscountedPrice = computed((): number => 
   applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount)
 );
 
@@ -62,10 +70,11 @@ function addVariation(): void {
   
   props.itemConfig.variations.push({
     name: '',
-    supportCount: 1,
     price,
     isFullset: false,
-    useCustomPrice: false
+    useCustomPrice: false,
+    fileIds: [],
+    fileItemMap: {}
   });
 }
 
@@ -77,7 +86,6 @@ function addFullsetVariation(): void {
   
   props.itemConfig.variations.unshift({
     name: 'Fullset',
-    supportCount: 0,
     price: suggestedPrice.value,
     isFullset: true
   });
@@ -86,16 +94,19 @@ function addFullsetVariation(): void {
 function toggleFullset(variation: VariationData, index: number): void {
   if (variation.isFullset) {
     variation.isFullset = false;
-    variation.supportCount = 1;
+    if (!variation.fileIds) {
+      variation.fileIds = [];
+    }
   } else {
     const existingFullsetIndex = props.itemConfig.variations.findIndex((v, i) => v.isFullset && i !== index);
     if (existingFullsetIndex !== -1) {
       const existingFullset = props.itemConfig.variations[existingFullsetIndex];
       existingFullset.isFullset = false;
-      existingFullset.supportCount = 1;
+      if (!existingFullset.fileIds) {
+        existingFullset.fileIds = [];
+      }
     }
     variation.isFullset = true;
-    variation.supportCount = 0;
   }
 }
 
@@ -128,18 +139,17 @@ function onVariationReorder(fromIndex: number, toIndex: number): void {
 }
 
 function updateVariationPrice(variation: VariationData): void {
-  if (variation.isFullset) {
-    variation.price = applyDiscount(props.itemConfig.pricing.fullsetPrice, props.itemConfig.discount);
-  } else if (variation.useCustomPrice && variation.customPrice !== undefined) {
-    variation.price = applyDiscount(variation.customPrice, props.itemConfig.discount);
-  } else {
-    variation.price = applyDiscount(props.itemConfig.pricing.normalVariationPrice, props.itemConfig.discount);
-  }
+    if (variation.isFullset) {
+      variation.price = applyDiscount(props.itemConfig.pricing.fullsetPrice, props.itemConfig.discount);
+    } else if (variation.useCustomPrice && variation.customPrice !== undefined) {
+      variation.price = applyDiscount(variation.customPrice, props.itemConfig.discount);
+    } else {
+      variation.price = applyDiscount(props.itemConfig.pricing.normalVariationPrice, props.itemConfig.discount);
+    }
 }
 
 function handleSave(): void {
   props.itemConfig.variations.forEach(variation => {
-    variation.supportCount = Number(variation.supportCount) || 1;
     updateVariationPrice(variation);
   });
   
@@ -167,7 +177,7 @@ function handleSave(): void {
       </button>
     </template>
     
-    <div class="be-flex be-flex-column be-gap-md">
+    <div class="be-flex be-flex-column be-gap-sm">
       <!-- Variations 管理区 -->
       <SectionHeader title="Variations 管理">
         <div v-if="itemConfig.variations.length === 0" class="empty-hint">
@@ -182,18 +192,18 @@ function handleSave(): void {
         >
           <template #actions="{ item: variation, index }">
             <div class="be-flex be-align-center be-gap-sm" style="flex: 1;">
-              <input v-model="variation.name" type="text" class="be-flex-1 be-p-xs be-px-sm be-text-base"
-                style="height: 28px;" placeholder="Variation 名称" />
+                <input v-model="variation.name" type="text" class="be-flex-1 be-p-xs be-px-sm be-text-base"
+                  style="height: 28px;" placeholder="Variation 名称" />
               <label v-if="!hasFullset || variation.isFullset" class="booth-toggle" title="将此 Variation 设为 Fullset（合集包）">
-                <input type="checkbox" :checked="variation.isFullset" @change="toggleFullset(variation, index)" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Fullset</span>
-              </label>
-            </div>
+                  <input type="checkbox" :checked="variation.isFullset" @change="toggleFullset(variation, index)" />
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-label">Fullset</span>
+                </label>
+              </div>
           </template>
           <template #content="{ item: variation }">
-            <!-- 价格显示/输入 -->
-            <div class="be-flex be-align-center be-gap-sm">
+              <!-- 价格显示/输入 -->
+              <div class="be-flex be-align-center be-gap-sm">
               <span v-if="variation.isFullset" class="be-text-base be-text-primary">
                 ¥{{ getVariationPrice(variation) }}
               </span>
@@ -202,27 +212,19 @@ function handleSave(): void {
                   ¥{{ getVariationPrice(variation) }}
                 </span>
                 <label class="booth-toggle be-flex-shrink-0" title="自定义此 Variation 的价格">
-                  <input type="checkbox" v-model="variation.useCustomPrice" />
-                  <span class="toggle-slider"></span>
-                </label>
-                <input 
-                  v-if="variation.useCustomPrice"
-                  v-model.number="variation.customPrice" 
-                  type="number" 
+                    <input type="checkbox" v-model="variation.useCustomPrice" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <input 
+                    v-if="variation.useCustomPrice"
+                    v-model.number="variation.customPrice" 
+                    type="number" 
                   class="be-flex-1 be-p-xs be-px-sm be-text-base" 
                   style="height: 28px; min-width: 80px;" 
-                  min="0" 
-                  placeholder="价格" 
-                />
-                <input 
-                  v-model.number="variation.supportCount" 
-                  type="number" 
-                  class="be-flex-1 be-p-xs be-px-sm be-text-base" 
-                  style="height: 28px; min-width: 60px;" 
-                  min="1" 
-                  placeholder="数量" 
-                />
-              </template>
+                    min="0" 
+                    placeholder="价格" 
+                  />
+                </template>
             </div>
           </template>
         </DraggableCardList>
@@ -263,21 +265,18 @@ function handleSave(): void {
               min="0" max="100" placeholder="0" />
           </div>
 
-          <div class="be-flex be-flex-column be-gap-sm">
-            <div class="be-text-sm be-font-bold be-text-secondary">价格预览</div>
-            <div class="be-flex be-justify-between be-align-center be-text-base">
-              <span class="be-text-secondary be-font-medium">普通 Variation:</span>
-              <span class="be-text-primary be-font-bold">
-                ¥{{ normalOriginalPrice }} → ¥{{ normalDiscountedPrice }}
-              </span>
+          <PreviewBox label="价格预览" type="text">
+            <div class="be-flex be-flex-column be-gap-xs">
+              <div class="be-flex be-justify-between">
+                <span>普通 Variation:</span>
+                <span>¥{{ normalOriginalPrice }} → ¥{{ normalDiscountedPrice }}</span>
+              </div>
+              <div class="be-flex be-justify-between">
+                <span>Fullset:</span>
+                <span>¥{{ fullsetOriginalPrice }} → ¥{{ fullsetDiscountedPrice }}</span>
+              </div>
             </div>
-            <div class="be-flex be-justify-between be-align-center be-text-base">
-              <span class="be-text-secondary be-font-medium">Fullset:</span>
-              <span class="be-text-primary be-font-bold">
-                ¥{{ fullsetOriginalPrice }} → ¥{{ fullsetDiscountedPrice }}
-              </span>
-            </div>
-          </div>
+          </PreviewBox>
         </div>
       </div>
     </div>

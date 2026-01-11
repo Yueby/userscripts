@@ -10,6 +10,8 @@ export interface ItemEditSectionElement {
     headlineInput: HTMLInputElement | null;
     /** 正文文本域 */
     bodyTextarea: HTMLTextAreaElement | null;
+    /** 删除按钮 */
+    deleteButton?: HTMLButtonElement | null;
 }
 
 /**
@@ -24,6 +26,8 @@ export interface ItemEditVariationElement {
     nameInput: HTMLInputElement | null;
     /** 价格输入框（数字商品） */
     priceInput: HTMLInputElement | null;
+    /** 删除按钮 */
+    deleteButton?: HTMLButtonElement | null;
 }
 
 /**
@@ -48,7 +52,6 @@ export interface TagData {
     element: HTMLElement;
 }
 
-
 /**
  * 完整的商品编辑数据结构
  */
@@ -57,13 +60,34 @@ export interface ItemEditData {
     nameInput: HTMLInputElement | null;
     /** 商品描述文本域 */
     descriptionTextarea: HTMLTextAreaElement | null;
-    /** Section 元素数组（所有 section li 元素） */
-    sections: ItemEditSectionElement[];
-    /** Variation 变体元素数组（所有 variation li 元素） */
-    variations: ItemEditVariationElement[];
     /** 标签列表 */
     tags: TagData[];
     /** 标签相关元素 */
     tagElements: TagElements | null;
 }
 
+/**
+ * 文件元素（下载文件）
+ */
+export interface DownloadableFileElement {
+    /** 文件 ID（从下载链接提取） */
+    id: string;
+    /** 文件名 */
+    name: string;
+    /** checkbox 元素 */
+    checkbox: HTMLInputElement;
+    /** 是否已选中 */
+    checked: boolean;
+}
+
+/**
+ * Variation 编辑面板
+ */
+export interface VariationEditPanel {
+    /** 面板容器 */
+    container: HTMLElement;
+    /** 关闭按钮 */
+    closeButton: HTMLButtonElement | null;
+    /** 文件列表 */
+    files: DownloadableFileElement[];
+}

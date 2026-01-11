@@ -16,6 +16,8 @@ export type ModalType =
   | 'input'      // 通用输入框
   | 'textarea'   // 通用文本域
   | 'alert'      // 通用提示框
+  | 'selectItem' // 选择商品
+  | 'selectFile' // 选择文件
   | '';
 
 export interface ModalState<T = any> {

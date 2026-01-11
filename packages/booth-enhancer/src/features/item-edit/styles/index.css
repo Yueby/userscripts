@@ -364,10 +364,10 @@
 
 .booth-toggle .toggle-slider {
   position: relative;
-  width: 44px;
-  height: 24px;
+  width: 36px;
+  height: 20px;
   background: #d1d5db;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.15s ease;
 }
 
@@ -376,8 +376,8 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   background: white;
   border-radius: 50%;
   transition: transform 0.3s;
@@ -385,11 +385,11 @@
 }
 
 .booth-toggle input[type="checkbox"]:checked+.toggle-slider {
-  background: #10b981;
+  background: #3b82f6;
 }
 
 .booth-toggle input[type="checkbox"]:checked+.toggle-slider:before {
-  transform: translateX(20px);
+  transform: translateX(16px);
 }
 
 .booth-toggle .toggle-label {
@@ -418,7 +418,7 @@
 }
 
 .booth-toggle input[type="checkbox"]:checked:active+.toggle-slider:before {
-  transform: translateX(20px);
+  transform: translateX(16px);
 }
 
 /* Toggle 尺寸变体 */
@@ -478,6 +478,15 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+/* Select 下拉箭头指示器 */
+.booth-enhancer-sidebar select {
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px 16px;
 }
 
 /* 统一的 hover 状态 - 中灰色边框 */
@@ -554,7 +563,6 @@
   color: var(--be-color-text-secondary);
 }
 
-
 /* 空状态提示 */
 .empty-hint {
   padding: var(--be-space-md);
@@ -573,7 +581,6 @@
   font-size: var(--be-font-size-base);
   color: var(--be-color-text-secondary);
 }
-
 
 /* Tab 导航 */
 .tab-nav {
@@ -631,6 +638,15 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+/* form-group 中的 select 下拉箭头指示器 */
+.form-group select {
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px 16px;
 }
 
 /* form-group 中的输入框继承全局统一样式 */

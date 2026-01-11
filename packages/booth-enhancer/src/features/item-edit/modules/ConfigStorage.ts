@@ -336,6 +336,57 @@ export class ConfigStorage {
     }
   }
 
+  importAllFromJSON(importData: any): void {
+    const errors: string[] = [];
+    
+    // 检查数据格式
+    if (!importData.data) {
+      throw new Error('无效的备份文件格式');
+    }
+    
+    const { tags, items, templates, itemConfigs } = importData.data;
+    
+    // 导入全局数据
+    if (tags) {
+      try {
+        this.importTags(tags);
+      } catch (e) {
+        errors.push('标签数据');
+      }
+    }
+    
+    if (items) {
+      try {
+        this.importItems(items);
+      } catch (e) {
+        errors.push('商品列表');
+      }
+    }
+    
+    if (templates) {
+      try {
+        this.importTemplates(templates);
+      } catch (e) {
+        errors.push('全局模板');
+      }
+    }
+    
+    // 导入所有商品配置
+    if (itemConfigs) {
+      for (const [itemId, config] of Object.entries(itemConfigs)) {
+        try {
+          this.importSingleItem(config as SingleItemConfig, { replace: true });
+        } catch (e) {
+          errors.push(`商品配置 ${itemId}`);
+        }
+      }
+    }
+    
+    if (errors.length > 0) {
+      throw new Error(`以下数据导入失败: ${errors.join('、')}`);
+    }
+  }
+
   /**
    * 导出数据为 JSON（保留用于向后兼容）
    */

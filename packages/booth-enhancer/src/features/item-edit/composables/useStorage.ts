@@ -28,6 +28,7 @@ export function useStorage() {
     importSingleItem: (config: any, options?: { replace?: boolean }) => 
       storage.importSingleItem(config, options),
     importAllFromZip: (files: Record<string, any>) => storage.importAllFromZip(files),
+    importAllFromJSON: (data: any) => storage.importAllFromJSON(data),
     
     // === 节点操作方法 ===
     createNode: <T>(tree: NodeTree<T>, name: string, data?: T, parentId?: string | null) =>

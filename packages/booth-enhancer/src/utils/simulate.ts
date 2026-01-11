@@ -60,10 +60,10 @@ export class Simulate {
      * @param element 目标元素
      */
     static click(element: HTMLElement): void {
+        // 不传递 view 参数，让浏览器使用默认值，避免跨域和类型转换问题
         const mouseEvent = new MouseEvent('click', {
             bubbles: true,
-            cancelable: true,
-            view: window
+            cancelable: true
         });
         element.dispatchEvent(mouseEvent);
     }

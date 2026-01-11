@@ -7,7 +7,7 @@ import ContextMenu from './components/ui/ContextMenu.vue';
 import { icons, withSize } from './components/ui/icons';
 import { useStorage } from './composables';
 import './styles/index.css';
-import { downloadJSON, downloadZIP, readJSONFile, readZIPFile, triggerFileInput } from './utils/exportHelper';
+import { downloadJSON, readJSONFile, triggerFileInput } from './utils/exportHelper';
 
 const props = defineProps<{
   api: ItemEditAPI;
@@ -25,7 +25,7 @@ const {
   exportItems, 
   exportTemplates, 
   exportAllItems, 
-  importAllFromZip,
+  importAllFromJSON,
   importTags,
   importItems,
   exportSingleItem,
@@ -44,6 +44,30 @@ function getTabComponent() {
       return EditTab;
     default:
       return TagTab;
+  }
+}
+
+// EditTab 引用
+const editTabRef = ref<InstanceType<typeof EditTab> | null>(null);
+
+// 设置 ref（用于动态组件）
+function setComponentRef(el: any) {
+  if (data.value.ui.activeTab === 'edit') {
+    editTabRef.value = el;
+  }
+}
+
+// 应用所有配置
+async function handleApplyAll() {
+  if (!editTabRef.value) {
+    toast.error('EditTab 未加载');
+    return;
+  }
+  
+  try {
+    await editTabRef.value.applyAll();
+  } catch (error) {
+    console.error('应用所有配置失败:', error);
   }
 }
 
@@ -100,18 +124,18 @@ function generateTimestamp(): string {
 // 导出/导入功能
 const handleExport = async () => {
   try {
-    const files: Record<string, any> = {
-      'tags.json': exportTags(),
-      'items.json': exportItems(),
-      'templates.json': exportTemplates()
+    const exportData = {
+      version: '1.0',
+      exportTime: Date.now(),
+      data: {
+        tags: exportTags(),
+        items: exportItems(),
+        templates: exportTemplates(),
+        itemConfigs: exportAllItems()
+      }
     };
     
-    const allItems = exportAllItems();
-    for (const [itemId, config] of Object.entries(allItems)) {
-      files[`item-${itemId}.json`] = config;
-    }
-    
-    await downloadZIP(files, `booth-backup-${generateTimestamp()}.zip`);
+    downloadJSON(exportData, `booth-backup-${generateTimestamp()}.json`);
     toast.success('导出成功');
   } catch (error) {
     console.error('导出失败:', error);
@@ -120,10 +144,10 @@ const handleExport = async () => {
 };
 
 const handleImport = () => {
-  triggerFileInput('.zip,application/zip', async (file) => {
+  triggerFileInput('.json,application/json', async (file) => {
     try {
-      const files = await readZIPFile(file);
-      importAllFromZip(files);
+      const importData = await readJSONFile(file);
+      importAllFromJSON(importData);
       toast.success('导入成功');
     } catch (error) {
       console.error('导入失败:', error);
@@ -264,12 +288,12 @@ const menuItems = computed<MenuItem[]>(() => {
   
   return [
     {
-      label: '导出完整备份 (ZIP)',
+      label: '导出完整备份 (JSON)',
       icon: withSize(icons.upload, 14),
       action: handleExport
     },
     {
-      label: '导入完整备份 (ZIP)',
+      label: '导入完整备份 (JSON)',
       icon: withSize(icons.download, 14),
       action: handleImport
     },
@@ -312,6 +336,12 @@ onUnmounted(() => {
       @update:active-tab="handleTabChange"
     >
       <template #actions>
+        <IconButton 
+          v-if="data.ui.activeTab === 'edit'" 
+          :icon="icons.send" 
+          title="应用所有" 
+          @click="handleApplyAll" 
+        />
         <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
         <IconButton :icon="icons.close" title="关闭" @click="closeSidebar" />
       </template>
@@ -353,6 +383,7 @@ onUnmounted(() => {
     <div class="sidebar-content">
       <component
         :is="getTabComponent()"
+        :ref="setComponentRef"
         :key="data.ui.activeTab + '-' + Date.now()"
         :api="props.api"
       />

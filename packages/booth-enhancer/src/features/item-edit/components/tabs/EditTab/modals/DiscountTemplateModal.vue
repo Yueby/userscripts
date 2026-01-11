@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useTemplateManager } from '../../../../composables';
-import type { DescriptionTemplate, GlobalTemplateConfig } from '../../../../config-types';
+import type { DiscountTemplate, GlobalTemplateConfig } from '../../../../config-types';
 import { SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
@@ -18,11 +18,11 @@ const emit = defineEmits<{
 }>();
 
 const templates = computed({
-  get(): DescriptionTemplate[] {
-    return props.globalTemplates.descriptionTemplates ||= [];
+  get(): DiscountTemplate[] {
+    return props.globalTemplates.discountTemplates ||= [];
   },
-  set(value: DescriptionTemplate[]): void {
-    props.globalTemplates.descriptionTemplates = value;
+  set(value: DiscountTemplate[]): void {
+    props.globalTemplates.discountTemplates = value;
   }
 });
 
@@ -35,7 +35,7 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
 <template>
   <Modal
     :show="show"
-    title="描述模板配置"
+    title="折扣模板配置"
     width="600px"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
@@ -52,11 +52,11 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
     </template>
 
     <SectionHeader>
-      <p class="form-hint" v-html="TEMPLATE_HINTS.full.replace('\n', '<br>')"></p>
+      <p class="form-hint" v-html="TEMPLATE_HINTS.discount.replace('\n', '<br>')"></p>
       <DraggableCardList
-        v-if="globalTemplates.descriptionTemplates && globalTemplates.descriptionTemplates.length > 0"
-        :items="globalTemplates.descriptionTemplates"
-        :key-extractor="(item: DescriptionTemplate) => item.id"
+        v-if="globalTemplates.discountTemplates && globalTemplates.discountTemplates.length > 0"
+        :items="globalTemplates.discountTemplates"
+        :key-extractor="(item: DiscountTemplate) => item.id"
         @remove="removeTemplate"
         @reorder="onReorder"
       >
@@ -66,7 +66,7 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
         <template #content="{ item }">
           <div class="form-group">
             <label>模板内容</label>
-            <textarea v-model="item.template" rows="1" placeholder="输入模板内容"></textarea>
+            <textarea v-model="item.template" rows="3" placeholder="输入模板内容"></textarea>
           </div>
         </template>
       </DraggableCardList>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useTemplateManager } from '../../../../composables';
-import type { ChangelogTemplate, GlobalTemplateConfig, SectionTemplate } from '../../../../config-types';
-import { SectionHeader, TabBar } from '../../../ui';
+import type { GlobalTemplateConfig, SectionTemplate } from '../../../../config-types';
+import { SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
 import Modal from '../../../ui/Modal.vue';
+import { BUTTON_CLASSES, TEMPLATE_HINTS } from './template-hints';
 
 const props = defineProps<{
   show: boolean;
@@ -16,34 +17,19 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-type TabType = 'section' | 'changelog';
-const activeTab = ref<TabType>('section');
-
-const tabs = [
-  { id: 'section', label: 'Section' },
-  { id: 'changelog', label: '更新日志' }
-];
-
 // Section 模板管理
 const sectionTemplates = computed({
-  get: () => props.globalTemplates.sectionTemplates ||= [],
-  set: (value) => { props.globalTemplates.sectionTemplates = value; }
+  get(): SectionTemplate[] {
+    return props.globalTemplates.sectionTemplates ||= [];
+  },
+  set(value: SectionTemplate[]): void {
+    props.globalTemplates.sectionTemplates = value;
+  }
 });
 
 const sectionManager = useTemplateManager({
   templates: sectionTemplates,
-  defaultTemplate: { headline: '', body: '' }
-});
-
-// Changelog 模板管理
-const changelogTemplates = computed({
-  get: () => props.globalTemplates.changelogTemplates ||= [],
-  set: (value) => { props.globalTemplates.changelogTemplates = value; }
-});
-
-const changelogManager = useTemplateManager({
-  templates: changelogTemplates,
-  defaultTemplate: { template: '◆ {date}\n{content}' }
+  defaultTemplate: { type: 'normal', headline: '', body: '' }
 });
 </script>
 
@@ -57,8 +43,8 @@ const changelogManager = useTemplateManager({
   >
     <template #header-actions>
       <button 
-        class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
-        @click="activeTab === 'section' ? sectionManager.addTemplate() : changelogManager.addTemplate()"
+        :class="BUTTON_CLASSES.addButton" 
+        @click="sectionManager.addTemplate()"
         title="添加模板"
         type="button"
       >
@@ -67,88 +53,62 @@ const changelogManager = useTemplateManager({
     </template>
 
     <div class="be-flex be-flex-column be-gap-sm">
-      <TabBar
-        :active-tab="activeTab"
-        :tabs="tabs"
-        @update:active-tab="activeTab = $event as TabType"
-      />
-
-      <!-- Section 模板 -->
-      <div v-if="activeTab === 'section'" class="tab-content">
-        <SectionHeader>
-          <p class="form-hint">可用变量: {itemName}, {supportCount}</p>
-          <DraggableCardList
+      <SectionHeader>
+        <p class="form-hint" v-html="TEMPLATE_HINTS.full.replace('\n', '<br>')"></p>
+        <p class="form-hint be-text-xs be-text-secondary">
+          <strong>模板类型说明：</strong><br>
+          • <strong>普通</strong>：常规 Section，可包含任意内容<br>
+          • <strong>日志</strong>：更新日志 Section，内容由日志条目动态生成（只需配置 Headline）<br>
+          • <strong>商品信息</strong>：自动从 Variations 关联的商品生成信息列表
+        </p>
+        <DraggableCardList
           v-if="globalTemplates.sectionTemplates && globalTemplates.sectionTemplates.length > 0"
           :items="globalTemplates.sectionTemplates"
           :key-extractor="(item: SectionTemplate) => item.id"
           @remove="sectionManager.removeTemplate"
           @reorder="sectionManager.onReorder"
         >
-          <template #content="{ item }">
-            <div class="be-flex be-flex-column be-gap-sm">
-              <div class="form-group">
-                <label>模板名称</label>
-                <input v-model="item.name" type="text" placeholder="输入模板名称" />
-              </div>
-              <div class="form-group">
-                <label>Headline</label>
-                <input v-model="item.headline" type="text" placeholder="输入 Headline" />
-              </div>
-              <div class="form-group">
-                <label>Body</label>
-                <textarea v-model="item.body" rows="1" placeholder="输入 Body"></textarea>
-              </div>
+        <template #actions="{ item }">
+          <select
+            v-model="item.type"
+            class="be-p-xs be-px-sm be-text-base"
+            style="height: 28px; width: auto; flex-shrink: 0;"
+          >
+            <option value="normal">普通</option>
+            <option value="log">日志</option>
+            <option value="iteminfo">商品信息</option>
+          </select>
+          <input
+            v-model="item.name"
+            type="text"
+            placeholder="输入模板名称"
+            style="flex: 1; min-width: 0;"
+          />
+        </template>
+        <template #content="{ item }">
+          <div class="be-flex be-flex-column be-gap-sm">
+            <div class="form-group">
+              <label>Headline</label>
+              <input v-model="item.headline" type="text" placeholder="输入 Headline" />
             </div>
-          </template>
+            <div v-if="item.type === 'normal' || !item.type" class="form-group">
+              <label>Body</label>
+              <textarea v-model="item.body" rows="1" placeholder="输入 Body"></textarea>
+            </div>
+            <p v-else-if="item.type === 'log'" class="form-hint be-text-xs be-text-secondary">
+              日志类型的 Section 内容由日志条目动态生成，无需手动填写 Body
+            </p>
+            <p v-else-if="item.type === 'iteminfo'" class="form-hint be-text-xs be-text-secondary">
+              商品信息类型的 Section 内容将自动从 Variations 关联的商品生成，无需手动填写 Body
+            </p>
+          </div>
+        </template>
         </DraggableCardList>
 
-          <div v-else class="empty-hint">
-            暂无模板，点击"添加模板"创建
-          </div>
-        </SectionHeader>
-      </div>
-
-      <!-- Changelog 模板 -->
-      <div v-else-if="activeTab === 'changelog'" class="tab-content">
-        <SectionHeader>
-          <p class="form-hint">可用变量: {date}, {content}</p>
-          <DraggableCardList
-          v-if="globalTemplates.changelogTemplates && globalTemplates.changelogTemplates.length > 0"
-          :items="globalTemplates.changelogTemplates"
-          :key-extractor="(item: ChangelogTemplate) => item.id"
-          @remove="changelogManager.removeTemplate"
-          @reorder="changelogManager.onReorder"
-        >
-          <template #content="{ item, index }">
-            <div class="be-flex be-flex-column be-gap-sm">
-              <div class="form-group">
-                <label>模板名称</label>
-                <input v-model="item.name" type="text" placeholder="输入模板名称" />
-              </div>
-              <div class="form-group">
-                <label>模板内容</label>
-                <textarea v-model="item.template" rows="1" placeholder="输入模板内容"></textarea>
-              </div>
-              <div class="be-flex be-align-center be-gap-sm be-pt-xs">
-                <label class="booth-toggle" title="设为默认">
-                  <input 
-                    type="checkbox" 
-                    :checked="item.isDefault"
-                    @change="changelogManager.setDefaultTemplate(index)"
-                  />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-          </template>
-        </DraggableCardList>
-
-          <div v-else class="empty-hint">
-            暂无模板，点击"添加模板"创建
-          </div>
-        </SectionHeader>
-      </div>
+        <div v-else class="empty-hint">
+          暂无模板，点击"添加模板"创建
+        </div>
+      </SectionHeader>
     </div>
   </Modal>
 </template>
-
