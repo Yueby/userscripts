@@ -2,6 +2,7 @@ import { ItemManageAPI } from "../../../api/item-manage";
 import { ItemElement } from "../../../api/item-manage/types";
 import { handleError } from "../../../utils/error";
 import { PageModule } from "../../PageModule";
+import { BatchProcessor } from "./batchProcessor";
 
 /**
  * 商品折叠功能模块
@@ -10,6 +11,7 @@ import { PageModule } from "../../PageModule";
 export class ItemCollapse extends PageModule<ItemManageAPI> {
     private _processedItems?: Set<HTMLElement>;
     private stylesInjected = false;
+    private batchProcessor?: BatchProcessor<ItemElement>;
 
     private get processedItems(): Set<HTMLElement> {
         if (!this._processedItems) {
@@ -23,14 +25,18 @@ export class ItemCollapse extends PageModule<ItemManageAPI> {
     }
 
     protected initialize(api: ItemManageAPI): void {
-        // 注入样式
+        if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor<ItemElement>();
+        }
+        
         this.injectStyles();
         
-        // 为所有商品添加折叠功能
         const items = api.getItems();
-        items.forEach(itemElement => {
-            this.addToItem(itemElement);
-        });
+        this.batchProcessor.process(
+            items,
+            item => this.addToItem(item),
+            10
+        );
     }
 
     /**

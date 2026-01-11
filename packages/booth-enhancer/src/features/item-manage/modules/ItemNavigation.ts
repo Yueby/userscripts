@@ -23,14 +23,11 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
     }
 
     protected initialize(api: ItemManageAPI): void {
-        // 从 API 获取商品数据
-        this.items = api.getItems();
-        
-        // 注入样式
         this.injectStyles();
         
         // 延迟创建导航栏，确保DOM稳定
         setTimeout(() => {
+            this.items = this.api.getItems();
             this.createNavigation();
         }, 1000);
     }
@@ -40,9 +37,7 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
      */
     createNavigation(): void {
         try {
-            // 检查是否已经创建过导航栏
             if (document.querySelector('.item-navigation')) return;
-
             if (this.items.length === 0) return;
 
             this.injectStyles();

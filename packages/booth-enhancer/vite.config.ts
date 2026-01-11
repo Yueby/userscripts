@@ -27,7 +27,7 @@ export default defineConfig({
           'zh-CN': '增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能'
         },
         author: 'Yueby',
-        version: '0.1.15',
+        version: '0.1.16',
         connect: ['raw.githubusercontent.com'],
         grant: [
           'GM_xmlhttpRequest',

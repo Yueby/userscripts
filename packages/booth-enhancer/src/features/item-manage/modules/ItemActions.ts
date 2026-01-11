@@ -2,23 +2,32 @@ import { ItemManageAPI } from "../../../api/item-manage";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
 import { PageModule } from "../../PageModule";
+import { BatchProcessor } from "./batchProcessor";
 
 /**
  * 商品操作功能模块
  * 提供删除商品、复制标签等操作功能
  */
 export class ItemActions extends PageModule<ItemManageAPI> {
+    private batchProcessor?: BatchProcessor<HTMLElement>;
 
     constructor(api: ItemManageAPI) {
         super(api);
     }
 
     protected initialize(api: ItemManageAPI): void {
-        // 为所有商品添加操作按钮
+        if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor<HTMLElement>();
+        }
+        
         const items = api.getItems();
-        items.forEach(item => {
-            this.addToItem(item.element);
-        });
+        const elements = items.map(item => item.element);
+        
+        this.batchProcessor.process(
+            elements,
+            element => this.addToItem(element),
+            20
+        );
     }
 
     /**

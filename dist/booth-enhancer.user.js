@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.15
+// @version            0.1.16
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -27,7 +27,7 @@
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-DUXauit0.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-fO4SboR1.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,7 +39,7 @@ System.register("./__entry.js", ['./__monkey.entry-DUXauit0.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-DUXauit0.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-fO4SboR1.js", ['vue'], (function (exports, module) {
   'use strict';
   var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
@@ -2649,9 +2649,9 @@ System.register("./__monkey.entry-DUXauit0.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BawqGQvR-Bn4Kluyn.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-Bu3VBxpr-CqHgblM9.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-anT-3t6x-BwU78x_5.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-B51LLUPY-Bdi1Gu3h.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-DNzRsP1Z-BjoVgon4.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DnDy1cBq-Ii7XOVFP.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -3825,15 +3825,59 @@ System.register("./__monkey.entry-DUXauit0.js", ['vue'], (function (exports, mod
           }
         }
       }
+      class BatchProcessor {
+        constructor() {
+          __publicField(this, "queue", []);
+          __publicField(this, "isProcessing", false);
+        }
+        /**
+         * 批处理任务
+         * @param items 待处理的项目列表
+         * @param processor 处理单个项目的函数
+         * @param batchSize 每批处理的数量
+         * @param onComplete 完成回调
+         */
+        async process(items, processor, batchSize = 10, onComplete) {
+          if (this.isProcessing) return;
+          this.isProcessing = true;
+          this.queue = [...items];
+          let processedCount = 0;
+          const processBatch = () => {
+            const batch = this.queue.splice(0, batchSize);
+            batch.forEach((item) => {
+              processor(item);
+              processedCount++;
+            });
+            if (this.queue.length > 0) {
+              if ("requestIdleCallback" in window) {
+                requestIdleCallback(processBatch, { timeout: 1e3 });
+              } else {
+                setTimeout(processBatch, 16);
+              }
+            } else {
+              this.isProcessing = false;
+              onComplete == null ? void 0 : onComplete(processedCount);
+            }
+          };
+          processBatch();
+        }
+      }
       class ItemActions extends PageModule {
         constructor(api) {
           super(api);
+          __publicField(this, "batchProcessor");
         }
         initialize(api) {
+          if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor();
+          }
           const items = api.getItems();
-          items.forEach((item) => {
-            this.addToItem(item.element);
-          });
+          const elements = items.map((item) => item.element);
+          this.batchProcessor.process(
+            elements,
+            (element) => this.addToItem(element),
+            20
+          );
         }
         /**
          * 为商品添加操作按钮
@@ -3988,6 +4032,7 @@ ${errorText}`);
           super(api);
           __publicField(this, "_processedItems");
           __publicField(this, "stylesInjected", false);
+          __publicField(this, "batchProcessor");
         }
         get processedItems() {
           if (!this._processedItems) {
@@ -3996,11 +4041,16 @@ ${errorText}`);
           return this._processedItems;
         }
         initialize(api) {
+          if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor();
+          }
           this.injectStyles();
           const items = api.getItems();
-          items.forEach((itemElement) => {
-            this.addToItem(itemElement);
-          });
+          this.batchProcessor.process(
+            items,
+            (item) => this.addToItem(item),
+            10
+          );
         }
         /**
          * 为商品添加折叠功能
@@ -4228,9 +4278,9 @@ ${errorText}`);
           __publicField(this, "hoverTimeout", null);
         }
         initialize(api) {
-          this.items = api.getItems();
           this.injectStyles();
           setTimeout(() => {
+            this.items = this.api.getItems();
             this.createNavigation();
           }, 1e3);
         }
@@ -4908,12 +4958,18 @@ ${errorText}`);
       class VariationNumbers extends PageModule {
         constructor(api) {
           super(api);
+          __publicField(this, "batchProcessor");
         }
         initialize(api) {
+          if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor();
+          }
           const items = api.getItems();
-          items.forEach((itemElement) => {
-            this.addToItem(itemElement);
-          });
+          this.batchProcessor.process(
+            items,
+            (item) => this.addToItem(item),
+            15
+          );
         }
         /**
          * 为商品添加变体序号（使用 API 数据）
@@ -4982,8 +5038,8 @@ ${errorText}`);
             this.modules.push(
               new ItemNavigation(this.api),
               new ItemActions(this.api),
-              new ItemCollapse(this.api),
-              new VariationNumbers(this.api)
+              new VariationNumbers(this.api),
+              new ItemCollapse(this.api)
             );
           }
         }
@@ -5156,7 +5212,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-BawqGQvR-Bn4Kluyn.js", ['vue', './useTreeTab-aXhKs2JX-DcLK_j4L.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+System.register("./TagTab-B51LLUPY-Bdi1Gu3h.js", ['vue', './useTreeTab-CQb0DhEa-CjU3DhTt.js', './__monkey.entry-fO4SboR1.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -5541,7 +5597,7 @@ System.register("./TagTab-BawqGQvR-Bn4Kluyn.js", ['vue', './useTreeTab-aXhKs2JX-
   };
 }));
 
-System.register("./ItemTab-Bu3VBxpr-CqHgblM9.js", ['vue', './useTreeTab-aXhKs2JX-DcLK_j4L.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+System.register("./ItemTab-DNzRsP1Z-BjoVgon4.js", ['vue', './useTreeTab-CQb0DhEa-CjU3DhTt.js', './__monkey.entry-fO4SboR1.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -5822,7 +5878,7 @@ System.register("./ItemTab-Bu3VBxpr-CqHgblM9.js", ['vue', './useTreeTab-aXhKs2JX
   };
 }));
 
-System.register("./useTreeTab-aXhKs2JX-DcLK_j4L.js", ['vue', './__monkey.entry-DUXauit0.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-CQb0DhEa-CjU3DhTt.js", ['vue', './__monkey.entry-fO4SboR1.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -6777,7 +6833,7 @@ System.register("./useTreeTab-aXhKs2JX-DcLK_j4L.js", ['vue', './__monkey.entry-D
   };
 }));
 
-System.register("./EditTab-anT-3t6x-BwU78x_5.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+System.register("./EditTab-DnDy1cBq-Ii7XOVFP.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-fO4SboR1.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, renderList, normalizeStyle, createBlock, normalizeClass, renderSlot, withModifiers, vModelCheckbox, useSlots, nextTick, useModal, _export_sfc, useStorage, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate;
   return {

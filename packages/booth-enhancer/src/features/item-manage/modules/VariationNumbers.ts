@@ -4,23 +4,30 @@ import { Config } from "../../../utils/config";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
 import { PageModule } from "../../PageModule";
+import { BatchProcessor } from "./batchProcessor";
 
 /**
  * 变体序号功能模块
  * 为变体列表添加序号显示
  */
 export class VariationNumbers extends PageModule<ItemManageAPI> {
+    private batchProcessor?: BatchProcessor<ItemElement>;
 
     constructor(api: ItemManageAPI) {
         super(api);
     }
 
     protected initialize(api: ItemManageAPI): void {
-        // 为所有商品添加变体序号
+        if (!this.batchProcessor) {
+            this.batchProcessor = new BatchProcessor<ItemElement>();
+        }
+        
         const items = api.getItems();
-        items.forEach(itemElement => {
-            this.addToItem(itemElement);
-        });
+        this.batchProcessor.process(
+            items,
+            item => this.addToItem(item),
+            15
+        );
     }
 
     /**
