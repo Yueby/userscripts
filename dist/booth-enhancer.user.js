@@ -27,7 +27,7 @@
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-cNiwjrQq.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-DUXauit0.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,260 +39,10689 @@ System.register("./__entry.js", ['./__monkey.entry-cNiwjrQq.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-cNiwjrQq.js", ['vue'], (function (exports, module) {
-	'use strict';
-	var defineComponent, ref, watch, nextTick, createBlock, onUnmounted, openBlock, Teleport, createVNode, Transition, withCtx, createElementBlock, createCommentVNode, normalizeStyle, normalizeClass, Fragment, renderList, createElementVNode, toDisplayString, onMounted, renderSlot, unref, defineAsyncComponent, computed, createTextVNode, resolveDynamicComponent, createApp;
-	return {
-		setters: [module => {
-			defineComponent = module.defineComponent;
-			ref = module.ref;
-			watch = module.watch;
-			nextTick = module.nextTick;
-			createBlock = module.createBlock;
-			onUnmounted = module.onUnmounted;
-			openBlock = module.openBlock;
-			Teleport = module.Teleport;
-			createVNode = module.createVNode;
-			Transition = module.Transition;
-			withCtx = module.withCtx;
-			createElementBlock = module.createElementBlock;
-			createCommentVNode = module.createCommentVNode;
-			normalizeStyle = module.normalizeStyle;
-			normalizeClass = module.normalizeClass;
-			Fragment = module.Fragment;
-			renderList = module.renderList;
-			createElementVNode = module.createElementVNode;
-			toDisplayString = module.toDisplayString;
-			onMounted = module.onMounted;
-			renderSlot = module.renderSlot;
-			unref = module.unref;
-			defineAsyncComponent = module.defineAsyncComponent;
-			computed = module.computed;
-			createTextVNode = module.createTextVNode;
-			resolveDynamicComponent = module.resolveDynamicComponent;
-			createApp = module.createApp;
-		}],
-		execute: (function () {
+System.register("./__monkey.entry-DUXauit0.js", ['vue'], (function (exports, module) {
+  'use strict';
+  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
+  return {
+    setters: [module => {
+      createApp = module.createApp;
+      ref = module.ref;
+      watch = module.watch;
+      defineComponent = module.defineComponent;
+      defineAsyncComponent = module.defineAsyncComponent;
+      computed = module.computed;
+      onMounted = module.onMounted;
+      onUnmounted = module.onUnmounted;
+      createElementBlock = module.createElementBlock;
+      openBlock = module.openBlock;
+      createVNode = module.createVNode;
+      createElementVNode = module.createElementVNode;
+      unref = module.unref;
+      withCtx = module.withCtx;
+      createBlock = module.createBlock;
+      createCommentVNode = module.createCommentVNode;
+      createTextVNode = module.createTextVNode;
+      toDisplayString = module.toDisplayString;
+      resolveDynamicComponent = module.resolveDynamicComponent;
+      Fragment = module.Fragment;
+      renderList = module.renderList;
+      normalizeClass = module.normalizeClass;
+      renderSlot = module.renderSlot;
+      Teleport = module.Teleport;
+      Transition = module.Transition;
+      normalizeStyle = module.normalizeStyle;
+      nextTick = module.nextTick;
+    }],
+    execute: (function () {
 
-			exports({
-				C: Ct,
-				f: ft,
-				g: gt,
-				w: wt,
-				x: xt
-			});
+      exports({
+        b: getSelectedDiscountTemplate,
+        c: createDefaultItemConfig,
+        d: getSelectedNameTemplate,
+        g: getSelectedDescriptionTemplate,
+        u: useStorage
+      });
 
-			var t=Object.defineProperty,n=(n,e,i)=>((n,e,i)=>e in n?t(n,e,{enumerable:true,configurable:true,writable:true,value:i}):n[e]=i)(n,"symbol"!=typeof e?e+"":e,i);class E{static input(t,n){var e,i;let o;t instanceof HTMLInputElement?o=null==(e=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,"value"))?void 0:e.set:t instanceof HTMLTextAreaElement&&(o=null==(i=Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,"value"))?void 0:i.set),o?o.call(t,n):t.value=n;const s=new Event("input",{bubbles:true});t.dispatchEvent(s);}static keyDown(t,n){const e=new KeyboardEvent("keydown",{bubbles:true,cancelable:true,key:"Enter",code:"Enter",keyCode:n,which:n,shiftKey:false,ctrlKey:false,metaKey:false});t.dispatchEvent(e);}static pressEnter(t){this.keyDown(t,13);}static click(t){const n=new MouseEvent("click",{bubbles:true,cancelable:true});t.dispatchEvent(n);}}class S{constructor(){n(this,"_isReady",false),n(this,"_readyCallbacks",[]),this.shouldActivate()&&this.initialize();}async initialize(){try{await this.waitForDOMReady(),await this.load(),this.t=!0,this.triggerReadyCallbacks();}catch(t){}}waitForDOMReady(){return "complete"===document.readyState?Promise.resolve():new Promise(t=>window.addEventListener("load",()=>t(),{once:true}))}triggerReadyCallbacks(){this.i.forEach(t=>{try{t(this);}catch(n){}}),this.i=[];}onReady(t){this.t?t(this):this.i.push(t);}ready(){return this.t}isActivated(){return this.shouldActivate()}}class j extends S{constructor(){super(),n(this,"_data",{nameInput:null,descriptionTextarea:null,tags:[],tagElements:null}),n(this,"_newSectionCallback"),n(this,"_newVariationCallback"),n(this,"_sectionRemovedCallback"),n(this,"_variationRemovedCallback"),n(this,"_tempSectionAddedCallback"),n(this,"_tempVariationAddedCallback"),n(this,"_tempSectionRemovedCallback"),n(this,"_tempVariationRemovedCallback");}get sections(){return this.parseSections()}get variations(){return this.parseVariations()}shouldActivate(){const t=window.location.pathname;return /^\/items\/\d+\/edit(_pre)?$/.test(t)}waitForElements(t=1e4){return new Promise(n=>{const e=()=>{const t=document.querySelector("#name input");return t&&t.value.trim().length>0};if(e())return void n();const i=setTimeout(()=>{o.disconnect(),n();},t),o=new MutationObserver(()=>{e()&&(clearTimeout(i),o.disconnect(),n());});o.observe(document.body,{childList:true,subtree:true});})}async load(){await this.waitForElements(),this.loadName(),this.loadDescription(),this.loadTagElements(),this.setupListObserver();}loadName(){const t=document.querySelector("#name input");this.o.nameInput=t||null;}loadDescription(){const t=document.querySelector("#description textarea");this.o.descriptionTextarea=t||null;}findAllListContainers(){const t=new Set;return document.querySelectorAll("section.bg-white.desktop\\:px-24.desktop\\:pt-24.desktop\\:rounded-t-4 ul").forEach(n=>t.add(n)),document.querySelectorAll("ul.grid.gap-16").forEach(n=>t.add(n)),Array.from(t).filter(t=>t.querySelector("li .variation-box-head"))}getListItems(t){return Array.from(t.children).filter(t=>"li"===t.tagName.toLowerCase())}parseSections(){return this.findAllListContainers().filter(t=>this.isSectionList(t)).flatMap(t=>this.getListItems(t).flatMap(n=>{const e=n.querySelector("input.charcoal-text-field-input"),i=n.querySelector("textarea.charcoal-text-area-textarea");return e&&i?[{element:n,container:t,headlineInput:e,bodyTextarea:i,deleteButton:this.findDeleteButton(n)}]:[]}))}parseVariations(){return this.findAllListContainers().filter(t=>!this.isSectionList(t)).flatMap(t=>this.getListItems(t).flatMap(n=>{const e=n.querySelector('div[id^="variationName-"]'),i=n.querySelector('div[id^="variationDigitalPrice-"]'),o=null==e?void 0:e.querySelector("input.charcoal-text-field-input"),s=null==i?void 0:i.querySelector("input.charcoal-text-field-input");return o&&s?[{element:n,container:t,nameInput:o,priceInput:s,deleteButton:this.findDeleteButton(n)}]:[]}))}isSectionList(t){const n=t.closest("section");return !!n&&n.classList.contains("bg-white")&&n.classList.contains("desktop:px-24")&&n.classList.contains("desktop:pt-24")&&n.classList.contains("desktop:rounded-t-4")}loadTagElements(){const t=document.querySelector("#item_tag"),n=document.querySelector(".js-item-tags-array"),e=document.querySelector("#item_tag .item-search-input__container");t&&n&&e&&(this.o.tagElements={container:t,input:n,inputContainer:e});}addSectionElement(t,n){var e;const i=t.querySelector("input.charcoal-text-field-input"),o=t.querySelector("textarea.charcoal-text-area-textarea");if(!i||!o)return;const s={element:t,container:n,headlineInput:i,bodyTextarea:o,deleteButton:this.findDeleteButton(t)};null==(e=this.l)||e.call(this,s),this.h&&(this.h(),this.h=void 0);}addVariationElement(t,n){var e;const i=t.querySelector('div[id^="variationName-"]'),o=t.querySelector('div[id^="variationDigitalPrice-"]'),s=null==i?void 0:i.querySelector("input.charcoal-text-field-input"),r=null==o?void 0:o.querySelector("input.charcoal-text-field-input");if(!s||!r)return;const a={element:t,container:n,nameInput:s,priceInput:r,deleteButton:this.findDeleteButton(t)};null==(e=this.u)||e.call(this,a),this.p&&(this.p(),this.p=void 0);}handleItemAdded(t,n){this.isSectionList(n)?this.addSectionElement(t,n):this.addVariationElement(t,n);}isTargetListContainer(t){return "UL"===t.tagName&&t.classList.contains("grid")&&t.classList.contains("gap-16")}setupListObserver(){new MutationObserver(t=>{var n,e;for(const i of t){for(const t of Array.from(i.addedNodes))if(t instanceof HTMLElement)if(this.isTargetListContainer(t)&&t.querySelector("li .variation-box-head"))Array.from(t.children).filter(t=>"li"===t.tagName.toLowerCase()).forEach(n=>this.handleItemAdded(n,t));else if("li"===t.tagName.toLowerCase()){const n=t.parentElement;n&&this.isTargetListContainer(n)&&t.querySelector(".variation-box-head")&&this.handleItemAdded(t,n);}for(const t of Array.from(i.removedNodes)){if(!(t instanceof HTMLElement))continue;if("li"!==t.tagName.toLowerCase())continue;const o=i.target;this.isSectionList(o)?(null==(n=this.m)||n.call(this,t),this.v&&(this.v(),this.v=void 0)):(null==(e=this.k)||e.call(this,t),this.T&&(this.T(),this.T=void 0));}}}).observe(document.body,{childList:true,subtree:true});}get data(){return this.o.tags=this.getTags(),{...this.o,sections:this.sections,variations:this.variations}}get tagElements(){return this.o.tagElements}onSectionAdded(t){this.l=t;}onVariationAdded(t){this.u=t;}getTags(){const t=[];return document.querySelectorAll("#item_tag .bg-secondary500 .font-bold").forEach(n=>{var e;const i=null==(e=n.textContent)?void 0:e.trim();i&&t.push({text:i,element:n});}),t}getTagTexts(){return this.getTags().map(t=>t.text)}hasTag(t){return this.getTagTexts().includes(t)}getTagDeleteButtons(){return Array.from(document.querySelectorAll('#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]')).map(t=>t.closest("a")).filter(Boolean)}get name(){var t;return (null==(t=this.o.nameInput)?void 0:t.value)||""}set name(t){this.o.nameInput&&E.input(this.o.nameInput,t);}get description(){var t;return (null==(t=this.o.descriptionTextarea)?void 0:t.value)||""}set description(t){this.o.descriptionTextarea&&E.input(this.o.descriptionTextarea,t);}setName(t){this.name=t;}setDescription(t){this.description=t;}updateSection(t,n){const e=this.sections[t];e&&(void 0!==n.headline&&e.headlineInput&&E.input(e.headlineInput,n.headline),void 0!==n.body&&e.bodyTextarea&&E.input(e.bodyTextarea,n.body));}updateVariation(t,n){const e=this.variations[t];e&&(void 0!==n.name&&e.nameInput&&E.input(e.nameInput,n.name),void 0!==n.price&&e.priceInput&&E.input(e.priceInput,n.price));}async addTags(t){if(!this.o.tagElements)return;const{input:n}=this.o.tagElements;for(const e of t){if(this.hasTag(e))continue;E.input(n,e);const t=new KeyboardEvent("keydown",{key:"Enter",code:"Enter",keyCode:13,bubbles:true,cancelable:true});n.dispatchEvent(t),await new Promise(t=>setTimeout(t,10));}}async removeTags(t){if(!this.o.tagElements)return;const n=new Set(t),e=this.getTagTexts(),i=[];if(e.forEach((t,e)=>{n.has(t)&&i.push(e);}),0===i.length)return;const o=this.getTagDeleteButtons();for(let s=i.length-1;s>=0;s--){const t=i[s];o[t]&&(o[t].click(),await new Promise(t=>setTimeout(t,10)));}}onNameChange(t){this.o.nameInput&&this.o.nameInput.addEventListener("input",n=>{t(n.target.value);});}onDescriptionChange(t){this.o.descriptionTextarea&&this.o.descriptionTextarea.addEventListener("input",n=>{t(n.target.value);});}addInputListeners(t,n){t.forEach(t=>{null==t||t.addEventListener("input",()=>n());});}onSectionsChange(t){this.sections.forEach(n=>{this.addInputListeners([n.headlineInput,n.bodyTextarea],t);});const n=this.l;this.l=e=>{this.addInputListeners([e.headlineInput,e.bodyTextarea],t),null==n||n(e),t();};}onVariationsChange(t){this.variations.forEach(n=>{this.addInputListeners([n.nameInput,n.priceInput],t);});const n=this.u;this.u=e=>{this.addInputListeners([e.nameInput,e.priceInput],t),null==n||n(e),t();};}findDeleteButton(t){const n=t.querySelectorAll("button");return 2>n.length?null:n[1]}findAddSectionButton(){var t;const n=document.querySelectorAll("div.cursor-pointer");for(const e of n){const n=e.querySelector(".icon-plus"),i=null==(t=e.textContent)?void 0:t.trim();if(n&&(null==i?void 0:i.includes("段落")))return e}return null}findAddVariationButton(){var t;const n=document.querySelectorAll("button.flex.flex-col.justify-between.items-center");for(const e of n){const n=e.querySelector('pixiv-icon[name="16/Download"]'),i=null==(t=e.textContent)?void 0:t.trim();if(n&&(null==i?void 0:i.includes("Digital")))return e}return null}clickAddSectionButton(){const t=this.findAddSectionButton();return !!t&&(t.click(),true)}clickAddVariationButton(){const t=this.findAddVariationButton();return !!t&&(t.click(),true)}createWaitPromise(t,n,e){return new Promise(i=>{const o=setTimeout(()=>{n(),i(false);},e);t(()=>{clearTimeout(o),i(true);});})}async addSection(t=5e3){return !!this.clickAddSectionButton()&&this.createWaitPromise(t=>{this.h=t;},()=>{this.h=void 0;},t)}async addVariation(t=5e3){return !!this.clickAddVariationButton()&&this.createWaitPromise(t=>{this.p=t;},()=>{this.p=void 0;},t)}setupAddSectionButtonListener(t){const n=()=>{const n=this.findAddSectionButton();n&&!n.dataset.listenerAttached&&(n.dataset.listenerAttached="true",n.addEventListener("click",()=>{t();}));};n(),new MutationObserver(()=>{n();}).observe(document.body,{childList:true,subtree:true});}setupAddVariationButtonListener(t){const n=()=>{const n=this.findAddVariationButton();n&&!n.dataset.listenerAttached&&(n.dataset.listenerAttached="true",n.addEventListener("click",()=>{t();}));};n(),new MutationObserver(()=>{n();}).observe(document.body,{childList:true,subtree:true});}deleteSectionByElement(t){return t.deleteButton||(t.deleteButton=this.findDeleteButton(t.element)),!!t.deleteButton&&(t.deleteButton.click(),true)}deleteSectionByIndex(t){const n=this.sections[t];return !!n&&this.deleteSectionByElement(n)}async removeSection(t,n=5e3){const e=this.sections[t];return !!e&&(e.deleteButton||(e.deleteButton=this.findDeleteButton(e.element)),!!e.deleteButton&&(e.deleteButton.click(),this.createWaitPromise(t=>{this.v=t;},()=>{this.v=void 0;},n)))}deleteAllSections(){let t=0;for(;this.sections.length>0&&this.deleteSectionByIndex(this.sections.length-1);)t++;return t}deleteVariationByElement(t){return t.deleteButton||(t.deleteButton=this.findDeleteButton(t.element)),!!t.deleteButton&&(t.deleteButton.click(),true)}deleteVariationByIndex(t){const n=this.variations[t];return !!n&&this.deleteVariationByElement(n)}async removeVariation(t,n=5e3){const e=this.variations[t];return !!e&&(e.deleteButton||(e.deleteButton=this.findDeleteButton(e.element)),!!e.deleteButton&&(e.deleteButton.click(),this.createWaitPromise(t=>{this.T=t;},()=>{this.T=void 0;},n)))}deleteAllVariations(){let t=0;for(;this.variations.length>0&&this.deleteVariationByIndex(this.variations.length-1);)t++;return t}getVariationFiles(t){const n=this.variations[t];if(!n)return [];const e=n.element.querySelectorAll('a[href*="/downloadables/"]'),i=[];return e.forEach(t=>{const n=t.href.match(/\/downloadables\/(\d+)/);n&&i.push(n[1]);}),i}get files(){return this.getAllFiles().map(t=>({id:t.id,name:t.name}))}getAllFiles(){var t;const n=document.querySelectorAll(".font-booth-demi");let e=null;for(const o of Array.from(n))if(null==(t=o.textContent)?void 0:t.includes("Add/Edit Files")){e=o.closest(".bg-white");break}if(!e)return [];const i=e.querySelector("ul.list-none");return i?this.parseFileListFromContainer(i):[]}parseFileListFromContainer(t){const n=t.querySelectorAll("li"),e=[];return n.forEach(t=>{var n;const i=t.querySelector('input.charcoal-checkbox-input[type="checkbox"]'),o=t.querySelector('a[href*="/downloadables/"]');if(i&&o){const t=o.href.match(/\/downloadables\/(\d+)/),s=t?t[1]:"",r=(null==(n=o.textContent)?void 0:n.trim())||"";e.push({id:s,name:r,checkbox:i,checked:i.checked});}}),e}findVariationEditButton(t){var n;const e=this.variations[t];if(!e)return null;const i=e.element.querySelector("i.icon-downloadables");if(i){const t=i.closest("div.cursor-pointer");if(null==(n=null==t?void 0:t.textContent)?void 0:n.includes("Add/Edit Files"))return t}const o=e.element.querySelector("div:nth-child(3)");if(o){const t=Array.from(o.querySelectorAll("button")).find(t=>{var n;const e=(null==(n=t.textContent)?void 0:n.trim())||"";return "Edit"===e||e.includes("Edit")&&!e.includes("Delete")});if(t)return t}return null}async openVariationEditPanel(t,n=5e3){const e=this.findVariationEditButton(t);return e?(E.click(e),await new Promise(t=>setTimeout(t,100)),new Promise(t=>{let e=null;const i=setTimeout(()=>{null==e||e.disconnect(),t(null);},n),o=()=>{const n=this.findVariationEditPanel();return !!n&&(clearTimeout(i),null==e||e.disconnect(),t(n),true)};o()||(e=new MutationObserver(o),e.observe(document.body,{childList:true,attributes:true,attributeFilter:["class","style"],subtree:true}));})):null}findVariationEditPanel(){const t=document.querySelectorAll("body > div.fixed.top-0.left-0.right-0"),n=Array.from(t).find(t=>{var n;return null==(n=t.textContent)?void 0:n.includes("Add/Edit Files")});if(!n)return null;const e=n.classList.contains("hidden"),i=null!==n.querySelector("ul.list-none");if(e&&!i)return null;const o=Array.from(n.querySelectorAll("button")).find(t=>t.querySelector('pixiv-icon[name="32/BoothClose"]'))||null;return {container:n,closeButton:o,files:this.parseFileList(n)}}parseFileList(t){const n=t.querySelectorAll("ul.list-none > li"),e=[];return n.forEach(t=>{var n;const i=t.querySelector('input.charcoal-checkbox-input[type="checkbox"]'),o=t.querySelector('a[href*="/downloadables/"]');if(i&&o){const t=o.href.match(/\/downloadables\/(\d+)/),s=t?t[1]:"",r=(null==(n=o.textContent)?void 0:n.trim())||"";e.push({id:s,name:r,checkbox:i,checked:i.checked});}}),e}selectFiles(t,n,e="replace"){t.files.forEach(t=>{const i=n.includes(t.id);("replace"===e?t.checked!==i:i&&!t.checked)&&t.checkbox.click();});}closeVariationEditPanel(t){t.closeButton&&t.closeButton.click();}getSelectedFileIds(t){return t.files.filter(t=>t.checked).map(t=>t.id)}getVariationSelectedFileIds(t){const n=this.variations[t];if(!n)return [];const e=n.element.querySelector("div:nth-child(3)");if(!e)return [];const i=e.querySelector("div.grid.gap-12 > div > ul");if(!i)return [];const o=i.querySelectorAll('a[href*="/downloadables/"]'),s=[];return o.forEach(t=>{const n=t.href.match(/\/downloadables\/(\d+)/);n&&s.push(n[1]);}),s}async setVariationFiles(t,n,e="replace"){const i=this.getVariationSelectedFileIds(t).sort(),o=[...new Set(n)].sort();if("replace"===e&&i.length===o.length&&i.every((t,n)=>t===o[n]))return {success:true,updated:false};const s=await this.openVariationEditPanel(t);return s?(this.selectFiles(s,n,e),await new Promise(t=>setTimeout(t,100)),this.closeVariationEditPanel(s),{success:true,updated:true}):{success:false,updated:false}}}class A{constructor(t){n(this,"context"),n(this,"path"),n(this,"api"),this.context=t,this.path=window.location.pathname;}async execute(){this.api=this.createAPI(),this.api?await new Promise(t=>{this.api.onReady(async()=>{await this.initialize(),t();});}):await this.initialize();}getAPI(){return this.api}}const L=function(){const t="undefined"!=typeof document&&document.createElement("link").relList;return t&&t.supports&&t.supports("modulepreload")?"modulepreload":"preload"}(),z={},O=function(t,n,e){let i=Promise.resolve();if(n&&n.length>0){document.getElementsByTagName("link");const t=document.querySelector("meta[property=csp-nonce]"),e=(null==t?void 0:t.nonce)||(null==t?void 0:t.getAttribute("nonce"));i=Promise.allSettled(n.map(t=>{if((t=function(t){return "/"+t}(t))in z)return;z[t]=true;const n=t.endsWith(".css"),i=n?'[rel="stylesheet"]':"";if(document.querySelector(`link[href="${t}"]${i}`))return;const o=document.createElement("link");return o.rel=n?"stylesheet":L,n||(o.as="script"),o.crossOrigin="",o.href=t,e&&o.setAttribute("nonce",e),document.head.appendChild(o),n?new Promise((n,e)=>{o.addEventListener("load",n),o.addEventListener("error",()=>e(Error("Unable to preload CSS for "+t)));}):void 0}));}function o(t){const n=new Event("vite:preloadError",{cancelable:true});if(n.payload=t,window.dispatchEvent(n),!n.defaultPrevented)throw t}return i.then(n=>{for(const t of n||[])"rejected"===t.status&&o(t.reason);return t().catch(o)})},D={key:0,class:"menu-separator"},V=["onClick"],N=["innerHTML"],P={class:"menu-label"},F={key:2,class:"menu-separator"},H=(t,n)=>{const e=t.C||t;for(const[i,o]of n)e[i]=o;return e},$=H(defineComponent({_:"ContextMenu",props:{show:{type:Boolean},x:{},y:{},items:{}},emits:["close"],setup(t,{emit:n}){const e=t,y=n,k=ref(null),T=ref({x:0,y:0}),C=ref(false);watch(()=>[e.show,e.x,e.y],([t])=>{t&&(async()=>{if(C.value=true,T.value={x:e.x,y:e.y},await nextTick(),await nextTick(),!k.value)return void(C.value=false);const t=k.value.getBoundingClientRect(),n=document.querySelector(".booth-enhancer-sidebar");let i,o,s;n?(i=n.getBoundingClientRect(),o=i.width,s=i.height):(o=document.documentElement.clientWidth,s=document.documentElement.clientHeight,i=new DOMRect(0,0,o,s));let r=e.x,a=e.y;const l=i.left+o;r+t.width>l-8&&(r=Math.max(i.left+8,l-t.width-8)),r<i.left+8&&(r=i.left+8);const c=i.top+s;a+t.height>c-8&&(a=Math.max(i.top+8,c-t.height-8)),a<i.top+8&&(a=i.top+8),T.value={x:r,y:a},await nextTick(),C.value=false;})();});const _=t=>{k.value&&!k.value.contains(t.target)&&y("close");};return watch(()=>e.show,t=>{t?setTimeout(()=>{document.addEventListener("click",_);},0):document.removeEventListener("click",_);}),onUnmounted(()=>{document.removeEventListener("click",_);}),(t,n)=>(openBlock(),createBlock(Teleport,{to:"body"},[createVNode(Transition,{name:"menu-fade"},{default:withCtx(()=>[t.show?(openBlock(),createElementBlock("div",{key:0,ref_key:"menuRef",ref:k,class:normalizeClass(["context-menu",{"no-transition":C.value}]),style:normalizeStyle({left:T.value.x+"px",top:T.value.y+"px"})},[(openBlock(true),createElementBlock(Fragment,null,renderList(t.items,(t,n)=>(openBlock(),createElementBlock(Fragment,{key:n},["-"===t.label?(openBlock(),createElementBlock("div",D)):(openBlock(),createElementBlock("div",{key:1,class:normalizeClass(["menu-item",{"menu-item-danger":t.danger,"menu-item-disabled":t.disabled}]),onClick:n=>(t=>{t.disabled||(t.action(),y("close"));})(t)},[t.icon?(openBlock(),createElementBlock("span",{key:0,class:"menu-icon",innerHTML:t.icon},null,8,N)):createCommentVNode("",true),createElementVNode("span",P,toDisplayString(t.label),1)],10,V)),t.separator?(openBlock(),createElementBlock("div",F)):createCommentVNode("",true)],64))),128))],6)):createCommentVNode("",true)]),I:1})]))}}),[["__scopeId","data-v-4d60a255"]]),J=["title"],R=["innerHTML"],q=H(defineComponent({_:"IconButton",props:{icon:{},title:{},variant:{}},emits:["click"],setup(t,{emit:n}){const e=n,i=t=>{e("click",t);};return (t,n)=>(openBlock(),createElementBlock("button",{class:normalizeClass(["icon-btn",{["variant-"+t.variant]:t.variant}]),title:t.title,onClick:i},[createElementVNode("span",{innerHTML:t.icon},null,8,R)],10,J))}}),[["__scopeId","data-v-996dd7d2"]]),G=(t,n,e)=>{let i=t.replace("<svg ",`<svg width="${n}" height="${n}" `);return void 0!==e&&(i=i.replace(/stroke-width="[\d.]+"/g,`stroke-width="${e}"`)),i},U={chevronLeft:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="15 18 9 12 15 6"></polyline>\n  </svg>',chevronRight:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="9 18 15 12 9 6"></polyline>\n  </svg>',chevronUp:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="18 15 12 9 6 15"></polyline>\n  </svg>',chevronDown:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="6 9 12 15 18 9"></polyline>\n  </svg>',download:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n    <polyline points="7 10 12 15 17 10"></polyline>\n    <line x1="12" y1="15" x2="12" y2="3"></line>\n  </svg>',upload:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n    <polyline points="17 8 12 3 7 8"></polyline>\n    <line x1="12" y1="3" x2="12" y2="15"></line>\n  </svg>',send:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <line x1="22" y1="2" x2="11" y2="13"></line>\n    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>\n  </svg>',close:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <line x1="18" y1="6" x2="6" y2="18"></line>\n    <line x1="6" y1="6" x2="18" y2="18"></line>\n  </svg>',plus:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <line x1="12" y1="5" x2="12" y2="19"></line>\n    <line x1="5" y1="12" x2="19" y2="12"></line>\n  </svg>',edit:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>\n    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>\n  </svg>',trash:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="3 6 5 6 21 6"></polyline>\n    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>\n  </svg>',copy:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>\n    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>\n  </svg>',folderEmpty:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>\n  </svg>',folderFilled:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>\n  </svg>',folder:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>\n  </svg>',folderOpen:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"></path>\n  </svg>',file:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>\n    <polyline points="13 2 13 9 20 9"></polyline>\n  </svg>',files:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M12 7H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12z" fill="currentColor"></path>\n    <polyline points="12 7 12 12 16 12" fill="currentColor"></polyline>\n    <path d="M17 2H10a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z" fill="white"></path>\n    <polyline points="17 2 17 7 21 7" fill="white"></polyline>\n  </svg>',search:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="11" cy="11" r="8"></circle>\n    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>\n  </svg>',tag:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>\n    <line x1="7" y1="7" x2="7.01" y2="7"></line>\n  </svg>',settings:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="12" cy="12" r="3"></circle>\n    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>\n  </svg>',eye:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>\n    <circle cx="12" cy="12" r="3"></circle>\n  </svg>',check:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <polyline points="20 6 9 17 4 12"></polyline>\n  </svg>',alertCircle:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="12" cy="12" r="10"></circle>\n    <line x1="12" y1="8" x2="12" y2="12"></line>\n    <line x1="12" y1="16" x2="12.01" y2="16"></line>\n  </svg>',info:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="12" cy="12" r="10"></circle>\n    <line x1="12" y1="16" x2="12" y2="12"></line>\n    <line x1="12" y1="8" x2="12.01" y2="8"></line>\n  </svg>',magic:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>\n    <path d="M7.5 4.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5L5.5 6.5l1.5-.5.5-1.5z"></path>\n    <path d="M18.5 14.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5.5-1.5z"></path>\n  </svg>',moreVertical:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="12" cy="12" r="1"></circle>\n    <circle cx="12" cy="5" r="1"></circle>\n    <circle cx="12" cy="19" r="1"></circle>\n  </svg>',moreHorizontal:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n    <circle cx="12" cy="12" r="1"></circle>\n    <circle cx="19" cy="12" r="1"></circle>\n    <circle cx="5" cy="12" r="1"></circle>\n  </svg>'},Y={class:"modal-header"},X={class:"modal-title"},K={class:"modal-header-actions"},W=["innerHTML"],Z={class:"modal-body"},Q={key:0,class:"modal-footer"},tt=["onClick"],nt=H(defineComponent({_:"Modal",props:{show:{type:Boolean},title:{},width:{},buttons:{},closeOnClickOutside:{type:Boolean,default:true},closeOnEsc:{type:Boolean,default:true},teleportTo:{default:"body"}},emits:["close","action"],setup(t,{emit:n}){const e=t,i=n,o=()=>{i("close");},b=t=>{e.closeOnClickOutside&&t.target===t.currentTarget&&o();},C=t=>{e.closeOnEsc&&"Escape"===t.key&&e.show&&o();};return onMounted(()=>{document.addEventListener("keydown",C);}),onUnmounted(()=>{document.removeEventListener("keydown",C);}),(t,n)=>(openBlock(),createBlock(Teleport,{to:t.teleportTo,disabled:"body"!==t.teleportTo},[createVNode(Transition,{name:"modal"},{default:withCtx(()=>[t.show?(openBlock(),createElementBlock("div",{key:0,class:normalizeClass(["modal-overlay",{"modal-in-sidebar":"body"!==t.teleportTo}]),onClick:b},[createElementVNode("div",{class:"modal-container",style:normalizeStyle({width:t.width||"400px"})},[createElementVNode("div",Y,[createElementVNode("div",X,toDisplayString(t.title||"提示"),1),createElementVNode("div",K,[renderSlot(t.$slots,"header-actions",{},void 0,true),createElementVNode("button",{class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",onClick:o,type:"button",title:"关闭"},[createElementVNode("span",{innerHTML:unref(U).close},null,8,W)])])]),createElementVNode("div",Z,[renderSlot(t.$slots,"default",{},void 0,true)]),t.$slots.footer||t.buttons&&t.buttons.length>0?(openBlock(),createElementBlock("div",Q,[renderSlot(t.$slots,"footer",{},()=>[(openBlock(true),createElementBlock(Fragment,null,renderList(t.buttons,t=>(openBlock(),createElementBlock("button",{key:t.action,class:normalizeClass(["booth-btn booth-btn-md",["booth-btn-"+(t.variant||"secondary")]]),onClick:n=>{return e=t.action,void i("action",e);var e;},type:"button"},toDisplayString(t.text),11,tt))),128))],true)])):createCommentVNode("",true)],4)],2)):createCommentVNode("",true)]),I:3})],8,["to","disabled"]))}}),[["__scopeId","data-v-db693591"]]),et={class:"tab-bar"},it={class:"tab-list"},ot=["onClick"],st=["innerHTML"],rt={class:"tab-label"},at={key:0,class:"tab-actions"},lt=H(defineComponent({_:"TabBar",props:{tabs:{},activeTab:{}},emits:["update:activeTab"],setup(t,{emit:n}){const e=n;return (t,n)=>(openBlock(),createElementBlock("div",et,[createElementVNode("div",it,[(openBlock(true),createElementBlock(Fragment,null,renderList(t.tabs,n=>(openBlock(),createElementBlock("button",{key:n.id,class:normalizeClass(["tab-btn",{active:t.activeTab===n.id}]),onClick:t=>{return i=n.id,void e("update:activeTab",i);var i;}},[n.icon?(openBlock(),createElementBlock("span",{key:0,class:"tab-icon",innerHTML:n.icon},null,8,st)):createCommentVNode("",true),createElementVNode("span",rt,toDisplayString(n.label),1)],10,ot))),128))]),t.$slots.actions?(openBlock(),createElementBlock("div",at,[renderSlot(t.$slots,"actions",{},void 0,true)])):createCommentVNode("",true)]))}}),[["__scopeId","data-v-ee7eccb8"]]); exports({ H, $, G, U, n: nt });var ct=(()=>"undefined"!=typeof GM_getValue?GM_getValue:void 0)(),dt=(()=>"undefined"!=typeof GM_notification?GM_notification:void 0)(),ht=(()=>"undefined"!=typeof GM_registerMenuCommand?GM_registerMenuCommand:void 0)(),ut=(()=>"undefined"!=typeof GM_setClipboard?GM_setClipboard:void 0)(),pt=(()=>"undefined"!=typeof GM_setValue?GM_setValue:void 0)(),mt=(()=>"undefined"!=typeof GM_xmlhttpRequest?GM_xmlhttpRequest:void 0)();function gt(t){return function(t){return {itemId:t,itemName:"",itemType:"normal",itemTypeName:"Item",useSmartLogic:true,selectedTemplates:{nameTemplateId:"default-name",descriptionTemplateId:"default-desc",discountTemplateId:"default-discount"},customDescription:"",discount:{enabled:false,discountPercent:0},pricing:{normalVariationPrice:0,fullsetPrice:0},sections:[],variations:[],tagNodeIds:[]}}(t)}function vt(t,n){if(!t||0===t.length)return "";let e;return n&&(e=t.find(t=>t.id===n)),e||(e=t.find(t=>t.isDefault)||t[0]),(null==e?void 0:e.template)||""}function ft(t,n){var e;return vt(t.nameTemplates,null==(e=n.selectedTemplates)?void 0:e.nameTemplateId)}function wt(t,n){var e;return vt(t.descriptionTemplates,null==(e=n.selectedTemplates)?void 0:e.descriptionTemplateId)}function xt(t,n){var e;return vt(t.discountTemplates,null==(e=n.selectedTemplates)?void 0:e.discountTemplateId)}const bt="booth-enhancer-config-v4",yt=class t{constructor(){n(this,"_data"),n(this,"_saveTimer",null),this.o=ref(this.load()),watch(this.o,()=>this.saveWithDebounce(),{deep:true});}static getInstance(){return t.instance||(t.instance=new t),t.instance}get data(){return this.o}load(){try{const t=ct(bt,null);if(t)return JSON.parse(t)}catch(t){}return {tagTree:{rootIds:[],nodes:{}},itemTree:{rootIds:[],nodes:{}},globalTemplates:{nameTemplates:[{id:"default-name",name:"默认商品名",template:"{商品名}",isDefault:true},{id:"smart-auto",name:"智能商品名（推荐）",template:"{智能标题}",isDefault:false},{id:"smart-with-discount",name:"智能商品名（含折扣标识）",template:"{折扣标识}{智能标题}",isDefault:false},{id:"always-show-count",name:"总是显示数量",template:"{支持数} {商品类型复数} | {首个变体名}",isDefault:false}],descriptionTemplates:[{id:"default-desc",name:"默认描述",template:"",isDefault:true}],discountTemplates:[{id:"default-discount",name:"默认打折",template:"【セール中】\n通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)",isDefault:true},{id:"fullset-discount",name:"含 Fullset",template:"◆[セール開催中]◆\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY\n⏰ {折扣开始时间} - {折扣结束时间}\n({折扣百分比}% OFF)",isDefault:false}],logTemplates:[{id:"default-log",name:"默认日志",template:"⟡ {日期}\n　・ {内容}",isDefault:true}],itemInfoTemplates:[{id:"default-item-info",name:"默认商品信息",template:"⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -",isDefault:true}],sectionTemplates:[]},itemConfigs:{},ui:{sidebarOpen:false,activeTab:"tags"}}}save(){try{pt(bt,JSON.stringify(this.o.value));}catch(t){}}saveWithDebounce(){this.M&&window.clearTimeout(this.M),this.M=window.setTimeout(()=>{this.save(),this.M=null;},500);}createNode(t,n,e,i=null){const o=crypto.randomUUID(),s={id:o,parentId:i,name:n,children:[],expanded:true,data:e,createdAt:Date.now(),updatedAt:Date.now()};if(t.nodes[o]=s,i){const n=t.nodes[i];n&&n.children.push(o);}else t.rootIds.push(o);return this.saveWithDebounce(),s}deleteNode(t,n){const e=t.nodes[n];if(e){if([...e.children].forEach(n=>this.deleteNode(t,n)),e.parentId){const i=t.nodes[e.parentId];i&&(i.children=i.children.filter(t=>t!==n));}else t.rootIds=t.rootIds.filter(t=>t!==n);delete t.nodes[n],this.saveWithDebounce();}}moveNode(t,n,e){const i=t.nodes[n];if(i&&i.id!==e){if(e){let i=t.nodes[e];for(;i;){if(i.id===n)return;if(!i.parentId)break;i=t.nodes[i.parentId];}}if(i.parentId){const e=t.nodes[i.parentId];e&&(e.children=e.children.filter(t=>t!==n));}else t.rootIds=t.rootIds.filter(t=>t!==n);if(e){const i=t.nodes[e];i&&i.children.push(n);}else t.rootIds.push(n);i.parentId=e,i.updatedAt=Date.now(),this.saveWithDebounce();}}insertNodeAt(t,n,e,i){const o=t.nodes[n];if(o){if(e){if(n===e)return;let i=t.nodes[e];for(;i;){if(i.id===n)return;if(!i.parentId)break;i=t.nodes[i.parentId];}}if(o.parentId){const e=t.nodes[o.parentId];e&&(e.children=e.children.filter(t=>t!==n));}else t.rootIds=t.rootIds.filter(t=>t!==n);if(e){const o=t.nodes[e];o&&o.children.splice(i,0,n);}else t.rootIds.splice(i,0,n);o.parentId=e,o.updatedAt=Date.now(),this.saveWithDebounce();}}renameNode(t,n,e){const i=t.nodes[n];i&&(i.name=e,i.updatedAt=Date.now(),this.saveWithDebounce());}exportTags(){return {tagTree:this.o.value.tagTree}}exportItems(){return {itemTree:this.o.value.itemTree}}exportTemplates(){return {globalTemplates:this.o.value.globalTemplates}}exportSingleItem(t){return this.o.value.itemConfigs[t]||null}exportAllItems(){return {...this.o.value.itemConfigs}}importTags(t){if(!t.tagTree||!t.tagTree.nodes)throw Error("无效的标签数据格式");this.o.value.tagTree=t.tagTree;}importItems(t){if(!t.itemTree||!t.itemTree.nodes)throw Error("无效的商品数据格式");this.o.value.itemTree=t.itemTree;}importTemplates(t){if(!t.globalTemplates)throw Error("无效的模板数据格式");this.o.value.globalTemplates=t.globalTemplates;}importSingleItem(t,n){if(!t.itemId)throw Error("商品配置缺少 itemId");return !(this.o.value.itemConfigs[t.itemId]&&!(null==n?void 0:n.replace)||(this.o.value.itemConfigs[t.itemId]=t,0))}importAllFromZip(t){const n=[];if(t["tags.json"])try{this.importTags(t["tags.json"]);}catch(e){n.push("标签数据");}if(t["items.json"])try{this.importItems(t["items.json"]);}catch(e){n.push("商品列表");}if(t["templates.json"])try{this.importTemplates(t["templates.json"]);}catch(e){n.push("全局模板");}for(const[i,o]of Object.entries(t))if(i.startsWith("item-")&&i.endsWith(".json"))try{this.importSingleItem(o,{replace:!0});}catch(e){n.push("商品配置 "+i);}if(n.length>0)throw Error("以下数据导入失败: "+n.join("、"))}importAllFromJSON(t){const n=[];if(!t.data)throw Error("无效的备份文件格式");const{tags:e,items:i,templates:o,itemConfigs:s}=t.data;if(e)try{this.importTags(e);}catch(r){n.push("标签数据");}if(i)try{this.importItems(i);}catch(r){n.push("商品列表");}if(o)try{this.importTemplates(o);}catch(r){n.push("全局模板");}if(s)for(const[a,l]of Object.entries(s))try{this.importSingleItem(l,{replace:!0});}catch(r){n.push("商品配置 "+a);}if(n.length>0)throw Error("以下数据导入失败: "+n.join("、"))}exportData(){return JSON.stringify(this.o.value,null,2)}importData(t){try{const n=JSON.parse(t);if(!n.tagTree||!n.itemTree)throw Error("Invalid data structure");return this.o.value=n,this.save(),!0}catch(n){return  false}}};n(yt,"instance");let kt=exports("k", yt);const Tt=exports("T", new class{constructor(){n(this,"container",null),n(this,"toasts",new Set),n(this,"targetContainer",null),n(this,"iconMap",{success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'});}setContainer(t){this.targetContainer=t,this.container&&(this.container.remove(),this.container=null);}ensureContainer(){return this.container||(this.container=document.createElement("div"),this.container.className="booth-toast-container",this.targetContainer?this.container.setAttribute("data-position","relative"):this.container.setAttribute("data-position","fixed"),this.injectStyles(),(this.targetContainer||document.body).appendChild(this.container)),this.container}injectStyles(){if(document.getElementById("booth-toast-styles"))return;const t=document.createElement("style");t.id="booth-toast-styles",t.textContent='\n      /* Toast 容器基础样式 */\n      .booth-toast-container {\n        display: flex;\n        gap: 8px;\n        pointer-events: none;\n        z-index: 1000;\n      }\n\n      /* Toast 容器在 body 中时 - 固定在右上角 */\n      .booth-toast-container[data-position="fixed"] {\n        position: fixed;\n        top: 20px;\n        right: 20px;\n        flex-direction: column;\n        z-index: 10001;\n      }\n\n      /* Toast 容器在其他元素中时 - 绝对定位在底部 */\n      .booth-toast-container[data-position="relative"] {\n        position: absolute;\n        bottom: 20px;\n        left: 20px;\n        right: 20px;\n        flex-direction: column-reverse;\n      }\n\n      .booth-toast {\n        min-width: 200px;\n        max-width: 400px;\n        padding: 14px 16px;\n        background: white;\n        border-radius: 8px;\n        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);\n        font-size: 14px;\n        line-height: 1.5;\n        pointer-events: auto;\n        opacity: 0;\n        transition: all 0.3s ease;\n        word-wrap: break-word;\n        display: flex;\n        align-items: flex-start;\n        gap: 10px;\n      }\n\n      .toast-icon {\n        flex-shrink: 0;\n        width: 20px;\n        height: 20px;\n        display: flex;\n        align-items: center;\n        justify-content: center;\n      }\n\n      .toast-icon svg {\n        width: 100%;\n        height: 100%;\n      }\n\n      .toast-message {\n        flex: 1;\n        padding-top: 1px;\n        color: #333;\n      }\n\n      /* Toast 在固定容器中时从右侧滑入 */\n      .booth-toast-container[data-position="fixed"] .booth-toast {\n        transform: translateX(20px);\n      }\n\n      .booth-toast-container[data-position="fixed"] .booth-toast.show {\n        opacity: 1;\n        transform: translateX(0);\n      }\n\n      /* Toast 在相对容器中时从下往上滑入 */\n      .booth-toast-container[data-position="relative"] .booth-toast {\n        transform: translateY(20px);\n      }\n\n      .booth-toast-container[data-position="relative"] .booth-toast.show {\n        opacity: 1;\n        transform: translateY(0);\n      }\n\n      .booth-toast-success {\n        background: #f0fdf4;\n        border: 1px solid #86efac;\n      }\n      \n      .booth-toast-success .toast-icon {\n        color: #22c55e;\n      }\n\n      .booth-toast-error {\n        background: #fef2f2;\n        border: 1px solid #fecaca;\n      }\n      \n      .booth-toast-error .toast-icon {\n        color: #ef4444;\n      }\n\n      .booth-toast-warning {\n        background: #fffbeb;\n        border: 1px solid #fde68a;\n      }\n      \n      .booth-toast-warning .toast-icon {\n        color: #f59e0b;\n      }\n\n      .booth-toast-info {\n        background: #eff6ff;\n        border: 1px solid #93c5fd;\n      }\n      \n      .booth-toast-info .toast-icon {\n        color: #3b82f6;\n      }\n\n      @media (max-width: 768px) {\n        .booth-toast-container[data-position="fixed"] {\n          top: 10px;\n          left: 10px;\n          right: 10px;\n        }\n\n        .booth-toast {\n          min-width: 0;\n          max-width: none;\n          width: 100%;\n          padding: 10px 14px;\n          font-size: 13px;\n        }\n      }\n    ',document.head.appendChild(t);}show(t){const{message:n,type:e="info",duration:i=3e3,onClose:o}=t,s=this.ensureContainer(),r=document.createElement("div");r.className="booth-toast booth-toast-"+e,r.innerHTML=`\n      <div class="toast-icon">${this.iconMap[e]}</div>\n      <div class="toast-message">${n}</div>\n    `,s.appendChild(r),this.toasts.add(r),requestAnimationFrame(()=>{r.classList.add("show");}),setTimeout(()=>{this.remove(r,o);},i);}remove(t,n){t.classList.remove("show"),setTimeout(()=>{t.parentElement&&t.parentElement.removeChild(t),this.toasts.delete(t),n&&n(),0===this.toasts.size&&this.container&&(this.container.remove(),this.container=null);},300);}success(t,n){this.show({message:t,type:"success",duration:n});}error(t,n){this.show({message:t,type:"error",duration:n});}warning(t,n){this.show({message:t,type:"warning",duration:n});}info(t,n){this.show({message:t,type:"info",duration:n});}});function Ct(){const t=kt.getInstance();return {storage:t,data:t.data,exportTags:()=>t.exportTags(),exportItems:()=>t.exportItems(),exportTemplates:()=>t.exportTemplates(),exportSingleItem:n=>t.exportSingleItem(n),exportAllItems:()=>t.exportAllItems(),importTags:n=>t.importTags(n),importItems:n=>t.importItems(n),importTemplates:n=>t.importTemplates(n),importSingleItem:(n,e)=>t.importSingleItem(n,e),importAllFromZip:n=>t.importAllFromZip(n),importAllFromJSON:n=>t.importAllFromJSON(n),createNode:(n,e,i,o)=>t.createNode(n,e,i,o),renameNode:(n,e,i)=>t.renameNode(n,e,i),deleteNode:(n,e)=>t.deleteNode(n,e),moveNode:(n,e,i)=>t.moveNode(n,e,i)}}function _t(t,n){const e=JSON.stringify(t,null,2);!function(t,n){const e=URL.createObjectURL(t),i=document.createElement("a");i.href=e,i.download=n,i.click(),URL.revokeObjectURL(e);}(new Blob([e],{type:"application/json"}),n);}function It(t){return new Promise((n,e)=>{const i=new FileReader;i.onload=t=>{var i;try{const e=JSON.parse(null==(i=t.target)?void 0:i.result);n(e);}catch(o){e(Error("无效的 JSON 格式"));}},i.onerror=()=>e(Error("文件读取失败")),i.readAsText(t);})}function Mt(t,n){const e=document.createElement("input");e.type="file",e.accept=t,e.onchange=t=>{var e;const i=null==(e=t.target.files)?void 0:e[0];i&&n(i);},e.click();}const Bt={class:"modal-content"},Et=["innerHTML"],St=["innerHTML"],jt={class:"sidebar-content"},At=H(defineComponent({_:"App",props:{api:{},itemId:{}},setup(t){const n=t,e=defineAsyncComponent(()=>O(()=>module.import('./TagTab-BWhxAzYP-BU1Pytah.js'),void 0)),l=defineAsyncComponent(()=>O(()=>module.import('./ItemTab-DUKS-646-D6sp1L6a.js'),void 0)),d=defineAsyncComponent(()=>O(()=>module.import('./EditTab-R0NUwsoO-CPQSm_db.js'),void 0)),{data:m,exportTags:g,exportItems:v,exportTemplates:f,exportAllItems:b,importAllFromJSON:k,importTags:B,importItems:E,exportSingleItem:S,importSingleItem:j}=Ct();function A(){switch(m.value.ui.activeTab){case "tags":default:return e;case "items":return l;case "edit":return d}}const L=ref(null);function z(t){"edit"===m.value.ui.activeTab&&(L.value=t);}async function D(){if(L.value)try{await L.value.applyAll();}catch(t){}else Tt.error("EditTab 未加载");}const V=ref(null),N=ref(false),P=ref({x:0,y:0}),F=ref(false),H=ref(null),J=[{id:"tags",label:"标签"},{id:"items",label:"商品"},{id:"edit",label:"编辑"}];watch(()=>m.value.ui.sidebarOpen,t=>{const n=document.getElementById("booth-enhancer-panel-root"),e=document.querySelector(".booth-enhancer-toggle");n&&(t?n.classList.add("panel-open"):n.classList.remove("panel-open")),e&&(e.innerHTML=t?U.chevronRight:U.chevronLeft);});const R=()=>{m.value.ui.sidebarOpen=false;},Y=t=>{m.value.ui.activeTab=t;};function X(){return (new Date).toISOString().slice(0,10)}const K=async()=>{try{_t({version:"1.0",exportTime:Date.now(),data:{tags:g(),items:v(),templates:f(),itemConfigs:b()}},`booth-backup-${X()}.json`),Tt.success("导出成功");}catch(t){Tt.error("导出失败："+t.message);}},W=()=>{Mt(".json,application/json",async t=>{try{const n=await It(t);k(n),Tt.success("导入成功");}catch(n){Tt.error("导入失败："+n.message);}});},Z=t=>{const n=t.currentTarget.getBoundingClientRect();P.value={x:n.left-100,y:n.bottom+4},N.value=!N.value;},Q=()=>{N.value=false;};function tt(){const t=m.value.ui.activeTab;if("edit"!==t)try{const n=X();_t("tags"===t?g():v(),`booth-${t}-${n}.json`),Tt.success(it.value+"数据导出成功");}catch(n){Tt.error("导出失败："+n.message);}}function et(){const t=m.value.ui.activeTab;"edit"!==t&&Mt(".json,application/json",async n=>{try{const e=await It(n);"tags"===t?B(e):E(e),Tt.success(it.value+"数据导入成功");}catch(e){Tt.error("导入失败："+e.message);}});}const it=computed(()=>{switch(m.value.ui.activeTab){case "tags":return "标签";case "items":return "商品";case "edit":return "编辑";default:return ""}});function ot(){if(n.itemId)try{const t=S(n.itemId);if(!t)return void Tt.error("当前商品没有配置数据");const e=X();_t(t,`booth-item-${n.itemId}-${e}.json`),Tt.success("商品配置导出成功");}catch(t){Tt.error("导出失败："+t.message);}else Tt.error("无法获取当前商品ID");}function st(){Mt(".json,application/json",async t=>{try{const n=await It(t);j(n,{replace:!1})?Tt.success("商品配置导入成功"):(H.value=n,F.value=!0);}catch(n){Tt.error("导入失败："+n.message);}});}function rt(){H.value&&(j(H.value,{replace:true}),Tt.success("商品配置导入成功")),F.value=false,H.value=null;}function at(){F.value=false,H.value=null;}const ct=computed(()=>{const t="edit"===m.value.ui.activeTab;return [{label:"导出完整备份 (JSON)",icon:G(U.upload,14),action:K},{label:"导入完整备份 (JSON)",icon:G(U.download,14),action:W},{label:"-",icon:"",action:()=>{}},{label:t?"导出当前商品 (JSON)":`导出${it.value}数据 (JSON)`,icon:G(U.upload,14),action:t?ot:tt},{label:t?"导入商品配置 (JSON)":`导入${it.value}数据 (JSON)`,icon:G(U.download,14),action:t?st:et}]});return onMounted(()=>{V.value&&Tt.setContainer(V.value);}),onUnmounted(()=>{Tt.setContainer(null);}),(t,e)=>(openBlock(),createElementBlock("div",{ref_key:"sidebarRef",ref:V,class:"booth-enhancer-sidebar"},[createVNode(unref(lt),{"active-tab":unref(m).ui.activeTab,tabs:J,"onUpdate:activeTab":Y},{actions:withCtx(()=>["edit"===unref(m).ui.activeTab?(openBlock(),createBlock(unref(q),{key:0,icon:unref(U).send,title:"应用所有",onClick:D},null,8,["icon"])):createCommentVNode("",true),createVNode(unref(q),{icon:unref(U).moreVertical,title:"更多操作",onClick:Z},null,8,["icon"]),createVNode(unref(q),{icon:unref(U).close,title:"关闭",onClick:R},null,8,["icon"])]),I:1},8,["active-tab"]),createVNode($,{show:N.value,x:P.value.x,y:P.value.y,items:ct.value,onClose:Q},null,8,["show","x","y","items"]),createVNode(unref(nt),{show:F.value,title:"导入确认","teleport-to":".booth-enhancer-sidebar",onClose:at,width:"400px"},{footer:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",onClick:at,title:"取消"},[createElementVNode("span",{innerHTML:unref(G)(unref(U).close,18)},null,8,Et)]),createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-danger",onClick:rt,title:"替换"},[createElementVNode("span",{innerHTML:unref(G)(unref(U).check,18)},null,8,St)])]),default:withCtx(()=>{var t;return [createElementVNode("div",Bt,[createElementVNode("p",null,[e[0]||(e[0]=createTextVNode("商品 ID ",-1)),createElementVNode("strong",null,toDisplayString(null==(t=H.value)?void 0:t.itemId),1),e[1]||(e[1]=createTextVNode(" 已存在配置。",-1))]),e[2]||(e[2]=createElementVNode("p",null,"是否要替换现有配置？",-1))])]}),I:1},8,["show"]),createElementVNode("div",jt,[(openBlock(),createBlock(resolveDynamicComponent(A()),{ref:z,key:unref(m).ui.activeTab+"-"+Date.now(),api:n.api},null,8,["api"]))])],512))}}),[["__scopeId","data-v-2b9f00bf"]]);class Lt{constructor(t){n(this,"api"),this.api=t,this.api.onReady(t=>{this.initialize(t);});}}class zt extends Lt{constructor(t){super(t);}initialize(){this.enhanceFilePanel();}enhanceFilePanel(){const t=this.findFilePanel();if(!t)return;if(t.hasAttribute("data-file-manager-enhanced"))return;t.setAttribute("data-file-manager-enhanced","true");const n=t.querySelector(".font-heavy-sans.text-\\[14px\\]");n&&this.addActionButtons(n);}findFilePanel(){var t;const n=document.querySelectorAll(".font-booth-demi");for(const e of Array.from(n))if(null==(t=e.textContent)?void 0:t.includes("Add/Edit Files"))return e.closest(".bg-white");return null}addActionButtons(t){var n;const e=document.createElement("div");e.className="flex gap-8 py-12 px-16 border-b border-b-border300",e.style.cssText="background: #f8f9fa;";const i=document.createElement("button");i.type="button",i.className="btn calm small",i.textContent="全选",i.onclick=()=>this.selectAllFiles();const o=document.createElement("button");o.type="button",o.className="btn calm small",o.textContent="全不选",o.onclick=()=>this.unselectAllFiles(),e.appendChild(i),e.appendChild(o),null==(n=t.parentElement)||n.insertBefore(e,t.nextSibling);}selectAllFiles(){this.setAllCheckboxes(true);}unselectAllFiles(){this.setAllCheckboxes(false);}setAllCheckboxes(t){const n=document.querySelectorAll('ul.list-none input.charcoal-checkbox-input[type="checkbox"]');Array.from(n).forEach(n=>{const e=n;e.checked!==t&&E.click(e);});}}class Ot extends Lt{constructor(t){super(t),n(this,"_observedContainers");}get observedContainers(){return this.B||(this.B=new WeakMap),this.B}initialize(t){const n=new Set;t.sections.forEach(t=>n.add(t.container)),t.variations.forEach(t=>n.add(t.container)),n.forEach(t=>{this.addNumbersToList(t);}),t.onSectionAdded(t=>{this.observedContainers.has(t.container)||this.addNumbersToList(t.container);}),t.onVariationAdded(t=>{this.observedContainers.has(t.container)||this.addNumbersToList(t.container);});}addNumbersToList(t){Array.from(t.children).filter(t=>"li"===t.tagName.toLowerCase()).forEach((t,n)=>{this.addNumberToItem(t,n+1);}),this.setupListObserver(t);}addNumberToItem(t,n){const e=t.querySelector(".variation-number");null==e||e.remove();const i=t.querySelector(".variation-box-head .flex.items-center.gap-4");if(!i)return;const o=document.createElement("span");o.className="variation-number typography-14 inline-block font-semibold",o.style.cssText="margin-right: 8px; color: #666;",o.textContent="#"+n,i.insertBefore(o,i.firstChild);}setupListObserver(t){const n=this.observedContainers.get(t);n&&n.disconnect();const e=new MutationObserver(()=>{Array.from(t.children).filter(t=>"li"===t.tagName.toLowerCase()).forEach((t,n)=>{this.addNumberToItem(t,n+1);});});e.observe(t,{childList:true,subtree:false}),this.observedContainers.set(t,e);}}function Dt(t,n){if(n)try{n();}catch(e){}}class Vt{static throttle(t,n){const e=t.toString();if(!this.throttleCache.has(e)){let i;const o=function(...e){i||(t.apply(this,e),i=true,setTimeout(()=>i=false,n));};this.throttleCache.set(e,o);}return this.throttleCache.get(e)}static sleep(t){return new Promise(n=>setTimeout(n,t))}static async waitForDOMReady(){"loading"===document.readyState&&await new Promise(t=>document.addEventListener("DOMContentLoaded",t));}static updateButtonState(t,n=true,e){if(!t)return;const i=n?'<i class="icon-check"></i><span class="cmd-label">已完成</span>':e;t.innerHTML=i,t.classList.toggle("calm",!n),t.classList.toggle("primary",n),n&&setTimeout(()=>{t.innerHTML=e,t.classList.add("calm"),t.classList.remove("primary");},1e3);}}n(Vt,"throttleCache",new Map);class Nt extends Lt{constructor(t){super(t);}initialize(t){this.waitForTagContainer(t);}waitForTagContainer(t){const n=t.tagElements;if(n)return void this.addTagButtons(n.inputContainer);const e=new MutationObserver(()=>{const n=t.tagElements;n&&(this.addTagButtons(n.inputContainer),e.disconnect());});e.observe(document.body,{childList:true,subtree:true});}addTagButtons(t){if(t.querySelector(".tag-action-buttons"))return;const n=document.createElement("div");n.className="flex gap-2 tag-action-buttons",n.style.cssText="\n            align-items: center;\n            position: absolute;\n            right: 8px;\n            top: 50%;\n            transform: translateY(-50%);\n        ";const e=document.createElement("a");e.className="btn calm small",e.innerHTML="复制标签",e.onclick=()=>this.copyTags();const i=document.createElement("a");i.className="btn calm small",i.innerHTML="粘贴标签",i.onclick=()=>this.pasteTags();const o=document.createElement("a");o.className="btn calm small",o.innerHTML="清空标签",o.onclick=()=>this.clearTags(),n.appendChild(e),n.appendChild(i),n.appendChild(o),t.appendChild(n);}copyTags(){try{const t=this.api.getTagTexts();if(0===t.length)return void Tt.warning("没有找到标签");navigator.clipboard.writeText(JSON.stringify(t)).then(()=>{const t=document.querySelector(".tag-action-buttons .btn:first-child");t instanceof HTMLElement&&Vt.updateButtonState(t,!0,t.innerHTML);});}catch(t){Dt();}}async pasteTags(){try{const n=await navigator.clipboard.readText(),e=JSON.parse(n);if(!Array.isArray(e)||0===e.length)throw Error("无效的标签数据");const i=this.api.tagElements;if(!i)throw Error("找不到标签容器");const{input:o,container:s}=i,r=this.api.getTagTexts(),a=e.filter(t=>!r.includes(t));if(0===a.length)return void Tt.info("所有标签都已存在，无需添加");const l=this.createProgressTip(s);try{for(let n=0;n<a.length;n++)l.updateProgress(n+1,a.length),o.focus(),E.input(o,a[n]),await Vt.sleep(1),E.pressEnter(o),await Vt.sleep(1);l.complete(`处理完成！已添加 ${a.length} 个新标签，跳过 ${e.length-a.length} 个已存在的标签。`);const t=document.querySelector(".tag-action-buttons .btn:nth-child(2)");t instanceof HTMLElement&&Vt.updateButtonState(t,!0,t.innerHTML);}catch(t){throw l.remove(),t}}catch(t){Dt(0,()=>{Tt.error("粘贴标签失败："+(t instanceof Error?t.message:t+""));});}}async clearTags(){try{if(!window.confirm("确定要清空所有标签吗？"))return;const n=this.api.tagElements;if(!n)throw Error("找不到标签容器");const e=this.api.getTagDeleteButtons();if(0===e.length)return void Tt.warning("没有找到需要清空的标签");const i=this.createProgressTip(n.container);try{for(let n=e.length-1;n>=0;n--)i.updateProgress(e.length-n,e.length),e[n].click(),await Vt.sleep(1);i.complete(`处理完成！已清空 ${e.length} 个标签。`);const t=document.querySelector(".tag-action-buttons .btn:nth-child(3)");t instanceof HTMLElement&&Vt.updateButtonState(t,!0,t.innerHTML);}catch(t){throw i.remove(),t}}catch(t){Dt();}}createProgressTip(t){const n=document.createElement("div");n.style.cssText="\n            margin-bottom: 12px;\n            background: #f5f7fa;\n            border-radius: 4px;\n            padding: 12px;\n            position: relative;\n        ";const e=document.createElement("div");e.style.cssText="color: #666; font-size: 14px; margin-bottom: 8px;";const i=document.createElement("div");i.style.cssText="\n            background: #e4e7ed;\n            height: 6px;\n            border-radius: 3px;\n            overflow: hidden;\n        ";const o=document.createElement("div");o.style.cssText="\n            width: 0%;\n            height: 100%;\n            background: #409EFF;\n            transition: width 0.3s ease;\n            border-radius: 3px;\n        ",i.appendChild(o),n.appendChild(e),n.appendChild(i);const s=t.querySelector(".item-search-input__container");return (null==s?void 0:s.parentElement)?s.parentElement.insertBefore(n,s):t.insertBefore(n,t.firstChild),{container:n,progressBar:o,textElement:e,updateProgress:(t,n,i)=>{const s=t/n*100;o.style.width=s+"%",e.textContent=i||`处理中... (${t}/${n})`;},complete:t=>{o.style.width="100%",o.style.background="#67C23A",e.textContent=t,setTimeout(()=>n.remove(),2e3);},remove:()=>n.remove()}}}class Pt extends A{constructor(t){super(t),n(this,"modules",[]),n(this,"app",null),n(this,"container",null),n(this,"toggleBtn",null);}shouldExecute(){const t=window.location.pathname;return /^\/items\/\d+\/edit(_pre)?$/.test(t)}createAPI(){return new j}async initialize(){this.api&&(this.modules.push(new Ot(this.api),new Nt(this.api),new zt(this.api)),this.injectStyles(),this.createToggleButton(),this.createPanelContainer(),this.mountVueApp());}injectStyles(){if(document.querySelector("#booth-enhancer-styles"))return;const t=document.createElement("style");t.id="booth-enhancer-styles",t.textContent="\n            .booth-enhancer-toggle {\n                position: fixed;\n                right: 0;\n                top: 50%;\n                transform: translateY(-50%);\n                width: 30px;\n                height: 60px;\n                background: rgba(255, 255, 255, 0.95);\n                border: 1px solid #e0e0e0;\n                border-right: none;\n                border-radius: 8px 0 0 8px;\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);\n                cursor: pointer;\n                transition: all 0.2s ease;\n                z-index: 999;\n                font-size: 12px;\n                color: #666;\n                user-select: none;\n            }\n\n            .booth-enhancer-toggle:hover {\n                background: #f8f9fa;\n                box-shadow: -2px 0 6px rgba(0, 0, 0, 0.15);\n            }\n\n            #booth-enhancer-panel-root {\n                position: fixed;\n                top: 50%;\n                right: 0;\n                transform: translateY(-50%) translateX(100%);\n                width: 400px;\n                min-width: 300px;\n                max-width: 500px;\n                height: 80vh;\n                max-height: 80vh;\n                z-index: 1000;\n                transition: transform 0.3s ease;\n                pointer-events: none;\n                box-sizing: border-box;\n            }\n\n            #booth-enhancer-panel-root.panel-open {\n                transform: translateY(-50%) translateX(0);\n                pointer-events: auto;\n            }\n\n            @media (max-width: 768px) {\n                #booth-enhancer-panel-root {\n                    width: 100%;\n                    max-width: 400px;\n                    height: 70vh;\n                    max-height: 70vh;\n                }\n                \n                .booth-enhancer-toggle {\n                    width: 40px;\n                    height: 60px;\n    }\n            }\n\n            @media (max-width: 480px) {\n                #booth-enhancer-panel-root {\n                    width: 100%;\n                    height: 85vh;\n                    max-height: 85vh;\n                }\n            }\n        ",document.head.appendChild(t);}updateSidebarState(t,n,e){this.toggleBtn&&(this.toggleBtn.innerHTML=t?n:e),this.container&&this.container.classList.toggle("panel-open",t);}createToggleButton(){this.toggleBtn=document.createElement("div"),this.toggleBtn.className="booth-enhancer-toggle",this.toggleBtn.title="配置面板";const t=G(U.chevronLeft,20,2.5),n=G(U.chevronRight,20,2.5);this.toggleBtn.innerHTML=t,this.toggleBtn.addEventListener("click",()=>{const e=kt.getInstance(),i=!e.data.value.ui.sidebarOpen;e.data.value.ui.sidebarOpen=i,this.updateSidebarState(i,n,t);}),document.body.appendChild(this.toggleBtn);}createPanelContainer(){this.container=document.createElement("div"),this.container.id="booth-enhancer-panel-root";const t=kt.getInstance().data.value.ui.sidebarOpen;if(t){const n=G(U.chevronRight,20,2.5),e=G(U.chevronLeft,20,2.5);this.updateSidebarState(t,n,e);}document.body.appendChild(this.container);}mountVueApp(){if(!this.container||!this.api)return;const t=window.location.pathname.match(/\/items\/(\d+)\/edit/),n=t?t[1]:"";this.app=createApp(At,{api:this.api,itemId:n}),this.app.mount(this.container);}}class Ft{extractId(t){var n;const e=t.getAttribute("data-id");if(e)return e;const i=((null==(n=t.querySelector(".nav"))?void 0:n.getAttribute("href"))||"").match(/\/items\/(\d+)/);return i?i[1]:""}parseVariations(t){const n=[];return t.querySelectorAll(".dashboard-items-variation .row").forEach(t=>{var e,i,o,s;const r=t.querySelector(".dashboard-items-variation-label");let a="";if(r){const t=r.textContent||"",n=t.match(/#\d+\s*(.+)/);a=n?n[1].trim():t.trim();}const l=t.querySelector(".price"),c=(null==(e=null==l?void 0:l.textContent)?void 0:e.trim())||"0",d=parseInt(c.replace(/[^\d]/g,""),10)||0,h=(null==(o=null==(i=t.querySelector(".sales_quantity .count"))?void 0:i.textContent)?void 0:o.trim())||"0",u=parseInt(h,10)||0,p=t.querySelector(".sales_subtotal"),m=(null==(s=null==p?void 0:p.textContent)?void 0:s.trim())||"0",g=parseInt(m.replace(/[^\d]/g,""),10)||0;n.push({data:{name:a,price:d,salesCount:u,revenue:g},element:t});}),n}parseTags(t){const n=[];return t.querySelectorAll(".dashboard-items-tags li").forEach(t=>{var e;const i=t.querySelector(".tag-text"),o=null==(e=null==i?void 0:i.textContent)?void 0:e.trim();o&&n.push({text:o,element:t});}),n}parseItem(t){var n,e,i,o;try{const s=this.extractId(t);if(!s)return null;const r=(null==(e=null==(n=t.querySelector(".nav"))?void 0:n.textContent)?void 0:e.trim())||"",a=(null==(i=t.querySelector(".nav"))?void 0:i.getAttribute("href"))||"",l=(null==(o=t.querySelector(".thumbnail img"))?void 0:o.src)||"",c=this.parseTags(t).map(t=>t.text),d=this.parseVariations(t).map(t=>t.data),h=t.querySelector(".item-stat.favs .count");return {id:s,name:r,url:a,thumbnail:l,tags:c,variations:d,favoritesCount:h&&parseInt(h.textContent||"0",10)||0}}catch(s){return null}}}class Ht extends S{constructor(){super(),n(this,"_items",[]),n(this,"_parser"),this.S=new Ft;}shouldActivate(){const t=window.location.pathname;return ("/items"===t||"/items/"===t)&&!t.match(/\/items\/\d+\/(edit|edit_pre)/)}waitForElements(t=5e3){return new Promise((n,e)=>{if(document.querySelector(".item-wrapper"))return void n();const i=setTimeout(()=>{o.disconnect(),e(Error("等待商品元素超时"));},t),o=new MutationObserver(()=>{document.querySelector(".item-wrapper")&&(clearTimeout(i),o.disconnect(),n());});o.observe(document.body,{childList:true,subtree:true});})}async load(){await this.waitForElements(),this.j=[],document.querySelectorAll(".item-wrapper").forEach(t=>{const n=t,e=this.S.parseItem(t);if(e){const t=n.querySelector(".dashboard-items-variation"),i=n.querySelector(".dashboard-items-tags"),o=this.S.parseVariations(n),s=this.S.parseTags(n);this.j.push({data:e,element:n,variationsUl:t,tagsUl:i,variations:o,tags:s});}});}getItems(){return [...this.j]}getItemsData(){return this.j.map(t=>t.data)}getItem(t){return this.j.find(n=>n.data.id===t)}getItemData(t){var n;return null==(n=this.j.find(n=>n.data.id===t))?void 0:n.data}getItemElement(t){var n;return null==(n=this.j.find(n=>n.data.id===t))?void 0:n.element}refresh(){this.load();}async copyItemTags(t){const n=this.getItem(t);if(!n)return  false;const e=n.data.tags;if(0===e.length)return alert("没有找到标签"),false;try{return await navigator.clipboard.writeText(JSON.stringify(e)),!0}catch(i){return  false}}}class $t extends Lt{constructor(t){super(t);}initialize(t){t.getItems().forEach(t=>{this.addToItem(t.element);});}addToItem(t){try{if(t.querySelector(".tag-copy-btn")||t.querySelector(".item-delete-btn-x"))return;this.addDeleteButton(t),this.addCopyTagsButton(t);}catch(n){Dt();}}addDeleteButton(t){const n=t.getAttribute("data-id");if(!n)return;const e=document.createElement("button");e.className="item-delete-btn-x",e.innerHTML='\n            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">\n                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n            </svg>\n        ',e.title="删除商品",e.onclick=async e=>{e.preventDefault(),await this.handleDeleteItem(t,n);},"static"===getComputedStyle(t).position&&(t.style.position="relative"),this.injectDeleteButtonStyles(),t.appendChild(e);}injectDeleteButtonStyles(){if(document.getElementById("item-delete-btn-styles"))return;const t=document.createElement("style");t.id="item-delete-btn-styles",t.textContent="\n            .item-delete-btn-x {\n                position: absolute;\n                top: 8px;\n                right: 8px;\n                z-index: 10;\n                width: 28px;\n                height: 28px;\n                padding: 0;\n                border: none;\n                border-radius: 50%;\n                background-color: #fff;\n                color: #666;\n                cursor: pointer;\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n                transition: all 0.2s ease;\n            }\n\n            .item-delete-btn-x svg {\n                width: 16px;\n                height: 16px;\n                display: block;\n            }\n\n            .item-delete-btn-x:hover {\n                background-color: #ff5252;\n                color: #fff;\n                box-shadow: 0 4px 8px rgba(255, 82, 82, 0.3);\n                transform: scale(1.1);\n            }\n\n            .item-delete-btn-x:active {\n                transform: scale(0.95);\n            }\n        ",document.head.appendChild(t);}addCopyTagsButton(t){const n=t.querySelector(".dashboard-items-tags"),e=t.querySelector(".dashboard-item-footer-actions"),i=t.getAttribute("data-id");if(n&&e&&i){const t=document.createElement("a");t.className="btn calm small tag-copy-btn mr-8",t.innerHTML="复制标签",t.onclick=async n=>{n.preventDefault(),await this.api.copyItemTags(i)&&Vt.updateButtonState(t,true,t.innerHTML);},e.insertBefore(t,e.firstChild);}}async handleDeleteItem(t,n){var e,i,o;try{if(!confirm("确定要删除这个商品吗？此操作不可恢复。"))return;const s=(null==(i=null==(e=t.querySelector(".nav"))?void 0:e.textContent)?void 0:i.trim())||"未知商品";if(!confirm(`再次确认删除商品：\n${s}\nID: ${n}`))return;const r=null==(o=document.querySelector('meta[name="csrf-token"]'))?void 0:o.getAttribute("content");if(!r)throw Error("无法获取CSRF token");const a=await fetch("https://manage.booth.pm/items/"+n,{method:"DELETE",headers:{accept:"application/json, text/javascript, */*; q=0.01","accept-language":"zh-CN,zh;q=0.9,en;q=0.8","x-requested-with":"XMLHttpRequest","x-csrf-token":r},referrer:window.location.href,referrerPolicy:"strict-origin-when-cross-origin",mode:"cors",credentials:"include"});if(!a.ok){const t=await a.text();throw Error(`删除失败: ${a.status}\n${t}`)}t.remove();}catch(s){Dt(0,()=>{alert("删除商品失败，请刷新页面重试");});}}}class Jt extends Lt{constructor(t){super(t),n(this,"_processedItems"),n(this,"stylesInjected",false);}get processedItems(){return this.A||(this.A=new Set),this.A}initialize(t){this.injectStyles(),t.getItems().forEach(t=>{this.addToItem(t);});}addToItem(t){var n,e;try{const{element:i,variationsUl:o,tagsUl:s,variations:r}=t;if(this.processedItems.has(i))return;this.processedItems.add(i);const a=[];if(o&&r.length>0&&!(null==(n=o.previousElementSibling)?void 0:n.classList.contains("item-collapse-header"))){const n=this.createVariationHeader(t);a.push({header:n,target:o});}if(s&&t.tags.length>0&&!(null==(e=s.previousElementSibling)?void 0:e.classList.contains("item-collapse-header"))){const t=this.createTagHeader(s);a.push({header:t,target:s});}a.forEach(({header:t,target:n})=>{var e;null==(e=n.parentElement)||e.insertBefore(t,n),n.classList.add("item-collapsible","collapsed");});}catch(i){Dt();}}setupCollapseToggle(t,n){const e=t.querySelector(".item-collapse-icon");let i=true;t.onclick=()=>{i=!i,n.classList.toggle("collapsed",i),e.classList.toggle("collapsed",i);};}createBaseHeader(t,n){const e=document.createElement("div");e.className="item-collapse-header";const i=document.createElement("div");if(i.className="item-collapse-title",i.innerHTML=`\n            <span class="item-collapse-icon collapsed">▼</span>\n            <span>${t}</span>\n        `,e.appendChild(i),n){const t=document.createElement("div");t.className="item-collapse-badges",t.innerHTML=n,e.appendChild(t);}return e}createVariationHeader(t){const{variations:n,variationsUl:e}=t,i=`\n            <span class="item-badge item-badge-count">变体: <strong>${n.length}</strong></span>\n            <span class="item-badge item-badge-sales">销量: <strong>${n.reduce((t,n)=>t+n.data.salesCount,0)}</strong></span>\n            <span class="item-badge item-badge-revenue">收益: <strong>${n.reduce((t,n)=>t+n.data.revenue,0).toLocaleString()}</strong></span>\n        `,o=this.createBaseHeader("变体列表",i);return this.setupCollapseToggle(o,e),o}createTagHeader(t){const n=this.createBaseHeader("标签列表");return this.setupCollapseToggle(n,t),n}injectStyles(){if(this.stylesInjected)return;this.stylesInjected=true;const t=document.createElement("style");t.id="booth-item-collapse-styles",t.textContent="\n            /* 折叠图标样式 */\n            .item-collapse-icon {\n                display: inline-flex;\n                align-items: center;\n                justify-content: center;\n                width: 16px;\n                height: 16px;\n                margin-right: 6px;\n                font-size: 10px;\n                color: #666;\n                flex-shrink: 0;\n                transition: transform 0.2s ease;\n            }\n\n            .item-collapse-icon.collapsed {\n                transform: rotate(-90deg);\n            }\n\n            /* 折叠容器样式 - 使用 GPU 加速属性 */\n            .item-collapsible {\n                overflow: hidden;\n                max-height: 5000px;\n                will-change: max-height, opacity; /* 提示浏览器优化 */\n                contain: layout style paint; /* 限制重排范围 */\n            }\n\n            .item-collapsible.collapsed {\n                max-height: 0 !important;\n                opacity: 0;\n                margin-top: 0 !important;\n                margin-bottom: 0 !important;\n                padding-top: 0 !important;\n                padding-bottom: 0 !important;\n                /* 使用 transform 代替部分属性，GPU 加速 */\n                transform: translateZ(0);\n            }\n\n            /* 折叠标题容器 */\n            .item-collapse-header {\n                display: flex;\n                align-items: center;\n                justify-content: space-between;\n                padding: 8px 12px;\n                margin-bottom: 8px;\n                font-weight: 500;\n                font-size: 13px;\n                color: #333;\n                user-select: none;\n                border-bottom: 1px solid #e0e0e0;\n                cursor: pointer;\n                transition: background-color 0.2s ease;\n                gap: 12px;\n            }\n            \n            .item-collapse-header:hover {\n                background-color: #f5f5f5;\n            }\n            \n            .item-collapse-header:first-of-type {\n                margin-top: 8px;\n            }\n\n            /* 标题部分 */\n            .item-collapse-title {\n                display: flex;\n                align-items: center;\n                flex-shrink: 0;\n            }\n\n            /* Badges 容器 */\n            .item-collapse-badges {\n                display: flex;\n                align-items: center;\n                gap: 8px;\n                margin-left: auto;\n                flex-wrap: wrap;\n                justify-content: flex-end;\n            }\n\n            /* Badge 基础样式 */\n            .item-badge {\n                display: inline-flex;\n                align-items: center;\n                padding: 4px 10px;\n                font-size: 11px;\n                font-weight: 400;\n                border-radius: 12px;\n                white-space: nowrap;\n            }\n\n            .item-badge strong {\n                font-weight: 600;\n            }\n\n            /* Badge 变体数量 */\n            .item-badge-count {\n                background-color: #e3f2fd;\n                color: #1976d2;\n            }\n\n            /* Badge 销量 */\n            .item-badge-sales {\n                background-color: #f3e5f5;\n                color: #7b1fa2;\n            }\n\n            /* Badge 收益 */\n            .item-badge-revenue {\n                background-color: #e8f5e9;\n                color: #388e3c;\n            }\n        ",document.head.appendChild(t);}}class Rt extends Lt{constructor(t){super(t),n(this,"navigationContainer",null),n(this,"toggleButton",null),n(this,"items",[]),n(this,"isExpanded",false),n(this,"searchInput",null),n(this,"filteredItems",[]),n(this,"isScrolling",false),n(this,"scrollTimeout",null),n(this,"hoverTimeout",null);}initialize(t){this.items=t.getItems(),this.injectStyles(),setTimeout(()=>{this.createNavigation();},1e3);}createNavigation(){try{if(document.querySelector(".item-navigation"))return;if(0===this.items.length)return;this.injectStyles(),this.createToggleButton(),this.createNavigationContainer(),this.createNavigationItems(),this.setupScrollListener();}catch(t){Dt();}}injectStyles(){if(document.querySelector("#booth-navigation-styles"))return;const t=document.createElement("style");t.id="booth-navigation-styles",t.textContent="\n            .navigation-toggle-button {\n            position: fixed;\n            right: 0;\n            top: 50%;\n            transform: translateY(-50%);\n                width: 30px;\n                height: 60px;\n            background: rgba(255, 255, 255, 0.95);\n            border: 1px solid #e0e0e0;\n            border-right: none;\n            border-radius: 8px 0 0 8px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);\n            cursor: pointer;\n            transition: all 0.2s ease;\n                z-index: 999;\n                font-size: 12px;\n                color: #666;\n            }\n\n            .navigation-toggle-button:hover {\n                background: #f8f9fa;\n                box-shadow: -2px 0 6px rgba(0, 0, 0, 0.15);\n            }\n\n            .item-navigation {\n                position: fixed;\n                top: 50%;\n                right: 0;\n                transform: translateY(-50%) translateX(100%);\n                width: 400px;\n                min-width: 300px;\n                max-width: 500px;\n                height: 80vh;\n                max-height: 80vh;\n                z-index: 1000;\n                transition: transform 0.3s ease;\n                pointer-events: none;\n                box-sizing: border-box;\n            }\n\n            .item-navigation.expanded {\n                transform: translateY(-50%) translateX(0);\n            }\n\n            .navigation-content {\n            width: 100%;\n            height: 100%;\n            background: rgba(255, 255, 255, 0.98);\n            border: 1px solid #e0e0e0;\n            border-radius: 12px 0 0 12px;\n            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);\n            display: flex;\n            flex-direction: column;\n            overflow: hidden;\n                pointer-events: auto;\n            }\n\n            /* 导航项样式 */\n            .navigation-item {\n                padding: 6px 8px;\n                margin-bottom: 1px;\n                border-radius: 4px;\n                cursor: pointer;\n                transition: all 0.2s ease;\n                border-left: 2px solid transparent;\n                background: #fff;\n                border: 1px solid transparent;\n                display: flex;\n                align-items: flex-start;\n                gap: 8px;\n            }\n\n            /* 导航项hover效果 */\n            .navigation-item:hover:not(.active) {\n                background-color: #f8f9fa;\n                border-color: #e9ecef;\n            }\n\n            /* 导航项active状态 */\n            .navigation-item.active {\n                background-color: #e3f2fd !important;\n                border-left-color: #2196f3 !important;\n                border-color: #bbdefb !important;\n            }\n\n            /* PC端：hover显示（通过JavaScript处理，这里只处理样式） */\n            @media (hover: hover) and (pointer: fine) {\n                .item-navigation:hover {\n                    pointer-events: auto;\n                }\n            }\n\n            /* 移动端：点击切换 */\n            @media (max-width: 768px) {\n                .item-navigation {\n                    width: 100%;\n                    max-width: 400px;\n                    height: 70vh;\n                    max-height: 70vh;\n                }\n\n                .navigation-toggle-button {\n                    width: 40px;\n                    height: 60px;\n                }\n            }\n\n            /* 小屏幕移动端 */\n            @media (max-width: 480px) {\n                .item-navigation {\n                    width: 100%;\n                    height: 85vh;\n                    max-height: 85vh;\n                    top: 50%;\n                    transform: translateY(-50%) translateX(100%);\n                }\n\n                .item-navigation.expanded {\n                    transform: translateY(-50%) translateX(0);\n                }\n            }\n\n            /* 头部样式 */\n            .navigation-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            padding: 12px 16px;\n            border-bottom: 1px solid #e0e0e0;\n            background: #f8f9fa;\n            flex-shrink: 0;\n                pointer-events: auto;\n            }\n\n            .navigation-header-title {\n            font-weight: 600;\n            color: #333;\n            font-size: 14px;\n            }\n\n            /* 关闭按钮样式 */\n            .navigation-close-button {\n                width: 24px;\n                height: 24px;\n                display: flex;\n                align-items: center;\n                justify-content: center;\n                cursor: pointer;\n                color: #666;\n                font-size: 20px;\n                line-height: 1;\n                border-radius: 4px;\n                transition: all 0.2s ease;\n            }\n\n            .navigation-close-button:hover {\n                background-color: #e0e0e0;\n                color: #333;\n            }\n\n            /* 搜索容器样式 */\n            .navigation-search {\n            padding: 12px 16px;\n            border-bottom: 1px solid #e0e0e0;\n            background: #fff;\n            flex-shrink: 0;\n            width: 100%;\n                min-width: 0;\n                box-sizing: border-box;\n                display: block;\n            }\n\n            /* 搜索输入框样式 */\n            .navigation-search-input {\n                width: 100% !important;\n                height: 32px;\n            padding: 8px 12px;\n                margin: 0;\n            border: 1px solid #ddd;\n            border-radius: 6px;\n            font-size: 12px;\n            outline: none;\n            transition: border-color 0.2s;\n                box-sizing: border-box;\n                line-height: 1;\n                display: block;\n                max-width: none;\n                min-width: 0;\n            }\n\n            .navigation-search-input:focus {\n                border-color: #2196f3;\n            }\n\n            /* 列表容器样式 */\n            .navigation-items-container {\n            flex: 1;\n            overflow-y: auto;\n            padding: 4px;\n            min-height: 0;\n            scrollbar-width: thin;\n            scrollbar-color: #ccc #f5f5f5;\n            }\n\n            /* 空状态样式 */\n            .navigation-empty-state {\n                text-align: center;\n                color: #666;\n                padding: 20px;\n                font-style: italic;\n            }\n\n            /* 缩略图容器样式 */\n            .navigation-thumbnail {\n                width: 40px;\n                height: 40px;\n                flex-shrink: 0;\n                border-radius: 4px;\n                overflow: hidden;\n                background: #f5f5f5;\n                display: flex;\n                align-items: center;\n                justify-content: center;\n            }\n\n            .navigation-thumbnail img {\n                width: 100%;\n                height: 100%;\n                object-fit: cover;\n            }\n\n            /* 商品信息容器样式 */\n            .navigation-item-info {\n                display: flex;\n                flex-direction: column;\n                gap: 2px;\n                flex: 1;\n                min-width: 0;\n            }\n\n            .navigation-item-name-row {\n                display: flex;\n                justify-content: space-between;\n                align-items: flex-start;\n                gap: 8px;\n            }\n\n            .navigation-item-name {\n                flex: 1;\n                margin-right: 6px;\n                font-weight: 500;\n                font-size: 11px;\n                line-height: 1.3;\n                word-wrap: break-word;\n                min-width: 0;\n            }\n\n            .navigation-item-variant-count {\n                color: #666;\n                font-size: 9px;\n                flex-shrink: 0;\n                background: #f0f0f0;\n                padding: 1px 4px;\n                border-radius: 8px;\n            }\n\n            .navigation-item-stats-row {\n                display: flex;\n                justify-content: space-between;\n                align-items: center;\n                font-size: 10px;\n                color: #666;\n            }\n\n            .navigation-item-stats-left {\n                display: flex;\n                gap: 8px;\n                align-items: center;\n            }\n\n            .navigation-item-sales {\n                font-weight: 500;\n            }\n\n            .navigation-item-sales.has-sales {\n                color: #28a745;\n            }\n\n            .navigation-item-sales.no-sales {\n                color: #999;\n            }\n\n            .navigation-item-favorites {\n                font-weight: 500;\n            }\n\n            .navigation-item-favorites.has-favorites {\n                color: #f48fb1;\n            }\n\n            .navigation-item-favorites.no-favorites {\n                color: #999;\n            }\n\n            .navigation-item-index {\n                color: #999;\n                font-size: 9px;\n            }\n        ",document.head.appendChild(t);}createToggleButton(){document.querySelector(".navigation-toggle-button")||(this.toggleButton=document.createElement("div"),this.toggleButton.className="navigation-toggle-button",this.toggleButton.innerHTML="◀",this.toggleButton.onclick=t=>{t.stopPropagation(),this.toggleNavigation();},this.toggleButton.onmouseenter=()=>{window.matchMedia("(hover: hover) and (pointer: fine)").matches&&this.showNavigation();},document.body.appendChild(this.toggleButton));}createNavigationContainer(){this.navigationContainer=document.createElement("div"),this.navigationContainer.className="item-navigation",this.createContentContainer(),document.body.appendChild(this.navigationContainer),this.setupPCHoverBehavior();}setupPCHoverBehavior(){this.navigationContainer&&this.toggleButton&&window.matchMedia("(hover: hover) and (pointer: fine)").matches&&(this.navigationContainer.onmouseenter=()=>{this.hoverTimeout&&(clearTimeout(this.hoverTimeout),this.hoverTimeout=null);},this.navigationContainer.onmouseleave=()=>{this.hoverTimeout&&clearTimeout(this.hoverTimeout),this.hoverTimeout=window.setTimeout(()=>{const t=this.toggleButton.getBoundingClientRect(),n=window.lastMouseX||0,e=window.lastMouseY||0;(n<t.left||n>t.right||e<t.top||e>t.bottom)&&this.hideNavigation();},200);},document.addEventListener("mousemove",t=>{window.lastMouseX=t.clientX,window.lastMouseY=t.clientY;}));}createContentContainer(){const t=document.createElement("div");t.className="navigation-content";const n=document.createElement("div");n.className="navigation-header";const e=document.createElement("div");e.className="navigation-header-title",e.textContent=`商品导航 (${this.items.length})`,n.appendChild(e);const i=document.createElement("div");i.className="navigation-close-button",i.innerHTML="×",i.onclick=()=>{this.hideNavigation();},n.appendChild(i);const o=document.createElement("div");o.className="navigation-search",this.searchInput=document.createElement("input"),this.searchInput.type="text",this.searchInput.className="navigation-search-input",this.searchInput.placeholder="搜索商品...",this.searchInput.oninput=()=>this.filterItems(),o.appendChild(this.searchInput);const s=document.createElement("div");if(s.className="navigation-items-container",!document.querySelector("#navigation-scrollbar-style")){const t=document.createElement("style");t.id="navigation-scrollbar-style",t.textContent="\n                .navigation-items-container::-webkit-scrollbar {\n                    width: 6px;\n                }\n                .navigation-items-container::-webkit-scrollbar-track {\n                    background: #f5f5f5;\n                    border-radius: 3px;\n                }\n                .navigation-items-container::-webkit-scrollbar-thumb {\n                    background: #ccc;\n                    border-radius: 3px;\n                }\n                .navigation-items-container::-webkit-scrollbar-thumb:hover {\n                    background: #999;\n                }\n            ",document.head.appendChild(t);}t.appendChild(n),t.appendChild(o),t.appendChild(s),this.navigationContainer.appendChild(t);}toggleNavigation(){this.navigationContainer&&(this.isExpanded=!this.isExpanded,this.isExpanded?this.showNavigation():this.hideNavigation());}showNavigation(){this.navigationContainer&&(this.navigationContainer.classList.add("expanded"),this.isExpanded=true,this.toggleButton&&(this.toggleButton.innerHTML="▶"));}hideNavigation(){this.navigationContainer&&(this.navigationContainer.classList.remove("expanded"),this.isExpanded=false,this.toggleButton&&(this.toggleButton.innerHTML="◀"));}createNavigationItems(){var t;if(!this.navigationContainer)return;const n=this.navigationContainer.querySelector(".navigation-items-container");if(!n)return;n.innerHTML="";const e=this.filteredItems.length>0?this.filteredItems:this.items;if(0===e.length){const e=document.createElement("div");return e.className="navigation-empty-state",e.textContent=(null==(t=this.searchInput)?void 0:t.value)?"未找到匹配的商品":"暂无商品",void n.appendChild(e)}e.forEach((t,e)=>{const{data:i,element:o,variations:s}=t,r=s.length,a=s.reduce((t,n)=>t+n.data.salesCount,0),l=i.favoritesCount,c=document.createElement("div");c.className="navigation-item",c.setAttribute("data-item-id",i.id);const d=document.createElement("div");if(d.className="navigation-thumbnail",i.thumbnail){const t=document.createElement("img");t.src=i.thumbnail,t.onerror=()=>{d.innerHTML='<div style="color: #999; font-size: 10px;">无图</div>';},d.appendChild(t);}else d.innerHTML='<div style="color: #999; font-size: 10px;">无图</div>';const h=document.createElement("div");h.className="navigation-item-info";const u=document.createElement("div");u.className="navigation-item-name-row";const p=document.createElement("span");p.className="navigation-item-name",p.textContent=i.name;const m=document.createElement("span");m.className="navigation-item-variant-count",m.textContent=r+"变体",u.appendChild(p),u.appendChild(m);const g=document.createElement("div");g.className="navigation-item-stats-row";const v=document.createElement("div");v.className="navigation-item-stats-left";const f=document.createElement("span");f.className="navigation-item-sales "+(a>0?"has-sales":"no-sales"),f.textContent="销量: "+a;const w=document.createElement("span");w.className="navigation-item-favorites "+(l>0?"has-favorites":"no-favorites"),w.innerHTML='<span style="color: inherit;">❤️</span> '+l,v.appendChild(f),v.appendChild(w);const x=document.createElement("span");x.className="navigation-item-index",x.textContent="#"+(e+1),g.appendChild(v),g.appendChild(x),h.appendChild(g),h.appendChild(u),c.appendChild(d),c.appendChild(h),c.onclick=()=>this.scrollToItem(o,c),n.appendChild(c);});}filterItems(){if(!this.searchInput)return;const t=this.searchInput.value.toLowerCase().trim();this.filteredItems=""===t?[]:this.items.filter(n=>{const{data:e}=n;return e.name.toLowerCase().includes(t)||e.id.includes(t)}),this.createNavigationItems();}scrollToItem(t,n){try{this.scrollTimeout&&clearTimeout(this.scrollTimeout),this.setActiveItem(n),this.isScrolling=!0,window.matchMedia("(max-width: 768px)").matches&&!this.isExpanded&&this.showNavigation(),t.scrollIntoView({behavior:"smooth",block:"center"}),this.scrollTimeout=window.setTimeout(()=>{this.highlightItem(t),this.setActiveItem(n),this.isScrolling=!1,this.scrollTimeout=null;},800);}catch(e){Dt();}}setActiveItem(t){var n;null==(n=this.navigationContainer)||n.querySelectorAll(".navigation-item").forEach(t=>{t.classList.remove("active");}),t.classList.add("active");}highlightItem(t){t.style.outline="2px solid #2196f3",t.style.outlineOffset="2px",t.style.transition="outline 0.3s ease",setTimeout(()=>{t.style.outline="",t.style.outlineOffset="";},3e3);}setupScrollListener(){let t=false;const n=()=>{if(!this.navigationContainer||this.isScrolling)return;const n=window.innerHeight;let e=null,i=1/0;if(Array.from(document.querySelectorAll(".item-wrapper")).forEach(t=>{const o=t.getBoundingClientRect();if(o.top<n&&o.bottom>0){const s=o.top+o.height/2,r=Math.abs(s-n/2);i>r&&(i=r,e=t);}}),e){const t=e.getAttribute("data-id");if(t){const n=this.navigationContainer.querySelector(`[data-item-id="${t}"]`);n instanceof HTMLElement&&this.setActiveItem(n);}}t=false;},e=()=>{t||(requestAnimationFrame(n),t=true);};window.addEventListener("scroll",e),this.scrollListener=e;}}class qt extends Lt{constructor(t){super(t);}initialize(t){t.getItems().forEach(t=>{this.addToItem(t);});}addToItem(t){try{const{element:n,variationsUl:e,variations:i}=t;if(!e||!i.length)return;this.addNumbersToVariations(i),this.setupVariationObserver(n,e,i);}catch(n){Dt();}}addNumbersToVariations(t){t.forEach((t,n)=>{const e=t.element.querySelector(".dashboard-items-variation-label");if(!e)return;let i=t.element.querySelector(".variation-number");i||(i=document.createElement("span"),i.className="variation-number",i.style.cssText="margin-right: 8px; color: #666;",e.insertBefore(i,e.firstChild)),i.textContent="#"+(n+1);});}setupVariationObserver(t,n,e){const i=new MutationObserver(Vt.throttle((t,n)=>{e.some((t,n)=>{const e=t.element.querySelector(".variation-number");return !e||e.textContent!=="#"+(n+1)})&&requestAnimationFrame(()=>this.addNumbersToVariations(e));},100));i.observe(n,{childList:true,subtree:false}),t.variationObserver=i;}}class Gt extends A{constructor(t){super(t),n(this,"modules",[]);}shouldExecute(){return "/items"===this.path||"/items/"===this.path}createAPI(){return new Ht}async initialize(){this.api&&this.modules.push(new Rt(this.api),new $t(this.api),new Jt(this.api),new qt(this.api));}}class Ut extends S{constructor(){super();}shouldActivate(){return  true}load(){}extractCookieInfo(t){var n,e;const i=t.split("\n").find(t=>t.toLowerCase().startsWith("set-cookie:")&&t.includes("_plaza_session_nktz7u="));if(!i)return null;const o=i.split(";")[0].split("=").slice(1).join("=").trim(),s=null==(e=null==(n=i.match(/expires=([^;]+)/i))?void 0:n[1])?void 0:e.trim();return {value:o,expires:s?new Date(s).toISOString():null}}async getSession(){return new Promise(t=>{mt({method:"GET",url:"https://manage.booth.pm/orders",headers:{Accept:"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8","Accept-Language":"ja,en-US;q=0.9,en;q=0.8"},onload:n=>{const e=this.extractCookieInfo(n.responseHeaders);if(e){const n={L:e.value,updated_at:(new Date).toISOString(),expires_at:e.expires};t({success:true,data:n});}else t({success:false,error:"未找到有效的 Session"});},onerror:n=>{t({success:false,error:"请求出错: "+(n.error||"网络错误")});}});})}async getSessionJSON(){const t=await this.getSession();return t.success&&t.data?JSON.stringify(t.data,null,2):null}}class Yt extends A{constructor(t){super(t);}shouldExecute(){return  true}createAPI(){return new Ut}async initialize(){ht("获取Booth Session",()=>this.getSessionAndCopy());}getNotificationText(t){return t?"Session已复制\n过期时间: "+new Date(t).toLocaleString():"Session已复制到剪贴板"}async getSessionAndCopy(){const t=this.getAPI();if(!t)return;const n=await t.getSession();if(n.success&&n.data){const t=JSON.stringify(n.data,null,2);ut(t,"Booth Session"),dt({text:this.getNotificationText(n.data.expires_at),title:"获取成功",timeout:3e3});}else dt({text:n.error||"未找到有效的 Session",title:"获取失败",timeout:3e3});}}(new class{constructor(){n(this,"context",{observers:new Map,cachedElements:new Map}),n(this,"features",[new Pt(this.context),new Gt(this.context),new Yt(this.context)]);}async init(){try{for(const n of this.features)try{n.shouldExecute()&&await n.execute();}catch(t){Dt();}}catch(t){Dt(0,()=>{});}}}).init();
+      var __defProp = Object.defineProperty;
+      var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+      var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+      class Simulate {
+        /**
+         * 模拟用户输入文本
+         * @param element 目标输入元素
+         * @param text 要输入的文本
+         */
+        static input(element, text) {
+          var _a, _b;
+          let nativeInputValueSetter;
+          if (element instanceof HTMLInputElement) {
+            nativeInputValueSetter = (_a = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")) == null ? void 0 : _a.set;
+          } else if (element instanceof HTMLTextAreaElement) {
+            nativeInputValueSetter = (_b = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")) == null ? void 0 : _b.set;
+          }
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(element, text);
+          } else {
+            element.value = text;
+          }
+          const ev2 = new Event("input", { bubbles: true });
+          element.dispatchEvent(ev2);
+        }
+        /**
+         * 模拟键盘按下事件
+         * @param element 目标元素
+         * @param keyCode 键码
+         */
+        static keyDown(element, keyCode) {
+          const keyboardEvent = new KeyboardEvent("keydown", {
+            bubbles: true,
+            cancelable: true,
+            key: "Enter",
+            code: "Enter",
+            keyCode,
+            which: keyCode,
+            shiftKey: false,
+            ctrlKey: false,
+            metaKey: false
+          });
+          element.dispatchEvent(keyboardEvent);
+        }
+        /**
+         * 模拟按下回车键
+         * @param element 目标元素
+         */
+        static pressEnter(element) {
+          this.keyDown(element, 13);
+        }
+        /**
+         * 模拟鼠标点击事件
+         * @param element 目标元素
+         */
+        static click(element) {
+          const mouseEvent = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true
+          });
+          element.dispatchEvent(mouseEvent);
+        }
+      }
+      class BaseAPI {
+        constructor() {
+          __publicField(this, "_isReady", false);
+          __publicField(this, "_readyCallbacks", []);
+          if (this.shouldActivate()) {
+            this.initialize();
+          }
+        }
+        /**
+         * 异步初始化
+         */
+        async initialize() {
+          try {
+            await this.waitForDOMReady();
+            await this.load();
+            this._isReady = true;
+            this.triggerReadyCallbacks();
+          } catch (error) {
+            console.error(`${this.constructor.name} 初始化失败:`, error);
+          }
+        }
+        /**
+         * 等待页面完全加载（包括所有资源和脚本）
+         */
+        waitForDOMReady() {
+          if (document.readyState === "complete") {
+            return Promise.resolve();
+          }
+          return new Promise(
+            (resolve) => window.addEventListener("load", () => resolve(), { once: true })
+          );
+        }
+        /**
+         * 触发 ready 回调
+         */
+        triggerReadyCallbacks() {
+          this._readyCallbacks.forEach((callback) => {
+            try {
+              callback(this);
+            } catch (error) {
+              console.error("Ready callback error:", error);
+            }
+          });
+          this._readyCallbacks = [];
+        }
+        /**
+         * 监听就绪事件
+         * 如果已经就绪，立即调用回调
+         * 否则等待就绪后调用
+         */
+        onReady(callback) {
+          if (this._isReady) {
+            callback(this);
+          } else {
+            this._readyCallbacks.push(callback);
+          }
+        }
+        /**
+         * 检查是否就绪
+         */
+        ready() {
+          return this._isReady;
+        }
+        /**
+         * 检查是否已激活（是否在正确的页面上）
+         */
+        isActivated() {
+          return this.shouldActivate();
+        }
+      }
+      class ItemEditAPI extends BaseAPI {
+        constructor() {
+          super();
+          __publicField(this, "_data", {
+            nameInput: null,
+            descriptionTextarea: null,
+            tags: [],
+            tagElements: null
+          });
+          __publicField(this, "_newSectionCallback");
+          __publicField(this, "_newVariationCallback");
+          __publicField(this, "_sectionRemovedCallback");
+          __publicField(this, "_variationRemovedCallback");
+          // 临时一次性回调（用于 addSection/removeSection 等待方法）
+          __publicField(this, "_tempSectionAddedCallback");
+          __publicField(this, "_tempVariationAddedCallback");
+          __publicField(this, "_tempSectionRemovedCallback");
+          __publicField(this, "_tempVariationRemovedCallback");
+        }
+        /**
+         * 实时获取 sections（不缓存）
+         */
+        get sections() {
+          return this.parseSections();
+        }
+        /**
+         * 实时获取 variations（不缓存）
+         */
+        get variations() {
+          return this.parseVariations();
+        }
+        /**
+         * 判断是否应该在当前页面激活
+         */
+        shouldActivate() {
+          const path = window.location.pathname;
+          return /^\/items\/\d+\/edit(_pre)?$/.test(path);
+        }
+        /**
+         * 等待名称输入框出现并填充数据
+         */
+        waitForElements(timeout = 1e4) {
+          return new Promise((resolve) => {
+            const checkNameInput = () => {
+              const nameInput = document.querySelector(
+                "#name input"
+              );
+              return nameInput && nameInput.value.trim().length > 0;
+            };
+            if (checkNameInput()) {
+              resolve();
+              return;
+            }
+            const timer = setTimeout(() => {
+              observer.disconnect();
+              resolve();
+            }, timeout);
+            const observer = new MutationObserver(() => {
+              if (checkNameInput()) {
+                clearTimeout(timer);
+                observer.disconnect();
+                resolve();
+              }
+            });
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true
+            });
+          });
+        }
+        /**
+         * 加载数据
+         * 等待关键元素出现后再加载
+         */
+        async load() {
+          await this.waitForElements();
+          this.loadName();
+          this.loadDescription();
+          this.loadTagElements();
+          this.setupListObserver();
+        }
+        /**
+         * 加载商品名称
+         */
+        loadName() {
+          const input = document.querySelector("#name input");
+          this._data.nameInput = input || null;
+        }
+        /**
+         * 加载商品描述
+         */
+        loadDescription() {
+          const textarea = document.querySelector(
+            "#description textarea"
+          );
+          this._data.descriptionTextarea = textarea || null;
+        }
+        /**
+         * 查找所有包含变体项的 ul 容器
+         */
+        findAllListContainers() {
+          const ulSet = /* @__PURE__ */ new Set();
+          document.querySelectorAll("section.bg-white.desktop\\:px-24.desktop\\:pt-24.desktop\\:rounded-t-4 ul").forEach((ul) => ulSet.add(ul));
+          document.querySelectorAll("ul.grid.gap-16").forEach((ul) => ulSet.add(ul));
+          return Array.from(ulSet).filter(
+            (container) => container.querySelector("li .variation-box-head")
+          );
+        }
+        /**
+         * 从容器中获取所有 li 元素
+         */
+        getListItems(container) {
+          return Array.from(container.children).filter(
+            (child) => child.tagName.toLowerCase() === "li"
+          );
+        }
+        /**
+         * 实时解析 Sections（从 DOM）
+         */
+        parseSections() {
+          return this.findAllListContainers().filter((container) => this.isSectionList(container)).flatMap(
+            (container) => this.getListItems(container).flatMap((item) => {
+              const headlineInput = item.querySelector("input.charcoal-text-field-input");
+              const bodyTextarea = item.querySelector("textarea.charcoal-text-area-textarea");
+              if (!headlineInput || !bodyTextarea) return [];
+              return [{
+                element: item,
+                container,
+                headlineInput,
+                bodyTextarea,
+                deleteButton: this.findDeleteButton(item)
+              }];
+            })
+          );
+        }
+        /**
+         * 实时解析 Variations（从 DOM）
+         */
+        parseVariations() {
+          return this.findAllListContainers().filter((container) => !this.isSectionList(container)).flatMap(
+            (container) => this.getListItems(container).flatMap((item) => {
+              const nameContainer = item.querySelector('div[id^="variationName-"]');
+              const priceContainer = item.querySelector('div[id^="variationDigitalPrice-"]');
+              const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector("input.charcoal-text-field-input");
+              const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector("input.charcoal-text-field-input");
+              if (!nameInput || !priceInput) return [];
+              return [{
+                element: item,
+                container,
+                nameInput,
+                priceInput,
+                deleteButton: this.findDeleteButton(item)
+              }];
+            })
+          );
+        }
+        /**
+         * 判断是否为 Section 列表
+         */
+        isSectionList(ul) {
+          const section = ul.closest("section");
+          if (!section) return false;
+          return section.classList.contains("bg-white") && section.classList.contains("desktop:px-24") && section.classList.contains("desktop:pt-24") && section.classList.contains("desktop:rounded-t-4");
+        }
+        /**
+         * 加载标签元素
+         */
+        loadTagElements() {
+          const container = document.querySelector("#item_tag");
+          const input = document.querySelector(
+            ".js-item-tags-array"
+          );
+          const inputContainer = document.querySelector(
+            "#item_tag .item-search-input__container"
+          );
+          if (container && input && inputContainer) {
+            this._data.tagElements = {
+              container,
+              input,
+              inputContainer
+            };
+          }
+        }
+        /**
+         * 解析并添加 Section 元素
+         */
+        addSectionElement(item, container) {
+          var _a;
+          const headlineInput = item.querySelector("input.charcoal-text-field-input");
+          const bodyTextarea = item.querySelector("textarea.charcoal-text-area-textarea");
+          if (!headlineInput || !bodyTextarea) return;
+          const sectionElement = {
+            element: item,
+            container,
+            headlineInput,
+            bodyTextarea,
+            deleteButton: this.findDeleteButton(item)
+          };
+          (_a = this._newSectionCallback) == null ? void 0 : _a.call(this, sectionElement);
+          if (this._tempSectionAddedCallback) {
+            this._tempSectionAddedCallback();
+            this._tempSectionAddedCallback = void 0;
+          }
+        }
+        /**
+         * 解析并添加 Variation 元素
+         */
+        addVariationElement(item, container) {
+          var _a;
+          const nameContainer = item.querySelector('div[id^="variationName-"]');
+          const priceContainer = item.querySelector('div[id^="variationDigitalPrice-"]');
+          const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector("input.charcoal-text-field-input");
+          const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector("input.charcoal-text-field-input");
+          if (!nameInput || !priceInput) return;
+          const variationElement = {
+            element: item,
+            container,
+            nameInput,
+            priceInput,
+            deleteButton: this.findDeleteButton(item)
+          };
+          (_a = this._newVariationCallback) == null ? void 0 : _a.call(this, variationElement);
+          if (this._tempVariationAddedCallback) {
+            this._tempVariationAddedCallback();
+            this._tempVariationAddedCallback = void 0;
+          }
+        }
+        /**
+         * 处理单个列表项的添加
+         */
+        handleItemAdded(item, container) {
+          const isSection = this.isSectionList(container);
+          if (isSection) {
+            this.addSectionElement(item, container);
+          } else {
+            this.addVariationElement(item, container);
+          }
+        }
+        /**
+         * 检查元素是否是我们关注的列表容器
+         */
+        isTargetListContainer(element) {
+          return element.tagName === "UL" && element.classList.contains("grid") && element.classList.contains("gap-16");
+        }
+        /**
+         * 设置列表观察器，监听新增和删除的列表项
+         */
+        setupListObserver() {
+          const observer = new MutationObserver((mutations) => {
+            var _a, _b;
+            for (const mutation of mutations) {
+              for (const node of Array.from(mutation.addedNodes)) {
+                if (!(node instanceof HTMLElement)) continue;
+                if (this.isTargetListContainer(node) && node.querySelector("li .variation-box-head")) {
+                  const items = Array.from(node.children).filter(
+                    (child) => child.tagName.toLowerCase() === "li"
+                  );
+                  items.forEach((item) => this.handleItemAdded(item, node));
+                } else if (node.tagName.toLowerCase() === "li") {
+                  const container = node.parentElement;
+                  if (container && this.isTargetListContainer(container) && node.querySelector(".variation-box-head")) {
+                    this.handleItemAdded(node, container);
+                  }
+                }
+              }
+              for (const node of Array.from(mutation.removedNodes)) {
+                if (!(node instanceof HTMLElement)) continue;
+                if (node.tagName.toLowerCase() !== "li") continue;
+                const container = mutation.target;
+                const isSection = this.isSectionList(container);
+                if (isSection) {
+                  (_a = this._sectionRemovedCallback) == null ? void 0 : _a.call(this, node);
+                  if (this._tempSectionRemovedCallback) {
+                    this._tempSectionRemovedCallback();
+                    this._tempSectionRemovedCallback = void 0;
+                  }
+                } else {
+                  (_b = this._variationRemovedCallback) == null ? void 0 : _b.call(this, node);
+                  if (this._tempVariationRemovedCallback) {
+                    this._tempVariationRemovedCallback();
+                    this._tempVariationRemovedCallback = void 0;
+                  }
+                }
+              }
+            }
+          });
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        }
+        /**
+         * 获取完整的商品编辑数据
+         */
+        get data() {
+          this._data.tags = this.getTags();
+          return {
+            ...this._data,
+            sections: this.sections,
+            variations: this.variations
+          };
+        }
+        /**
+         * 获取标签元素
+         */
+        get tagElements() {
+          return this._data.tagElements;
+        }
+        /**
+         * 监听新增的 Section 元素
+         */
+        onSectionAdded(callback) {
+          this._newSectionCallback = callback;
+        }
+        /**
+         * 监听新增的 Variation 元素
+         */
+        onVariationAdded(callback) {
+          this._newVariationCallback = callback;
+        }
+        /**
+         * 获取当前所有标签数据
+         */
+        getTags() {
+          const tags = [];
+          const tagElements = document.querySelectorAll(
+            "#item_tag .bg-secondary500 .font-bold"
+          );
+          tagElements.forEach((element) => {
+            var _a;
+            const text = (_a = element.textContent) == null ? void 0 : _a.trim();
+            if (text) {
+              tags.push({
+                text,
+                element
+              });
+            }
+          });
+          return tags;
+        }
+        /**
+         * 获取标签文本列表
+         */
+        getTagTexts() {
+          return this.getTags().map((tag) => tag.text);
+        }
+        /**
+         * 检查标签是否存在
+         */
+        hasTag(tagText) {
+          return this.getTagTexts().includes(tagText);
+        }
+        /**
+         * 获取标签删除按钮
+         */
+        getTagDeleteButtons() {
+          return Array.from(
+            document.querySelectorAll(
+              '#item_tag .bg-secondary500 a.flex pixiv-icon[name="32/BoothClose"]'
+            )
+          ).map((icon) => icon.closest("a")).filter(Boolean);
+        }
+        /**
+         * 获取/设置商品名
+         */
+        get name() {
+          var _a;
+          return ((_a = this._data.nameInput) == null ? void 0 : _a.value) || "";
+        }
+        set name(value) {
+          if (!this._data.nameInput) {
+            console.error("找不到商品名输入框");
+            return;
+          }
+          Simulate.input(this._data.nameInput, value);
+        }
+        /**
+         * 获取/设置商品描述
+         */
+        get description() {
+          var _a;
+          return ((_a = this._data.descriptionTextarea) == null ? void 0 : _a.value) || "";
+        }
+        set description(value) {
+          if (!this._data.descriptionTextarea) {
+            console.error("找不到商品描述文本域");
+            return;
+          }
+          Simulate.input(this._data.descriptionTextarea, value);
+        }
+        /**
+         * 设置商品名（别名）
+         */
+        setName(value) {
+          this.name = value;
+        }
+        /**
+         * 设置商品描述（别名）
+         */
+        setDescription(value) {
+          this.description = value;
+        }
+        /**
+         * 更新指定 Section
+         */
+        updateSection(index, data) {
+          const section = this.sections[index];
+          if (!section) return;
+          if (data.headline !== void 0 && section.headlineInput) {
+            Simulate.input(section.headlineInput, data.headline);
+          }
+          if (data.body !== void 0 && section.bodyTextarea) {
+            Simulate.input(section.bodyTextarea, data.body);
+          }
+        }
+        /**
+         * 更新指定 Variation
+         */
+        updateVariation(index, data) {
+          const variation = this.variations[index];
+          if (!variation) return;
+          if (data.name !== void 0 && variation.nameInput) {
+            Simulate.input(variation.nameInput, data.name);
+          }
+          if (data.price !== void 0 && variation.priceInput) {
+            Simulate.input(variation.priceInput, data.price);
+          }
+        }
+        /**
+         * 批量添加 Tags
+         */
+        async addTags(tags) {
+          if (!this._data.tagElements) return;
+          const { input } = this._data.tagElements;
+          for (const tag of tags) {
+            if (this.hasTag(tag)) continue;
+            Simulate.input(input, tag);
+            const enterEvent = new KeyboardEvent("keydown", {
+              key: "Enter",
+              code: "Enter",
+              keyCode: 13,
+              bubbles: true,
+              cancelable: true
+            });
+            input.dispatchEvent(enterEvent);
+            await new Promise((resolve) => setTimeout(resolve, 10));
+          }
+        }
+        /**
+         * 批量移除 Tags
+         */
+        async removeTags(tags) {
+          if (!this._data.tagElements) return;
+          const tagsToRemove = new Set(tags);
+          const currentTags = this.getTagTexts();
+          const indicesToRemove = [];
+          currentTags.forEach((tag, index) => {
+            if (tagsToRemove.has(tag)) {
+              indicesToRemove.push(index);
+            }
+          });
+          if (indicesToRemove.length === 0) return;
+          const deleteButtons = this.getTagDeleteButtons();
+          for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+            const index = indicesToRemove[i];
+            if (deleteButtons[index]) {
+              deleteButtons[index].click();
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+          }
+        }
+        /**
+         * 监听商品名变化
+         */
+        onNameChange(callback) {
+          if (this._data.nameInput) {
+            this._data.nameInput.addEventListener("input", (e) => {
+              callback(e.target.value);
+            });
+          }
+        }
+        /**
+         * 监听描述变化
+         */
+        onDescriptionChange(callback) {
+          if (this._data.descriptionTextarea) {
+            this._data.descriptionTextarea.addEventListener("input", (e) => {
+              callback(e.target.value);
+            });
+          }
+        }
+        /**
+         * 为元素添加输入监听器
+         */
+        addInputListeners(elements, callback) {
+          elements.forEach((element) => {
+            element == null ? void 0 : element.addEventListener("input", () => callback());
+          });
+        }
+        /**
+         * 监听 Section 列表变化
+         */
+        onSectionsChange(callback) {
+          this.sections.forEach((section) => {
+            this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
+          });
+          const originalCallback = this._newSectionCallback;
+          this._newSectionCallback = (section) => {
+            this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
+            originalCallback == null ? void 0 : originalCallback(section);
+            callback();
+          };
+        }
+        /**
+         * 监听 Variation 列表变化
+         */
+        onVariationsChange(callback) {
+          this.variations.forEach((variation) => {
+            this.addInputListeners([variation.nameInput, variation.priceInput], callback);
+          });
+          const originalCallback = this._newVariationCallback;
+          this._newVariationCallback = (variation) => {
+            this.addInputListeners([variation.nameInput, variation.priceInput], callback);
+            originalCallback == null ? void 0 : originalCallback(variation);
+            callback();
+          };
+        }
+        /**
+         * 查找 Section 元素内的删除按钮
+         * @param sectionElement Section 的 li 元素
+         * @returns 删除按钮或 null
+         */
+        findDeleteButton(itemElement) {
+          const buttons = itemElement.querySelectorAll("button");
+          return buttons.length >= 2 ? buttons[1] : null;
+        }
+        /**
+         * 查找"添加段落"按钮
+         * 该按钮位于 Section 列表底部
+         */
+        findAddSectionButton() {
+          var _a;
+          const buttons = document.querySelectorAll("div.cursor-pointer");
+          for (const button of buttons) {
+            const hasIcon = button.querySelector(".icon-plus");
+            const textContent = (_a = button.textContent) == null ? void 0 : _a.trim();
+            if (hasIcon && (textContent == null ? void 0 : textContent.includes("段落"))) {
+              return button;
+            }
+          }
+          return null;
+        }
+        /**
+         * 查找"添加 Variation"按钮
+         * 该按钮位于 Variation 列表区域
+         */
+        findAddVariationButton() {
+          var _a;
+          const buttons = document.querySelectorAll(
+            "button.flex.flex-col.justify-between.items-center"
+          );
+          for (const button of buttons) {
+            const hasDownloadIcon = button.querySelector('pixiv-icon[name="16/Download"]');
+            const textContent = (_a = button.textContent) == null ? void 0 : _a.trim();
+            if (hasDownloadIcon && (textContent == null ? void 0 : textContent.includes("Digital"))) {
+              return button;
+            }
+          }
+          return null;
+        }
+        /**
+         * 点击"添加段落"按钮，自动创建新的 Section
+         * @returns 是否成功找到并点击按钮
+         */
+        clickAddSectionButton() {
+          const button = this.findAddSectionButton();
+          if (button) {
+            button.click();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 点击"添加 Variation"按钮，自动创建新的 Variation
+         * @returns 是否成功找到并点击按钮
+         */
+        clickAddVariationButton() {
+          const button = this.findAddVariationButton();
+          if (button) {
+            button.click();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 创建一个带超时的等待 Promise
+         */
+        createWaitPromise(setCallback, clearCallback, timeout) {
+          return new Promise((resolve) => {
+            const timer = setTimeout(() => {
+              clearCallback();
+              resolve(false);
+            }, timeout);
+            setCallback(() => {
+              clearTimeout(timer);
+              resolve(true);
+            });
+          });
+        }
+        /**
+         * 添加 Section 并等待完成
+         * @param timeout 超时时间（毫秒），默认 5000ms
+         * @returns Promise<boolean> 是否成功添加
+         */
+        async addSection(timeout = 5e3) {
+          if (!this.clickAddSectionButton()) {
+            return false;
+          }
+          return this.createWaitPromise(
+            (callback) => {
+              this._tempSectionAddedCallback = callback;
+            },
+            () => {
+              this._tempSectionAddedCallback = void 0;
+            },
+            timeout
+          );
+        }
+        /**
+         * 添加 Variation 并等待完成
+         * @param timeout 超时时间（毫秒），默认 5000ms
+         * @returns Promise<boolean> 是否成功添加
+         */
+        async addVariation(timeout = 5e3) {
+          if (!this.clickAddVariationButton()) {
+            return false;
+          }
+          return this.createWaitPromise(
+            (callback) => {
+              this._tempVariationAddedCallback = callback;
+            },
+            () => {
+              this._tempVariationAddedCallback = void 0;
+            },
+            timeout
+          );
+        }
+        /**
+         * 设置"添加段落"按钮的点击监听器
+         * 当用户手动点击按钮时触发回调
+         */
+        setupAddSectionButtonListener(callback) {
+          const checkAndAttach = () => {
+            const button = this.findAddSectionButton();
+            if (button && !button.dataset.listenerAttached) {
+              button.dataset.listenerAttached = "true";
+              button.addEventListener("click", () => {
+                callback();
+              });
+            }
+          };
+          checkAndAttach();
+          const observer = new MutationObserver(() => {
+            checkAndAttach();
+          });
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        }
+        /**
+         * 设置"添加 Variation"按钮的点击监听器
+         * 当用户手动点击按钮时触发回调
+         */
+        setupAddVariationButtonListener(callback) {
+          const checkAndAttach = () => {
+            const button = this.findAddVariationButton();
+            if (button && !button.dataset.listenerAttached) {
+              button.dataset.listenerAttached = "true";
+              button.addEventListener("click", () => {
+                callback();
+              });
+            }
+          };
+          checkAndAttach();
+          const observer = new MutationObserver(() => {
+            checkAndAttach();
+          });
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        }
+        /**
+         * 删除指定的 Section
+         * @param section Section 元素对象
+         * @returns 是否成功删除
+         */
+        deleteSectionByElement(section) {
+          if (!section.deleteButton) {
+            section.deleteButton = this.findDeleteButton(section.element);
+          }
+          if (section.deleteButton) {
+            section.deleteButton.click();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 删除指定索引的 Section
+         * @param index Section 在列表中的索引
+         * @returns 是否成功点击删除按钮
+         */
+        deleteSectionByIndex(index) {
+          const section = this.sections[index];
+          if (section) {
+            return this.deleteSectionByElement(section);
+          }
+          return false;
+        }
+        /**
+         * 删除 Section 并等待完成
+         * @param index Section 在列表中的索引
+         * @param timeout 超时时间（毫秒），默认 5000ms
+         * @returns Promise<boolean> 是否成功删除
+         */
+        async removeSection(index, timeout = 5e3) {
+          const section = this.sections[index];
+          if (!section) return false;
+          if (!section.deleteButton) {
+            section.deleteButton = this.findDeleteButton(section.element);
+          }
+          if (!section.deleteButton) return false;
+          section.deleteButton.click();
+          return this.createWaitPromise(
+            (callback) => {
+              this._tempSectionRemovedCallback = callback;
+            },
+            () => {
+              this._tempSectionRemovedCallback = void 0;
+            },
+            timeout
+          );
+        }
+        /**
+         * 删除所有 Sections
+         * @returns 成功删除的数量
+         */
+        deleteAllSections() {
+          let count = 0;
+          while (this.sections.length > 0) {
+            if (this.deleteSectionByIndex(this.sections.length - 1)) {
+              count++;
+            } else {
+              break;
+            }
+          }
+          return count;
+        }
+        /**
+         * 删除指定的 Variation
+         * @param variation Variation 元素对象
+         * @returns 是否成功删除
+         */
+        deleteVariationByElement(variation) {
+          if (!variation.deleteButton) {
+            variation.deleteButton = this.findDeleteButton(variation.element);
+          }
+          if (variation.deleteButton) {
+            variation.deleteButton.click();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 根据索引删除 Variation
+         * @param index Variation 在列表中的索引
+         * @returns 是否成功删除
+         */
+        deleteVariationByIndex(index) {
+          const variation = this.variations[index];
+          if (variation) {
+            return this.deleteVariationByElement(variation);
+          }
+          return false;
+        }
+        /**
+         * 删除 Variation 并等待完成
+         * @param index Variation 在列表中的索引
+         * @param timeout 超时时间（毫秒），默认 5000ms
+         * @returns Promise<boolean> 是否成功删除
+         */
+        async removeVariation(index, timeout = 5e3) {
+          const variation = this.variations[index];
+          if (!variation) return false;
+          if (!variation.deleteButton) {
+            variation.deleteButton = this.findDeleteButton(variation.element);
+          }
+          if (!variation.deleteButton) return false;
+          variation.deleteButton.click();
+          return this.createWaitPromise(
+            (callback) => {
+              this._tempVariationRemovedCallback = callback;
+            },
+            () => {
+              this._tempVariationRemovedCallback = void 0;
+            },
+            timeout
+          );
+        }
+        /**
+         * 删除所有 Variations
+         * @returns 成功删除的数量
+         */
+        deleteAllVariations() {
+          let count = 0;
+          while (this.variations.length > 0) {
+            if (this.deleteVariationByIndex(this.variations.length - 1)) {
+              count++;
+            } else {
+              break;
+            }
+          }
+          return count;
+        }
+        // ===== Variation 文件管理方法 =====
+        /**
+         * 从页面的文件管理面板获取所有文件列表
+         * @returns 文件元素数组
+         */
+        /**
+         * 获取 variation 的已关联文件
+         * @param variationIndex variation 索引
+         * @returns 文件 ID 数组
+         */
+        getVariationFiles(variationIndex) {
+          const variation = this.variations[variationIndex];
+          if (!variation) return [];
+          const fileLinks = variation.element.querySelectorAll('a[href*="/downloadables/"]');
+          const fileIds = [];
+          fileLinks.forEach((link) => {
+            const href = link.href;
+            const idMatch = href.match(/\/downloadables\/(\d+)/);
+            if (idMatch) {
+              fileIds.push(idMatch[1]);
+            }
+          });
+          return fileIds;
+        }
+        /**
+         * 获取所有可下载文件（实时从 DOM 获取）
+         */
+        get files() {
+          return this.getAllFiles().map((file) => ({
+            id: file.id,
+            name: file.name
+          }));
+        }
+        getAllFiles() {
+          var _a;
+          const titleElements = document.querySelectorAll(".font-booth-demi");
+          let filePanel = null;
+          for (const title of Array.from(titleElements)) {
+            if ((_a = title.textContent) == null ? void 0 : _a.includes("Add/Edit Files")) {
+              filePanel = title.closest(".bg-white");
+              break;
+            }
+          }
+          if (!filePanel) return [];
+          const fileList = filePanel.querySelector("ul.list-none");
+          if (!fileList) return [];
+          return this.parseFileListFromContainer(fileList);
+        }
+        /**
+         * 从容器中解析文件列表
+         * @param container 文件列表容器
+         * @returns 文件元素数组
+         */
+        parseFileListFromContainer(container) {
+          const fileElements = container.querySelectorAll("li");
+          const files = [];
+          fileElements.forEach((li) => {
+            var _a;
+            const checkbox = li.querySelector('input.charcoal-checkbox-input[type="checkbox"]');
+            const link = li.querySelector('a[href*="/downloadables/"]');
+            if (checkbox && link) {
+              const href = link.href;
+              const idMatch = href.match(/\/downloadables\/(\d+)/);
+              const id = idMatch ? idMatch[1] : "";
+              const name = ((_a = link.textContent) == null ? void 0 : _a.trim()) || "";
+              files.push({
+                id,
+                name,
+                checkbox,
+                checked: checkbox.checked
+              });
+            }
+          });
+          return files;
+        }
+        /**
+         * 查找 variation 的编辑按钮或 "Add/Edit Files" 元素
+         * @param index Variation 索引
+         * @returns 编辑按钮/div 元素或 null
+         */
+        findVariationEditButton(index) {
+          var _a;
+          const variation = this.variations[index];
+          if (!variation) return null;
+          const iconElement = variation.element.querySelector("i.icon-downloadables");
+          if (iconElement) {
+            const clickableParent = iconElement.closest("div.cursor-pointer");
+            if ((_a = clickableParent == null ? void 0 : clickableParent.textContent) == null ? void 0 : _a.includes("Add/Edit Files")) {
+              return clickableParent;
+            }
+          }
+          const filesSection = variation.element.querySelector("div:nth-child(3)");
+          if (filesSection) {
+            const buttons = Array.from(filesSection.querySelectorAll("button"));
+            const editButton = buttons.find((btn) => {
+              var _a2;
+              const text = ((_a2 = btn.textContent) == null ? void 0 : _a2.trim()) || "";
+              return text === "Edit" || text.includes("Edit") && !text.includes("Delete");
+            });
+            if (editButton) return editButton;
+          }
+          console.error(`[ItemEditAPI] 未找到 Variation ${index} 的编辑按钮`);
+          return null;
+        }
+        /**
+         * 打开 variation 编辑面板并返回面板信息
+         * @param index Variation 索引
+         * @param timeout 超时时间（毫秒）
+         * @returns Promise<VariationEditPanel | null>
+         */
+        async openVariationEditPanel(index, timeout = 5e3) {
+          const button = this.findVariationEditButton(index);
+          if (!button) return null;
+          Simulate.click(button);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          return new Promise((resolve) => {
+            let observer = null;
+            const timer = setTimeout(() => {
+              console.error(`[ItemEditAPI] Variation ${index} 打开面板超时`);
+              observer == null ? void 0 : observer.disconnect();
+              resolve(null);
+            }, timeout);
+            const checkPanel = () => {
+              const panel = this.findVariationEditPanel();
+              if (panel) {
+                clearTimeout(timer);
+                observer == null ? void 0 : observer.disconnect();
+                resolve(panel);
+                return true;
+              }
+              return false;
+            };
+            if (checkPanel()) return;
+            observer = new MutationObserver(checkPanel);
+            observer.observe(document.body, {
+              childList: true,
+              attributes: true,
+              attributeFilter: ["class", "style"],
+              subtree: true
+            });
+          });
+        }
+        /**
+         * 查找 variation 编辑面板
+         * @returns VariationEditPanel 或 null
+         */
+        findVariationEditPanel() {
+          const containers = document.querySelectorAll("body > div.fixed.top-0.left-0.right-0");
+          const container = Array.from(containers).find(
+            (c) => {
+              var _a;
+              return (_a = c.textContent) == null ? void 0 : _a.includes("Add/Edit Files");
+            }
+          );
+          if (!container) return null;
+          const hasHiddenClass = container.classList.contains("hidden");
+          const hasFileList = container.querySelector("ul.list-none") !== null;
+          if (hasHiddenClass && !hasFileList) return null;
+          const closeButton = Array.from(container.querySelectorAll("button")).find((btn) => btn.querySelector('pixiv-icon[name="32/BoothClose"]')) || null;
+          const files = this.parseFileList(container);
+          return { container, closeButton, files };
+        }
+        /**
+         * 解析文件列表
+         * @param container 面板容器
+         * @returns 文件元素数组
+         */
+        parseFileList(container) {
+          const fileElements = container.querySelectorAll("ul.list-none > li");
+          const files = [];
+          fileElements.forEach((li) => {
+            var _a;
+            const checkbox = li.querySelector('input.charcoal-checkbox-input[type="checkbox"]');
+            const link = li.querySelector('a[href*="/downloadables/"]');
+            if (checkbox && link) {
+              const href = link.href;
+              const idMatch = href.match(/\/downloadables\/(\d+)/);
+              const id = idMatch ? idMatch[1] : "";
+              const name = ((_a = link.textContent) == null ? void 0 : _a.trim()) || "";
+              files.push({
+                id,
+                name,
+                checkbox,
+                checked: checkbox.checked
+              });
+            }
+          });
+          return files;
+        }
+        /**
+         * 选择文件
+         * @param panel Variation 编辑面板
+         * @param fileIds 要选择的文件 ID 数组
+         * @param mode 选择模式：replace（替换）或 append（追加）
+         */
+        selectFiles(panel, fileIds, mode = "replace") {
+          panel.files.forEach((file) => {
+            const shouldCheck = fileIds.includes(file.id);
+            const needsUpdate = mode === "replace" ? file.checked !== shouldCheck : shouldCheck && !file.checked;
+            if (needsUpdate) {
+              file.checkbox.click();
+            }
+          });
+        }
+        /**
+         * 关闭 variation 编辑面板
+         * @param panel Variation 编辑面板
+         */
+        closeVariationEditPanel(panel) {
+          if (!panel.closeButton) {
+            console.error(`[ItemEditAPI] 未找到关闭按钮`);
+            return;
+          }
+          panel.closeButton.click();
+        }
+        /**
+         * 获取已选文件 ID 列表
+         * @param panel Variation 编辑面板
+         * @returns 已选文件的 ID 数组
+         */
+        getSelectedFileIds(panel) {
+          return panel.files.filter((f) => f.checked).map((f) => f.id);
+        }
+        /**
+         * 从 variation 卡片读取已选择的文件 ID 列表
+         * @param index Variation 索引
+         * @returns 文件 ID 数组
+         */
+        getVariationSelectedFileIds(index) {
+          const variation = this.variations[index];
+          if (!variation) return [];
+          const filesSection = variation.element.querySelector("div:nth-child(3)");
+          if (!filesSection) return [];
+          const fileList = filesSection.querySelector("div.grid.gap-12 > div > ul");
+          if (!fileList) return [];
+          const fileLinks = fileList.querySelectorAll('a[href*="/downloadables/"]');
+          const fileIds = [];
+          fileLinks.forEach((link) => {
+            const href = link.href;
+            const match = href.match(/\/downloadables\/(\d+)/);
+            if (match) {
+              fileIds.push(match[1]);
+            }
+          });
+          return fileIds;
+        }
+        /**
+         * 为 variation 设置文件（自动打开/关闭面板）
+         * @param variationIndex Variation 索引
+         * @param fileIds 要选择的文件 ID 数组
+         * @param mode 选择模式：replace（替换）或 append（追加）
+         * @returns Promise<{ success: boolean; updated: boolean }> success: 是否成功, updated: 是否实际更新了文件
+         */
+        async setVariationFiles(variationIndex, fileIds, mode = "replace") {
+          const currentSelectedIds = this.getVariationSelectedFileIds(variationIndex).sort();
+          const targetIds = [...new Set(fileIds)].sort();
+          const isIdentical = mode === "replace" && currentSelectedIds.length === targetIds.length && currentSelectedIds.every((id, index) => id === targetIds[index]);
+          if (isIdentical) {
+            return { success: true, updated: false };
+          }
+          const panel = await this.openVariationEditPanel(variationIndex);
+          if (!panel) return { success: false, updated: false };
+          this.selectFiles(panel, fileIds, mode);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          this.closeVariationEditPanel(panel);
+          return { success: true, updated: true };
+        }
+      }
+      class PageFeature {
+        constructor(context) {
+          __publicField(this, "context");
+          __publicField(this, "path");
+          __publicField(this, "api");
+          this.context = context;
+          this.path = window.location.pathname;
+        }
+        /**
+         * 执行页面功能
+         */
+        async execute() {
+          this.api = this.createAPI();
+          if (this.api) {
+            await new Promise((resolve) => {
+              this.api.onReady(async () => {
+                await this.initialize();
+                resolve();
+              });
+            });
+          } else {
+            await this.initialize();
+          }
+        }
+        /**
+         * 获取API实例
+         */
+        getAPI() {
+          return this.api;
+        }
+      }
+      const scriptRel = /* @__PURE__ */ function detectScriptRel() {
+        const relList = typeof document !== "undefined" && document.createElement("link").relList;
+        return relList && relList.supports && relList.supports("modulepreload") ? "modulepreload" : "preload";
+      }();
+      const assetsURL = function(dep) {
+        return "/" + dep;
+      };
+      const seen = {};
+      const __vitePreload = function preload(baseModule, deps, importerUrl) {
+        let promise = Promise.resolve();
+        if (deps && deps.length > 0) {
+          document.getElementsByTagName("link");
+          const cspNonceMeta = document.querySelector(
+            "meta[property=csp-nonce]"
+          );
+          const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
+          promise = Promise.allSettled(
+            deps.map((dep) => {
+              dep = assetsURL(dep);
+              if (dep in seen) return;
+              seen[dep] = true;
+              const isCss = dep.endsWith(".css");
+              const cssSelector = isCss ? '[rel="stylesheet"]' : "";
+              if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+                return;
+              }
+              const link = document.createElement("link");
+              link.rel = isCss ? "stylesheet" : scriptRel;
+              if (!isCss) {
+                link.as = "script";
+              }
+              link.crossOrigin = "";
+              link.href = dep;
+              if (cspNonce) {
+                link.setAttribute("nonce", cspNonce);
+              }
+              document.head.appendChild(link);
+              if (isCss) {
+                return new Promise((res, rej) => {
+                  link.addEventListener("load", res);
+                  link.addEventListener(
+                    "error",
+                    () => rej(new Error(`Unable to preload CSS for ${dep}`))
+                  );
+                });
+              }
+            })
+          );
+        }
+        function handlePreloadError(err) {
+          const e = new Event("vite:preloadError", {
+            cancelable: true
+          });
+          e.payload = err;
+          window.dispatchEvent(e);
+          if (!e.defaultPrevented) {
+            throw err;
+          }
+        }
+        return promise.then((res) => {
+          for (const item of res || []) {
+            if (item.status !== "rejected") continue;
+            handlePreloadError(item.reason);
+          }
+          return baseModule().catch(handlePreloadError);
+        });
+      };
+      const _hoisted_1$4 = {
+        key: 0,
+        class: "menu-separator"
+      };
+      const _hoisted_2$4 = ["onClick"];
+      const _hoisted_3$3 = ["innerHTML"];
+      const _hoisted_4$3 = { class: "menu-label" };
+      const _hoisted_5$2 = {
+        key: 2,
+        class: "menu-separator"
+      };
+      const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+        __name: "ContextMenu",
+        props: {
+          show: { type: Boolean },
+          x: {},
+          y: {},
+          items: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const menuRef = ref(null);
+          const adjustedPosition = ref({ x: 0, y: 0 });
+          const isRepositioning = ref(false);
+          const calculatePosition = async () => {
+            isRepositioning.value = true;
+            adjustedPosition.value = { x: props.x, y: props.y };
+            await nextTick();
+            await nextTick();
+            if (!menuRef.value) {
+              isRepositioning.value = false;
+              return;
+            }
+            const menu = menuRef.value;
+            const menuRect = menu.getBoundingClientRect();
+            const parent = document.querySelector(".booth-enhancer-sidebar");
+            let containerRect;
+            let containerWidth;
+            let containerHeight;
+            if (parent) {
+              containerRect = parent.getBoundingClientRect();
+              containerWidth = containerRect.width;
+              containerHeight = containerRect.height;
+            } else {
+              containerWidth = document.documentElement.clientWidth;
+              containerHeight = document.documentElement.clientHeight;
+              containerRect = new DOMRect(0, 0, containerWidth, containerHeight);
+            }
+            let finalX = props.x;
+            let finalY = props.y;
+            const padding = 8;
+            const rightBoundary = containerRect.left + containerWidth;
+            if (finalX + menuRect.width > rightBoundary - padding) {
+              finalX = Math.max(containerRect.left + padding, rightBoundary - menuRect.width - padding);
+            }
+            if (finalX < containerRect.left + padding) {
+              finalX = containerRect.left + padding;
+            }
+            const bottomBoundary = containerRect.top + containerHeight;
+            if (finalY + menuRect.height > bottomBoundary - padding) {
+              finalY = Math.max(containerRect.top + padding, bottomBoundary - menuRect.height - padding);
+            }
+            if (finalY < containerRect.top + padding) {
+              finalY = containerRect.top + padding;
+            }
+            adjustedPosition.value = { x: finalX, y: finalY };
+            await nextTick();
+            isRepositioning.value = false;
+          };
+          watch(() => [props.show, props.x, props.y], ([newShow]) => {
+            if (newShow) {
+              calculatePosition();
+            }
+          });
+          const handleItemClick = (item) => {
+            if (item.disabled) return;
+            item.action();
+            emit("close");
+          };
+          const handleGlobalClick = (e) => {
+            if (menuRef.value && !menuRef.value.contains(e.target)) {
+              emit("close");
+            }
+          };
+          watch(() => props.show, (isShow) => {
+            if (isShow) {
+              setTimeout(() => {
+                document.addEventListener("click", handleGlobalClick);
+              }, 0);
+            } else {
+              document.removeEventListener("click", handleGlobalClick);
+            }
+          });
+          onUnmounted(() => {
+            document.removeEventListener("click", handleGlobalClick);
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Teleport, { to: "body" }, [
+              createVNode(Transition, { name: "menu-fade" }, {
+                default: withCtx(() => [
+                  _ctx.show ? (openBlock(), createElementBlock("div", {
+                    key: 0,
+                    ref_key: "menuRef",
+                    ref: menuRef,
+                    class: normalizeClass(["context-menu", { "no-transition": isRepositioning.value }]),
+                    style: normalizeStyle({ left: adjustedPosition.value.x + "px", top: adjustedPosition.value.y + "px" })
+                  }, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.items, (item, index) => {
+                      return openBlock(), createElementBlock(Fragment, { key: index }, [
+                        item.label === "-" ? (openBlock(), createElementBlock("div", _hoisted_1$4)) : (openBlock(), createElementBlock("div", {
+                          key: 1,
+                          class: normalizeClass(["menu-item", {
+                            "menu-item-danger": item.danger,
+                            "menu-item-disabled": item.disabled
+                          }]),
+                          onClick: ($event) => handleItemClick(item)
+                        }, [
+                          item.icon ? (openBlock(), createElementBlock("span", {
+                            key: 0,
+                            class: "menu-icon",
+                            innerHTML: item.icon
+                          }, null, 8, _hoisted_3$3)) : createCommentVNode("", true),
+                          createElementVNode("span", _hoisted_4$3, toDisplayString(item.label), 1)
+                        ], 10, _hoisted_2$4)),
+                        item.separator ? (openBlock(), createElementBlock("div", _hoisted_5$2)) : createCommentVNode("", true)
+                      ], 64);
+                    }), 128))
+                  ], 6)) : createCommentVNode("", true)
+                ]),
+                _: 1
+              })
+            ]);
+          };
+        }
+      });
+      const _export_sfc = exports("_", (sfc, props) => {
+        const target = sfc.__vccOpts || sfc;
+        for (const [key, val] of props) {
+          target[key] = val;
+        }
+        return target;
+      });
+      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-4d60a255"]]));
+      const _hoisted_1$3 = ["title"];
+      const _hoisted_2$3 = ["innerHTML"];
+      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+        __name: "IconButton",
+        props: {
+          icon: {},
+          title: {},
+          variant: {}
+        },
+        emits: ["click"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const handleClick = (e) => {
+            emit("click", e);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("button", {
+              class: normalizeClass(["icon-btn", { [`variant-${_ctx.variant}`]: _ctx.variant }]),
+              title: _ctx.title,
+              onClick: handleClick
+            }, [
+              createElementVNode("span", { innerHTML: _ctx.icon }, null, 8, _hoisted_2$3)
+            ], 10, _hoisted_1$3);
+          };
+        }
+      });
+      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-996dd7d2"]]);
+      const withSize = exports("w", (svg, size, strokeWidth) => {
+        let result = svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
+        if (strokeWidth !== void 0) {
+          result = result.replace(/stroke-width="[\d.]+"/g, `stroke-width="${strokeWidth}"`);
+        }
+        return result;
+      });
+      const icons = exports("i", {
+        // 导航
+        chevronLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>`,
+        chevronRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>`,
+        chevronUp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>`,
+        chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>`,
+        // 操作
+        download: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>`,
+        upload: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="17 8 12 3 7 8"></polyline>
+    <line x1="12" y1="3" x2="12" y2="15"></line>
+  </svg>`,
+        send: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"></line>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+  </svg>`,
+        close: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>`,
+        plus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>`,
+        edit: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+  </svg>`,
+        trash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>`,
+        copy: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>`,
+        // 文件夹
+        folderEmpty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folderFilled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folder: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>`,
+        folderOpen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"></path>
+  </svg>`,
+        file: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+    <polyline points="13 2 13 9 20 9"></polyline>
+  </svg>`,
+        files: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 7H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12z" fill="currentColor"></path>
+    <polyline points="12 7 12 12 16 12" fill="currentColor"></polyline>
+    <path d="M17 2H10a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z" fill="white"></path>
+    <polyline points="17 2 17 7 21 7" fill="white"></polyline>
+  </svg>`,
+        // 搜索
+        search: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>`,
+        // 标签
+        tag: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+  </svg>`,
+        // 设置
+        settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+  </svg>`,
+        // 状态
+        eye: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>`,
+        check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>`,
+        alertCircle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="8" x2="12" y2="12"></line>
+    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+  </svg>`,
+        info: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>`,
+        // 魔法/自动化
+        magic: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>
+    <path d="M7.5 4.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5L5.5 6.5l1.5-.5.5-1.5z"></path>
+    <path d="M18.5 14.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5.5-1.5z"></path>
+  </svg>`,
+        // 其他
+        moreVertical: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1"></circle>
+    <circle cx="12" cy="5" r="1"></circle>
+    <circle cx="12" cy="19" r="1"></circle>
+  </svg>`,
+        moreHorizontal: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1"></circle>
+    <circle cx="19" cy="12" r="1"></circle>
+    <circle cx="5" cy="12" r="1"></circle>
+  </svg>`
+      });
+      const _hoisted_1$2 = { class: "modal-header" };
+      const _hoisted_2$2 = { class: "modal-title" };
+      const _hoisted_3$2 = { class: "modal-header-actions" };
+      const _hoisted_4$2 = ["innerHTML"];
+      const _hoisted_5$1 = { class: "modal-body" };
+      const _hoisted_6$1 = {
+        key: 0,
+        class: "modal-footer"
+      };
+      const _hoisted_7 = ["onClick"];
+      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+        __name: "Modal",
+        props: {
+          show: { type: Boolean },
+          title: {},
+          width: {},
+          buttons: {},
+          closeOnClickOutside: { type: Boolean, default: true },
+          closeOnEsc: { type: Boolean, default: true },
+          teleportTo: { default: "body" }
+        },
+        emits: ["close", "action"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const handleClose = () => {
+            emit("close");
+          };
+          const handleOverlayClick = (e) => {
+            if (props.closeOnClickOutside && e.target === e.currentTarget) {
+              handleClose();
+            }
+          };
+          const handleButtonClick = (action) => {
+            emit("action", action);
+          };
+          const handleKeyDown = (e) => {
+            if (props.closeOnEsc && e.key === "Escape" && props.show) {
+              handleClose();
+            }
+          };
+          onMounted(() => {
+            document.addEventListener("keydown", handleKeyDown);
+          });
+          onUnmounted(() => {
+            document.removeEventListener("keydown", handleKeyDown);
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Teleport, {
+              to: _ctx.teleportTo,
+              disabled: _ctx.teleportTo !== "body"
+            }, [
+              createVNode(Transition, { name: "modal" }, {
+                default: withCtx(() => [
+                  _ctx.show ? (openBlock(), createElementBlock("div", {
+                    key: 0,
+                    class: normalizeClass(["modal-overlay", { "modal-in-sidebar": _ctx.teleportTo !== "body" }]),
+                    onClick: handleOverlayClick
+                  }, [
+                    createElementVNode("div", {
+                      class: "modal-container",
+                      style: normalizeStyle({ width: _ctx.width || "400px" })
+                    }, [
+                      createElementVNode("div", _hoisted_1$2, [
+                        createElementVNode("div", _hoisted_2$2, toDisplayString(_ctx.title || "提示"), 1),
+                        createElementVNode("div", _hoisted_3$2, [
+                          renderSlot(_ctx.$slots, "header-actions", {}, void 0, true),
+                          createElementVNode("button", {
+                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                            onClick: handleClose,
+                            type: "button",
+                            title: "关闭"
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(icons).close
+                            }, null, 8, _hoisted_4$2)
+                          ])
+                        ])
+                      ]),
+                      createElementVNode("div", _hoisted_5$1, [
+                        renderSlot(_ctx.$slots, "default", {}, void 0, true)
+                      ]),
+                      _ctx.$slots.footer || _ctx.buttons && _ctx.buttons.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, [
+                        renderSlot(_ctx.$slots, "footer", {}, () => [
+                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.buttons, (btn) => {
+                            return openBlock(), createElementBlock("button", {
+                              key: btn.action,
+                              class: normalizeClass(["booth-btn booth-btn-md", [`booth-btn-${btn.variant || "secondary"}`]]),
+                              onClick: ($event) => handleButtonClick(btn.action),
+                              type: "button"
+                            }, toDisplayString(btn.text), 11, _hoisted_7);
+                          }), 128))
+                        ], true)
+                      ])) : createCommentVNode("", true)
+                    ], 4)
+                  ], 2)) : createCommentVNode("", true)
+                ]),
+                _: 3
+              })
+            ], 8, ["to", "disabled"]);
+          };
+        }
+      });
+      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-db693591"]]));
+      const _hoisted_1$1 = { class: "tab-bar" };
+      const _hoisted_2$1 = { class: "tab-list" };
+      const _hoisted_3$1 = ["onClick"];
+      const _hoisted_4$1 = ["innerHTML"];
+      const _hoisted_5 = { class: "tab-label" };
+      const _hoisted_6 = {
+        key: 0,
+        class: "tab-actions"
+      };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "TabBar",
+        props: {
+          tabs: {},
+          activeTab: {}
+        },
+        emits: ["update:activeTab"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const handleTabClick = (tabId) => {
+            emit("update:activeTab", tabId);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$1, [
+              createElementVNode("div", _hoisted_2$1, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
+                  return openBlock(), createElementBlock("button", {
+                    key: tab.id,
+                    class: normalizeClass(["tab-btn", { active: _ctx.activeTab === tab.id }]),
+                    onClick: ($event) => handleTabClick(tab.id)
+                  }, [
+                    tab.icon ? (openBlock(), createElementBlock("span", {
+                      key: 0,
+                      class: "tab-icon",
+                      innerHTML: tab.icon
+                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
+                    createElementVNode("span", _hoisted_5, toDisplayString(tab.label), 1)
+                  ], 10, _hoisted_3$1);
+                }), 128))
+              ]),
+              _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                renderSlot(_ctx.$slots, "actions", {}, void 0, true)
+              ])) : createCommentVNode("", true)
+            ]);
+          };
+        }
+      });
+      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ee7eccb8"]]);
+      var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+      var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
+      var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
+      var _GM_setClipboard = /* @__PURE__ */ (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
+      var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+      var _GM_xmlhttpRequest = /* @__PURE__ */ (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+      function createDefaultGlobalTemplates() {
+        return {
+          nameTemplates: [
+            {
+              id: "default-name",
+              name: "默认商品名",
+              template: "{商品名}",
+              isDefault: true
+            },
+            {
+              id: "smart-auto",
+              name: "智能商品名（推荐）",
+              template: "{智能标题}",
+              isDefault: false
+            },
+            {
+              id: "smart-with-discount",
+              name: "智能商品名（含折扣标识）",
+              template: "{折扣标识}{智能标题}",
+              isDefault: false
+            },
+            {
+              id: "always-show-count",
+              name: "总是显示数量",
+              template: "{支持数} {商品类型复数} | {首个变体名}",
+              isDefault: false
+            }
+          ],
+          descriptionTemplates: [
+            {
+              id: "default-desc",
+              name: "默认描述",
+              template: "",
+              isDefault: true
+            }
+          ],
+          discountTemplates: [
+            {
+              id: "default-discount",
+              name: "默认打折",
+              template: "【セール中】\n通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)",
+              isDefault: true
+            },
+            {
+              id: "fullset-discount",
+              name: "含 Fullset",
+              template: "◆[セール開催中]◆\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY\n⏰ {折扣开始时间} - {折扣结束时间}\n({折扣百分比}% OFF)",
+              isDefault: false
+            }
+          ],
+          logTemplates: [
+            {
+              id: "default-log",
+              name: "默认日志",
+              template: "⟡ {日期}\n　・ {内容}",
+              isDefault: true
+            }
+          ],
+          itemInfoTemplates: [
+            {
+              id: "default-item-info",
+              name: "默认商品信息",
+              template: "⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -",
+              isDefault: true
+            }
+          ],
+          sectionTemplates: []
+        };
+      }
+      function createDefaultSingleItemConfig(itemId) {
+        return {
+          itemId,
+          itemName: "",
+          itemType: "normal",
+          itemTypeName: "Item",
+          useSmartLogic: true,
+          selectedTemplates: {
+            nameTemplateId: "default-name",
+            descriptionTemplateId: "default-desc",
+            discountTemplateId: "default-discount"
+          },
+          customDescription: "",
+          discount: {
+            enabled: false,
+            discountPercent: 0
+          },
+          pricing: {
+            normalVariationPrice: 0,
+            fullsetPrice: 0
+          },
+          sections: [],
+          variations: [],
+          tagNodeIds: []
+        };
+      }
+      function createDefaultItemConfig(itemId) {
+        return createDefaultSingleItemConfig(itemId);
+      }
+      function getSelectedTemplate(templates, selectedTemplateId) {
+        if (!templates || templates.length === 0) {
+          return "";
+        }
+        let template;
+        if (selectedTemplateId) {
+          template = templates.find((t) => t.id === selectedTemplateId);
+        }
+        if (!template) {
+          template = templates.find((t) => t.isDefault) || templates[0];
+        }
+        return (template == null ? void 0 : template.template) || "";
+      }
+      function getSelectedNameTemplate(config, itemConfig) {
+        var _a;
+        return getSelectedTemplate(
+          config.nameTemplates,
+          (_a = itemConfig.selectedTemplates) == null ? void 0 : _a.nameTemplateId
+        );
+      }
+      function getSelectedDescriptionTemplate(config, itemConfig) {
+        var _a;
+        return getSelectedTemplate(
+          config.descriptionTemplates,
+          (_a = itemConfig.selectedTemplates) == null ? void 0 : _a.descriptionTemplateId
+        );
+      }
+      function getSelectedDiscountTemplate(config, itemConfig) {
+        var _a;
+        return getSelectedTemplate(
+          config.discountTemplates,
+          (_a = itemConfig.selectedTemplates) == null ? void 0 : _a.discountTemplateId
+        );
+      }
+      const createDefaultData = () => {
+        return {
+          tagTree: {
+            rootIds: [],
+            nodes: {}
+          },
+          itemTree: {
+            rootIds: [],
+            nodes: {}
+          },
+          globalTemplates: createDefaultGlobalTemplates(),
+          itemConfigs: {},
+          ui: {
+            sidebarOpen: false,
+            activeTab: "tags"
+          }
+        };
+      };
+      const STORAGE_KEY = "booth-enhancer-config-v4";
+      const SAVE_DEBOUNCE = 500;
+      const _ConfigStorage = class _ConfigStorage {
+        constructor() {
+          __publicField(this, "_data");
+          __publicField(this, "_saveTimer", null);
+          this._data = ref(this.load());
+          watch(
+            this._data,
+            () => this.saveWithDebounce(),
+            { deep: true }
+          );
+        }
+        static getInstance() {
+          if (!_ConfigStorage.instance) {
+            _ConfigStorage.instance = new _ConfigStorage();
+          }
+          return _ConfigStorage.instance;
+        }
+        get data() {
+          return this._data;
+        }
+        load() {
+          try {
+            const stored = _GM_getValue(STORAGE_KEY, null);
+            if (stored) {
+              return JSON.parse(stored);
+            }
+          } catch (e) {
+            console.error("Failed to load config:", e);
+          }
+          return createDefaultData();
+        }
+        save() {
+          try {
+            _GM_setValue(STORAGE_KEY, JSON.stringify(this._data.value));
+          } catch (e) {
+            console.error("Failed to save config:", e);
+          }
+        }
+        saveWithDebounce() {
+          if (this._saveTimer) window.clearTimeout(this._saveTimer);
+          this._saveTimer = window.setTimeout(() => {
+            this.save();
+            this._saveTimer = null;
+          }, SAVE_DEBOUNCE);
+        }
+        // === Unity 风格节点操作 ===
+        /**
+         * 创建节点
+         */
+        createNode(tree, name, data, parentId = null) {
+          const id = crypto.randomUUID();
+          const node = {
+            id,
+            parentId,
+            name,
+            children: [],
+            expanded: true,
+            data,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+          };
+          tree.nodes[id] = node;
+          if (parentId) {
+            const parent = tree.nodes[parentId];
+            if (parent) parent.children.push(id);
+          } else {
+            tree.rootIds.push(id);
+          }
+          this.saveWithDebounce();
+          return node;
+        }
+        /**
+         * 删除节点
+         */
+        deleteNode(tree, id) {
+          const node = tree.nodes[id];
+          if (!node) return;
+          [...node.children].forEach((childId) => this.deleteNode(tree, childId));
+          if (node.parentId) {
+            const parent = tree.nodes[node.parentId];
+            if (parent) {
+              parent.children = parent.children.filter((cid) => cid !== id);
+            }
+          } else {
+            tree.rootIds = tree.rootIds.filter((rid) => rid !== id);
+          }
+          delete tree.nodes[id];
+          this.saveWithDebounce();
+        }
+        /**
+         * 移动节点
+         */
+        moveNode(tree, id, targetParentId) {
+          const node = tree.nodes[id];
+          if (!node) return;
+          if (node.id === targetParentId) return;
+          if (targetParentId) {
+            let current = tree.nodes[targetParentId];
+            while (current) {
+              if (current.id === id) return;
+              if (!current.parentId) break;
+              current = tree.nodes[current.parentId];
+            }
+          }
+          if (node.parentId) {
+            const oldParent = tree.nodes[node.parentId];
+            if (oldParent) {
+              oldParent.children = oldParent.children.filter((cid) => cid !== id);
+            }
+          } else {
+            tree.rootIds = tree.rootIds.filter((rid) => rid !== id);
+          }
+          if (targetParentId) {
+            const newParent = tree.nodes[targetParentId];
+            if (newParent) {
+              newParent.children.push(id);
+            }
+          } else {
+            tree.rootIds.push(id);
+          }
+          node.parentId = targetParentId;
+          node.updatedAt = Date.now();
+          this.saveWithDebounce();
+        }
+        /**
+         * 在指定位置插入节点（用于排序）
+         */
+        insertNodeAt(tree, nodeId, targetParentId, index) {
+          const node = tree.nodes[nodeId];
+          if (!node) return;
+          if (targetParentId) {
+            if (nodeId === targetParentId) return;
+            let current = tree.nodes[targetParentId];
+            while (current) {
+              if (current.id === nodeId) return;
+              if (!current.parentId) break;
+              current = tree.nodes[current.parentId];
+            }
+          }
+          if (node.parentId) {
+            const oldParent = tree.nodes[node.parentId];
+            if (oldParent) {
+              oldParent.children = oldParent.children.filter((cid) => cid !== nodeId);
+            }
+          } else {
+            tree.rootIds = tree.rootIds.filter((rid) => rid !== nodeId);
+          }
+          if (targetParentId) {
+            const newParent = tree.nodes[targetParentId];
+            if (newParent) {
+              newParent.children.splice(index, 0, nodeId);
+            }
+          } else {
+            tree.rootIds.splice(index, 0, nodeId);
+          }
+          node.parentId = targetParentId;
+          node.updatedAt = Date.now();
+          this.saveWithDebounce();
+        }
+        /**
+         * 重命名节点
+         */
+        renameNode(tree, id, newName) {
+          const node = tree.nodes[id];
+          if (!node) return;
+          node.name = newName;
+          node.updatedAt = Date.now();
+          this.saveWithDebounce();
+        }
+        // ===== 导出方法 =====
+        exportTags() {
+          return { tagTree: this._data.value.tagTree };
+        }
+        exportItems() {
+          return { itemTree: this._data.value.itemTree };
+        }
+        exportTemplates() {
+          return { globalTemplates: this._data.value.globalTemplates };
+        }
+        exportSingleItem(itemId) {
+          const config = this._data.value.itemConfigs[itemId];
+          return config || null;
+        }
+        exportAllItems() {
+          return { ...this._data.value.itemConfigs };
+        }
+        // ===== 导入方法 =====
+        importTags(data) {
+          if (!data.tagTree || !data.tagTree.nodes) {
+            throw new Error("无效的标签数据格式");
+          }
+          this._data.value.tagTree = data.tagTree;
+        }
+        importItems(data) {
+          if (!data.itemTree || !data.itemTree.nodes) {
+            throw new Error("无效的商品数据格式");
+          }
+          this._data.value.itemTree = data.itemTree;
+        }
+        importTemplates(data) {
+          if (!data.globalTemplates) {
+            throw new Error("无效的模板数据格式");
+          }
+          this._data.value.globalTemplates = data.globalTemplates;
+        }
+        importSingleItem(config, options) {
+          if (!config.itemId) {
+            throw new Error("商品配置缺少 itemId");
+          }
+          const exists = !!this._data.value.itemConfigs[config.itemId];
+          if (exists && !(options == null ? void 0 : options.replace)) {
+            return false;
+          }
+          this._data.value.itemConfigs[config.itemId] = config;
+          return true;
+        }
+        importAllFromZip(files) {
+          const errors = [];
+          if (files["tags.json"]) {
+            try {
+              this.importTags(files["tags.json"]);
+            } catch (e) {
+              errors.push("标签数据");
+            }
+          }
+          if (files["items.json"]) {
+            try {
+              this.importItems(files["items.json"]);
+            } catch (e) {
+              errors.push("商品列表");
+            }
+          }
+          if (files["templates.json"]) {
+            try {
+              this.importTemplates(files["templates.json"]);
+            } catch (e) {
+              errors.push("全局模板");
+            }
+          }
+          for (const [filename, data] of Object.entries(files)) {
+            if (filename.startsWith("item-") && filename.endsWith(".json")) {
+              try {
+                this.importSingleItem(data, { replace: true });
+              } catch (e) {
+                errors.push(`商品配置 ${filename}`);
+              }
+            }
+          }
+          if (errors.length > 0) {
+            throw new Error(`以下数据导入失败: ${errors.join("、")}`);
+          }
+        }
+        importAllFromJSON(importData) {
+          const errors = [];
+          if (!importData.data) {
+            throw new Error("无效的备份文件格式");
+          }
+          const { tags, items, templates, itemConfigs } = importData.data;
+          if (tags) {
+            try {
+              this.importTags(tags);
+            } catch (e) {
+              errors.push("标签数据");
+            }
+          }
+          if (items) {
+            try {
+              this.importItems(items);
+            } catch (e) {
+              errors.push("商品列表");
+            }
+          }
+          if (templates) {
+            try {
+              this.importTemplates(templates);
+            } catch (e) {
+              errors.push("全局模板");
+            }
+          }
+          if (itemConfigs) {
+            for (const [itemId, config] of Object.entries(itemConfigs)) {
+              try {
+                this.importSingleItem(config, { replace: true });
+              } catch (e) {
+                errors.push(`商品配置 ${itemId}`);
+              }
+            }
+          }
+          if (errors.length > 0) {
+            throw new Error(`以下数据导入失败: ${errors.join("、")}`);
+          }
+        }
+        /**
+         * 导出数据为 JSON（保留用于向后兼容）
+         */
+        exportData() {
+          return JSON.stringify(this._data.value, null, 2);
+        }
+        /**
+         * 导入数据从 JSON（保留用于向后兼容）
+         */
+        importData(jsonString) {
+          try {
+            const parsed = JSON.parse(jsonString);
+            if (!parsed.tagTree || !parsed.itemTree) {
+              throw new Error("Invalid data structure");
+            }
+            this._data.value = parsed;
+            this.save();
+            return true;
+          } catch (e) {
+            console.error("Failed to import data:", e);
+            return false;
+          }
+        }
+      };
+      __publicField(_ConfigStorage, "instance");
+      let ConfigStorage = exports("C", _ConfigStorage);
+      class ToastManager {
+        constructor() {
+          __publicField(this, "container", null);
+          __publicField(this, "toasts", /* @__PURE__ */ new Set());
+          __publicField(this, "targetContainer", null);
+          // 图标映射（静态常量）
+          __publicField(this, "iconMap", {
+            success: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+            error: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+            warning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+            info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+          });
+        }
+        /**
+         * 设置 Toast 显示的目标容器
+         * @param container 目标容器元素，如果为 null 则使用 body
+         */
+        setContainer(container) {
+          this.targetContainer = container;
+          if (this.container) {
+            this.container.remove();
+            this.container = null;
+          }
+        }
+        ensureContainer() {
+          if (!this.container) {
+            this.container = document.createElement("div");
+            this.container.className = "booth-toast-container";
+            if (this.targetContainer) {
+              this.container.setAttribute("data-position", "relative");
+            } else {
+              this.container.setAttribute("data-position", "fixed");
+            }
+            this.injectStyles();
+            const parent = this.targetContainer || document.body;
+            parent.appendChild(this.container);
+          }
+          return this.container;
+        }
+        injectStyles() {
+          if (document.getElementById("booth-toast-styles")) return;
+          const style = document.createElement("style");
+          style.id = "booth-toast-styles";
+          style.textContent = `
+      /* Toast 容器基础样式 */
+      .booth-toast-container {
+        display: flex;
+        gap: 8px;
+        pointer-events: none;
+        z-index: 1000;
+      }
 
-		})
-	};
+      /* Toast 容器在 body 中时 - 固定在右上角 */
+      .booth-toast-container[data-position="fixed"] {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        flex-direction: column;
+        z-index: 10001;
+      }
+
+      /* Toast 容器在其他元素中时 - 绝对定位在底部 */
+      .booth-toast-container[data-position="relative"] {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        flex-direction: column-reverse;
+      }
+
+      .booth-toast {
+        min-width: 200px;
+        max-width: 400px;
+        padding: 14px 16px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        font-size: 14px;
+        line-height: 1.5;
+        pointer-events: auto;
+        opacity: 0;
+        transition: all 0.3s ease;
+        word-wrap: break-word;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .toast-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toast-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .toast-message {
+        flex: 1;
+        padding-top: 1px;
+        color: #333;
+      }
+
+      /* Toast 在固定容器中时从右侧滑入 */
+      .booth-toast-container[data-position="fixed"] .booth-toast {
+        transform: translateX(20px);
+      }
+
+      .booth-toast-container[data-position="fixed"] .booth-toast.show {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Toast 在相对容器中时从下往上滑入 */
+      .booth-toast-container[data-position="relative"] .booth-toast {
+        transform: translateY(20px);
+      }
+
+      .booth-toast-container[data-position="relative"] .booth-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .booth-toast-success {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+      }
+      
+      .booth-toast-success .toast-icon {
+        color: #22c55e;
+      }
+
+      .booth-toast-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+      }
+      
+      .booth-toast-error .toast-icon {
+        color: #ef4444;
+      }
+
+      .booth-toast-warning {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+      }
+      
+      .booth-toast-warning .toast-icon {
+        color: #f59e0b;
+      }
+
+      .booth-toast-info {
+        background: #eff6ff;
+        border: 1px solid #93c5fd;
+      }
+      
+      .booth-toast-info .toast-icon {
+        color: #3b82f6;
+      }
+
+      @media (max-width: 768px) {
+        .booth-toast-container[data-position="fixed"] {
+          top: 10px;
+          left: 10px;
+          right: 10px;
+        }
+
+        .booth-toast {
+          min-width: 0;
+          max-width: none;
+          width: 100%;
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+      }
+    `;
+          document.head.appendChild(style);
+        }
+        show(options) {
+          const {
+            message,
+            type = "info",
+            duration = 3e3,
+            onClose
+          } = options;
+          const container = this.ensureContainer();
+          const toast2 = document.createElement("div");
+          toast2.className = `booth-toast booth-toast-${type}`;
+          toast2.innerHTML = `
+      <div class="toast-icon">${this.iconMap[type]}</div>
+      <div class="toast-message">${message}</div>
+    `;
+          container.appendChild(toast2);
+          this.toasts.add(toast2);
+          requestAnimationFrame(() => {
+            toast2.classList.add("show");
+          });
+          setTimeout(() => {
+            this.remove(toast2, onClose);
+          }, duration);
+        }
+        remove(toast2, onClose) {
+          toast2.classList.remove("show");
+          setTimeout(() => {
+            if (toast2.parentElement) {
+              toast2.parentElement.removeChild(toast2);
+            }
+            this.toasts.delete(toast2);
+            if (onClose) {
+              onClose();
+            }
+            if (this.toasts.size === 0 && this.container) {
+              this.container.remove();
+              this.container = null;
+            }
+          }, 300);
+        }
+        success(message, duration) {
+          this.show({ message, type: "success", duration });
+        }
+        error(message, duration) {
+          this.show({ message, type: "error", duration });
+        }
+        warning(message, duration) {
+          this.show({ message, type: "warning", duration });
+        }
+        info(message, duration) {
+          this.show({ message, type: "info", duration });
+        }
+      }
+      const toast = exports("t", new ToastManager());
+      function useStorage() {
+        const storage = ConfigStorage.getInstance();
+        return {
+          // 原始实例（用于特殊场景）
+          storage,
+          // 响应式数据
+          data: storage.data,
+          // === 导出方法 ===
+          exportTags: () => storage.exportTags(),
+          exportItems: () => storage.exportItems(),
+          exportTemplates: () => storage.exportTemplates(),
+          exportSingleItem: (itemId) => storage.exportSingleItem(itemId),
+          exportAllItems: () => storage.exportAllItems(),
+          // === 导入方法 ===
+          importTags: (data) => storage.importTags(data),
+          importItems: (data) => storage.importItems(data),
+          importTemplates: (data) => storage.importTemplates(data),
+          importSingleItem: (config, options) => storage.importSingleItem(config, options),
+          importAllFromZip: (files) => storage.importAllFromZip(files),
+          importAllFromJSON: (data) => storage.importAllFromJSON(data),
+          // === 节点操作方法 ===
+          createNode: (tree, name, data, parentId) => storage.createNode(tree, name, data, parentId),
+          renameNode: (tree, nodeId, newName) => storage.renameNode(tree, nodeId, newName),
+          deleteNode: (tree, nodeId) => storage.deleteNode(tree, nodeId),
+          moveNode: (tree, nodeId, newParentId) => storage.moveNode(tree, nodeId, newParentId)
+        };
+      }
+      function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      function downloadJSON(data, filename) {
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        triggerDownload(blob, filename);
+      }
+      function readJSONFile(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            var _a;
+            try {
+              const data = JSON.parse((_a = e.target) == null ? void 0 : _a.result);
+              resolve(data);
+            } catch (error) {
+              reject(new Error("无效的 JSON 格式"));
+            }
+          };
+          reader.onerror = () => reject(new Error("文件读取失败"));
+          reader.readAsText(file);
+        });
+      }
+      function triggerFileInput(accept, callback) {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = accept;
+        input.onchange = (e) => {
+          var _a;
+          const file = (_a = e.target.files) == null ? void 0 : _a[0];
+          if (file) callback(file);
+        };
+        input.click();
+      }
+      const _hoisted_1 = { class: "modal-content" };
+      const _hoisted_2 = ["innerHTML"];
+      const _hoisted_3 = ["innerHTML"];
+      const _hoisted_4 = { class: "sidebar-content" };
+      const _sfc_main = /* @__PURE__ */ defineComponent({
+        __name: "App",
+        props: {
+          api: {},
+          itemId: {}
+        },
+        setup(__props) {
+          const props = __props;
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BawqGQvR-Bn4Kluyn.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-Bu3VBxpr-CqHgblM9.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-anT-3t6x-BwU78x_5.js'), void 0 ));
+          const {
+            data,
+            exportTags,
+            exportItems,
+            exportTemplates,
+            exportAllItems,
+            importAllFromJSON,
+            importTags,
+            importItems,
+            exportSingleItem,
+            importSingleItem
+          } = useStorage();
+          function getTabComponent() {
+            const activeTab = data.value.ui.activeTab;
+            switch (activeTab) {
+              case "tags":
+                return TagTab;
+              case "items":
+                return ItemTab;
+              case "edit":
+                return EditTab;
+              default:
+                return TagTab;
+            }
+          }
+          const editTabRef = ref(null);
+          function setComponentRef(el) {
+            if (data.value.ui.activeTab === "edit") {
+              editTabRef.value = el;
+            }
+          }
+          async function handleApplyAll() {
+            if (!editTabRef.value) {
+              toast.error("EditTab 未加载");
+              return;
+            }
+            try {
+              await editTabRef.value.applyAll();
+            } catch (error) {
+              console.error("应用所有配置失败:", error);
+            }
+          }
+          const sidebarRef = ref(null);
+          const showMenu = ref(false);
+          const menuPosition = ref({ x: 0, y: 0 });
+          const showImportConflictDialog = ref(false);
+          const pendingImportConfig = ref(null);
+          const tabs = [
+            { id: "tags", label: "标签" },
+            { id: "items", label: "商品" },
+            { id: "edit", label: "编辑" }
+          ];
+          watch(() => data.value.ui.sidebarOpen, (isOpen) => {
+            const panelRoot = document.getElementById("booth-enhancer-panel-root");
+            const toggleBtn = document.querySelector(".booth-enhancer-toggle");
+            if (panelRoot) {
+              if (isOpen) {
+                panelRoot.classList.add("panel-open");
+              } else {
+                panelRoot.classList.remove("panel-open");
+              }
+            }
+            if (toggleBtn) {
+              toggleBtn.innerHTML = isOpen ? icons.chevronRight : icons.chevronLeft;
+            }
+          });
+          const closeSidebar = () => {
+            data.value.ui.sidebarOpen = false;
+          };
+          const handleTabChange = (tab) => {
+            data.value.ui.activeTab = tab;
+          };
+          function generateTimestamp() {
+            return (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+          }
+          const handleExport = async () => {
+            try {
+              const exportData = {
+                version: "1.0",
+                exportTime: Date.now(),
+                data: {
+                  tags: exportTags(),
+                  items: exportItems(),
+                  templates: exportTemplates(),
+                  itemConfigs: exportAllItems()
+                }
+              };
+              downloadJSON(exportData, `booth-backup-${generateTimestamp()}.json`);
+              toast.success("导出成功");
+            } catch (error) {
+              console.error("导出失败:", error);
+              toast.error("导出失败：" + error.message);
+            }
+          };
+          const handleImport = () => {
+            triggerFileInput(".json,application/json", async (file) => {
+              try {
+                const importData = await readJSONFile(file);
+                importAllFromJSON(importData);
+                toast.success("导入成功");
+              } catch (error) {
+                console.error("导入失败:", error);
+                toast.error("导入失败：" + error.message);
+              }
+            });
+          };
+          const toggleMenu = (event) => {
+            const target = event.currentTarget;
+            const rect = target.getBoundingClientRect();
+            menuPosition.value = {
+              x: rect.left - 100,
+              y: rect.bottom + 4
+            };
+            showMenu.value = !showMenu.value;
+          };
+          const closeMenu = () => {
+            showMenu.value = false;
+          };
+          function handleTabExport() {
+            const activeTab = data.value.ui.activeTab;
+            if (activeTab === "edit") return;
+            try {
+              const timestamp = generateTimestamp();
+              const exportData = activeTab === "tags" ? exportTags() : exportItems();
+              const fileName = `booth-${activeTab}-${timestamp}.json`;
+              downloadJSON(exportData, fileName);
+              toast.success(`${currentTabLabel.value}数据导出成功`);
+            } catch (error) {
+              console.error("导出失败:", error);
+              toast.error("导出失败：" + error.message);
+            }
+          }
+          function handleTabImport() {
+            const activeTab = data.value.ui.activeTab;
+            if (activeTab === "edit") return;
+            triggerFileInput(".json,application/json", async (file) => {
+              try {
+                const importData = await readJSONFile(file);
+                if (activeTab === "tags") {
+                  importTags(importData);
+                } else {
+                  importItems(importData);
+                }
+                toast.success(`${currentTabLabel.value}数据导入成功`);
+              } catch (error) {
+                console.error("导入失败:", error);
+                toast.error("导入失败：" + error.message);
+              }
+            });
+          }
+          const currentTabLabel = computed(() => {
+            switch (data.value.ui.activeTab) {
+              case "tags":
+                return "标签";
+              case "items":
+                return "商品";
+              case "edit":
+                return "编辑";
+              default:
+                return "";
+            }
+          });
+          function handleEditExport() {
+            if (!props.itemId) {
+              toast.error("无法获取当前商品ID");
+              return;
+            }
+            try {
+              const config = exportSingleItem(props.itemId);
+              if (!config) {
+                toast.error("当前商品没有配置数据");
+                return;
+              }
+              const timestamp = generateTimestamp();
+              downloadJSON(config, `booth-item-${props.itemId}-${timestamp}.json`);
+              toast.success("商品配置导出成功");
+            } catch (error) {
+              console.error("导出失败:", error);
+              toast.error("导出失败：" + error.message);
+            }
+          }
+          function handleEditImport() {
+            triggerFileInput(".json,application/json", async (file) => {
+              try {
+                const config = await readJSONFile(file);
+                const success = importSingleItem(config, { replace: false });
+                if (!success) {
+                  pendingImportConfig.value = config;
+                  showImportConflictDialog.value = true;
+                } else {
+                  toast.success("商品配置导入成功");
+                }
+              } catch (error) {
+                console.error("导入失败:", error);
+                toast.error("导入失败：" + error.message);
+              }
+            });
+          }
+          function confirmReplaceConfig() {
+            if (pendingImportConfig.value) {
+              importSingleItem(pendingImportConfig.value, { replace: true });
+              toast.success("商品配置导入成功");
+            }
+            showImportConflictDialog.value = false;
+            pendingImportConfig.value = null;
+          }
+          function cancelImport() {
+            showImportConflictDialog.value = false;
+            pendingImportConfig.value = null;
+          }
+          const menuItems = computed(() => {
+            const isEditTab = data.value.ui.activeTab === "edit";
+            return [
+              {
+                label: "导出完整备份 (JSON)",
+                icon: withSize(icons.upload, 14),
+                action: handleExport
+              },
+              {
+                label: "导入完整备份 (JSON)",
+                icon: withSize(icons.download, 14),
+                action: handleImport
+              },
+              {
+                label: "-",
+                icon: "",
+                action: () => {
+                }
+              },
+              {
+                label: isEditTab ? "导出当前商品 (JSON)" : `导出${currentTabLabel.value}数据 (JSON)`,
+                icon: withSize(icons.upload, 14),
+                action: isEditTab ? handleEditExport : handleTabExport
+              },
+              {
+                label: isEditTab ? "导入商品配置 (JSON)" : `导入${currentTabLabel.value}数据 (JSON)`,
+                icon: withSize(icons.download, 14),
+                action: isEditTab ? handleEditImport : handleTabImport
+              }
+            ];
+          });
+          onMounted(() => {
+            if (sidebarRef.value) {
+              toast.setContainer(sidebarRef.value);
+            }
+          });
+          onUnmounted(() => {
+            toast.setContainer(null);
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", {
+              ref_key: "sidebarRef",
+              ref: sidebarRef,
+              class: "booth-enhancer-sidebar"
+            }, [
+              createVNode(unref(TabBar), {
+                "active-tab": unref(data).ui.activeTab,
+                tabs,
+                "onUpdate:activeTab": handleTabChange
+              }, {
+                actions: withCtx(() => [
+                  unref(data).ui.activeTab === "edit" ? (openBlock(), createBlock(unref(IconButton), {
+                    key: 0,
+                    icon: unref(icons).send,
+                    title: "应用所有",
+                    onClick: handleApplyAll
+                  }, null, 8, ["icon"])) : createCommentVNode("", true),
+                  createVNode(unref(IconButton), {
+                    icon: unref(icons).moreVertical,
+                    title: "更多操作",
+                    onClick: toggleMenu
+                  }, null, 8, ["icon"]),
+                  createVNode(unref(IconButton), {
+                    icon: unref(icons).close,
+                    title: "关闭",
+                    onClick: closeSidebar
+                  }, null, 8, ["icon"])
+                ]),
+                _: 1
+              }, 8, ["active-tab"]),
+              createVNode(ContextMenu, {
+                show: showMenu.value,
+                x: menuPosition.value.x,
+                y: menuPosition.value.y,
+                items: menuItems.value,
+                onClose: closeMenu
+              }, null, 8, ["show", "x", "y", "items"]),
+              createVNode(unref(Modal), {
+                show: showImportConflictDialog.value,
+                title: "导入确认",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: cancelImport,
+                width: "400px"
+              }, {
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: cancelImport,
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_2)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: confirmReplaceConfig,
+                    title: "替换"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_3)
+                  ])
+                ]),
+                default: withCtx(() => {
+                  var _a;
+                  return [
+                    createElementVNode("div", _hoisted_1, [
+                      createElementVNode("p", null, [
+                        _cache[0] || (_cache[0] = createTextVNode("商品 ID ", -1)),
+                        createElementVNode("strong", null, toDisplayString((_a = pendingImportConfig.value) == null ? void 0 : _a.itemId), 1),
+                        _cache[1] || (_cache[1] = createTextVNode(" 已存在配置。", -1))
+                      ]),
+                      _cache[2] || (_cache[2] = createElementVNode("p", null, "是否要替换现有配置？", -1))
+                    ])
+                  ];
+                }),
+                _: 1
+              }, 8, ["show"]),
+              createElementVNode("div", _hoisted_4, [
+                (openBlock(), createBlock(resolveDynamicComponent(getTabComponent()), {
+                  ref: setComponentRef,
+                  key: unref(data).ui.activeTab + "-" + Date.now(),
+                  api: props.api
+                }, null, 8, ["api"]))
+              ])
+            ], 512);
+          };
+        }
+      });
+      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-2b9f00bf"]]);
+      class PageModule {
+        constructor(api) {
+          __publicField(this, "api");
+          this.api = api;
+          this.api.onReady((api2) => {
+            this.initialize(api2);
+          });
+        }
+      }
+      class FileManager extends PageModule {
+        constructor(api) {
+          super(api);
+        }
+        initialize() {
+          this.enhanceFilePanel();
+        }
+        /**
+         * 增强文件管理面板
+         */
+        enhanceFilePanel() {
+          const panel = this.findFilePanel();
+          if (!panel) return;
+          if (panel.hasAttribute("data-file-manager-enhanced")) return;
+          panel.setAttribute("data-file-manager-enhanced", "true");
+          const storageDiv = panel.querySelector(".font-heavy-sans.text-\\[14px\\]");
+          if (!storageDiv) return;
+          this.addActionButtons(storageDiv);
+        }
+        /**
+         * 查找文件管理面板
+         */
+        findFilePanel() {
+          var _a;
+          const titleElements = document.querySelectorAll(".font-booth-demi");
+          for (const title of Array.from(titleElements)) {
+            if ((_a = title.textContent) == null ? void 0 : _a.includes("Add/Edit Files")) {
+              return title.closest(".bg-white");
+            }
+          }
+          return null;
+        }
+        /**
+         * 添加操作按钮
+         */
+        addActionButtons(storageDiv) {
+          var _a;
+          const buttonContainer = document.createElement("div");
+          buttonContainer.className = "flex gap-8 py-12 px-16 border-b border-b-border300";
+          buttonContainer.style.cssText = "background: #f8f9fa;";
+          const selectAllBtn = document.createElement("button");
+          selectAllBtn.type = "button";
+          selectAllBtn.className = "btn calm small";
+          selectAllBtn.textContent = "全选";
+          selectAllBtn.onclick = () => this.selectAllFiles();
+          const unselectAllBtn = document.createElement("button");
+          unselectAllBtn.type = "button";
+          unselectAllBtn.className = "btn calm small";
+          unselectAllBtn.textContent = "全不选";
+          unselectAllBtn.onclick = () => this.unselectAllFiles();
+          buttonContainer.appendChild(selectAllBtn);
+          buttonContainer.appendChild(unselectAllBtn);
+          (_a = storageDiv.parentElement) == null ? void 0 : _a.insertBefore(buttonContainer, storageDiv.nextSibling);
+        }
+        /**
+         * 全选所有文件
+         */
+        selectAllFiles() {
+          this.setAllCheckboxes(true);
+        }
+        /**
+         * 全不选所有文件
+         */
+        unselectAllFiles() {
+          this.setAllCheckboxes(false);
+        }
+        /**
+         * 设置所有复选框状态
+         */
+        setAllCheckboxes(checked) {
+          const fileCheckboxes = document.querySelectorAll(
+            'ul.list-none input.charcoal-checkbox-input[type="checkbox"]'
+          );
+          Array.from(fileCheckboxes).forEach((checkbox) => {
+            const input = checkbox;
+            if (input.checked !== checked) {
+              Simulate.click(input);
+            }
+          });
+        }
+      }
+      class ItemNumbers extends PageModule {
+        constructor(api) {
+          super(api);
+          __publicField(this, "_observedContainers");
+        }
+        get observedContainers() {
+          if (!this._observedContainers) {
+            this._observedContainers = /* @__PURE__ */ new WeakMap();
+          }
+          return this._observedContainers;
+        }
+        initialize(api) {
+          const containers = /* @__PURE__ */ new Set();
+          api.sections.forEach((section) => containers.add(section.container));
+          api.variations.forEach((variation) => containers.add(variation.container));
+          containers.forEach((container) => {
+            this.addNumbersToList(container);
+          });
+          api.onSectionAdded((section) => {
+            if (!this.observedContainers.has(section.container)) {
+              this.addNumbersToList(section.container);
+            }
+          });
+          api.onVariationAdded((variation) => {
+            if (!this.observedContainers.has(variation.container)) {
+              this.addNumbersToList(variation.container);
+            }
+          });
+        }
+        /**
+         * 为列表添加序号
+         */
+        addNumbersToList(ul) {
+          const items = Array.from(ul.children).filter(
+            (child) => child.tagName.toLowerCase() === "li"
+          );
+          items.forEach((li, index) => {
+            this.addNumberToItem(li, index + 1);
+          });
+          this.setupListObserver(ul);
+        }
+        /**
+         * 为单个列表项添加序号
+         */
+        addNumberToItem(li, number) {
+          const existingNumber = li.querySelector(".variation-number");
+          existingNumber == null ? void 0 : existingNumber.remove();
+          const titleContainer = li.querySelector(".variation-box-head .flex.items-center.gap-4");
+          if (!titleContainer) return;
+          const numberSpan = document.createElement("span");
+          numberSpan.className = "variation-number typography-14 inline-block font-semibold";
+          numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+          numberSpan.textContent = `#${number}`;
+          titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
+        }
+        /**
+         * 设置列表观察器
+         */
+        setupListObserver(ul) {
+          const existingObserver = this.observedContainers.get(ul);
+          if (existingObserver) {
+            existingObserver.disconnect();
+          }
+          const observer = new MutationObserver(() => {
+            const items = Array.from(ul.children).filter(
+              (child) => child.tagName.toLowerCase() === "li"
+            );
+            items.forEach((li, index) => {
+              this.addNumberToItem(li, index + 1);
+            });
+          });
+          observer.observe(ul, {
+            childList: true,
+            subtree: false
+          });
+          this.observedContainers.set(ul, observer);
+        }
+      }
+      function handleError(error, fallback) {
+        console.error("Booth Helper Error:", error);
+        if (fallback) {
+          try {
+            fallback();
+          } catch (e) {
+            console.error("Fallback handler failed:", e);
+          }
+        }
+      }
+      const Config = {
+        throttleDelay: 100,
+        animationDelay: 1e3
+      };
+      class Utils {
+        // 优化的节流函数，使用Map缓存
+        static throttle(func, limit) {
+          const key = func.toString();
+          if (!this.throttleCache.has(key)) {
+            let inThrottle;
+            const throttled = function(...args) {
+              if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+              }
+            };
+            this.throttleCache.set(key, throttled);
+          }
+          return this.throttleCache.get(key);
+        }
+        // 等待指定时间
+        static sleep(ms) {
+          return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+        // 等待DOM加载完成
+        static async waitForDOMReady() {
+          if (document.readyState === "loading") {
+            await new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve));
+          }
+        }
+        // 优化的按钮状态更新
+        static updateButtonState(button, success = true, originalHtml) {
+          if (!button) return;
+          const newHtml = success ? '<i class="icon-check"></i><span class="cmd-label">已完成</span>' : originalHtml;
+          button.innerHTML = newHtml;
+          button.classList.toggle("calm", !success);
+          button.classList.toggle("primary", success);
+          if (success) {
+            setTimeout(() => {
+              button.innerHTML = originalHtml;
+              button.classList.add("calm");
+              button.classList.remove("primary");
+            }, Config.animationDelay);
+          }
+        }
+      }
+      __publicField(Utils, "throttleCache", /* @__PURE__ */ new Map());
+      class TagManager extends PageModule {
+        constructor(api) {
+          super(api);
+        }
+        initialize(api) {
+          this.waitForTagContainer(api);
+        }
+        /**
+         * 等待标签容器出现
+         */
+        waitForTagContainer(api) {
+          const tagElements = api.tagElements;
+          if (tagElements) {
+            this.addTagButtons(tagElements.inputContainer);
+            return;
+          }
+          const observer = new MutationObserver(() => {
+            const elements = api.tagElements;
+            if (elements) {
+              this.addTagButtons(elements.inputContainer);
+              observer.disconnect();
+            }
+          });
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        }
+        /**
+         * 添加标签操作按钮
+         */
+        addTagButtons(inputContainer) {
+          if (inputContainer.querySelector(".tag-action-buttons")) return;
+          const buttonContainer = document.createElement("div");
+          buttonContainer.className = "flex gap-2 tag-action-buttons";
+          buttonContainer.style.cssText = `
+            align-items: center;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        `;
+          const copyBtn = document.createElement("a");
+          copyBtn.className = "btn calm small";
+          copyBtn.innerHTML = "复制标签";
+          copyBtn.onclick = () => this.copyTags();
+          const pasteBtn = document.createElement("a");
+          pasteBtn.className = "btn calm small";
+          pasteBtn.innerHTML = "粘贴标签";
+          pasteBtn.onclick = () => this.pasteTags();
+          const clearBtn = document.createElement("a");
+          clearBtn.className = "btn calm small";
+          clearBtn.innerHTML = "清空标签";
+          clearBtn.onclick = () => this.clearTags();
+          buttonContainer.appendChild(copyBtn);
+          buttonContainer.appendChild(pasteBtn);
+          buttonContainer.appendChild(clearBtn);
+          inputContainer.appendChild(buttonContainer);
+        }
+        /**
+         * 复制标签到剪贴板
+         */
+        copyTags() {
+          try {
+            const tags = this.api.getTagTexts();
+            if (tags.length === 0) {
+              toast.warning("没有找到标签");
+              return;
+            }
+            navigator.clipboard.writeText(JSON.stringify(tags)).then(() => {
+              const copyBtn = document.querySelector(".tag-action-buttons .btn:first-child");
+              if (copyBtn instanceof HTMLElement) {
+                Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
+              }
+            });
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 从剪贴板粘贴标签
+         */
+        async pasteTags() {
+          try {
+            const text = await navigator.clipboard.readText();
+            const newTags = JSON.parse(text);
+            if (!Array.isArray(newTags) || newTags.length === 0) {
+              throw new Error("无效的标签数据");
+            }
+            const tagElements = this.api.tagElements;
+            if (!tagElements) throw new Error("找不到标签容器");
+            const { input, container } = tagElements;
+            const existingTags = this.api.getTagTexts();
+            const tagsToAdd = newTags.filter((tag) => !existingTags.includes(tag));
+            if (tagsToAdd.length === 0) {
+              toast.info("所有标签都已存在，无需添加");
+              return;
+            }
+            const progress = this.createProgressTip(container);
+            try {
+              for (let i = 0; i < tagsToAdd.length; i++) {
+                progress.updateProgress(i + 1, tagsToAdd.length);
+                input.focus();
+                Simulate.input(input, tagsToAdd[i]);
+                await Utils.sleep(1);
+                Simulate.pressEnter(input);
+                await Utils.sleep(1);
+              }
+              progress.complete(
+                `处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`
+              );
+              const pasteBtn = document.querySelector(".tag-action-buttons .btn:nth-child(2)");
+              if (pasteBtn instanceof HTMLElement) {
+                Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+              }
+            } catch (error) {
+              progress.remove();
+              throw error;
+            }
+          } catch (error) {
+            handleError(error, () => {
+              toast.error("粘贴标签失败：" + (error instanceof Error ? error.message : String(error)));
+            });
+          }
+        }
+        /**
+         * 清空所有标签
+         */
+        async clearTags() {
+          try {
+            const confirmed = window.confirm("确定要清空所有标签吗？");
+            if (!confirmed) return;
+            const tagElements = this.api.tagElements;
+            if (!tagElements) throw new Error("找不到标签容器");
+            const deleteButtons = this.api.getTagDeleteButtons();
+            if (deleteButtons.length === 0) {
+              toast.warning("没有找到需要清空的标签");
+              return;
+            }
+            const progress = this.createProgressTip(tagElements.container);
+            try {
+              for (let i = deleteButtons.length - 1; i >= 0; i--) {
+                progress.updateProgress(deleteButtons.length - i, deleteButtons.length);
+                const button = deleteButtons[i];
+                button.click();
+                await Utils.sleep(1);
+              }
+              progress.complete(`处理完成！已清空 ${deleteButtons.length} 个标签。`);
+              const clearBtn = document.querySelector(".tag-action-buttons .btn:nth-child(3)");
+              if (clearBtn instanceof HTMLElement) {
+                Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+              }
+            } catch (error) {
+              progress.remove();
+              throw error;
+            }
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 创建进度提示
+         */
+        createProgressTip(container) {
+          const tipContainer = document.createElement("div");
+          tipContainer.style.cssText = `
+            margin-bottom: 12px;
+            background: #f5f7fa;
+            border-radius: 4px;
+            padding: 12px;
+            position: relative;
+        `;
+          const textElement = document.createElement("div");
+          textElement.style.cssText = "color: #666; font-size: 14px; margin-bottom: 8px;";
+          const progressBarContainer = document.createElement("div");
+          progressBarContainer.style.cssText = `
+            background: #e4e7ed;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        `;
+          const progressBar = document.createElement("div");
+          progressBar.style.cssText = `
+            width: 0%;
+            height: 100%;
+            background: #409EFF;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        `;
+          progressBarContainer.appendChild(progressBar);
+          tipContainer.appendChild(textElement);
+          tipContainer.appendChild(progressBarContainer);
+          const inputContainer = container.querySelector(".item-search-input__container");
+          if (inputContainer == null ? void 0 : inputContainer.parentElement) {
+            inputContainer.parentElement.insertBefore(tipContainer, inputContainer);
+          } else {
+            container.insertBefore(tipContainer, container.firstChild);
+          }
+          return {
+            container: tipContainer,
+            progressBar,
+            textElement,
+            updateProgress: (current, total, message) => {
+              const percentage = current / total * 100;
+              progressBar.style.width = `${percentage}%`;
+              textElement.textContent = message || `处理中... (${current}/${total})`;
+            },
+            complete: (message) => {
+              progressBar.style.width = "100%";
+              progressBar.style.background = "#67C23A";
+              textElement.textContent = message;
+              setTimeout(() => tipContainer.remove(), 2e3);
+            },
+            remove: () => tipContainer.remove()
+          };
+        }
+      }
+      class ItemEditFeature extends PageFeature {
+        constructor(context) {
+          super(context);
+          __publicField(this, "modules", []);
+          __publicField(this, "app", null);
+          __publicField(this, "container", null);
+          __publicField(this, "toggleBtn", null);
+        }
+        shouldExecute() {
+          const path = window.location.pathname;
+          return /^\/items\/\d+\/edit(_pre)?$/.test(path);
+        }
+        createAPI() {
+          return new ItemEditAPI();
+        }
+        async initialize() {
+          if (this.api) {
+            this.modules.push(
+              new ItemNumbers(this.api),
+              new TagManager(this.api),
+              new FileManager(this.api)
+            );
+            this.injectStyles();
+            this.createToggleButton();
+            this.createPanelContainer();
+            this.mountVueApp();
+          }
+        }
+        /**
+         * 注入样式表
+         */
+        injectStyles() {
+          if (document.querySelector("#booth-enhancer-styles")) return;
+          const style = document.createElement("style");
+          style.id = "booth-enhancer-styles";
+          style.textContent = `
+            .booth-enhancer-toggle {
+                position: fixed;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 30px;
+                height: 60px;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid #e0e0e0;
+                border-right: none;
+                border-radius: 8px 0 0 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                z-index: 999;
+                font-size: 12px;
+                color: #666;
+                user-select: none;
+            }
+
+            .booth-enhancer-toggle:hover {
+                background: #f8f9fa;
+                box-shadow: -2px 0 6px rgba(0, 0, 0, 0.15);
+            }
+
+            #booth-enhancer-panel-root {
+                position: fixed;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%) translateX(100%);
+                width: 400px;
+                min-width: 300px;
+                max-width: 500px;
+                height: 80vh;
+                max-height: 80vh;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+                pointer-events: none;
+                box-sizing: border-box;
+            }
+
+            #booth-enhancer-panel-root.panel-open {
+                transform: translateY(-50%) translateX(0);
+                pointer-events: auto;
+            }
+
+            @media (max-width: 768px) {
+                #booth-enhancer-panel-root {
+                    width: 100%;
+                    max-width: 400px;
+                    height: 70vh;
+                    max-height: 70vh;
+                }
+                
+                .booth-enhancer-toggle {
+                    width: 40px;
+                    height: 60px;
+    }
+            }
+
+            @media (max-width: 480px) {
+                #booth-enhancer-panel-root {
+                    width: 100%;
+                    height: 85vh;
+                    max-height: 85vh;
+                }
+            }
+        `;
+          document.head.appendChild(style);
+        }
+        /**
+         * 更新侧边栏状态
+         */
+        updateSidebarState(isOpen, chevronRight, chevronLeft) {
+          if (this.toggleBtn) {
+            this.toggleBtn.innerHTML = isOpen ? chevronRight : chevronLeft;
+          }
+          if (this.container) {
+            this.container.classList.toggle("panel-open", isOpen);
+          }
+        }
+        /**
+         * 创建侧边栏触发按钮
+         */
+        createToggleButton() {
+          this.toggleBtn = document.createElement("div");
+          this.toggleBtn.className = "booth-enhancer-toggle";
+          this.toggleBtn.title = "配置面板";
+          const chevronLeft = withSize(icons.chevronLeft, 20, 2.5);
+          const chevronRight = withSize(icons.chevronRight, 20, 2.5);
+          this.toggleBtn.innerHTML = chevronLeft;
+          this.toggleBtn.addEventListener("click", () => {
+            const storage = ConfigStorage.getInstance();
+            const isOpen = !storage.data.value.ui.sidebarOpen;
+            storage.data.value.ui.sidebarOpen = isOpen;
+            this.updateSidebarState(isOpen, chevronRight, chevronLeft);
+          });
+          document.body.appendChild(this.toggleBtn);
+        }
+        /**
+         * 创建面板容器
+         */
+        createPanelContainer() {
+          this.container = document.createElement("div");
+          this.container.id = "booth-enhancer-panel-root";
+          const storage = ConfigStorage.getInstance();
+          const sidebarOpen = storage.data.value.ui.sidebarOpen;
+          if (sidebarOpen) {
+            const chevronRight = withSize(icons.chevronRight, 20, 2.5);
+            const chevronLeft = withSize(icons.chevronLeft, 20, 2.5);
+            this.updateSidebarState(sidebarOpen, chevronRight, chevronLeft);
+          }
+          document.body.appendChild(this.container);
+        }
+        /**
+         * 挂载 Vue 应用
+         */
+        mountVueApp() {
+          if (!this.container || !this.api) return;
+          const match = window.location.pathname.match(/\/items\/(\d+)\/edit/);
+          const itemId = match ? match[1] : "";
+          this.app = createApp(AppVue, {
+            api: this.api,
+            itemId
+          });
+          this.app.mount(this.container);
+        }
+      }
+      class ItemManageParser {
+        /**
+         * 从元素中提取商品ID
+         */
+        extractId(element) {
+          var _a;
+          const dataId = element.getAttribute("data-id");
+          if (dataId) return dataId;
+          const link = ((_a = element.querySelector(".nav")) == null ? void 0 : _a.getAttribute("href")) || "";
+          const match = link.match(/\/items\/(\d+)/);
+          return match ? match[1] : "";
+        }
+        /**
+         * 解析变体列表（数据+元素）
+         */
+        parseVariations(element) {
+          const variations = [];
+          const rows = element.querySelectorAll(".dashboard-items-variation .row");
+          rows.forEach((row) => {
+            var _a, _b, _c, _d;
+            const labelEl = row.querySelector(".dashboard-items-variation-label");
+            let name = "";
+            if (labelEl) {
+              const textContent = labelEl.textContent || "";
+              const match = textContent.match(/#\d+\s*(.+)/);
+              name = match ? match[1].trim() : textContent.trim();
+            }
+            const priceEl = row.querySelector(".price");
+            const priceText = ((_a = priceEl == null ? void 0 : priceEl.textContent) == null ? void 0 : _a.trim()) || "0";
+            const price = parseInt(priceText.replace(/[^\d]/g, ""), 10) || 0;
+            const salesText = ((_c = (_b = row.querySelector(".sales_quantity .count")) == null ? void 0 : _b.textContent) == null ? void 0 : _c.trim()) || "0";
+            const salesCount = parseInt(salesText, 10) || 0;
+            const revenueEl = row.querySelector(".sales_subtotal");
+            const revenueText = ((_d = revenueEl == null ? void 0 : revenueEl.textContent) == null ? void 0 : _d.trim()) || "0";
+            const revenue = parseInt(revenueText.replace(/[^\d]/g, ""), 10) || 0;
+            variations.push({
+              data: { name, price, salesCount, revenue },
+              element: row
+            });
+          });
+          return variations;
+        }
+        /**
+         * 解析标签列表（文本+元素）
+         */
+        parseTags(element) {
+          const tags = [];
+          const tagElements = element.querySelectorAll(".dashboard-items-tags li");
+          tagElements.forEach((li) => {
+            var _a;
+            const textEl = li.querySelector(".tag-text");
+            const text = (_a = textEl == null ? void 0 : textEl.textContent) == null ? void 0 : _a.trim();
+            if (text) {
+              tags.push({
+                text,
+                element: li
+              });
+            }
+          });
+          return tags;
+        }
+        /**
+         * 解析单个商品（只返回数据）
+         */
+        parseItem(element) {
+          var _a, _b, _c, _d;
+          try {
+            const id = this.extractId(element);
+            if (!id) return null;
+            const name = ((_b = (_a = element.querySelector(".nav")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "";
+            const url = ((_c = element.querySelector(".nav")) == null ? void 0 : _c.getAttribute("href")) || "";
+            const thumbnail = ((_d = element.querySelector(".thumbnail img")) == null ? void 0 : _d.src) || "";
+            const tags = this.parseTags(element).map((t) => t.text);
+            const variations = this.parseVariations(element).map((v) => v.data);
+            const favElement = element.querySelector(".item-stat.favs .count");
+            const favoritesCount = favElement ? parseInt(favElement.textContent || "0", 10) || 0 : 0;
+            return {
+              id,
+              name,
+              url,
+              thumbnail,
+              tags,
+              variations,
+              favoritesCount
+            };
+          } catch (error) {
+            console.error("解析商品失败:", error);
+            return null;
+          }
+        }
+      }
+      class ItemManageAPI extends BaseAPI {
+        constructor() {
+          super();
+          __publicField(this, "_items", []);
+          __publicField(this, "_parser");
+          this._parser = new ItemManageParser();
+        }
+        /**
+         * 判断是否应该在当前页面激活
+         * 只在商品管理列表页面激活（不包括编辑页面）
+         */
+        shouldActivate() {
+          const path = window.location.pathname;
+          return (path === "/items" || path === "/items/") && !path.match(/\/items\/\d+\/(edit|edit_pre)/);
+        }
+        /**
+         * 等待商品元素出现
+         */
+        waitForElements(timeout = 5e3) {
+          return new Promise((resolve, reject) => {
+            if (document.querySelector(".item-wrapper")) {
+              resolve();
+              return;
+            }
+            const timer = setTimeout(() => {
+              observer.disconnect();
+              reject(new Error("等待商品元素超时"));
+            }, timeout);
+            const observer = new MutationObserver(() => {
+              if (document.querySelector(".item-wrapper")) {
+                clearTimeout(timer);
+                observer.disconnect();
+                resolve();
+              }
+            });
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true
+            });
+          });
+        }
+        /**
+         * 加载商品数据
+         * 等待商品元素出现后再加载
+         */
+        async load() {
+          await this.waitForElements();
+          this._items = [];
+          const elements = document.querySelectorAll(".item-wrapper");
+          elements.forEach((element) => {
+            const htmlElement = element;
+            const data = this._parser.parseItem(element);
+            if (data) {
+              const variationsUl = htmlElement.querySelector(".dashboard-items-variation");
+              const tagsUl = htmlElement.querySelector(".dashboard-items-tags");
+              const variations = this._parser.parseVariations(htmlElement);
+              const tags = this._parser.parseTags(htmlElement);
+              this._items.push({
+                data,
+                element: htmlElement,
+                variationsUl,
+                tagsUl,
+                variations,
+                tags
+              });
+            }
+          });
+        }
+        /**
+         * 获取所有商品（包含数据和DOM元素）
+         */
+        getItems() {
+          return [...this._items];
+        }
+        /**
+         * 获取所有商品数据（只返回数据，不含DOM元素）
+         */
+        getItemsData() {
+          return this._items.map((item) => item.data);
+        }
+        /**
+         * 根据ID获取商品（包含数据和DOM元素）
+         */
+        getItem(id) {
+          return this._items.find((item) => item.data.id === id);
+        }
+        /**
+         * 根据ID获取商品数据（只返回数据）
+         */
+        getItemData(id) {
+          var _a;
+          return (_a = this._items.find((item) => item.data.id === id)) == null ? void 0 : _a.data;
+        }
+        /**
+         * 根据ID获取DOM元素
+         */
+        getItemElement(id) {
+          var _a;
+          return (_a = this._items.find((item) => item.data.id === id)) == null ? void 0 : _a.element;
+        }
+        /**
+         * 刷新数据（重新解析DOM）
+         */
+        refresh() {
+          this.load();
+        }
+        /**
+         * 复制商品标签到剪贴板
+         * @param itemId 商品ID
+         * @returns 是否复制成功
+         */
+        async copyItemTags(itemId) {
+          const item = this.getItem(itemId);
+          if (!item) {
+            console.error(`未找到商品: ${itemId}`);
+            return false;
+          }
+          const tags = item.data.tags;
+          if (tags.length === 0) {
+            alert("没有找到标签");
+            return false;
+          }
+          try {
+            await navigator.clipboard.writeText(JSON.stringify(tags));
+            return true;
+          } catch (error) {
+            console.error("复制标签失败:", error);
+            return false;
+          }
+        }
+      }
+      class ItemActions extends PageModule {
+        constructor(api) {
+          super(api);
+        }
+        initialize(api) {
+          const items = api.getItems();
+          items.forEach((item) => {
+            this.addToItem(item.element);
+          });
+        }
+        /**
+         * 为商品添加操作按钮
+         * @param item 商品元素
+         */
+        addToItem(item) {
+          try {
+            if (item.querySelector(".tag-copy-btn") || item.querySelector(".item-delete-btn-x")) return;
+            this.addDeleteButton(item);
+            this.addCopyTagsButton(item);
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 添加删除按钮
+         */
+        addDeleteButton(item) {
+          const itemId = item.getAttribute("data-id");
+          if (!itemId) return;
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "item-delete-btn-x";
+          deleteBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+          deleteBtn.title = "删除商品";
+          deleteBtn.onclick = async (e) => {
+            e.preventDefault();
+            await this.handleDeleteItem(item, itemId);
+          };
+          if (getComputedStyle(item).position === "static") {
+            item.style.position = "relative";
+          }
+          this.injectDeleteButtonStyles();
+          item.appendChild(deleteBtn);
+        }
+        /**
+         * 注入删除按钮样式
+         */
+        injectDeleteButtonStyles() {
+          if (document.getElementById("item-delete-btn-styles")) return;
+          const style = document.createElement("style");
+          style.id = "item-delete-btn-styles";
+          style.textContent = `
+            .item-delete-btn-x {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                z-index: 10;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                border: none;
+                border-radius: 50%;
+                background-color: #fff;
+                color: #666;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: all 0.2s ease;
+            }
+
+            .item-delete-btn-x svg {
+                width: 16px;
+                height: 16px;
+                display: block;
+            }
+
+            .item-delete-btn-x:hover {
+                background-color: #ff5252;
+                color: #fff;
+                box-shadow: 0 4px 8px rgba(255, 82, 82, 0.3);
+                transform: scale(1.1);
+            }
+
+            .item-delete-btn-x:active {
+                transform: scale(0.95);
+            }
+        `;
+          document.head.appendChild(style);
+        }
+        /**
+         * 添加复制标签按钮
+         */
+        addCopyTagsButton(item) {
+          const tagList = item.querySelector(".dashboard-items-tags");
+          const footerActions = item.querySelector(".dashboard-item-footer-actions");
+          const itemId = item.getAttribute("data-id");
+          if (tagList && footerActions && itemId) {
+            const copyBtn = document.createElement("a");
+            copyBtn.className = "btn calm small tag-copy-btn mr-8";
+            copyBtn.innerHTML = "复制标签";
+            copyBtn.onclick = async (e) => {
+              e.preventDefault();
+              const success = await this.api.copyItemTags(itemId);
+              if (success) {
+                Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
+              }
+            };
+            footerActions.insertBefore(copyBtn, footerActions.firstChild);
+          }
+        }
+        /**
+         * 处理删除商品
+         */
+        async handleDeleteItem(item, itemId) {
+          var _a, _b, _c;
+          try {
+            if (!confirm("确定要删除这个商品吗？此操作不可恢复。")) return;
+            const itemName = ((_b = (_a = item.querySelector(".nav")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "未知商品";
+            if (!confirm(`再次确认删除商品：
+${itemName}
+ID: ${itemId}`)) return;
+            const csrfToken = (_c = document.querySelector('meta[name="csrf-token"]')) == null ? void 0 : _c.getAttribute("content");
+            if (!csrfToken) {
+              throw new Error("无法获取CSRF token");
+            }
+            const response = await fetch(`https://manage.booth.pm/items/${itemId}`, {
+              method: "DELETE",
+              headers: {
+                "accept": "application/json, text/javascript, */*; q=0.01",
+                "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+                "x-requested-with": "XMLHttpRequest",
+                "x-csrf-token": csrfToken
+              },
+              referrer: window.location.href,
+              referrerPolicy: "strict-origin-when-cross-origin",
+              mode: "cors",
+              credentials: "include"
+            });
+            if (response.ok) {
+              item.remove();
+            } else {
+              const errorText = await response.text();
+              console.log("删除失败响应:", errorText);
+              throw new Error(`删除失败: ${response.status}
+${errorText}`);
+            }
+          } catch (error) {
+            handleError(error, () => {
+              alert("删除商品失败，请刷新页面重试");
+            });
+          }
+        }
+      }
+      class ItemCollapse extends PageModule {
+        constructor(api) {
+          super(api);
+          __publicField(this, "_processedItems");
+          __publicField(this, "stylesInjected", false);
+        }
+        get processedItems() {
+          if (!this._processedItems) {
+            this._processedItems = /* @__PURE__ */ new Set();
+          }
+          return this._processedItems;
+        }
+        initialize(api) {
+          this.injectStyles();
+          const items = api.getItems();
+          items.forEach((itemElement) => {
+            this.addToItem(itemElement);
+          });
+        }
+        /**
+         * 为商品添加折叠功能
+         * @param itemElement API 提供的商品元素
+         */
+        addToItem(itemElement) {
+          var _a, _b;
+          try {
+            const { element, variationsUl, tagsUl, variations } = itemElement;
+            if (this.processedItems.has(element)) return;
+            this.processedItems.add(element);
+            const headers = [];
+            if (variationsUl && variations.length > 0 && !((_a = variationsUl.previousElementSibling) == null ? void 0 : _a.classList.contains("item-collapse-header"))) {
+              const header = this.createVariationHeader(itemElement);
+              headers.push({ header, target: variationsUl });
+            }
+            if (tagsUl && itemElement.tags.length > 0 && !((_b = tagsUl.previousElementSibling) == null ? void 0 : _b.classList.contains("item-collapse-header"))) {
+              const header = this.createTagHeader(tagsUl);
+              headers.push({ header, target: tagsUl });
+            }
+            headers.forEach(({ header, target }) => {
+              var _a2;
+              (_a2 = target.parentElement) == null ? void 0 : _a2.insertBefore(header, target);
+              target.classList.add("item-collapsible", "collapsed");
+            });
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 设置折叠功能
+         */
+        setupCollapseToggle(header, target) {
+          const icon = header.querySelector(".item-collapse-icon");
+          let isCollapsed = true;
+          header.onclick = () => {
+            isCollapsed = !isCollapsed;
+            target.classList.toggle("collapsed", isCollapsed);
+            icon.classList.toggle("collapsed", isCollapsed);
+          };
+        }
+        /**
+         * 创建基础折叠标题
+         */
+        createBaseHeader(title, badgesHTML) {
+          const header = document.createElement("div");
+          header.className = "item-collapse-header";
+          const titleSection = document.createElement("div");
+          titleSection.className = "item-collapse-title";
+          titleSection.innerHTML = `
+            <span class="item-collapse-icon collapsed">▼</span>
+            <span>${title}</span>
+        `;
+          header.appendChild(titleSection);
+          if (badgesHTML) {
+            const badgesContainer = document.createElement("div");
+            badgesContainer.className = "item-collapse-badges";
+            badgesContainer.innerHTML = badgesHTML;
+            header.appendChild(badgesContainer);
+          }
+          return header;
+        }
+        /**
+         * 创建变体列表折叠标题（使用 API 数据）
+         */
+        createVariationHeader(itemElement) {
+          const { variations, variationsUl } = itemElement;
+          const count = variations.length;
+          const totalSales = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
+          const totalRevenue = variations.reduce((sum, v) => sum + v.data.revenue, 0);
+          const badgesHTML = `
+            <span class="item-badge item-badge-count">变体: <strong>${count}</strong></span>
+            <span class="item-badge item-badge-sales">销量: <strong>${totalSales}</strong></span>
+            <span class="item-badge item-badge-revenue">收益: <strong>${totalRevenue.toLocaleString()}</strong></span>
+        `;
+          const header = this.createBaseHeader("变体列表", badgesHTML);
+          this.setupCollapseToggle(header, variationsUl);
+          return header;
+        }
+        /**
+         * 创建标签列表折叠标题
+         */
+        createTagHeader(tagsUl) {
+          const header = this.createBaseHeader("标签列表");
+          this.setupCollapseToggle(header, tagsUl);
+          return header;
+        }
+        /**
+         * 注入样式表
+         */
+        injectStyles() {
+          if (this.stylesInjected) {
+            return;
+          }
+          this.stylesInjected = true;
+          const style = document.createElement("style");
+          style.id = "booth-item-collapse-styles";
+          style.textContent = `
+            /* 折叠图标样式 */
+            .item-collapse-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 16px;
+                height: 16px;
+                margin-right: 6px;
+                font-size: 10px;
+                color: #666;
+                flex-shrink: 0;
+                transition: transform 0.2s ease;
+            }
+
+            .item-collapse-icon.collapsed {
+                transform: rotate(-90deg);
+            }
+
+            /* 折叠容器样式 - 使用 GPU 加速属性 */
+            .item-collapsible {
+                overflow: hidden;
+                max-height: 5000px;
+                will-change: max-height, opacity; /* 提示浏览器优化 */
+                contain: layout style paint; /* 限制重排范围 */
+            }
+
+            .item-collapsible.collapsed {
+                max-height: 0 !important;
+                opacity: 0;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                /* 使用 transform 代替部分属性，GPU 加速 */
+                transform: translateZ(0);
+            }
+
+            /* 折叠标题容器 */
+            .item-collapse-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 8px 12px;
+                margin-bottom: 8px;
+                font-weight: 500;
+                font-size: 13px;
+                color: #333;
+                user-select: none;
+                border-bottom: 1px solid #e0e0e0;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                gap: 12px;
+            }
+            
+            .item-collapse-header:hover {
+                background-color: #f5f5f5;
+            }
+            
+            .item-collapse-header:first-of-type {
+                margin-top: 8px;
+            }
+
+            /* 标题部分 */
+            .item-collapse-title {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            /* Badges 容器 */
+            .item-collapse-badges {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-left: auto;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            /* Badge 基础样式 */
+            .item-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 400;
+                border-radius: 12px;
+                white-space: nowrap;
+            }
+
+            .item-badge strong {
+                font-weight: 600;
+            }
+
+            /* Badge 变体数量 */
+            .item-badge-count {
+                background-color: #e3f2fd;
+                color: #1976d2;
+            }
+
+            /* Badge 销量 */
+            .item-badge-sales {
+                background-color: #f3e5f5;
+                color: #7b1fa2;
+            }
+
+            /* Badge 收益 */
+            .item-badge-revenue {
+                background-color: #e8f5e9;
+                color: #388e3c;
+            }
+        `;
+          document.head.appendChild(style);
+        }
+      }
+      class ItemNavigation extends PageModule {
+        constructor(api) {
+          super(api);
+          __publicField(this, "navigationContainer", null);
+          __publicField(this, "toggleButton", null);
+          __publicField(this, "items", []);
+          __publicField(this, "isExpanded", false);
+          __publicField(this, "searchInput", null);
+          __publicField(this, "filteredItems", []);
+          __publicField(this, "isScrolling", false);
+          __publicField(this, "scrollTimeout", null);
+          __publicField(this, "hoverTimeout", null);
+        }
+        initialize(api) {
+          this.items = api.getItems();
+          this.injectStyles();
+          setTimeout(() => {
+            this.createNavigation();
+          }, 1e3);
+        }
+        /**
+         * 创建商品导航栏
+         */
+        createNavigation() {
+          try {
+            if (document.querySelector(".item-navigation")) return;
+            if (this.items.length === 0) return;
+            this.injectStyles();
+            this.createToggleButton();
+            this.createNavigationContainer();
+            this.createNavigationItems();
+            this.setupScrollListener();
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 注入样式表
+         */
+        injectStyles() {
+          if (document.querySelector("#booth-navigation-styles")) return;
+          const style = document.createElement("style");
+          style.id = "booth-navigation-styles";
+          style.textContent = `
+            .navigation-toggle-button {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+                width: 30px;
+                height: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e0e0e0;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+                z-index: 999;
+                font-size: 12px;
+                color: #666;
+            }
+
+            .navigation-toggle-button:hover {
+                background: #f8f9fa;
+                box-shadow: -2px 0 6px rgba(0, 0, 0, 0.15);
+            }
+
+            .item-navigation {
+                position: fixed;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%) translateX(100%);
+                width: 400px;
+                min-width: 300px;
+                max-width: 500px;
+                height: 80vh;
+                max-height: 80vh;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+                pointer-events: none;
+                box-sizing: border-box;
+            }
+
+            .item-navigation.expanded {
+                transform: translateY(-50%) translateX(0);
+            }
+
+            .navigation-content {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+                pointer-events: auto;
+            }
+
+            /* 导航项样式 */
+            .navigation-item {
+                padding: 6px 8px;
+                margin-bottom: 1px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 2px solid transparent;
+                background: #fff;
+                border: 1px solid transparent;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            /* 导航项hover效果 */
+            .navigation-item:hover:not(.active) {
+                background-color: #f8f9fa;
+                border-color: #e9ecef;
+            }
+
+            /* 导航项active状态 */
+            .navigation-item.active {
+                background-color: #e3f2fd !important;
+                border-left-color: #2196f3 !important;
+                border-color: #bbdefb !important;
+            }
+
+            /* PC端：hover显示（通过JavaScript处理，这里只处理样式） */
+            @media (hover: hover) and (pointer: fine) {
+                .item-navigation:hover {
+                    pointer-events: auto;
+                }
+            }
+
+            /* 移动端：点击切换 */
+            @media (max-width: 768px) {
+                .item-navigation {
+                    width: 100%;
+                    max-width: 400px;
+                    height: 70vh;
+                    max-height: 70vh;
+                }
+
+                .navigation-toggle-button {
+                    width: 40px;
+                    height: 60px;
+                }
+            }
+
+            /* 小屏幕移动端 */
+            @media (max-width: 480px) {
+                .item-navigation {
+                    width: 100%;
+                    height: 85vh;
+                    max-height: 85vh;
+                    top: 50%;
+                    transform: translateY(-50%) translateX(100%);
+                }
+
+                .item-navigation.expanded {
+                    transform: translateY(-50%) translateX(0);
+                }
+            }
+
+            /* 头部样式 */
+            .navigation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            flex-shrink: 0;
+                pointer-events: auto;
+            }
+
+            .navigation-header-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            }
+
+            /* 关闭按钮样式 */
+            .navigation-close-button {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: #666;
+                font-size: 20px;
+                line-height: 1;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+
+            .navigation-close-button:hover {
+                background-color: #e0e0e0;
+                color: #333;
+            }
+
+            /* 搜索容器样式 */
+            .navigation-search {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+            flex-shrink: 0;
+            width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+                display: block;
+            }
+
+            /* 搜索输入框样式 */
+            .navigation-search-input {
+                width: 100% !important;
+                height: 32px;
+            padding: 8px 12px;
+                margin: 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+                box-sizing: border-box;
+                line-height: 1;
+                display: block;
+                max-width: none;
+                min-width: 0;
+            }
+
+            .navigation-search-input:focus {
+                border-color: #2196f3;
+            }
+
+            /* 列表容器样式 */
+            .navigation-items-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px;
+            min-height: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f5f5f5;
+            }
+
+            /* 空状态样式 */
+            .navigation-empty-state {
+                text-align: center;
+                color: #666;
+                padding: 20px;
+                font-style: italic;
+            }
+
+            /* 缩略图容器样式 */
+            .navigation-thumbnail {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .navigation-thumbnail img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 商品信息容器样式 */
+            .navigation-item-info {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .navigation-item-name-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .navigation-item-name {
+                flex: 1;
+                margin-right: 6px;
+                font-weight: 500;
+                font-size: 11px;
+                line-height: 1.3;
+                word-wrap: break-word;
+                min-width: 0;
+            }
+
+            .navigation-item-variant-count {
+                color: #666;
+                font-size: 9px;
+                flex-shrink: 0;
+                background: #f0f0f0;
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
+
+            .navigation-item-stats-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 10px;
+                color: #666;
+            }
+
+            .navigation-item-stats-left {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .navigation-item-sales {
+                font-weight: 500;
+            }
+
+            .navigation-item-sales.has-sales {
+                color: #28a745;
+            }
+
+            .navigation-item-sales.no-sales {
+                color: #999;
+            }
+
+            .navigation-item-favorites {
+                font-weight: 500;
+            }
+
+            .navigation-item-favorites.has-favorites {
+                color: #f48fb1;
+            }
+
+            .navigation-item-favorites.no-favorites {
+                color: #999;
+            }
+
+            .navigation-item-index {
+                color: #999;
+                font-size: 9px;
+            }
+        `;
+          document.head.appendChild(style);
+        }
+        /**
+         * 创建独立的切换按钮
+         */
+        createToggleButton() {
+          if (document.querySelector(".navigation-toggle-button")) return;
+          this.toggleButton = document.createElement("div");
+          this.toggleButton.className = "navigation-toggle-button";
+          this.toggleButton.innerHTML = "◀";
+          this.toggleButton.onclick = (e) => {
+            e.stopPropagation();
+            this.toggleNavigation();
+          };
+          this.toggleButton.onmouseenter = () => {
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+              this.showNavigation();
+            }
+          };
+          document.body.appendChild(this.toggleButton);
+        }
+        /**
+         * 创建导航栏容器
+         */
+        createNavigationContainer() {
+          this.navigationContainer = document.createElement("div");
+          this.navigationContainer.className = "item-navigation";
+          this.createContentContainer();
+          document.body.appendChild(this.navigationContainer);
+          this.setupPCHoverBehavior();
+        }
+        /**
+         * 设置PC端hover行为
+         */
+        setupPCHoverBehavior() {
+          if (!this.navigationContainer || !this.toggleButton) return;
+          if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            return;
+          }
+          this.navigationContainer.onmouseenter = () => {
+            if (this.hoverTimeout) {
+              clearTimeout(this.hoverTimeout);
+              this.hoverTimeout = null;
+            }
+          };
+          this.navigationContainer.onmouseleave = () => {
+            if (this.hoverTimeout) {
+              clearTimeout(this.hoverTimeout);
+            }
+            this.hoverTimeout = window.setTimeout(() => {
+              const buttonRect = this.toggleButton.getBoundingClientRect();
+              const mouseX = window.lastMouseX || 0;
+              const mouseY = window.lastMouseY || 0;
+              if (!(mouseX >= buttonRect.left && mouseX <= buttonRect.right && mouseY >= buttonRect.top && mouseY <= buttonRect.bottom)) {
+                this.hideNavigation();
+              }
+            }, 200);
+          };
+          document.addEventListener("mousemove", (e) => {
+            window.lastMouseX = e.clientX;
+            window.lastMouseY = e.clientY;
+          });
+        }
+        /**
+         * 创建内容容器
+         */
+        createContentContainer() {
+          const contentContainer = document.createElement("div");
+          contentContainer.className = "navigation-content";
+          const header = document.createElement("div");
+          header.className = "navigation-header";
+          const title = document.createElement("div");
+          title.className = "navigation-header-title";
+          title.textContent = `商品导航 (${this.items.length})`;
+          header.appendChild(title);
+          const closeButton = document.createElement("div");
+          closeButton.className = "navigation-close-button";
+          closeButton.innerHTML = "×";
+          closeButton.onclick = () => {
+            this.hideNavigation();
+          };
+          header.appendChild(closeButton);
+          const searchContainer = document.createElement("div");
+          searchContainer.className = "navigation-search";
+          this.searchInput = document.createElement("input");
+          this.searchInput.type = "text";
+          this.searchInput.className = "navigation-search-input";
+          this.searchInput.placeholder = "搜索商品...";
+          this.searchInput.oninput = () => this.filterItems();
+          searchContainer.appendChild(this.searchInput);
+          const itemsContainer = document.createElement("div");
+          itemsContainer.className = "navigation-items-container";
+          if (!document.querySelector("#navigation-scrollbar-style")) {
+            const style = document.createElement("style");
+            style.id = "navigation-scrollbar-style";
+            style.textContent = `
+                .navigation-items-container::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .navigation-items-container::-webkit-scrollbar-track {
+                    background: #f5f5f5;
+                    border-radius: 3px;
+                }
+                .navigation-items-container::-webkit-scrollbar-thumb {
+                    background: #ccc;
+                    border-radius: 3px;
+                }
+                .navigation-items-container::-webkit-scrollbar-thumb:hover {
+                    background: #999;
+                }
+            `;
+            document.head.appendChild(style);
+          }
+          contentContainer.appendChild(header);
+          contentContainer.appendChild(searchContainer);
+          contentContainer.appendChild(itemsContainer);
+          this.navigationContainer.appendChild(contentContainer);
+        }
+        /**
+         * 切换导航栏状态（移动端使用）
+         */
+        toggleNavigation() {
+          if (!this.navigationContainer) return;
+          this.isExpanded = !this.isExpanded;
+          if (this.isExpanded) {
+            this.showNavigation();
+          } else {
+            this.hideNavigation();
+          }
+        }
+        /**
+         * 显示导航栏
+         */
+        showNavigation() {
+          if (!this.navigationContainer) return;
+          this.navigationContainer.classList.add("expanded");
+          this.isExpanded = true;
+          if (this.toggleButton) {
+            this.toggleButton.innerHTML = "▶";
+          }
+        }
+        /**
+         * 隐藏导航栏
+         */
+        hideNavigation() {
+          if (!this.navigationContainer) return;
+          this.navigationContainer.classList.remove("expanded");
+          this.isExpanded = false;
+          if (this.toggleButton) {
+            this.toggleButton.innerHTML = "◀";
+          }
+        }
+        /**
+         * 创建导航项（使用 API 数据）
+         */
+        createNavigationItems() {
+          var _a;
+          if (!this.navigationContainer) return;
+          const itemsContainer = this.navigationContainer.querySelector(".navigation-items-container");
+          if (!itemsContainer) return;
+          itemsContainer.innerHTML = "";
+          const itemsToShow = this.filteredItems.length > 0 ? this.filteredItems : this.items;
+          if (itemsToShow.length === 0) {
+            const emptyState = document.createElement("div");
+            emptyState.className = "navigation-empty-state";
+            emptyState.textContent = ((_a = this.searchInput) == null ? void 0 : _a.value) ? "未找到匹配的商品" : "暂无商品";
+            itemsContainer.appendChild(emptyState);
+            return;
+          }
+          itemsToShow.forEach((itemElement, index) => {
+            const { data, element, variations } = itemElement;
+            const variationCount = variations.length;
+            const salesCount = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
+            const favoritesCount = data.favoritesCount;
+            const navItem = document.createElement("div");
+            navItem.className = "navigation-item";
+            navItem.setAttribute("data-item-id", data.id);
+            const thumbnailContainer = document.createElement("div");
+            thumbnailContainer.className = "navigation-thumbnail";
+            if (data.thumbnail) {
+              const img = document.createElement("img");
+              img.src = data.thumbnail;
+              img.onerror = () => {
+                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+              };
+              thumbnailContainer.appendChild(img);
+            } else {
+              thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+            }
+            const itemInfo = document.createElement("div");
+            itemInfo.className = "navigation-item-info";
+            const nameRow = document.createElement("div");
+            nameRow.className = "navigation-item-name-row";
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "navigation-item-name";
+            nameSpan.textContent = data.name;
+            const countSpan = document.createElement("span");
+            countSpan.className = "navigation-item-variant-count";
+            countSpan.textContent = `${variationCount}变体`;
+            nameRow.appendChild(nameSpan);
+            nameRow.appendChild(countSpan);
+            const statsRow = document.createElement("div");
+            statsRow.className = "navigation-item-stats-row";
+            const statsLeft = document.createElement("div");
+            statsLeft.className = "navigation-item-stats-left";
+            const salesSpan = document.createElement("span");
+            salesSpan.className = `navigation-item-sales ${salesCount > 0 ? "has-sales" : "no-sales"}`;
+            salesSpan.textContent = `销量: ${salesCount}`;
+            const favsSpan = document.createElement("span");
+            favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? "has-favorites" : "no-favorites"}`;
+            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
+            statsLeft.appendChild(salesSpan);
+            statsLeft.appendChild(favsSpan);
+            const indexSpan = document.createElement("span");
+            indexSpan.className = "navigation-item-index";
+            indexSpan.textContent = `#${index + 1}`;
+            statsRow.appendChild(statsLeft);
+            statsRow.appendChild(indexSpan);
+            itemInfo.appendChild(statsRow);
+            itemInfo.appendChild(nameRow);
+            navItem.appendChild(thumbnailContainer);
+            navItem.appendChild(itemInfo);
+            navItem.onclick = () => this.scrollToItem(element, navItem);
+            itemsContainer.appendChild(navItem);
+          });
+        }
+        /**
+         * 过滤商品（使用 API 数据）
+         */
+        filterItems() {
+          if (!this.searchInput) return;
+          const searchTerm = this.searchInput.value.toLowerCase().trim();
+          if (searchTerm === "") {
+            this.filteredItems = [];
+          } else {
+            this.filteredItems = this.items.filter((itemElement) => {
+              const { data } = itemElement;
+              return data.name.toLowerCase().includes(searchTerm) || data.id.includes(searchTerm);
+            });
+          }
+          this.createNavigationItems();
+        }
+        /**
+         * 滚动到指定商品
+         */
+        scrollToItem(item, navItem) {
+          try {
+            if (this.scrollTimeout) {
+              clearTimeout(this.scrollTimeout);
+            }
+            this.setActiveItem(navItem);
+            this.isScrolling = true;
+            if (window.matchMedia("(max-width: 768px)").matches && !this.isExpanded) {
+              this.showNavigation();
+            }
+            item.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+            this.scrollTimeout = window.setTimeout(() => {
+              this.highlightItem(item);
+              this.setActiveItem(navItem);
+              this.isScrolling = false;
+              this.scrollTimeout = null;
+            }, 800);
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 设置活跃商品
+         */
+        setActiveItem(activeNavItem) {
+          var _a;
+          (_a = this.navigationContainer) == null ? void 0 : _a.querySelectorAll(".navigation-item").forEach((el) => {
+            el.classList.remove("active");
+          });
+          activeNavItem.classList.add("active");
+        }
+        /**
+         * 高亮商品
+         */
+        highlightItem(item) {
+          item.style.outline = "2px solid #2196f3";
+          item.style.outlineOffset = "2px";
+          item.style.transition = "outline 0.3s ease";
+          setTimeout(() => {
+            item.style.outline = "";
+            item.style.outlineOffset = "";
+          }, 3e3);
+        }
+        /**
+         * 设置滚动监听
+         */
+        setupScrollListener() {
+          let ticking = false;
+          const updateActiveItem = () => {
+            if (!this.navigationContainer || this.isScrolling) return;
+            const windowHeight = window.innerHeight;
+            let activeItem = null;
+            let minDistance = Infinity;
+            const currentItems = Array.from(document.querySelectorAll(".item-wrapper"));
+            currentItems.forEach((item) => {
+              const rect = item.getBoundingClientRect();
+              if (rect.top < windowHeight && rect.bottom > 0) {
+                const itemCenter = rect.top + rect.height / 2;
+                const screenCenter = windowHeight / 2;
+                const distance = Math.abs(itemCenter - screenCenter);
+                if (distance < minDistance) {
+                  minDistance = distance;
+                  activeItem = item;
+                }
+              }
+            });
+            if (activeItem) {
+              const itemId = activeItem.getAttribute("data-id");
+              if (itemId) {
+                const activeNavItem = this.navigationContainer.querySelector(`[data-item-id="${itemId}"]`);
+                if (activeNavItem instanceof HTMLElement) {
+                  this.setActiveItem(activeNavItem);
+                }
+              }
+            }
+            ticking = false;
+          };
+          const onScroll = () => {
+            if (!ticking) {
+              requestAnimationFrame(updateActiveItem);
+              ticking = true;
+            }
+          };
+          window.addEventListener("scroll", onScroll);
+          this.scrollListener = onScroll;
+        }
+      }
+      class VariationNumbers extends PageModule {
+        constructor(api) {
+          super(api);
+        }
+        initialize(api) {
+          const items = api.getItems();
+          items.forEach((itemElement) => {
+            this.addToItem(itemElement);
+          });
+        }
+        /**
+         * 为商品添加变体序号（使用 API 数据）
+         * @param itemElement API 提供的商品元素
+         */
+        addToItem(itemElement) {
+          try {
+            const { element, variationsUl, variations } = itemElement;
+            if (!variationsUl || !variations.length) return;
+            this.addNumbersToVariations(variations);
+            this.setupVariationObserver(element, variationsUl, variations);
+          } catch (error) {
+            handleError(error);
+          }
+        }
+        /**
+         * 为变体添加序号（使用 API 的 variations）
+         */
+        addNumbersToVariations(variations) {
+          variations.forEach((variationElement, index) => {
+            const labelArea = variationElement.element.querySelector(".dashboard-items-variation-label");
+            if (!labelArea) return;
+            let numberSpan = variationElement.element.querySelector(".variation-number");
+            if (!numberSpan) {
+              numberSpan = document.createElement("span");
+              numberSpan.className = "variation-number";
+              numberSpan.style.cssText = "margin-right: 8px; color: #666;";
+              labelArea.insertBefore(numberSpan, labelArea.firstChild);
+            }
+            numberSpan.textContent = `#${index + 1}`;
+          });
+        }
+        /**
+         * 设置变体列表观察器（使用 API 的 variations）
+         */
+        setupVariationObserver(item, variationList, variations) {
+          const observer = new MutationObserver(Utils.throttle((_mutations, _observer) => {
+            const needsUpdate = variations.some((variationElement, index) => {
+              const numberSpan = variationElement.element.querySelector(".variation-number");
+              return !numberSpan || numberSpan.textContent !== `#${index + 1}`;
+            });
+            if (needsUpdate) {
+              requestAnimationFrame(() => this.addNumbersToVariations(variations));
+            }
+          }, Config.throttleDelay));
+          observer.observe(variationList, {
+            childList: true,
+            subtree: false
+          });
+          item.variationObserver = observer;
+        }
+      }
+      class ItemManageFeature extends PageFeature {
+        constructor(context) {
+          super(context);
+          __publicField(this, "modules", []);
+        }
+        shouldExecute() {
+          return this.path === "/items" || this.path === "/items/";
+        }
+        createAPI() {
+          return new ItemManageAPI();
+        }
+        async initialize() {
+          if (this.api) {
+            this.modules.push(
+              new ItemNavigation(this.api),
+              new ItemActions(this.api),
+              new ItemCollapse(this.api),
+              new VariationNumbers(this.api)
+            );
+          }
+        }
+      }
+      class SessionAPI extends BaseAPI {
+        constructor() {
+          super();
+        }
+        /**
+         * 判断是否应该在当前页面激活
+         * Session API 在所有页面都可用
+         */
+        shouldActivate() {
+          return true;
+        }
+        /**
+         * 加载数据（Session API 不需要预加载）
+         */
+        load() {
+        }
+        /**
+         * 从响应头中提取 Cookie 信息
+         */
+        extractCookieInfo(headers) {
+          var _a, _b;
+          const cookieHeader = headers.split("\n").find((line) => line.toLowerCase().startsWith("set-cookie:") && line.includes("_plaza_session_nktz7u="));
+          if (!cookieHeader) return null;
+          const value = cookieHeader.split(";")[0].split("=").slice(1).join("=").trim();
+          const expires = (_b = (_a = cookieHeader.match(/expires=([^;]+)/i)) == null ? void 0 : _a[1]) == null ? void 0 : _b.trim();
+          return {
+            value,
+            expires: expires ? new Date(expires).toISOString() : null
+          };
+        }
+        /**
+         * 获取 Booth Session
+         * @returns Promise<SessionResult> Session 数据或错误信息
+         */
+        async getSession() {
+          return new Promise((resolve) => {
+            _GM_xmlhttpRequest({
+              method: "GET",
+              url: "https://manage.booth.pm/orders",
+              headers: {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "ja,en-US;q=0.9,en;q=0.8"
+              },
+              onload: (response) => {
+                const cookieInfo = this.extractCookieInfo(response.responseHeaders);
+                if (cookieInfo) {
+                  const sessionData = {
+                    _plaza_session_nktz7u: cookieInfo.value,
+                    updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+                    expires_at: cookieInfo.expires
+                  };
+                  resolve({
+                    success: true,
+                    data: sessionData
+                  });
+                } else {
+                  resolve({
+                    success: false,
+                    error: "未找到有效的 Session"
+                  });
+                }
+              },
+              onerror: (error) => {
+                resolve({
+                  success: false,
+                  error: `请求出错: ${error.error || "网络错误"}`
+                });
+              }
+            });
+          });
+        }
+        /**
+         * 获取 Session 并格式化为 JSON 字符串
+         * @returns Promise<string | null> JSON 格式的 Session 数据
+         */
+        async getSessionJSON() {
+          const result = await this.getSession();
+          if (result.success && result.data) {
+            return JSON.stringify(result.data, null, 2);
+          }
+          return null;
+        }
+      }
+      class SessionFeature extends PageFeature {
+        constructor(context) {
+          super(context);
+        }
+        shouldExecute() {
+          return true;
+        }
+        createAPI() {
+          return new SessionAPI();
+        }
+        async initialize() {
+          _GM_registerMenuCommand("获取Booth Session", () => this.getSessionAndCopy());
+        }
+        /**
+         * 获取通知文本
+         */
+        getNotificationText(expiresAt) {
+          if (expiresAt) {
+            const expiryDate = new Date(expiresAt).toLocaleString();
+            return `Session已复制
+过期时间: ${expiryDate}`;
+          }
+          return "Session已复制到剪贴板";
+        }
+        /**
+         * 获取 Session 并复制到剪贴板
+         */
+        async getSessionAndCopy() {
+          const api = this.getAPI();
+          if (!api) return;
+          const result = await api.getSession();
+          if (result.success && result.data) {
+            const jsonData = JSON.stringify(result.data, null, 2);
+            _GM_setClipboard(jsonData, "Booth Session");
+            _GM_notification({
+              text: this.getNotificationText(result.data.expires_at),
+              title: "获取成功",
+              timeout: 3e3
+            });
+          } else {
+            _GM_notification({
+              text: result.error || "未找到有效的 Session",
+              title: "获取失败",
+              timeout: 3e3
+            });
+          }
+        }
+      }
+      class BoothEnhancer {
+        constructor() {
+          __publicField(this, "context", {
+            observers: /* @__PURE__ */ new Map(),
+            cachedElements: /* @__PURE__ */ new Map()
+          });
+          __publicField(this, "features", [
+            // new OrderAnalysisFeature(this.context),
+            new ItemEditFeature(this.context),
+            new ItemManageFeature(this.context),
+            new SessionFeature(this.context)
+          ]);
+        }
+        async init() {
+          try {
+            for (const feature of this.features) {
+              try {
+                if (feature.shouldExecute()) {
+                  await feature.execute();
+                }
+              } catch (error) {
+                handleError(error);
+              }
+            }
+          } catch (error) {
+            handleError(error, () => {
+              console.error("Booth Enhancer 启动失败");
+            });
+          }
+        }
+      }
+      new BoothEnhancer().init();
+
+    })
+  };
 }));
 
-System.register("./TagTab-BWhxAzYP-BU1Pytah.js", ['vue', './useTreeTab-B3BkgX7f-CasvKy8u.js', './__monkey.entry-cNiwjrQq.js'], (function (exports, module) {
-	'use strict';
-	var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, le, ee, ne, H$1, Ct, G$1, U$1, nt;
-	return {
-		setters: [module => {
-			defineComponent = module.defineComponent;
-			computed = module.computed;
-			createElementBlock = module.createElementBlock;
-			openBlock = module.openBlock;
-			createVNode = module.createVNode;
-			unref = module.unref;
-			withCtx = module.withCtx;
-			createCommentVNode = module.createCommentVNode;
-			createElementVNode = module.createElementVNode;
-			Fragment = module.Fragment;
-			renderList = module.renderList;
-			toDisplayString = module.toDisplayString;
-			withModifiers = module.withModifiers;
-			withDirectives = module.withDirectives;
-			withKeys = module.withKeys;
-			vModelText = module.vModelText;
-			createTextVNode = module.createTextVNode;
-		}, module => {
-			le = module.l;
-			ee = module.e;
-			ne = module.n;
-		}, module => {
-			H$1 = module.H;
-			Ct = module.C;
-			G$1 = module.G;
-			U$1 = module.U;
-			nt = module.n;
-		}],
-		execute: (function () {
+System.register("./TagTab-BawqGQvR-Bn4Kluyn.js", ['vue', './useTreeTab-aXhKs2JX-DcLK_j4L.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+  'use strict';
+  var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
+  return {
+    setters: [module => {
+      defineComponent = module.defineComponent;
+      computed = module.computed;
+      createElementBlock = module.createElementBlock;
+      openBlock = module.openBlock;
+      createVNode = module.createVNode;
+      unref = module.unref;
+      withCtx = module.withCtx;
+      createCommentVNode = module.createCommentVNode;
+      createElementVNode = module.createElementVNode;
+      Fragment = module.Fragment;
+      renderList = module.renderList;
+      toDisplayString = module.toDisplayString;
+      withModifiers = module.withModifiers;
+      withDirectives = module.withDirectives;
+      withKeys = module.withKeys;
+      vModelText = module.vModelText;
+      createTextVNode = module.createTextVNode;
+    }, module => {
+      useTreeTab = module.u;
+      Tree = module.T;
+      tagSearchFilter = module.t;
+    }, module => {
+      _export_sfc = module._;
+      useStorage = module.u;
+      withSize = module.w;
+      icons = module.i;
+      Modal = module.M;
+    }],
+    execute: (function () {
 
-			const x={class:"tag-preset-tab"},H={key:0,class:"tag-custom-content"},L={class:"tag-badges-wrapper"},S={class:"tag-text"},_=["onClick"],A=["innerHTML"],U={key:0},V={key:1},N={class:"form-group"},j={class:"form-group"},I={key:2},J={key:3},K={class:"modal-message"},O={key:4},q={key:0,class:"modal-message-with-margin"},B=["placeholder"],F={key:5},D={key:0,class:"modal-message-with-margin"},E=["placeholder"],z={key:6},G={class:"modal-message"},P=["innerHTML"],Q=["innerHTML"],R=["innerHTML"],W=["innerHTML"],X=["innerHTML"],Y=exports("default", H$1(defineComponent({t:"TagTab",props:{api:{}},setup(e){const C=e,{data:Y,createNode:Z,renameNode:$}=Ct(),ee$1=computed(()=>Y.value.tagTree);function te(e){var t;return !!e&&(!!((null==(t=e.data)?void 0:t.tags)&&Array.isArray(e.data.tags)&&e.data.tags.length>0)||!(!e.children||0===e.children.length)&&e.children.some(e=>{const t=ee$1.value.nodes[e];return t&&te(t)}))}function ne$1(e,t){var n;(null==(n=e.data)?void 0:n.tags)&&Array.isArray(e.data.tags)&&e.data.tags.forEach(e=>t.add(e)),e.children&&e.children.length>0&&e.children.forEach(e=>{const n=ee$1.value.nodes[e];n&&ne$1(n,t);});}const oe=computed(()=>[{label:"应用标签",action:(e,t)=>{const n=new Set;t&&t.length>0?t.forEach(e=>ne$1(e,n)):e&&ne$1(e,n),n.size>0&&C.api.addTags(Array.from(n));},show:(e,t)=>t&&t.length>0?t.some(te):te(e)},{label:"移除标签",action:(e,t)=>{const n=new Set;t&&t.length>0?t.forEach(e=>ne$1(e,n)):e&&ne$1(e,n),n.size>0&&C.api.removeTags(Array.from(n));},show:(e,t)=>t&&t.length>0?t.some(te):te(e),danger:true}]),ae=le({tree:()=>Y.value.tagTree,onCreateFolder:e=>Z(ee$1.value,"新建文件夹",void 0,e).id,onCreateItem:e=>Z(ee$1.value,"新建 Tag 预设",{tags:[]},e).id,onEditItem:async e=>{const t=Y.value.tagTree.nodes[e];if(!t||!t.data)return;const n=await ae.modal.openModal({type:"createTag",title:"编辑 Tag 预设",formData:{name:t.name,tagsText:t.data.tags.join("\n")}});if(n&&n.name&&n.tagsText){const o=(e=>{const t=e.trim();if(t.startsWith("[")&&t.endsWith("]"))try{const e=JSON.parse(t);if(Array.isArray(e))return e.map(e=>(e+"").trim()).filter(e=>e.length>0)}catch(n){}return t.split(/[,\n]+/).map(e=>e.trim()).filter(e=>e.length>0)})(n.tagsText);o.length>0&&($(ee$1.value,e,n.name.trim()),t.data.tags=o);}}});return (e,t)=>(openBlock(),createElementBlock("div",x,[createVNode(ee,{tree:unref(ae).tree.value,"search-placeholder":"搜索 Tag...","search-filter":unref(ne),"custom-menu-items":oe.value,"on-create-folder":unref(ae).handleCreateFolder,"on-create-item":unref(ae).handleCreateItem,"on-rename":unref(ae).handleRename,"on-delete":unref(ae).handleDelete,"on-edit":unref(ae).handleEditItem,onSelectionChange:unref(ae).handleSelect},{default:withCtx(({node:e})=>{var t;return [(null==(t=e.data)?void 0:t.tags)?(openBlock(),createElementBlock("div",H,[createElementVNode("div",L,[(openBlock(true),createElementBlock(Fragment,null,renderList(e.data.tags,(t,a)=>(openBlock(),createElementBlock("span",{key:a,class:"tag-badge"},[createElementVNode("span",S,toDisplayString(t),1),createElementVNode("button",{class:"tag-delete-btn",onClick:withModifiers(t=>((e,t)=>{var n;const o=null==(n=e.data)?void 0:n.tags;if(o&&Array.isArray(o)){const n=[...o];n.splice(t,1),e.data={tags:n};}})(e,a),["stop"]),title:"删除此标签"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).close,12)},null,8,A)],8,_)]))),128))])])):createCommentVNode("",true)]}),o:1},8,["tree","search-filter","custom-menu-items","on-create-folder","on-create-item","on-rename","on-delete","on-edit","onSelectionChange"]),createVNode(nt,{show:unref(ae).modal.state.value.show,title:unref(ae).modal.state.value.title,"teleport-to":".booth-enhancer-sidebar",onClose:unref(ae).modal.closeModal},{footer:withCtx(()=>["alert"!==unref(ae).modal.state.value.type?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",onClick:t[9]||(t[9]=(...e)=>unref(ae).modal.closeModal&&unref(ae).modal.closeModal(...e)),title:"取消"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).close,18)},null,8,P)])):createCommentVNode("",true),"createTag"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("button",{key:1,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[10]||(t[10]=e=>unref(ae).modal.confirmModal(unref(ae).modal.state.value.formData)),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,Q)])):"delete"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("button",{key:2,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-danger",onClick:t[11]||(t[11]=e=>unref(ae).modal.confirmModal(true)),title:"删除"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).trash,18)},null,8,R)])):"alert"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("button",{key:3,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[12]||(t[12]=e=>unref(ae).modal.confirmModal()),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,W)])):(openBlock(),createElementBlock("button",{key:4,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[13]||(t[13]=e=>unref(ae).modal.confirmModal()),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,X)]))]),default:withCtx(()=>["createFolder"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",U,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[0]||(t[0]=e=>unref(ae).modal.state.value.inputValue=e),type:"text",placeholder:"文件夹名称",onKeyup:t[1]||(t[1]=withKeys(e=>unref(ae).modal.confirmModal(),["enter"]))},null,544),[[vModelText,unref(ae).modal.state.value.inputValue]])])):"createTag"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",V,[createElementVNode("div",N,[t[14]||(t[14]=createElementVNode("label",null,[createTextVNode("预设名称 "),createElementVNode("span",{class:"required"},"*")],-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[2]||(t[2]=e=>unref(ae).modal.state.value.formData.name=e),type:"text",placeholder:"例如：イチゴ配布物"},null,512),[[vModelText,unref(ae).modal.state.value.formData.name]])]),createElementVNode("div",j,[t[15]||(t[15]=createElementVNode("label",null,[createTextVNode("标签列表 "),createElementVNode("span",{class:"required"},"*")],-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t[3]||(t[3]=e=>unref(ae).modal.state.value.formData.tagsText=e),class:"modal-textarea-code-small",placeholder:'支持两种格式：\n1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]\n2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ',rows:"4"},null,512),[[vModelText,unref(ae).modal.state.value.formData.tagsText]]),t[16]||(t[16]=createElementVNode("small",{class:"form-hint-small"},' 💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入 ',-1))])])):"rename"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",I,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[4]||(t[4]=e=>unref(ae).modal.state.value.inputValue=e),type:"text",placeholder:"新名称",onKeyup:t[5]||(t[5]=withKeys(e=>unref(ae).modal.confirmModal(),["enter"]))},null,544),[[vModelText,unref(ae).modal.state.value.inputValue]])])):"delete"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",J,[createElementVNode("p",K,toDisplayString(unref(ae).modal.state.value.formData.message),1)])):"input"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",O,[unref(ae).modal.state.value.message?(openBlock(),createElementBlock("p",q,toDisplayString(unref(ae).modal.state.value.message),1)):createCommentVNode("",true),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[6]||(t[6]=e=>unref(ae).modal.state.value.inputValue=e),type:"text",placeholder:unref(ae).modal.state.value.placeholder,onKeyup:t[7]||(t[7]=withKeys(e=>unref(ae).modal.confirmModal(),["enter"]))},null,40,B),[[vModelText,unref(ae).modal.state.value.inputValue]])])):"textarea"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",F,[unref(ae).modal.state.value.message?(openBlock(),createElementBlock("p",D,toDisplayString(unref(ae).modal.state.value.message),1)):createCommentVNode("",true),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t[8]||(t[8]=e=>unref(ae).modal.state.value.inputValue=e),class:"modal-textarea-code",placeholder:unref(ae).modal.state.value.placeholder,rows:"4"},null,8,E),[[vModelText,unref(ae).modal.state.value.inputValue]])])):"alert"===unref(ae).modal.state.value.type?(openBlock(),createElementBlock("div",z,[createElementVNode("p",G,toDisplayString(unref(ae).modal.state.value.message),1)])):createCommentVNode("",true)]),o:1},8,["show","title","onClose"])]))}}),[["__scopeId","data-v-7caba342"]]));
+      const _hoisted_1 = { class: "tag-preset-tab" };
+      const _hoisted_2 = {
+        key: 0,
+        class: "tag-custom-content"
+      };
+      const _hoisted_3 = { class: "tag-badges-wrapper" };
+      const _hoisted_4 = { class: "tag-text" };
+      const _hoisted_5 = ["onClick"];
+      const _hoisted_6 = ["innerHTML"];
+      const _hoisted_7 = { key: 0 };
+      const _hoisted_8 = { key: 1 };
+      const _hoisted_9 = { class: "form-group" };
+      const _hoisted_10 = { class: "form-group" };
+      const _hoisted_11 = { key: 2 };
+      const _hoisted_12 = { key: 3 };
+      const _hoisted_13 = { class: "modal-message" };
+      const _hoisted_14 = { key: 4 };
+      const _hoisted_15 = {
+        key: 0,
+        class: "modal-message-with-margin"
+      };
+      const _hoisted_16 = ["placeholder"];
+      const _hoisted_17 = { key: 5 };
+      const _hoisted_18 = {
+        key: 0,
+        class: "modal-message-with-margin"
+      };
+      const _hoisted_19 = ["placeholder"];
+      const _hoisted_20 = { key: 6 };
+      const _hoisted_21 = { class: "modal-message" };
+      const _hoisted_22 = ["innerHTML"];
+      const _hoisted_23 = ["innerHTML"];
+      const _hoisted_24 = ["innerHTML"];
+      const _hoisted_25 = ["innerHTML"];
+      const _hoisted_26 = ["innerHTML"];
+      const _sfc_main = /* @__PURE__ */ defineComponent({
+        __name: "TagTab",
+        props: {
+          api: {}
+        },
+        setup(__props) {
+          const props = __props;
+          const { data, createNode, renameNode } = useStorage();
+          const tree = computed(() => data.value.tagTree);
+          function hasTagsRecursive(node) {
+            var _a;
+            if (!node) return false;
+            const hasTags = ((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags) && node.data.tags.length > 0;
+            if (hasTags) return true;
+            if (!node.children || node.children.length === 0) return false;
+            return node.children.some((childId) => {
+              const childNode = tree.value.nodes[childId];
+              return childNode && hasTagsRecursive(childNode);
+            });
+          }
+          function extractTagsRecursive(node, tagsSet) {
+            var _a;
+            if (((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags)) {
+              node.data.tags.forEach((tag) => tagsSet.add(tag));
+            }
+            if (node.children && node.children.length > 0) {
+              node.children.forEach((childId) => {
+                const childNode = tree.value.nodes[childId];
+                if (childNode) {
+                  extractTagsRecursive(childNode, tagsSet);
+                }
+              });
+            }
+          }
+          const customMenuItems = computed(() => [
+            {
+              label: "应用标签",
+              action: (node, selection) => {
+                const tagsToApply = /* @__PURE__ */ new Set();
+                if (selection && selection.length > 0) {
+                  selection.forEach((n) => extractTagsRecursive(n, tagsToApply));
+                } else if (node) {
+                  extractTagsRecursive(node, tagsToApply);
+                }
+                if (tagsToApply.size > 0) {
+                  props.api.addTags(Array.from(tagsToApply));
+                }
+              },
+              show: (node, selection) => {
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTagsRecursive);
+                }
+                return hasTagsRecursive(node);
+              }
+            },
+            {
+              label: "移除标签",
+              action: (node, selection) => {
+                const tagsToRemove = /* @__PURE__ */ new Set();
+                if (selection && selection.length > 0) {
+                  selection.forEach((n) => extractTagsRecursive(n, tagsToRemove));
+                } else if (node) {
+                  extractTagsRecursive(node, tagsToRemove);
+                }
+                if (tagsToRemove.size > 0) {
+                  props.api.removeTags(Array.from(tagsToRemove));
+                }
+              },
+              show: (node, selection) => {
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTagsRecursive);
+                }
+                return hasTagsRecursive(node);
+              },
+              danger: true
+            }
+          ]);
+          const handleDeleteTag = (node, tagIndex) => {
+            var _a;
+            const tags = (_a = node.data) == null ? void 0 : _a.tags;
+            if (tags && Array.isArray(tags)) {
+              const newTags = [...tags];
+              newTags.splice(tagIndex, 1);
+              node.data = { tags: newTags };
+            }
+          };
+          const parseTags = (tagsText) => {
+            const trimmed = tagsText.trim();
+            if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+              try {
+                const parsed = JSON.parse(trimmed);
+                if (Array.isArray(parsed)) {
+                  return parsed.map((tag) => String(tag).trim()).filter((tag) => tag.length > 0);
+                }
+              } catch (e) {
+                console.warn("JSON 解析失败，尝试普通文本解析:", e);
+              }
+            }
+            return trimmed.split(/[,\n]+/).map((tag) => tag.trim()).filter((tag) => tag.length > 0);
+          };
+          const treeTab = useTreeTab({
+            tree: () => data.value.tagTree,
+            onCreateFolder: (parentId) => {
+              const newNode = createNode(tree.value, "新建文件夹", void 0, parentId);
+              return newNode.id;
+            },
+            onCreateItem: (parentId) => {
+              const tagData = { tags: [] };
+              const newNode = createNode(tree.value, "新建 Tag 预设", tagData, parentId);
+              return newNode.id;
+            },
+            onEditItem: async (nodeId) => {
+              const node = data.value.tagTree.nodes[nodeId];
+              if (!node || !node.data) return;
+              const result = await treeTab.modal.openModal({
+                type: "createTag",
+                title: "编辑 Tag 预设",
+                formData: {
+                  name: node.name,
+                  tagsText: node.data.tags.join("\n")
+                }
+              });
+              if (result && result.name && result.tagsText) {
+                const tags = parseTags(result.tagsText);
+                if (tags.length > 0) {
+                  renameNode(tree.value, nodeId, result.name.trim());
+                  node.data.tags = tags;
+                }
+              }
+            }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1, [
+              createVNode(Tree, {
+                tree: unref(treeTab).tree.value,
+                "search-placeholder": "搜索 Tag...",
+                "search-filter": unref(tagSearchFilter),
+                "custom-menu-items": customMenuItems.value,
+                "on-create-folder": unref(treeTab).handleCreateFolder,
+                "on-create-item": unref(treeTab).handleCreateItem,
+                "on-rename": unref(treeTab).handleRename,
+                "on-delete": unref(treeTab).handleDelete,
+                "on-edit": unref(treeTab).handleEditItem,
+                onSelectionChange: unref(treeTab).handleSelect
+              }, {
+                default: withCtx(({ node }) => {
+                  var _a;
+                  return [
+                    ((_a = node.data) == null ? void 0 : _a.tags) ? (openBlock(), createElementBlock("div", _hoisted_2, [
+                      createElementVNode("div", _hoisted_3, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(node.data.tags, (tag, index) => {
+                          return openBlock(), createElementBlock("span", {
+                            key: index,
+                            class: "tag-badge"
+                          }, [
+                            createElementVNode("span", _hoisted_4, toDisplayString(tag), 1),
+                            createElementVNode("button", {
+                              class: "tag-delete-btn",
+                              onClick: withModifiers(($event) => handleDeleteTag(node, index), ["stop"]),
+                              title: "删除此标签"
+                            }, [
+                              createElementVNode("span", {
+                                innerHTML: unref(withSize)(unref(icons).close, 12)
+                              }, null, 8, _hoisted_6)
+                            ], 8, _hoisted_5)
+                          ]);
+                        }), 128))
+                      ])
+                    ])) : createCommentVNode("", true)
+                  ];
+                }),
+                _: 1
+              }, 8, ["tree", "search-filter", "custom-menu-items", "on-create-folder", "on-create-item", "on-rename", "on-delete", "on-edit", "onSelectionChange"]),
+              createVNode(Modal, {
+                show: unref(treeTab).modal.state.value.show,
+                title: unref(treeTab).modal.state.value.title,
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: unref(treeTab).modal.closeModal
+              }, {
+                footer: withCtx(() => [
+                  unref(treeTab).modal.state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
+                    key: 0,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: _cache[9] || (_cache[9] = //@ts-ignore
+                    (...args) => unref(treeTab).modal.closeModal && unref(treeTab).modal.closeModal(...args)),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_22)
+                  ])) : createCommentVNode("", true),
+                  unref(treeTab).modal.state.value.type === "createTag" ? (openBlock(), createElementBlock("button", {
+                    key: 1,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[10] || (_cache[10] = ($event) => unref(treeTab).modal.confirmModal(unref(treeTab).modal.state.value.formData)),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_23)
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
+                    key: 2,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: _cache[11] || (_cache[11] = ($event) => unref(treeTab).modal.confirmModal(true)),
+                    title: "删除"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                    }, null, 8, _hoisted_24)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
+                    key: 3,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[12] || (_cache[12] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_25)
+                  ])) : (openBlock(), createElementBlock("button", {
+                    key: 4,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[13] || (_cache[13] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_26)
+                  ]))
+                ]),
+                default: withCtx(() => [
+                  unref(treeTab).modal.state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_7, [
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: "文件夹名称",
+                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 544), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "createTag" ? (openBlock(), createElementBlock("div", _hoisted_8, [
+                    createElementVNode("div", _hoisted_9, [
+                      _cache[14] || (_cache[14] = createElementVNode("label", null, [
+                        createTextVNode("预设名称 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(treeTab).modal.state.value.formData.name = $event),
+                        type: "text",
+                        placeholder: "例如：イチゴ配布物"
+                      }, null, 512), [
+                        [vModelText, unref(treeTab).modal.state.value.formData.name]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_10, [
+                      _cache[15] || (_cache[15] = createElementVNode("label", null, [
+                        createTextVNode("标签列表 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("textarea", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(treeTab).modal.state.value.formData.tagsText = $event),
+                        class: "modal-textarea-code-small",
+                        placeholder: '支持两种格式：\n1. JSON 数组（从 Booth 复制）：["アクセサリー","眼鏡","イチゴ"]\n2. 普通文本（逗号/换行/空格分隔）：アクセサリー,眼鏡,イチゴ',
+                        rows: "4"
+                      }, null, 512), [
+                        [vModelText, unref(treeTab).modal.state.value.formData.tagsText]
+                      ]),
+                      _cache[16] || (_cache[16] = createElementVNode("small", { class: "form-hint-small" }, ' 💡 直接粘贴从 Booth "复制标签"功能得到的 JSON 数据，或手动输入 ', -1))
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: "新名称",
+                      onKeyup: _cache[5] || (_cache[5] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 544), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_12, [
+                    createElementVNode("p", _hoisted_13, toDisplayString(unref(treeTab).modal.state.value.formData.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_14, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_15, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      onKeyup: _cache[7] || (_cache[7] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 40, _hoisted_16), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_17, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_18, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
+                    withDirectives(createElementVNode("textarea", {
+                      "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      class: "modal-textarea-code",
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      rows: "4"
+                    }, null, 8, _hoisted_19), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_20, [
+                    createElementVNode("p", _hoisted_21, toDisplayString(unref(treeTab).modal.state.value.message), 1)
+                  ])) : createCommentVNode("", true)
+                ]),
+                _: 1
+              }, 8, ["show", "title", "onClose"])
+            ]);
+          };
+        }
+      });
+      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-7caba342"]]));
 
-		})
-	};
+    })
+  };
 }));
 
-System.register("./ItemTab-DUKS-646-D6sp1L6a.js", ['vue', './useTreeTab-B3BkgX7f-CasvKy8u.js', './__monkey.entry-cNiwjrQq.js'], (function (exports, module) {
-	'use strict';
-	var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, le, ee, te, H$1, Ct, nt, G$1, U$1;
-	return {
-		setters: [module => {
-			defineComponent = module.defineComponent;
-			computed = module.computed;
-			createElementBlock = module.createElementBlock;
-			openBlock = module.openBlock;
-			createVNode = module.createVNode;
-			unref = module.unref;
-			withCtx = module.withCtx;
-			createCommentVNode = module.createCommentVNode;
-			createElementVNode = module.createElementVNode;
-			toDisplayString = module.toDisplayString;
-			withDirectives = module.withDirectives;
-			withKeys = module.withKeys;
-			vModelText = module.vModelText;
-			createTextVNode = module.createTextVNode;
-		}, module => {
-			le = module.l;
-			ee = module.e;
-			te = module.t;
-		}, module => {
-			H$1 = module.H;
-			Ct = module.C;
-			nt = module.n;
-			G$1 = module.G;
-			U$1 = module.U;
-		}],
-		execute: (function () {
+System.register("./ItemTab-Bu3VBxpr-CqHgblM9.js", ['vue', './useTreeTab-aXhKs2JX-DcLK_j4L.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+  'use strict';
+  var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
+  return {
+    setters: [module => {
+      defineComponent = module.defineComponent;
+      computed = module.computed;
+      createElementBlock = module.createElementBlock;
+      openBlock = module.openBlock;
+      createVNode = module.createVNode;
+      unref = module.unref;
+      withCtx = module.withCtx;
+      createCommentVNode = module.createCommentVNode;
+      createElementVNode = module.createElementVNode;
+      toDisplayString = module.toDisplayString;
+      withDirectives = module.withDirectives;
+      withKeys = module.withKeys;
+      vModelText = module.vModelText;
+      createTextVNode = module.createTextVNode;
+    }, module => {
+      useTreeTab = module.u;
+      Tree = module.T;
+      itemDataSearchFilter = module.i;
+    }, module => {
+      _export_sfc = module._;
+      useStorage = module.u;
+      Modal = module.M;
+      withSize = module.w;
+      icons = module.i;
+    }],
+    execute: (function () {
 
-			const M={class:"item-data-tab"},C={key:0,class:"item-custom-content"},x={class:"item-field"},H={class:"item-field"},L={key:0},U={key:1},I={class:"form-group"},w={class:"form-group"},V={class:"form-group"},_={key:2},N={key:3},j={class:"modal-message"},K={key:4},F={key:0,class:"modal-message-with-margin"},S=["placeholder"],q={key:5},D={key:0,class:"modal-message-with-margin"},E=["placeholder"],z={key:6},A={class:"modal-message"},B=["innerHTML"],G=["innerHTML"],J=["innerHTML"],O=["innerHTML"],P=["innerHTML"],Q=exports("default", H$1(defineComponent({t:"ItemTab",setup(e){const{data:g,createNode:Q,renameNode:R}=Ct(),W=le({tree:()=>g.value.itemTree,onCreateFolder:e=>Q(g.value.itemTree,"新建文件夹",void 0,e).id,onCreateItem:e=>Q(g.value.itemTree,"新建商品数据",{authorName:"",itemName:"",itemUrl:""},e).id,onEditItem:async e=>{var t;const o=g.value.itemTree.nodes[e];if(!o||!o.data)return;const n=await W.modal.openModal({type:"createItem",title:"编辑商品数据",formData:{name:o.name,authorName:o.data.authorName||"",itemUrl:o.data.itemUrl||""}});if(null==(t=null==n?void 0:n.name)?void 0:t.trim()){const t=n.name.trim();R(g.value.itemTree,e,t),o.data.authorName=n.authorName.trim(),o.data.itemName=t,o.data.itemUrl=n.itemUrl.trim();}}}),X=computed(()=>[]);return (e,t)=>(openBlock(),createElementBlock("div",M,[createVNode(unref(ee),{tree:unref(W).tree.value,"search-placeholder":"搜索商品数据...","search-filter":unref(te),"on-create-folder":unref(W).handleCreateFolder,"on-create-item":unref(W).handleCreateItem,"on-rename":unref(W).handleRename,"on-delete":unref(W).handleDelete,"on-edit":unref(W).handleEditItem,"custom-menu-items":X.value,onSelectionChange:unref(W).handleSelect},{default:withCtx(({node:e})=>{var a,l;return [(null==(a=e.data)?void 0:a.authorName)||(null==(l=e.data)?void 0:l.itemUrl)?(openBlock(),createElementBlock("div",C,[createElementVNode("span",x,toDisplayString(e.data.authorName||"—"),1),t[15]||(t[15]=createElementVNode("span",{class:"item-separator"},"·",-1)),createElementVNode("span",H,toDisplayString(e.name),1)])):createCommentVNode("",true)]}),o:1},8,["tree","search-filter","on-create-folder","on-create-item","on-rename","on-delete","on-edit","custom-menu-items","onSelectionChange"]),createVNode(nt,{show:unref(W).modal.state.value.show,title:unref(W).modal.state.value.title,"teleport-to":".booth-enhancer-sidebar",onClose:unref(W).modal.closeModal},{footer:withCtx(()=>["alert"!==unref(W).modal.state.value.type?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",onClick:t[10]||(t[10]=(...e)=>unref(W).modal.closeModal&&unref(W).modal.closeModal(...e)),title:"取消"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).close,18)},null,8,B)])):createCommentVNode("",true),"createItem"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("button",{key:1,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[11]||(t[11]=e=>unref(W).modal.confirmModal(unref(W).modal.state.value.formData)),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,G)])):"delete"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("button",{key:2,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-danger",onClick:t[12]||(t[12]=e=>unref(W).modal.confirmModal(true)),title:"删除"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).trash,18)},null,8,J)])):"alert"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("button",{key:3,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[13]||(t[13]=e=>unref(W).modal.confirmModal()),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,O)])):(openBlock(),createElementBlock("button",{key:4,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",onClick:t[14]||(t[14]=e=>unref(W).modal.confirmModal()),title:"确定"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U$1).check,18)},null,8,P)]))]),default:withCtx(()=>["createFolder"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",L,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[0]||(t[0]=e=>unref(W).modal.state.value.inputValue=e),type:"text",placeholder:"文件夹名称",onKeyup:t[1]||(t[1]=withKeys(e=>unref(W).modal.confirmModal(),["enter"]))},null,544),[[vModelText,unref(W).modal.state.value.inputValue]])])):"createItem"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",U,[createElementVNode("div",I,[t[16]||(t[16]=createElementVNode("label",null,[createTextVNode("商品名称 "),createElementVNode("span",{class:"required"},"*")],-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[2]||(t[2]=e=>unref(W).modal.state.value.formData.name=e),type:"text",placeholder:"例如：イチゴ - Ichigo"},null,512),[[vModelText,unref(W).modal.state.value.formData.name]])]),createElementVNode("div",w,[t[17]||(t[17]=createElementVNode("label",null,"作者名称",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[3]||(t[3]=e=>unref(W).modal.state.value.formData.authorName=e),type:"text",placeholder:"例如：みゅ"},null,512),[[vModelText,unref(W).modal.state.value.formData.authorName]])]),createElementVNode("div",V,[t[18]||(t[18]=createElementVNode("label",null,"商品链接",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[4]||(t[4]=e=>unref(W).modal.state.value.formData.itemUrl=e),type:"text",placeholder:"https://booth.pm/..."},null,512),[[vModelText,unref(W).modal.state.value.formData.itemUrl]])])])):"rename"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",_,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[5]||(t[5]=e=>unref(W).modal.state.value.inputValue=e),type:"text",placeholder:"新名称",onKeyup:t[6]||(t[6]=withKeys(e=>unref(W).modal.confirmModal(),["enter"]))},null,544),[[vModelText,unref(W).modal.state.value.inputValue]])])):"delete"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",N,[createElementVNode("p",j,toDisplayString(unref(W).modal.state.value.formData.message),1)])):"input"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",K,[unref(W).modal.state.value.message?(openBlock(),createElementBlock("p",F,toDisplayString(unref(W).modal.state.value.message),1)):createCommentVNode("",true),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[7]||(t[7]=e=>unref(W).modal.state.value.inputValue=e),type:"text",placeholder:unref(W).modal.state.value.placeholder,onKeyup:t[8]||(t[8]=withKeys(e=>unref(W).modal.confirmModal(),["enter"]))},null,40,S),[[vModelText,unref(W).modal.state.value.inputValue]])])):"textarea"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",q,[unref(W).modal.state.value.message?(openBlock(),createElementBlock("p",D,toDisplayString(unref(W).modal.state.value.message),1)):createCommentVNode("",true),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t[9]||(t[9]=e=>unref(W).modal.state.value.inputValue=e),class:"modal-textarea-code",placeholder:unref(W).modal.state.value.placeholder,rows:"4"},null,8,E),[[vModelText,unref(W).modal.state.value.inputValue]])])):"alert"===unref(W).modal.state.value.type?(openBlock(),createElementBlock("div",z,[createElementVNode("p",A,toDisplayString(unref(W).modal.state.value.message),1)])):createCommentVNode("",true)]),o:1},8,["show","title","onClose"])]))}}),[["__scopeId","data-v-6c6b3856"]]));
+      const _hoisted_1 = { class: "item-data-tab" };
+      const _hoisted_2 = {
+        key: 0,
+        class: "item-custom-content"
+      };
+      const _hoisted_3 = { class: "item-field" };
+      const _hoisted_4 = { class: "item-field" };
+      const _hoisted_5 = { key: 0 };
+      const _hoisted_6 = { key: 1 };
+      const _hoisted_7 = { class: "form-group" };
+      const _hoisted_8 = { class: "form-group" };
+      const _hoisted_9 = { class: "form-group" };
+      const _hoisted_10 = { key: 2 };
+      const _hoisted_11 = { key: 3 };
+      const _hoisted_12 = { class: "modal-message" };
+      const _hoisted_13 = { key: 4 };
+      const _hoisted_14 = {
+        key: 0,
+        class: "modal-message-with-margin"
+      };
+      const _hoisted_15 = ["placeholder"];
+      const _hoisted_16 = { key: 5 };
+      const _hoisted_17 = {
+        key: 0,
+        class: "modal-message-with-margin"
+      };
+      const _hoisted_18 = ["placeholder"];
+      const _hoisted_19 = { key: 6 };
+      const _hoisted_20 = { class: "modal-message" };
+      const _hoisted_21 = ["innerHTML"];
+      const _hoisted_22 = ["innerHTML"];
+      const _hoisted_23 = ["innerHTML"];
+      const _hoisted_24 = ["innerHTML"];
+      const _hoisted_25 = ["innerHTML"];
+      const _sfc_main = /* @__PURE__ */ defineComponent({
+        __name: "ItemTab",
+        setup(__props) {
+          const { data, createNode, renameNode } = useStorage();
+          const treeTab = useTreeTab({
+            tree: () => data.value.itemTree,
+            onCreateFolder: (parentId) => {
+              const newNode = createNode(data.value.itemTree, "新建文件夹", void 0, parentId);
+              return newNode.id;
+            },
+            onCreateItem: (parentId) => {
+              const itemData = {
+                authorName: "",
+                itemName: "",
+                itemUrl: ""
+              };
+              const newNode = createNode(data.value.itemTree, "新建商品数据", itemData, parentId);
+              return newNode.id;
+            },
+            onEditItem: async (nodeId) => {
+              var _a;
+              const node = data.value.itemTree.nodes[nodeId];
+              if (!node || !node.data) return;
+              const result = await treeTab.modal.openModal({
+                type: "createItem",
+                title: "编辑商品数据",
+                formData: {
+                  name: node.name,
+                  authorName: node.data.authorName || "",
+                  itemUrl: node.data.itemUrl || ""
+                }
+              });
+              if ((_a = result == null ? void 0 : result.name) == null ? void 0 : _a.trim()) {
+                const trimmedName = result.name.trim();
+                renameNode(data.value.itemTree, nodeId, trimmedName);
+                node.data.authorName = result.authorName.trim();
+                node.data.itemName = trimmedName;
+                node.data.itemUrl = result.itemUrl.trim();
+              }
+            }
+          });
+          const customMenuItems = computed(() => []);
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1, [
+              createVNode(unref(Tree), {
+                tree: unref(treeTab).tree.value,
+                "search-placeholder": "搜索商品数据...",
+                "search-filter": unref(itemDataSearchFilter),
+                "on-create-folder": unref(treeTab).handleCreateFolder,
+                "on-create-item": unref(treeTab).handleCreateItem,
+                "on-rename": unref(treeTab).handleRename,
+                "on-delete": unref(treeTab).handleDelete,
+                "on-edit": unref(treeTab).handleEditItem,
+                "custom-menu-items": customMenuItems.value,
+                onSelectionChange: unref(treeTab).handleSelect
+              }, {
+                default: withCtx(({ node }) => {
+                  var _a, _b;
+                  return [
+                    ((_a = node.data) == null ? void 0 : _a.authorName) || ((_b = node.data) == null ? void 0 : _b.itemUrl) ? (openBlock(), createElementBlock("div", _hoisted_2, [
+                      createElementVNode("span", _hoisted_3, toDisplayString(node.data.authorName || "—"), 1),
+                      _cache[15] || (_cache[15] = createElementVNode("span", { class: "item-separator" }, "·", -1)),
+                      createElementVNode("span", _hoisted_4, toDisplayString(node.name), 1)
+                    ])) : createCommentVNode("", true)
+                  ];
+                }),
+                _: 1
+              }, 8, ["tree", "search-filter", "on-create-folder", "on-create-item", "on-rename", "on-delete", "on-edit", "custom-menu-items", "onSelectionChange"]),
+              createVNode(Modal, {
+                show: unref(treeTab).modal.state.value.show,
+                title: unref(treeTab).modal.state.value.title,
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: unref(treeTab).modal.closeModal
+              }, {
+                footer: withCtx(() => [
+                  unref(treeTab).modal.state.value.type !== "alert" ? (openBlock(), createElementBlock("button", {
+                    key: 0,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    onClick: _cache[10] || (_cache[10] = //@ts-ignore
+                    (...args) => unref(treeTab).modal.closeModal && unref(treeTab).modal.closeModal(...args)),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_21)
+                  ])) : createCommentVNode("", true),
+                  unref(treeTab).modal.state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
+                    key: 1,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[11] || (_cache[11] = ($event) => unref(treeTab).modal.confirmModal(unref(treeTab).modal.state.value.formData)),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_22)
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
+                    key: 2,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                    onClick: _cache[12] || (_cache[12] = ($event) => unref(treeTab).modal.confirmModal(true)),
+                    title: "删除"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                    }, null, 8, _hoisted_23)
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
+                    key: 3,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[13] || (_cache[13] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_24)
+                  ])) : (openBlock(), createElementBlock("button", {
+                    key: 4,
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    onClick: _cache[14] || (_cache[14] = ($event) => unref(treeTab).modal.confirmModal()),
+                    title: "确定"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_25)
+                  ]))
+                ]),
+                default: withCtx(() => [
+                  unref(treeTab).modal.state.value.type === "createFolder" ? (openBlock(), createElementBlock("div", _hoisted_5, [
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: "文件夹名称",
+                      onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 544), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                    createElementVNode("div", _hoisted_7, [
+                      _cache[16] || (_cache[16] = createElementVNode("label", null, [
+                        createTextVNode("商品名称 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(treeTab).modal.state.value.formData.name = $event),
+                        type: "text",
+                        placeholder: "例如：イチゴ - Ichigo"
+                      }, null, 512), [
+                        [vModelText, unref(treeTab).modal.state.value.formData.name]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_8, [
+                      _cache[17] || (_cache[17] = createElementVNode("label", null, "作者名称", -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(treeTab).modal.state.value.formData.authorName = $event),
+                        type: "text",
+                        placeholder: "例如：みゅ"
+                      }, null, 512), [
+                        [vModelText, unref(treeTab).modal.state.value.formData.authorName]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_9, [
+                      _cache[18] || (_cache[18] = createElementVNode("label", null, "商品链接", -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(treeTab).modal.state.value.formData.itemUrl = $event),
+                        type: "text",
+                        placeholder: "https://booth.pm/..."
+                      }, null, 512), [
+                        [vModelText, unref(treeTab).modal.state.value.formData.itemUrl]
+                      ])
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "rename" ? (openBlock(), createElementBlock("div", _hoisted_10, [
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: "新名称",
+                      onKeyup: _cache[6] || (_cache[6] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 544), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                    createElementVNode("p", _hoisted_12, toDisplayString(unref(treeTab).modal.state.value.formData.message), 1)
+                  ])) : unref(treeTab).modal.state.value.type === "input" ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      type: "text",
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      onKeyup: _cache[8] || (_cache[8] = withKeys(($event) => unref(treeTab).modal.confirmModal(), ["enter"]))
+                    }, null, 40, _hoisted_15), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "textarea" ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                    unref(treeTab).modal.state.value.message ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString(unref(treeTab).modal.state.value.message), 1)) : createCommentVNode("", true),
+                    withDirectives(createElementVNode("textarea", {
+                      "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => unref(treeTab).modal.state.value.inputValue = $event),
+                      class: "modal-textarea-code",
+                      placeholder: unref(treeTab).modal.state.value.placeholder,
+                      rows: "4"
+                    }, null, 8, _hoisted_18), [
+                      [vModelText, unref(treeTab).modal.state.value.inputValue]
+                    ])
+                  ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("div", _hoisted_19, [
+                    createElementVNode("p", _hoisted_20, toDisplayString(unref(treeTab).modal.state.value.message), 1)
+                  ])) : createCommentVNode("", true)
+                ]),
+                _: 1
+              }, 8, ["show", "title", "onClose"])
+            ]);
+          };
+        }
+      });
+      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6c6b3856"]]));
 
-		})
-	};
+    })
+  };
 }));
 
-System.register("./useTreeTab-B3BkgX7f-CasvKy8u.js", ['vue', './__monkey.entry-cNiwjrQq.js', './useModal-CEDTPuIh-FnhElVKI.js'], (function (exports, module) {
-	'use strict';
-	var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, H, Ct, kt, $$1, U$1, G$1, t;
-	return {
-		setters: [module => {
-			ref = module.ref;
-			computed = module.computed;
-			defineComponent = module.defineComponent;
-			onMounted = module.onMounted;
-			onUnmounted = module.onUnmounted;
-			createElementBlock = module.createElementBlock;
-			openBlock = module.openBlock;
-			createCommentVNode = module.createCommentVNode;
-			createVNode = module.createVNode;
-			withDirectives = module.withDirectives;
-			createElementVNode = module.createElementVNode;
-			vModelText = module.vModelText;
-			renderSlot = module.renderSlot;
-			Fragment = module.Fragment;
-			renderList = module.renderList;
-			createBlock = module.createBlock;
-			createSlots = module.createSlots;
-			withCtx = module.withCtx;
-			mergeProps = module.mergeProps;
-			withModifiers = module.withModifiers;
-			normalizeClass = module.normalizeClass;
-			watch = module.watch;
-			resolveComponent = module.resolveComponent;
-			normalizeStyle = module.normalizeStyle;
-			unref = module.unref;
-			toDisplayString = module.toDisplayString;
-			nextTick = module.nextTick;
-		}, module => {
-			H = module.H;
-			Ct = module.C;
-			kt = module.k;
-			$$1 = module.$;
-			U$1 = module.U;
-			G$1 = module.G;
-		}, module => {
-			t = module.t;
-		}],
-		execute: (function () {
+System.register("./useTreeTab-aXhKs2JX-DcLK_j4L.js", ['vue', './__monkey.entry-DUXauit0.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+  'use strict';
+  var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
+  return {
+    setters: [module => {
+      ref = module.ref;
+      computed = module.computed;
+      defineComponent = module.defineComponent;
+      onMounted = module.onMounted;
+      onUnmounted = module.onUnmounted;
+      createElementBlock = module.createElementBlock;
+      openBlock = module.openBlock;
+      createCommentVNode = module.createCommentVNode;
+      createVNode = module.createVNode;
+      withDirectives = module.withDirectives;
+      createElementVNode = module.createElementVNode;
+      vModelText = module.vModelText;
+      renderSlot = module.renderSlot;
+      Fragment = module.Fragment;
+      renderList = module.renderList;
+      createBlock = module.createBlock;
+      createSlots = module.createSlots;
+      withCtx = module.withCtx;
+      mergeProps = module.mergeProps;
+      withModifiers = module.withModifiers;
+      normalizeClass = module.normalizeClass;
+      watch = module.watch;
+      resolveComponent = module.resolveComponent;
+      normalizeStyle = module.normalizeStyle;
+      unref = module.unref;
+      toDisplayString = module.toDisplayString;
+      nextTick = module.nextTick;
+    }, module => {
+      _export_sfc = module._;
+      useStorage = module.u;
+      ConfigStorage = module.C;
+      ContextMenu = module.a;
+      icons = module.i;
+      withSize = module.w;
+    }, module => {
+      useModal = module.u;
+    }],
+    execute: (function () {
 
-			exports({
-				l: le,
-				n: ne,
-				t: te
-			});
+      exports({
+        i: itemDataSearchFilter,
+        t: tagSearchFilter,
+        u: useTreeTab
+      });
 
-			const S={class:"tree-item"},E=["innerHTML"],F={key:1,class:"expand-icon placeholder"},j=["innerHTML"],O=["innerHTML"],U=["innerHTML"],V=["innerHTML"],q={class:"name"},A={key:2,class:"count"},K={key:3,class:"node-header-extra"},P={key:2,class:"tree-children"},$=H(defineComponent({t:"TreeNode",props:{node:{},tree:{},level:{},editingNodeId:{},showChildren:{type:Boolean,default:true},selection:{},activeNodeId:{},selectable:{type:Boolean,default:true},selectableFilter:{}},emits:["select","contextmenu","rename"],setup(e,{emit:_}){const T=e,L=_,H=kt.getInstance(),R=computed(()=>T.level||0),B=ref(false),N=ref(null),$=computed(()=>T.editingNodeId===T.node.id),z=ref(""),G=ref(null),J=computed(()=>{const e=T.tree.nodes;return T.node.children.map(n=>e[n]).filter(Boolean)}),Q=computed(()=>T.node.children.length>0),W=computed(()=>{var e;return (null==(e=T.selection)?void 0:e.has(T.node.id))||false}),X=computed(()=>T.activeNodeId===T.node.id),Y=computed(()=>!!T.selectable&&(!T.selectableFilter||T.selectableFilter(T.node))),Z=computed(()=>{const e=!!T.node.data,n=Q.value;return e?n?U$1.files:U$1.file:n?U$1.folderFilled:U$1.folderEmpty}),ee=()=>{T.node.expanded=!T.node.expanded;},ne=e=>{e.dataTransfer&&(e.dataTransfer.setData("text/plain",T.node.id),e.dataTransfer.effectAllowed="move");},te=()=>{B.value=false,N.value=null;},le=e=>{e.preventDefault(),e.stopPropagation(),e.dataTransfer&&(e.dataTransfer.dropEffect="move");const n=e.currentTarget.getBoundingClientRect(),t=e.clientY-n.top,l=n.height;N.value=.25*l>t?"before":t>.75*l?"after":"inside",B.value=true;},oe=e=>{const n=e.currentTarget.getBoundingClientRect(),t=e.clientX,l=e.clientY;t>=n.left&&t<n.right&&l>=n.top&&l<n.bottom||(B.value=false,N.value=null);},ae=e=>{var n;e.preventDefault(),e.stopPropagation();const t=null==(n=e.dataTransfer)?void 0:n.getData("text/plain");if(!t)return B.value=false,void(N.value=null);if(t===T.node.id)return B.value=false,void(N.value=null);if(re(t,T.node.id))return B.value=false,void(N.value=null);const l=N.value;if("inside"===l)H.moveNode(T.tree,t,T.node.id),T.node.expanded||(T.node.expanded=true);else {const e=T.node.parentId,n=(e?T.tree.nodes[e].children:T.tree.rootIds).indexOf(T.node.id),o="before"===l?n:n+1;H.insertNodeAt(T.tree,t,e,o);}B.value=false,N.value=null;},re=(e,n)=>{let t=T.tree.nodes[n];for(;t;){if(t.id===e)return  true;if(!t.parentId)break;t=T.tree.nodes[t.parentId];}return  false};async function ie(){z.value=T.node.name,await nextTick(),setTimeout(()=>{G.value&&(G.value.focus(),G.value.select());},0);}watch($,async e=>{e&&await ie();},{immediate:true}),watch(()=>T.editingNodeId,async e=>{e===T.node.id&&await ie();});const se=()=>{const e=z.value.trim();e&&e!==T.node.name?L("rename",T.node.id,e):L("rename",T.node.id,T.node.name);},ce=e=>{"Enter"===e.key?(e.preventDefault(),se()):"Escape"===e.key&&(e.preventDefault(),L("rename",T.node.id,T.node.name));},de=e=>{if($.value)return;const n=e.target;n.closest("button, a, .action-icon")||(n.closest("input, textarea, select")?!Y.value||e.ctrlKey||e.shiftKey||e.metaKey||L("select",T.node,e):Y.value&&L("select",T.node,e));};return (e,n)=>{const t=resolveComponent("TreeNode",true);return openBlock(),createElementBlock("div",S,[B.value&&"before"===N.value?(openBlock(),createElementBlock("div",{key:0,class:"drop-indicator drop-indicator-before",style:normalizeStyle({paddingLeft:20*R.value+"px"})},null,4)):createCommentVNode("",true),createElementVNode("div",{class:normalizeClass(["tree-node-wrapper",{"drag-over":B.value,"drag-over-inside":"inside"===N.value}]),draggable:"true",onDragstart:ne,onDragend:te,onDragover:le,onDragleave:oe,onDrop:ae},[createElementVNode("div",{class:normalizeClass(["node-item",{"has-custom-content":e.$slots.default,"is-editing":$.value,selected:W.value,active:X.value,selectable:Y.value}]),onClick:de,onContextmenu:n[3]||(n[3]=withModifiers(n=>{return t=n,l=e.node,void($.value||(t.stopPropagation(),L("contextmenu",t,l)));var t,l;},["prevent"]))},[createElementVNode("div",{class:normalizeClass(["tree-node-content",{expanded:e.node.expanded,"has-children":Q.value}]),style:normalizeStyle({paddingLeft:20*R.value+"px"})},[$.value?(openBlock(),createElementBlock(Fragment,{key:0},[e.showChildren&&Q.value?(openBlock(),createElementBlock("span",{key:0,class:"expand-icon",onClick:n[0]||(n[0]=withModifiers(e=>ee(),["stop"])),innerHTML:unref(G$1)(e.node.expanded?unref(U$1).chevronDown:unref(U$1).chevronRight,12)},null,8,E)):(openBlock(),createElementBlock("span",F)),createElementVNode("span",{class:"icon",innerHTML:unref(G$1)(Z.value,16),style:normalizeStyle({color:e.node.data?"#94a3b8":"#fbbf24"})},null,12,j),withDirectives(createElementVNode("input",{ref_key:"inputRef",ref:G,"onUpdate:modelValue":n[1]||(n[1]=e=>z.value=e),class:"node-name-input",onBlur:se,onKeydown:ce},null,544),[[vModelText,z.value]])],64)):(openBlock(),createElementBlock(Fragment,{key:1},[e.showChildren&&Q.value?(openBlock(),createElementBlock("div",{key:0,class:"toggle-area",onClick:n[2]||(n[2]=withModifiers(e=>ee(),["stop"]))},[createElementVNode("span",{class:"expand-icon",innerHTML:unref(G$1)(e.node.expanded?unref(U$1).chevronDown:unref(U$1).chevronRight,12)},null,8,O),createElementVNode("span",{class:"icon",innerHTML:unref(G$1)(Z.value,16),style:normalizeStyle({color:e.node.data?"#94a3b8":"#fbbf24"})},null,12,U)])):(openBlock(),createElementBlock(Fragment,{key:1},[n[7]||(n[7]=createElementVNode("span",{class:"expand-icon placeholder"},null,-1)),createElementVNode("span",{class:"icon",innerHTML:unref(G$1)(Z.value,16),style:normalizeStyle({color:e.node.data?"#94a3b8":"#fbbf24"})},null,12,V)],64)),createElementVNode("span",q,toDisplayString(e.node.name),1),Q.value?(openBlock(),createElementBlock("span",A,"("+toDisplayString(e.node.children.length)+")",1)):createCommentVNode("",true),e.$slots.header?(openBlock(),createElementBlock("div",K,[renderSlot(e.$slots,"header",{node:e.node,level:R.value},void 0,true)])):createCommentVNode("",true)],64))],6),e.$slots.default?(openBlock(),createElementBlock("div",{key:0,class:"node-custom-content",style:normalizeStyle({paddingLeft:20*R.value+36+"px"})},[renderSlot(e.$slots,"default",{node:e.node,level:R.value},void 0,true)],4)):createCommentVNode("",true)],34)],34),B.value&&"after"===N.value?(openBlock(),createElementBlock("div",{key:1,class:"drop-indicator drop-indicator-after",style:normalizeStyle({paddingLeft:20*R.value+"px"})},null,4)):createCommentVNode("",true),e.showChildren&&e.node.expanded&&Q.value?(openBlock(),createElementBlock("div",P,[(openBlock(true),createElementBlock(Fragment,null,renderList(J.value,l=>(openBlock(),createBlock(t,{key:l.id,node:l,tree:e.tree,level:R.value+1,"editing-node-id":e.editingNodeId,"show-children":e.showChildren,selection:e.selection,"active-node-id":e.activeNodeId,selectable:e.selectable,"selectable-filter":e.selectableFilter,onSelect:n[4]||(n[4]=(e,n)=>L("select",e,n)),onContextmenu:n[5]||(n[5]=(e,n)=>L("contextmenu",e,n)),onRename:n[6]||(n[6]=(e,n)=>L("rename",e,n))},createSlots({l:2},[renderList(e.$slots,(n,t)=>({name:t,fn:withCtx(n=>[renderSlot(e.$slots,t,mergeProps({ref_for:true},n),void 0,true)])}))]),1032,["node","tree","level","editing-node-id","show-children","selection","active-node-id","selectable","selectable-filter"]))),128))])):createCommentVNode("",true)])}}}),[["__scopeId","data-v-fbb1ef76"]]),z={key:0,class:"tree-search"},G=["placeholder"],J={key:0,class:"tree-search-toolbar"},Q={key:1,class:"search-results"},W={key:0,class:"search-results-list"},X={key:1,class:"search-empty"},Y={key:0,class:"empty-state"},Z={key:1,class:"tree-content"},ee=exports("e", H(defineComponent({t:"Tree",props:{tree:{},parentId:{},mode:{default:"tree"},searchPlaceholder:{},searchFilter:{},customMenuItems:{},selectable:{type:Boolean,default:true},selectableFilter:{},onCreateFolder:{},onCreateItem:{},onRename:{},onDelete:{},onEdit:{}},emits:["selectionChange"],setup(e,{emit:l}){const o=e,c=l,p=kt.getInstance(),y=ref(""),C=ref(new Set),I=ref(null),D=ref(null),H=computed(()=>y.value.trim().length>0),B=computed(()=>H.value&&o.searchFilter?Object.values(o.tree.nodes).filter(e=>o.searchFilter(e,y.value.trim())):[]),N=computed(()=>B.value.length>0),S=ref({show:false,targetId:null,x:0,y:0}),E=ref(null),F=ref(null),j=e=>{o.selectable&&0!==C.value.size&&F.value&&(F.value.contains(e.target)||be());};onMounted(()=>{document.addEventListener("click",j);}),onUnmounted(()=>{document.removeEventListener("click",j);});const O=computed(()=>{var e;const n=o.tree.nodes;return "list"===o.mode?Object.values(n).filter(e=>e.data).sort((e,n)=>n.updatedAt-e.updatedAt):(o.parentId?(null==(e=n[o.parentId])?void 0:e.children)||[]:o.tree.rootIds).map(e=>n[e]).filter(Boolean)}),U=computed(()=>S.value.targetId?o.tree.nodes[S.value.targetId]:null);function V(e){if(!o.customMenuItems||0===o.customMenuItems.length)return [];const n=pe();return o.customMenuItems.filter(t=>!t.show||t.show(e,n))}const q=computed(()=>V(U.value)),A=computed(()=>V(null));function K(e,n,t,l){0!==n.length&&(e.length>0&&(e[e.length-1].separator=true),n.forEach(n=>{e.push({label:n.label,action:()=>n.action(t,l),danger:n.danger,separator:n.separator});}));}const P=computed(()=>{const e=[],n=pe();return function(e){"tree"===o.mode&&e.push({label:"新建文件夹节点",action:te}),e.push({label:"新建数据节点",action:le,separator:true});}(e),U.value?(e.push({label:"重命名",action:ae}),U.value.data&&o.onEdit&&e.push({label:"编辑",action:oe}),K(e,q.value,U.value,n),e.length>0&&(e[e.length-1].separator=true),e.push({label:"删除",action:ie,danger:true})):K(e,A.value,null,n),e}),ee=()=>{if(!S.value.targetId)return null;const e=U.value;return e?e.id:null},ne=(e,n)=>{S.value={show:true,targetId:(null==n?void 0:n.id)||null,x:e.clientX,y:e.clientY};},te=()=>{var e;const n=ee(),t=null==(e=o.onCreateFolder)?void 0:e.call(o,n);t&&(E.value=t);},le=()=>{var e;const n=ee(),t=null==(e=o.onCreateItem)?void 0:e.call(o,n);t&&(E.value=t);},oe=()=>{var e;S.value.targetId&&(null==(e=o.onEdit)||e.call(o,S.value.targetId));},ae=()=>{S.value.targetId&&(E.value=S.value.targetId);},re=(e,n)=>{var t;null==(t=o.onRename)||t.call(o,e,n),E.value=null;},ie=async()=>{var e;if(S.value.targetId)try{await(null==(e=o.onDelete)?void 0:e.call(o,S.value.targetId));}catch(n){}},se=ref(false),ce=e=>{e.target.closest(".tree-node-wrapper")||(e.preventDefault(),e.stopPropagation(),e.dataTransfer&&(e.dataTransfer.dropEffect="move"),se.value=true);},de=e=>{e.target.closest(".node-tree")||(se.value=false);},ue=e=>{var n;if(e.target.closest(".tree-node-wrapper"))return;e.preventDefault(),e.stopPropagation();const t=null==(n=e.dataTransfer)?void 0:n.getData("text/plain");t&&p.moveNode(o.tree,t,o.parentId||null),se.value=false;},ve=e=>{e.target.closest(".tree-node-content")||ne(e,null);},fe=e=>{e.target.closest(".node-item")||C.value.size>0&&be();},pe=()=>Array.from(C.value).map(e=>o.tree.nodes[e]).filter(Boolean),me=()=>{const e=pe();c("selectionChange",e);},ye=(e,n)=>{if(o.selectableFilter&&!o.selectableFilter(e))return;const t=(null==n?void 0:n.ctrlKey)||(null==n?void 0:n.metaKey),l=null==n?void 0:n.shiftKey,a=new Set(C.value);if(l&&D.value){const n=(()=>{var e;const n=[],t=e=>{for(const l of e){const e=o.tree.nodes[l];e&&(n.push(e),e.expanded&&e.children.length>0&&t(e.children));}};return "list"===o.mode?n.push(...O.value):H.value?n.push(...B.value):t(o.parentId?(null==(e=o.tree.nodes[o.parentId])?void 0:e.children)||[]:o.tree.rootIds),n})(),t=n.findIndex(e=>e.id===D.value),l=n.findIndex(n=>n.id===e.id);if(-1!==t&&-1!==l){a.clear();const r=Math.min(t,l),i=Math.max(t,l);for(let e=r;i>=e;e++){const t=n[e];o.selectableFilter&&!o.selectableFilter(t)||a.add(t.id);}I.value=e.id;}}else t?a.has(e.id)?(a.delete(e.id),I.value===e.id&&(I.value=null)):(a.add(e.id),I.value=e.id,D.value=e.id):(a.clear(),a.add(e.id),I.value=e.id,D.value=e.id);C.value=a,me();},be=()=>{C.value=new Set,I.value=null,D.value=null,me();},he=(e,n)=>{C.value.has(n.id)||ye(n),ne(e,n);};return (e,n)=>(openBlock(),createElementBlock("div",{class:"tree-wrapper",ref_key:"treeRootRef",ref:F},[e.searchFilter?(openBlock(),createElementBlock("div",z,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":n[0]||(n[0]=e=>y.value=e),type:"text",placeholder:e.searchPlaceholder||"搜索...",class:"search-input"},null,8,G),[[vModelText,y.value]]),e.$slots.toolbar?(openBlock(),createElementBlock("div",J,[renderSlot(e.$slots,"toolbar",{},void 0,true)])):createCommentVNode("",true)])):createCommentVNode("",true),H.value?(openBlock(),createElementBlock("div",Q,[N.value?(openBlock(),createElementBlock("div",W,[(openBlock(true),createElementBlock(Fragment,null,renderList(B.value,n=>(openBlock(),createBlock($,{key:n.id,node:n,tree:e.tree,level:0,"editing-node-id":E.value,"show-children":false,selection:C.value,"active-node-id":I.value,selectable:e.selectable,"selectable-filter":e.selectableFilter,onSelect:ye,onContextmenu:he,onRename:re},createSlots({l:2},[renderList(e.$slots,(n,t)=>({name:t,fn:withCtx(n=>[renderSlot(e.$slots,t,mergeProps({ref_for:true},n||{}),void 0,true)])}))]),1032,["node","tree","editing-node-id","selection","active-node-id","selectable","selectable-filter"]))),128))])):(openBlock(),createElementBlock("div",X," 没有找到匹配的结果 "))])):(openBlock(),createElementBlock("div",{key:2,class:normalizeClass(["node-tree",{"tree-drag-over":se.value}]),onContextmenu:withModifiers(ve,["prevent"]),onClick:fe,onDragover:ce,onDragleave:de,onDrop:ue},[0===O.value.length?(openBlock(),createElementBlock("div",Y," 暂无数据，右键新建 ")):(openBlock(),createElementBlock("div",Z,[(openBlock(true),createElementBlock(Fragment,null,renderList(O.value,n=>(openBlock(),createBlock($,{key:n.id,node:n,tree:e.tree,level:0,"editing-node-id":E.value,"show-children":"tree"===e.mode,selection:C.value,"active-node-id":I.value,selectable:e.selectable,"selectable-filter":e.selectableFilter,onSelect:ye,onContextmenu:he,onRename:re},createSlots({l:2},[renderList(e.$slots,(n,t)=>({name:t,fn:withCtx(n=>[renderSlot(e.$slots,t,mergeProps({ref_for:true},n||{}),void 0,true)])}))]),1032,["node","tree","editing-node-id","show-children","selection","active-node-id","selectable","selectable-filter"]))),128))]))],34)),createVNode($$1,{show:S.value.show,x:S.value.x,y:S.value.y,items:P.value,onClose:n[1]||(n[1]=e=>S.value.show=false)},null,8,["show","x","y","items"])],512))}}),[["__scopeId","data-v-b7665db9"]]));function ne(e,n){var t;if(!(null==(t=e.data)?void 0:t.tags))return  false;const l=n.toLowerCase(),o=e.name.toLowerCase(),a=e.data.tags.join(" ").toLowerCase();return o.includes(l)||a.includes(l)}function te(e,n){var t,l,o,a,r,i;if(!(null==(t=e.data)?void 0:t.authorName)&&!(null==(l=e.data)?void 0:l.itemUrl))return  false;const s=n.toLowerCase(),c=e.name.toLowerCase(),d=(null==(a=null==(o=e.data)?void 0:o.authorName)?void 0:a.toLowerCase())||"",u=(null==(i=null==(r=e.data)?void 0:r.itemUrl)?void 0:i.toLowerCase())||"";return c.includes(s)||d.includes(s)||u.includes(s)}function le(e){const{renameNode:l,deleteNode:o}=Ct(),a=t(),r=ref(null),i=computed(()=>"function"==typeof e.tree?e.tree():e.tree);return {selectedNodeId:r,tree:i,handleSelect:function(e){e.length>0&&(r.value=e[0].id);},handleCreateFolder:function(n){return e.onCreateFolder?e.onCreateFolder(n):Ct().createNode(i.value,"新建文件夹",void 0,n).id},handleCreateItem:function(n){if(e.onCreateItem)return e.onCreateItem(n);throw Error("onCreateItem is required")},handleEditItem:async function(n){e.onEditItem&&await e.onEditItem(n);},handleRename:function(e,n){const t=n.trim();t&&l(i.value,e,t);},handleDelete:async function(e){const n=i.value.nodes[e];n&&await a.openModal({type:"delete",title:"确认删除",formData:{message:`确定要删除"${n.name}"吗？`}})&&o(i.value,e);},modal:a}}
+      const _hoisted_1$1 = { class: "tree-item" };
+      const _hoisted_2$1 = ["innerHTML"];
+      const _hoisted_3$1 = {
+        key: 1,
+        class: "expand-icon placeholder"
+      };
+      const _hoisted_4$1 = ["innerHTML"];
+      const _hoisted_5$1 = ["innerHTML"];
+      const _hoisted_6$1 = ["innerHTML"];
+      const _hoisted_7$1 = ["innerHTML"];
+      const _hoisted_8$1 = { class: "name" };
+      const _hoisted_9 = {
+        key: 2,
+        class: "count"
+      };
+      const _hoisted_10 = {
+        key: 3,
+        class: "node-header-extra"
+      };
+      const _hoisted_11 = {
+        key: 2,
+        class: "tree-children"
+      };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "TreeNode",
+        props: {
+          node: {},
+          tree: {},
+          level: {},
+          editingNodeId: {},
+          showChildren: { type: Boolean, default: true },
+          selection: {},
+          activeNodeId: {},
+          selectable: { type: Boolean, default: true },
+          selectableFilter: {}
+        },
+        emits: ["select", "contextmenu", "rename"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const configStorage = ConfigStorage.getInstance();
+          const currentLevel = computed(() => props.level || 0);
+          const isDragOver = ref(false);
+          const dropPosition = ref(null);
+          const isEditing = computed(() => props.editingNodeId === props.node.id);
+          const editingName = ref("");
+          const inputRef = ref(null);
+          const children = computed(() => {
+            const allNodes = props.tree.nodes;
+            return props.node.children.map((id) => allNodes[id]).filter(Boolean);
+          });
+          const hasChildren = computed(() => props.node.children.length > 0);
+          const isSelected = computed(() => {
+            var _a;
+            return ((_a = props.selection) == null ? void 0 : _a.has(props.node.id)) || false;
+          });
+          const isActive = computed(() => props.activeNodeId === props.node.id);
+          const isSelectable = computed(() => {
+            if (!props.selectable) return false;
+            return props.selectableFilter ? props.selectableFilter(props.node) : true;
+          });
+          const nodeIcon = computed(() => {
+            const hasData = !!props.node.data;
+            const hasKids = hasChildren.value;
+            if (hasData) {
+              return hasKids ? icons.files : icons.file;
+            } else {
+              return hasKids ? icons.folderFilled : icons.folderEmpty;
+            }
+          });
+          const toggleExpanded = () => {
+            props.node.expanded = !props.node.expanded;
+          };
+          const handleDragStart = (e) => {
+            if (e.dataTransfer) {
+              e.dataTransfer.setData("text/plain", props.node.id);
+              e.dataTransfer.effectAllowed = "move";
+            }
+          };
+          const handleDragEnd = () => {
+            isDragOver.value = false;
+            dropPosition.value = null;
+          };
+          const handleDragOver = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.dataTransfer) {
+              e.dataTransfer.dropEffect = "move";
+            }
+            const element = e.currentTarget;
+            const rect = element.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const height = rect.height;
+            if (y < height * 0.25) {
+              dropPosition.value = "before";
+            } else if (y > height * 0.75) {
+              dropPosition.value = "after";
+            } else {
+              dropPosition.value = "inside";
+            }
+            isDragOver.value = true;
+          };
+          const handleDragLeave = (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+            if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) {
+              isDragOver.value = false;
+              dropPosition.value = null;
+            }
+          };
+          const handleDrop = (e) => {
+            var _a;
+            e.preventDefault();
+            e.stopPropagation();
+            const draggedNodeId = (_a = e.dataTransfer) == null ? void 0 : _a.getData("text/plain");
+            if (!draggedNodeId) {
+              isDragOver.value = false;
+              dropPosition.value = null;
+              return;
+            }
+            if (draggedNodeId === props.node.id) {
+              isDragOver.value = false;
+              dropPosition.value = null;
+              return;
+            }
+            if (isDescendant(draggedNodeId, props.node.id)) {
+              isDragOver.value = false;
+              dropPosition.value = null;
+              return;
+            }
+            const position = dropPosition.value;
+            if (position === "inside") {
+              configStorage.moveNode(props.tree, draggedNodeId, props.node.id);
+              if (!props.node.expanded) {
+                props.node.expanded = true;
+              }
+            } else {
+              const parentId = props.node.parentId;
+              const siblingIds = parentId ? props.tree.nodes[parentId].children : props.tree.rootIds;
+              const currentIndex = siblingIds.indexOf(props.node.id);
+              const insertIndex = position === "before" ? currentIndex : currentIndex + 1;
+              configStorage.insertNodeAt(props.tree, draggedNodeId, parentId, insertIndex);
+            }
+            isDragOver.value = false;
+            dropPosition.value = null;
+          };
+          const isDescendant = (ancestorId, targetId) => {
+            let current = props.tree.nodes[targetId];
+            while (current) {
+              if (current.id === ancestorId) return true;
+              if (!current.parentId) break;
+              current = props.tree.nodes[current.parentId];
+            }
+            return false;
+          };
+          async function focusAndSelectInput() {
+            editingName.value = props.node.name;
+            await nextTick();
+            setTimeout(() => {
+              if (inputRef.value) {
+                inputRef.value.focus();
+                inputRef.value.select();
+              }
+            }, 0);
+          }
+          watch(isEditing, async (newValue) => {
+            if (newValue) {
+              await focusAndSelectInput();
+            }
+          }, { immediate: true });
+          watch(() => props.editingNodeId, async (newId) => {
+            if (newId === props.node.id) {
+              await focusAndSelectInput();
+            }
+          });
+          const saveEdit = () => {
+            const newName = editingName.value.trim();
+            if (newName && newName !== props.node.name) {
+              emit("rename", props.node.id, newName);
+            } else {
+              emit("rename", props.node.id, props.node.name);
+            }
+          };
+          const cancelEdit = () => {
+            emit("rename", props.node.id, props.node.name);
+          };
+          const handleEditKeydown = (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              saveEdit();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              cancelEdit();
+            }
+          };
+          const handleNodeClick = (e) => {
+            if (isEditing.value) return;
+            const target = e.target;
+            if (target.closest("button, a, .action-icon")) {
+              return;
+            }
+            const isInput = target.closest("input, textarea, select");
+            if (isInput) {
+              if (isSelectable.value && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+                emit("select", props.node, e);
+              }
+              return;
+            }
+            if (isSelectable.value) {
+              emit("select", props.node, e);
+            }
+          };
+          const handleContextmenu = (event, node) => {
+            if (isEditing.value) {
+              return;
+            }
+            event.stopPropagation();
+            emit("contextmenu", event, node);
+          };
+          return (_ctx, _cache) => {
+            const _component_TreeNode = resolveComponent("TreeNode", true);
+            return openBlock(), createElementBlock("div", _hoisted_1$1, [
+              isDragOver.value && dropPosition.value === "before" ? (openBlock(), createElementBlock("div", {
+                key: 0,
+                class: "drop-indicator drop-indicator-before",
+                style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" })
+              }, null, 4)) : createCommentVNode("", true),
+              createElementVNode("div", {
+                class: normalizeClass([
+                  "tree-node-wrapper",
+                  {
+                    "drag-over": isDragOver.value,
+                    "drag-over-inside": dropPosition.value === "inside"
+                  }
+                ]),
+                draggable: "true",
+                onDragstart: handleDragStart,
+                onDragend: handleDragEnd,
+                onDragover: handleDragOver,
+                onDragleave: handleDragLeave,
+                onDrop: handleDrop
+              }, [
+                createElementVNode("div", {
+                  class: normalizeClass([
+                    "node-item",
+                    {
+                      "has-custom-content": _ctx.$slots.default,
+                      "is-editing": isEditing.value,
+                      "selected": isSelected.value,
+                      "active": isActive.value,
+                      "selectable": isSelectable.value
+                    }
+                  ]),
+                  onClick: handleNodeClick,
+                  onContextmenu: _cache[3] || (_cache[3] = withModifiers(($event) => handleContextmenu($event, _ctx.node), ["prevent"]))
+                }, [
+                  createElementVNode("div", {
+                    class: normalizeClass([
+                      "tree-node-content",
+                      {
+                        "expanded": _ctx.node.expanded,
+                        "has-children": hasChildren.value
+                      }
+                    ]),
+                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" })
+                  }, [
+                    isEditing.value ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                      _ctx.showChildren && hasChildren.value ? (openBlock(), createElementBlock("span", {
+                        key: 0,
+                        class: "expand-icon",
+                        onClick: _cache[0] || (_cache[0] = withModifiers(($event) => toggleExpanded(), ["stop"])),
+                        innerHTML: unref(withSize)(_ctx.node.expanded ? unref(icons).chevronDown : unref(icons).chevronRight, 12)
+                      }, null, 8, _hoisted_2$1)) : (openBlock(), createElementBlock("span", _hoisted_3$1)),
+                      createElementVNode("span", {
+                        class: "icon",
+                        innerHTML: unref(withSize)(nodeIcon.value, 16),
+                        style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
+                      }, null, 12, _hoisted_4$1),
+                      withDirectives(createElementVNode("input", {
+                        ref_key: "inputRef",
+                        ref: inputRef,
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => editingName.value = $event),
+                        class: "node-name-input",
+                        onBlur: saveEdit,
+                        onKeydown: handleEditKeydown
+                      }, null, 544), [
+                        [vModelText, editingName.value]
+                      ])
+                    ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                      _ctx.showChildren && hasChildren.value ? (openBlock(), createElementBlock("div", {
+                        key: 0,
+                        class: "toggle-area",
+                        onClick: _cache[2] || (_cache[2] = withModifiers(($event) => toggleExpanded(), ["stop"]))
+                      }, [
+                        createElementVNode("span", {
+                          class: "expand-icon",
+                          innerHTML: unref(withSize)(_ctx.node.expanded ? unref(icons).chevronDown : unref(icons).chevronRight, 12)
+                        }, null, 8, _hoisted_5$1),
+                        createElementVNode("span", {
+                          class: "icon",
+                          innerHTML: unref(withSize)(nodeIcon.value, 16),
+                          style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
+                        }, null, 12, _hoisted_6$1)
+                      ])) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                        _cache[7] || (_cache[7] = createElementVNode("span", { class: "expand-icon placeholder" }, null, -1)),
+                        createElementVNode("span", {
+                          class: "icon",
+                          innerHTML: unref(withSize)(nodeIcon.value, 16),
+                          style: normalizeStyle({ color: _ctx.node.data ? "#94a3b8" : "#fbbf24" })
+                        }, null, 12, _hoisted_7$1)
+                      ], 64)),
+                      createElementVNode("span", _hoisted_8$1, toDisplayString(_ctx.node.name), 1),
+                      hasChildren.value ? (openBlock(), createElementBlock("span", _hoisted_9, "(" + toDisplayString(_ctx.node.children.length) + ")", 1)) : createCommentVNode("", true),
+                      _ctx.$slots.header ? (openBlock(), createElementBlock("div", _hoisted_10, [
+                        renderSlot(_ctx.$slots, "header", {
+                          node: _ctx.node,
+                          level: currentLevel.value
+                        }, void 0, true)
+                      ])) : createCommentVNode("", true)
+                    ], 64))
+                  ], 6),
+                  _ctx.$slots.default ? (openBlock(), createElementBlock("div", {
+                    key: 0,
+                    class: "node-custom-content",
+                    style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + 36 + "px" })
+                  }, [
+                    renderSlot(_ctx.$slots, "default", {
+                      node: _ctx.node,
+                      level: currentLevel.value
+                    }, void 0, true)
+                  ], 4)) : createCommentVNode("", true)
+                ], 34)
+              ], 34),
+              isDragOver.value && dropPosition.value === "after" ? (openBlock(), createElementBlock("div", {
+                key: 1,
+                class: "drop-indicator drop-indicator-after",
+                style: normalizeStyle({ paddingLeft: currentLevel.value * 20 + "px" })
+              }, null, 4)) : createCommentVNode("", true),
+              _ctx.showChildren && _ctx.node.expanded && hasChildren.value ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(children.value, (child) => {
+                  return openBlock(), createBlock(_component_TreeNode, {
+                    key: child.id,
+                    node: child,
+                    tree: _ctx.tree,
+                    level: currentLevel.value + 1,
+                    "editing-node-id": _ctx.editingNodeId,
+                    "show-children": _ctx.showChildren,
+                    selection: _ctx.selection,
+                    "active-node-id": _ctx.activeNodeId,
+                    selectable: _ctx.selectable,
+                    "selectable-filter": _ctx.selectableFilter,
+                    onSelect: _cache[4] || (_cache[4] = (node, e) => emit("select", node, e)),
+                    onContextmenu: _cache[5] || (_cache[5] = (e, n) => emit("contextmenu", e, n)),
+                    onRename: _cache[6] || (_cache[6] = (nodeId, newName) => emit("rename", nodeId, newName))
+                  }, createSlots({ _: 2 }, [
+                    renderList(_ctx.$slots, (_, name) => {
+                      return {
+                        name,
+                        fn: withCtx((slotData) => [
+                          renderSlot(_ctx.$slots, name, mergeProps({ ref_for: true }, slotData), void 0, true)
+                        ])
+                      };
+                    })
+                  ]), 1032, ["node", "tree", "level", "editing-node-id", "show-children", "selection", "active-node-id", "selectable", "selectable-filter"]);
+                }), 128))
+              ])) : createCommentVNode("", true)
+            ]);
+          };
+        }
+      });
+      const TreeNode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-fbb1ef76"]]);
+      const _hoisted_1 = {
+        key: 0,
+        class: "tree-search"
+      };
+      const _hoisted_2 = ["placeholder"];
+      const _hoisted_3 = {
+        key: 0,
+        class: "tree-search-toolbar"
+      };
+      const _hoisted_4 = {
+        key: 1,
+        class: "search-results"
+      };
+      const _hoisted_5 = {
+        key: 0,
+        class: "search-results-list"
+      };
+      const _hoisted_6 = {
+        key: 1,
+        class: "search-empty"
+      };
+      const _hoisted_7 = {
+        key: 0,
+        class: "empty-state"
+      };
+      const _hoisted_8 = {
+        key: 1,
+        class: "tree-content"
+      };
+      const _sfc_main = /* @__PURE__ */ defineComponent({
+        __name: "Tree",
+        props: {
+          tree: {},
+          parentId: {},
+          mode: { default: "tree" },
+          searchPlaceholder: {},
+          searchFilter: {},
+          customMenuItems: {},
+          selectable: { type: Boolean, default: true },
+          selectableFilter: {},
+          onCreateFolder: {},
+          onCreateItem: {},
+          onRename: {},
+          onDelete: {},
+          onEdit: {}
+        },
+        emits: ["selectionChange"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const configStorage = ConfigStorage.getInstance();
+          const searchText = ref("");
+          const selection = ref(/* @__PURE__ */ new Set());
+          const activeNodeId = ref(null);
+          const anchorNodeId = ref(null);
+          const isSearching = computed(() => searchText.value.trim().length > 0);
+          const searchResults = computed(() => {
+            if (!isSearching.value || !props.searchFilter) {
+              return [];
+            }
+            const allNodes = Object.values(props.tree.nodes);
+            return allNodes.filter((node) => props.searchFilter(node, searchText.value.trim()));
+          });
+          const hasSearchResults = computed(() => searchResults.value.length > 0);
+          const contextMenu = ref({
+            show: false,
+            targetId: null,
+            x: 0,
+            y: 0
+          });
+          const editingNodeId = ref(null);
+          const treeRootRef = ref(null);
+          const handleGlobalClick = (e) => {
+            if (!props.selectable || selection.value.size === 0) return;
+            if (!treeRootRef.value) return;
+            if (treeRootRef.value.contains(e.target)) return;
+            clearSelection();
+          };
+          onMounted(() => {
+            document.addEventListener("click", handleGlobalClick);
+          });
+          onUnmounted(() => {
+            document.removeEventListener("click", handleGlobalClick);
+          });
+          const rootNodes = computed(() => {
+            var _a;
+            const allNodes = props.tree.nodes;
+            if (props.mode === "list") {
+              return Object.values(allNodes).filter((node) => node.data).sort((a, b) => b.updatedAt - a.updatedAt);
+            }
+            const ids = props.parentId ? ((_a = allNodes[props.parentId]) == null ? void 0 : _a.children) || [] : props.tree.rootIds;
+            return ids.map((id) => allNodes[id]).filter(Boolean);
+          });
+          const targetNode = computed(() => {
+            if (!contextMenu.value.targetId) return null;
+            return props.tree.nodes[contextMenu.value.targetId];
+          });
+          function getVisibleCustomMenuItems(node) {
+            if (!props.customMenuItems || props.customMenuItems.length === 0) {
+              return [];
+            }
+            const selectedNodes = getSelectedNodes();
+            return props.customMenuItems.filter(
+              (item) => !item.show || item.show(node, selectedNodes)
+            );
+          }
+          const visibleCustomMenuItems = computed(
+            () => getVisibleCustomMenuItems(targetNode.value)
+          );
+          const visibleCustomMenuItemsForRoot = computed(
+            () => getVisibleCustomMenuItems(null)
+          );
+          function appendCustomMenuItems(items, customItems, node, selectedNodes) {
+            if (customItems.length === 0) return;
+            if (items.length > 0) {
+              items[items.length - 1].separator = true;
+            }
+            customItems.forEach((item) => {
+              items.push({
+                label: item.label,
+                action: () => item.action(node, selectedNodes),
+                danger: item.danger,
+                separator: item.separator
+              });
+            });
+          }
+          function addBaseCreateItems(items) {
+            if (props.mode === "tree") {
+              items.push({
+                label: "新建文件夹节点",
+                action: handleCreateFolder
+              });
+            }
+            items.push({
+              label: "新建数据节点",
+              action: handleCreateItem,
+              separator: true
+            });
+          }
+          const menuItems = computed(() => {
+            const items = [];
+            const selectedNodes = getSelectedNodes();
+            addBaseCreateItems(items);
+            if (targetNode.value) {
+              items.push({
+                label: "重命名",
+                action: handleRename
+              });
+              if (targetNode.value.data && props.onEdit) {
+                items.push({
+                  label: "编辑",
+                  action: handleEdit
+                });
+              }
+              appendCustomMenuItems(items, visibleCustomMenuItems.value, targetNode.value, selectedNodes);
+              if (items.length > 0) {
+                items[items.length - 1].separator = true;
+              }
+              items.push({
+                label: "删除",
+                action: handleDelete,
+                danger: true
+              });
+            } else {
+              appendCustomMenuItems(items, visibleCustomMenuItemsForRoot.value, null, selectedNodes);
+            }
+            return items;
+          });
+          const getParentId = () => {
+            if (!contextMenu.value.targetId) return null;
+            const node = targetNode.value;
+            if (!node) return null;
+            return node.id;
+          };
+          const showContextMenu = (event, node) => {
+            contextMenu.value = {
+              show: true,
+              targetId: (node == null ? void 0 : node.id) || null,
+              x: event.clientX,
+              y: event.clientY
+            };
+          };
+          const handleCreateFolder = () => {
+            var _a;
+            const parentId = getParentId();
+            const newNodeId = (_a = props.onCreateFolder) == null ? void 0 : _a.call(props, parentId);
+            if (newNodeId) {
+              editingNodeId.value = newNodeId;
+            }
+          };
+          const handleCreateItem = () => {
+            var _a;
+            const parentId = getParentId();
+            const newNodeId = (_a = props.onCreateItem) == null ? void 0 : _a.call(props, parentId);
+            if (newNodeId) {
+              editingNodeId.value = newNodeId;
+            }
+          };
+          const handleEdit = () => {
+            var _a;
+            if (!contextMenu.value.targetId) return;
+            (_a = props.onEdit) == null ? void 0 : _a.call(props, contextMenu.value.targetId);
+          };
+          const handleRename = () => {
+            if (!contextMenu.value.targetId) return;
+            editingNodeId.value = contextMenu.value.targetId;
+          };
+          const handleNodeRename = (nodeId, newName) => {
+            var _a;
+            (_a = props.onRename) == null ? void 0 : _a.call(props, nodeId, newName);
+            editingNodeId.value = null;
+          };
+          const handleDelete = async () => {
+            var _a;
+            if (!contextMenu.value.targetId) return;
+            try {
+              await ((_a = props.onDelete) == null ? void 0 : _a.call(props, contextMenu.value.targetId));
+            } catch (error) {
+              console.debug("Delete cancelled or failed:", error);
+            }
+          };
+          const isTreeDragOver = ref(false);
+          const handleTreeDragOver = (e) => {
+            const target = e.target;
+            if (target.closest(".tree-node-wrapper")) {
+              return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.dataTransfer) {
+              e.dataTransfer.dropEffect = "move";
+            }
+            isTreeDragOver.value = true;
+          };
+          const handleTreeDragLeave = (e) => {
+            const target = e.target;
+            if (!target.closest(".node-tree")) {
+              isTreeDragOver.value = false;
+            }
+          };
+          const handleTreeDrop = (e) => {
+            var _a;
+            const target = e.target;
+            if (target.closest(".tree-node-wrapper")) {
+              return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const nodeId = (_a = e.dataTransfer) == null ? void 0 : _a.getData("text/plain");
+            if (nodeId) {
+              configStorage.moveNode(props.tree, nodeId, props.parentId || null);
+            }
+            isTreeDragOver.value = false;
+          };
+          const handleRootContextmenu = (e) => {
+            if (e.target.closest(".tree-node-content")) {
+              return;
+            }
+            showContextMenu(e, null);
+          };
+          const handleTreeClick = (e) => {
+            const target = e.target;
+            if (!target.closest(".node-item")) {
+              if (selection.value.size > 0) {
+                clearSelection();
+              }
+            }
+          };
+          const getVisibleNodes = () => {
+            var _a;
+            const result = [];
+            const traverse = (nodeIds) => {
+              for (const id of nodeIds) {
+                const node = props.tree.nodes[id];
+                if (!node) continue;
+                result.push(node);
+                if (node.expanded && node.children.length > 0) {
+                  traverse(node.children);
+                }
+              }
+            };
+            if (props.mode === "list") {
+              result.push(...rootNodes.value);
+            } else if (isSearching.value) {
+              result.push(...searchResults.value);
+            } else {
+              traverse(props.parentId ? ((_a = props.tree.nodes[props.parentId]) == null ? void 0 : _a.children) || [] : props.tree.rootIds);
+            }
+            return result;
+          };
+          const getSelectedNodes = () => {
+            return Array.from(selection.value).map((id) => props.tree.nodes[id]).filter(Boolean);
+          };
+          const emitSelectionChange = () => {
+            const selectedNodes = getSelectedNodes();
+            emit("selectionChange", selectedNodes);
+          };
+          const handleSelection = (node, event) => {
+            if (props.selectableFilter && !props.selectableFilter(node)) {
+              return;
+            }
+            const isCtrl = (event == null ? void 0 : event.ctrlKey) || (event == null ? void 0 : event.metaKey);
+            const isShift = event == null ? void 0 : event.shiftKey;
+            const newSelection = new Set(selection.value);
+            if (isShift && anchorNodeId.value) {
+              const visibleNodes = getVisibleNodes();
+              const anchorIndex = visibleNodes.findIndex((n) => n.id === anchorNodeId.value);
+              const currentIndex = visibleNodes.findIndex((n) => n.id === node.id);
+              if (anchorIndex !== -1 && currentIndex !== -1) {
+                newSelection.clear();
+                const startIndex = Math.min(anchorIndex, currentIndex);
+                const endIndex = Math.max(anchorIndex, currentIndex);
+                for (let i = startIndex; i <= endIndex; i++) {
+                  const n = visibleNodes[i];
+                  if (!props.selectableFilter || props.selectableFilter(n)) {
+                    newSelection.add(n.id);
+                  }
+                }
+                activeNodeId.value = node.id;
+              }
+            } else if (isCtrl) {
+              if (newSelection.has(node.id)) {
+                newSelection.delete(node.id);
+                if (activeNodeId.value === node.id) {
+                  activeNodeId.value = null;
+                }
+              } else {
+                newSelection.add(node.id);
+                activeNodeId.value = node.id;
+                anchorNodeId.value = node.id;
+              }
+            } else {
+              newSelection.clear();
+              newSelection.add(node.id);
+              activeNodeId.value = node.id;
+              anchorNodeId.value = node.id;
+            }
+            selection.value = newSelection;
+            emitSelectionChange();
+          };
+          const clearSelection = () => {
+            selection.value = /* @__PURE__ */ new Set();
+            activeNodeId.value = null;
+            anchorNodeId.value = null;
+            emitSelectionChange();
+          };
+          const handleContextmenu = (event, node) => {
+            if (!selection.value.has(node.id)) {
+              handleSelection(node);
+            }
+            showContextMenu(event, node);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", {
+              class: "tree-wrapper",
+              ref_key: "treeRootRef",
+              ref: treeRootRef
+            }, [
+              _ctx.searchFilter ? (openBlock(), createElementBlock("div", _hoisted_1, [
+                withDirectives(createElementVNode("input", {
+                  "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchText.value = $event),
+                  type: "text",
+                  placeholder: _ctx.searchPlaceholder || "搜索...",
+                  class: "search-input"
+                }, null, 8, _hoisted_2), [
+                  [vModelText, searchText.value]
+                ]),
+                _ctx.$slots.toolbar ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                  renderSlot(_ctx.$slots, "toolbar", {}, void 0, true)
+                ])) : createCommentVNode("", true)
+              ])) : createCommentVNode("", true),
+              isSearching.value ? (openBlock(), createElementBlock("div", _hoisted_4, [
+                hasSearchResults.value ? (openBlock(), createElementBlock("div", _hoisted_5, [
+                  (openBlock(true), createElementBlock(Fragment, null, renderList(searchResults.value, (node) => {
+                    return openBlock(), createBlock(TreeNode, {
+                      key: node.id,
+                      node,
+                      tree: _ctx.tree,
+                      level: 0,
+                      "editing-node-id": editingNodeId.value,
+                      "show-children": false,
+                      selection: selection.value,
+                      "active-node-id": activeNodeId.value,
+                      selectable: _ctx.selectable,
+                      "selectable-filter": _ctx.selectableFilter,
+                      onSelect: handleSelection,
+                      onContextmenu: handleContextmenu,
+                      onRename: handleNodeRename
+                    }, createSlots({ _: 2 }, [
+                      renderList(_ctx.$slots, (_, name) => {
+                        return {
+                          name,
+                          fn: withCtx((slotData) => [
+                            renderSlot(_ctx.$slots, name, mergeProps({ ref_for: true }, slotData || {}), void 0, true)
+                          ])
+                        };
+                      })
+                    ]), 1032, ["node", "tree", "editing-node-id", "selection", "active-node-id", "selectable", "selectable-filter"]);
+                  }), 128))
+                ])) : (openBlock(), createElementBlock("div", _hoisted_6, " 没有找到匹配的结果 "))
+              ])) : (openBlock(), createElementBlock("div", {
+                key: 2,
+                class: normalizeClass(["node-tree", { "tree-drag-over": isTreeDragOver.value }]),
+                onContextmenu: withModifiers(handleRootContextmenu, ["prevent"]),
+                onClick: handleTreeClick,
+                onDragover: handleTreeDragOver,
+                onDragleave: handleTreeDragLeave,
+                onDrop: handleTreeDrop
+              }, [
+                rootNodes.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_7, " 暂无数据，右键新建 ")) : (openBlock(), createElementBlock("div", _hoisted_8, [
+                  (openBlock(true), createElementBlock(Fragment, null, renderList(rootNodes.value, (node) => {
+                    return openBlock(), createBlock(TreeNode, {
+                      key: node.id,
+                      node,
+                      tree: _ctx.tree,
+                      level: 0,
+                      "editing-node-id": editingNodeId.value,
+                      "show-children": _ctx.mode === "tree",
+                      selection: selection.value,
+                      "active-node-id": activeNodeId.value,
+                      selectable: _ctx.selectable,
+                      "selectable-filter": _ctx.selectableFilter,
+                      onSelect: handleSelection,
+                      onContextmenu: handleContextmenu,
+                      onRename: handleNodeRename
+                    }, createSlots({ _: 2 }, [
+                      renderList(_ctx.$slots, (_, name) => {
+                        return {
+                          name,
+                          fn: withCtx((slotData) => [
+                            renderSlot(_ctx.$slots, name, mergeProps({ ref_for: true }, slotData || {}), void 0, true)
+                          ])
+                        };
+                      })
+                    ]), 1032, ["node", "tree", "editing-node-id", "show-children", "selection", "active-node-id", "selectable", "selectable-filter"]);
+                  }), 128))
+                ]))
+              ], 34)),
+              createVNode(ContextMenu, {
+                show: contextMenu.value.show,
+                x: contextMenu.value.x,
+                y: contextMenu.value.y,
+                items: menuItems.value,
+                onClose: _cache[1] || (_cache[1] = ($event) => contextMenu.value.show = false)
+              }, null, 8, ["show", "x", "y", "items"])
+            ], 512);
+          };
+        }
+      });
+      const Tree = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-b7665db9"]]));
+      function tagSearchFilter(node, searchText) {
+        var _a;
+        if (!((_a = node.data) == null ? void 0 : _a.tags)) return false;
+        const lowerSearch = searchText.toLowerCase();
+        const nodeName = node.name.toLowerCase();
+        const tagsText = node.data.tags.join(" ").toLowerCase();
+        return nodeName.includes(lowerSearch) || tagsText.includes(lowerSearch);
+      }
+      function itemDataSearchFilter(node, searchText) {
+        var _a, _b, _c, _d, _e, _f;
+        if (!((_a = node.data) == null ? void 0 : _a.authorName) && !((_b = node.data) == null ? void 0 : _b.itemUrl)) return false;
+        const lowerSearch = searchText.toLowerCase();
+        const nodeName = node.name.toLowerCase();
+        const authorName = ((_d = (_c = node.data) == null ? void 0 : _c.authorName) == null ? void 0 : _d.toLowerCase()) || "";
+        const itemUrl = ((_f = (_e = node.data) == null ? void 0 : _e.itemUrl) == null ? void 0 : _f.toLowerCase()) || "";
+        return nodeName.includes(lowerSearch) || authorName.includes(lowerSearch) || itemUrl.includes(lowerSearch);
+      }
+      function useTreeTab(options) {
+        const { renameNode, deleteNode } = useStorage();
+        const modal = useModal();
+        const selectedNodeId = ref(null);
+        const tree = computed(
+          () => typeof options.tree === "function" ? options.tree() : options.tree
+        );
+        function handleSelect(nodes) {
+          if (nodes.length > 0) {
+            selectedNodeId.value = nodes[0].id;
+          }
+        }
+        function handleCreateFolder(parentId) {
+          if (options.onCreateFolder) {
+            return options.onCreateFolder(parentId);
+          }
+          const storage = useStorage();
+          const newNode = storage.createNode(tree.value, "新建文件夹", void 0, parentId);
+          return newNode.id;
+        }
+        function handleCreateItem(parentId) {
+          if (options.onCreateItem) {
+            return options.onCreateItem(parentId);
+          }
+          throw new Error("onCreateItem is required");
+        }
+        async function handleEditItem(nodeId) {
+          if (options.onEditItem) {
+            await options.onEditItem(nodeId);
+          }
+        }
+        function handleRename(nodeId, newName) {
+          const trimmedName = newName.trim();
+          if (trimmedName) {
+            renameNode(tree.value, nodeId, trimmedName);
+          }
+        }
+        async function handleDelete(nodeId) {
+          const node = tree.value.nodes[nodeId];
+          if (!node) return;
+          const confirmed = await modal.openModal({
+            type: "delete",
+            title: "确认删除",
+            formData: { message: `确定要删除"${node.name}"吗？` }
+          });
+          if (confirmed) {
+            deleteNode(tree.value, nodeId);
+          }
+        }
+        return {
+          selectedNodeId,
+          tree,
+          handleSelect,
+          handleCreateFolder,
+          handleCreateItem,
+          handleEditItem,
+          handleRename,
+          handleDelete,
+          modal
+        };
+      }
 
-		})
-	};
+    })
+  };
 }));
 
-System.register("./EditTab-R0NUwsoO-CPQSm_db.js", ['vue', './useModal-CEDTPuIh-FnhElVKI.js', './__monkey.entry-cNiwjrQq.js'], (function (exports, module) {
-	'use strict';
-	var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, renderList, normalizeStyle, renderSlot, createBlock, withModifiers, vModelCheckbox, normalizeClass, nextTick, useSlots, t, H, Ct$1, wt$1, xt$1, Tt$1, nt$1, G$1, U, gt$1, ft$1;
-	return {
-		setters: [module => {
-			defineComponent = module.defineComponent;
-			computed = module.computed;
-			ref = module.ref;
-			watch = module.watch;
-			onMounted = module.onMounted;
-			createElementBlock = module.createElementBlock;
-			openBlock = module.openBlock;
-			Fragment = module.Fragment;
-			createVNode = module.createVNode;
-			createCommentVNode = module.createCommentVNode;
-			unref = module.unref;
-			withCtx = module.withCtx;
-			createElementVNode = module.createElementVNode;
-			withDirectives = module.withDirectives;
-			createTextVNode = module.createTextVNode;
-			withKeys = module.withKeys;
-			vModelText = module.vModelText;
-			vModelSelect = module.vModelSelect;
-			toDisplayString = module.toDisplayString;
-			renderList = module.renderList;
-			normalizeStyle = module.normalizeStyle;
-			renderSlot = module.renderSlot;
-			createBlock = module.createBlock;
-			withModifiers = module.withModifiers;
-			vModelCheckbox = module.vModelCheckbox;
-			normalizeClass = module.normalizeClass;
-			nextTick = module.nextTick;
-			useSlots = module.useSlots;
-		}, module => {
-			t = module.t;
-		}, module => {
-			H = module.H;
-			Ct$1 = module.C;
-			wt$1 = module.w;
-			xt$1 = module.x;
-			Tt$1 = module.T;
-			nt$1 = module.n;
-			G$1 = module.G;
-			U = module.U;
-			gt$1 = module.g;
-			ft$1 = module.f;
-		}],
-		execute: (function () {
+System.register("./EditTab-anT-3t6x-BwU78x_5.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-DUXauit0.js'], (function (exports, module) {
+  'use strict';
+  var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, renderList, normalizeStyle, createBlock, normalizeClass, renderSlot, withModifiers, vModelCheckbox, useSlots, nextTick, useModal, _export_sfc, useStorage, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate;
+  return {
+    setters: [module => {
+      defineComponent = module.defineComponent;
+      computed = module.computed;
+      ref = module.ref;
+      watch = module.watch;
+      onMounted = module.onMounted;
+      createElementBlock = module.createElementBlock;
+      openBlock = module.openBlock;
+      Fragment = module.Fragment;
+      createVNode = module.createVNode;
+      createCommentVNode = module.createCommentVNode;
+      unref = module.unref;
+      withCtx = module.withCtx;
+      createElementVNode = module.createElementVNode;
+      withDirectives = module.withDirectives;
+      createTextVNode = module.createTextVNode;
+      withKeys = module.withKeys;
+      vModelText = module.vModelText;
+      vModelSelect = module.vModelSelect;
+      toDisplayString = module.toDisplayString;
+      renderList = module.renderList;
+      normalizeStyle = module.normalizeStyle;
+      createBlock = module.createBlock;
+      normalizeClass = module.normalizeClass;
+      renderSlot = module.renderSlot;
+      withModifiers = module.withModifiers;
+      vModelCheckbox = module.vModelCheckbox;
+      useSlots = module.useSlots;
+      nextTick = module.nextTick;
+    }, module => {
+      useModal = module.u;
+    }, module => {
+      _export_sfc = module._;
+      useStorage = module.u;
+      getSelectedDescriptionTemplate = module.g;
+      getSelectedDiscountTemplate = module.b;
+      toast = module.t;
+      Modal = module.M;
+      withSize = module.w;
+      icons = module.i;
+      createDefaultItemConfig = module.c;
+      getSelectedNameTemplate = module.d;
+    }],
+    execute: (function () {
 
-			const N={class:"file-selector"},j=["onClick"],O={class:"be-text-sm be-font-medium"},A={key:1,class:"empty-hint be-text-center be-text-secondary be-py-md"},E=H(defineComponent({t:"FileSelector",props:{files:{},selectedFileIds:{},emptyText:{},columns:{},maxHeight:{}},emits:["update:selectedFileIds"],setup(e,{emit:u}){const d=e,p=u,b=computed(()=>d.columns||2),m=computed(()=>d.emptyText||"暂无文件，请先上传文件");return (e,t)=>(openBlock(),createElementBlock("div",N,[e.files.length>0?(openBlock(),createElementBlock("div",{key:0,class:"file-grid",style:normalizeStyle({gridTemplateColumns:`repeat(${b.value}, 1fr)`,maxHeight:e.maxHeight||"300px"})},[(openBlock(true),createElementBlock(Fragment,null,renderList(e.files,e=>{return openBlock(),createElementBlock("button",{key:e.id,class:normalizeClass(["file-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",{"is-selected":(t=e.id,d.selectedFileIds.includes(t))}]),type:"button",onClick:t=>function(e){const t=[...d.selectedFileIds],n=t.indexOf(e);n>-1?t.splice(n,1):t.push(e),p("update:selectedFileIds",t);}(e.id)},[createElementVNode("span",O,toDisplayString(e.name),1)],10,j);var t;}),128))],4)):(openBlock(),createElementBlock("div",A,toDisplayString(m.value),1))]))}}),[["__scopeId","data-v-43c71f00"]]),z={class:"preview-box be-flex be-flex-column be-gap-xs"},q={key:0,class:"be-text-xs be-text-secondary"},K={key:1,class:"be-text-secondary"},G={key:2,class:"be-whitespace-pre-wrap be-break-words be-m-0"},J={key:3},Q=H(defineComponent({t:"PreviewBox",props:{label:{},type:{},isEmpty:{type:Boolean},emptyText:{}},setup:e=>(e,t)=>(openBlock(),createElementBlock("div",z,[e.label?(openBlock(),createElementBlock("div",q,toDisplayString(e.label),1)):createCommentVNode("",true),e.isEmpty?(openBlock(),createElementBlock("div",K,toDisplayString(e.emptyText||"暂无内容"),1)):"pre"===e.type?(openBlock(),createElementBlock("pre",G,[t[0]||(t[0]=createTextVNode("      ",-1)),renderSlot(e.$slots,"default",{},void 0,true),t[1]||(t[1]=createTextVNode("\n    ",-1))])):(openBlock(),createElementBlock("div",J,[renderSlot(e.$slots,"default",{},void 0,true)]))]))}),[["__scopeId","data-v-93d09832"]]),W={key:0,class:"section-header"},X={key:0,class:"be-text-base be-font-bold"},Y={key:1,class:"actions"},Z={class:"section-content"},ee=H(defineComponent({t:"SectionHeader",props:{title:{default:""},noBorder:{type:Boolean,default:false}},setup(e){const l=e,a=useSlots(),s=computed(()=>l.title||a.title||a.actions);return (e,t)=>(openBlock(),createElementBlock("section",{class:normalizeClass(["section-header-container",{"no-header":!s.value,"no-border":e.noBorder}])},[s.value?(openBlock(),createElementBlock("div",W,[e.title||e.$slots.title?(openBlock(),createElementBlock("div",X,[renderSlot(e.$slots,"title",{},()=>[createTextVNode(toDisplayString(e.title),1)],true)])):createCommentVNode("",true),e.$slots.actions?(openBlock(),createElementBlock("div",Y,[renderSlot(e.$slots,"actions",{},void 0,true)])):createCommentVNode("",true)])):createCommentVNode("",true),createElementVNode("div",Z,[renderSlot(e.$slots,"default",{},void 0,true)])],2))}}),[["__scopeId","data-v-5643104c"]]),te={class:"template-selector"},ne={key:0,class:"template-selector-label"},oe=["value"],le={key:2,class:"empty-hint"},ae=H(defineComponent({t:"TemplateSelector",props:{modelValue:{},templates:{default:()=>[]},label:{default:"选择模板"},placeholder:{default:"请选择模板"},emptyHint:{default:"暂无可用模板"}},emits:["update:modelValue"],setup(e,{emit:l}){const i=e,r=l,d=computed({get:()=>i.modelValue,set(e){r("update:modelValue",e);}});return watch(()=>i.templates,function(e){e&&0!==e.length?e.some(e=>e.id===i.modelValue)||r("update:modelValue",e[0].id):r("update:modelValue","");},{immediate:true}),(e,t)=>(openBlock(),createElementBlock("div",te,[e.label?(openBlock(),createElementBlock("label",ne,toDisplayString(e.label),1)):createCommentVNode("",true),e.templates&&e.templates.length>0?withDirectives((openBlock(),createElementBlock("select",{key:1,"onUpdate:modelValue":t[0]||(t[0]=e=>d.value=e),class:"template-selector-select"},[(openBlock(true),createElementBlock(Fragment,null,renderList(e.templates,e=>(openBlock(),createElementBlock("option",{key:e.id,value:e.id},toDisplayString(e.name),9,oe))),128))],512)),[[vModelSelect,d.value]]):(openBlock(),createElementBlock("div",le,toDisplayString(e.emptyHint),1))]))}}),[["__scopeId","data-v-08bcafdd"]]),se={class:"draggable-card-list"},ie=["onDragstart","onDrop"],re={class:"card-actions"},ce=["innerHTML"],ue={class:"card-number"},de={class:"actions-content"},pe=["onClick"],be=["innerHTML"],me={class:"card-content"},fe=H(defineComponent({t:"DraggableCardList",props:{items:{},keyExtractor:{type:Function,default:(e,t)=>void 0!==(null==e?void 0:e.id)?e.id:t}},emits:["remove","reorder"],setup(e,{emit:t}){const l=t,i=ref(null);function u(e){e.preventDefault();}return (e,t)=>(openBlock(),createElementBlock("div",se,[(openBlock(true),createElementBlock(Fragment,null,renderList(e.items,(t,a)=>(openBlock(),createElementBlock("div",{key:e.keyExtractor(t,a),class:"draggable-card",draggable:"true",onDragstart:e=>function(e){i.value=e;}(a),onDragover:u,onDrop:e=>{return t=a,e.preventDefault(),void(null!==i.value&&i.value!==t?(l("reorder",i.value,t),i.value=null):i.value=null);var t;}},[createElementVNode("div",re,[createElementVNode("span",{class:"drag-handle",innerHTML:unref(G$1)(unref(U).moreVertical,14)},null,8,ce),createElementVNode("span",ue,"#"+toDisplayString(a+1),1),createElementVNode("div",de,[renderSlot(e.$slots,"actions",{item:t,index:a},void 0,true)]),createElementVNode("button",{class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",onClick:e=>function(e){l("remove",e);}(a),title:"删除"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).trash,14)},null,8,be)],8,pe)]),createElementVNode("div",me,[renderSlot(e.$slots,"content",{item:t,index:a},void 0,true)])],40,ie))),128))]))}}),[["__scopeId","data-v-6cf94b77"]]);function he(e){const{templates:t,defaultTemplate:n,minTemplates:o=1}=e;return {addTemplate:function(){const e=t.value||(t.value=[]),o={id:crypto.randomUUID(),name:"模板 "+(e.length+1),isDefault:false,...n};e.push(o);},removeTemplate:function(e){const n=t.value;n&&n.length>o&&n.splice(e,1);},setDefaultTemplate:function(e){const n=t.value;n&&n.forEach((t,n)=>{t.isDefault=n===e;});},onReorder:function(e,n){const o=t.value;if(!o)return;const[l]=o.splice(e,1);o.splice(n,0,l);}}}function ye(e,t){return t.enabled&&0!==t.discountPercent?Math.round(e*(1-t.discountPercent/100)):e}const ve={"商品名":"itemName","支持数":"supportCount","商品类型":"itemTypeName","商品类型复数":"itemTypePlural","变体数量":"variationCount","首个变体名":"firstName","智能标题":"smartTitle","折扣标识":"discountIndicator","原价":"originalPrice","折扣价":"discountedPrice","折扣百分比":"discountPercent","Fullset原价":"fullsetOriginalPrice","Fullset折扣价":"fullsetDiscountedPrice","折扣开始时间":"startDate","折扣结束时间":"endDate","日期":"date","内容":"content","作者名":"authorName","商品链接":"itemUrl"};function xe(e,t){let n=e;return Object.entries(ve).forEach(([e,o])=>{const l=t[o];if(null!=l){const t=RegExp(`\\{${e}\\}`,"g");n=n.replace(t,l+"");}}),n}function ge(e){const t=new Date(e);return `${t.getFullYear()}/${t.getMonth()+1}/${t.getDate()}`}function Te(e){return e.filter(e=>!e.isFullset).reduce((e,t)=>t.fileItemMap?e+Object.keys(t.fileItemMap).filter(e=>t.fileItemMap[e]).length:e,0)}function ke(e,t){if(1===t)return e;const n=e.toLowerCase();return /[sxz]$|[cs]h$/.test(n)?e+"es":/[^aeiou]y$/.test(n)?e.slice(0,-1)+"ies":e+"s"}function we(e,t){var n,o,l,a;const s=crypto.randomUUID();switch(e){case "normal":return {id:s,type:"normal",headline:"",body:""};case "log":return {id:s,type:"log",headline:"更新日志",logEntries:[],logTemplateId:(null==(o=null==(n=t.logTemplates)?void 0:n[0])?void 0:o.id)||""};case "iteminfo":return {id:s,type:"iteminfo",headline:"対応アバター",itemInfoTemplateId:(null==(a=null==(l=t.itemInfoTemplates)?void 0:l[0])?void 0:a.id)||""}}}function _e(e,t,n){switch(e.type||(e.type="normal"),e.type){case "normal":return function(e,t){if(e.templateId&&t){const n=t.find(t=>t.id===e.templateId);if(n)return {headline:e.headline??n.headline,body:e.body??n.body??""}}return {headline:e.headline??"",body:e.body??""}}(e,t.sectionTemplates);case "log":return function(e,t){const n=e.headline??"更新日志",o=null==t?void 0:t.find(t=>t.id===e.logTemplateId),l=(null==o?void 0:o.template)||"{日期} - {内容}";return {headline:n,body:e.logEntries.map(e=>xe(l,{date:ge(e.date),content:e.content})).join("\n\n")}}(e,t.logTemplates);case "iteminfo":return function(e,t,n){const o=e.headline??"対応アバター",l=null==t?void 0:t.find(t=>t.id===e.itemInfoTemplateId),a=(null==l?void 0:l.template)||"⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -";return {headline:o,body:function(e,t){const n=function(e){const t=new Map;return e.forEach(e=>{const n=e.authorName||"未知作者";t.has(n)||t.set(n,[]),t.get(n).push(e);}),t}(e),o=[];return n.forEach(e=>{e.forEach(e=>{const n=xe(t,{authorName:e.authorName,itemName:e.itemName,itemUrl:e.itemUrl});o.push(n);});}),o.join("\n\n")}(function(e,t){const n=[],o=new Set;return e.forEach(e=>{e.fileItemMap&&Object.values(e.fileItemMap).forEach(e=>{if(e&&!o.has(e)){const l=t.nodes[e];(null==l?void 0:l.data)&&(n.push(l.data),o.add(e));}});}),n}(n.variations,n.itemTree),a)}}(e,t.itemInfoTemplates,n);default:return {headline:e.headline||"",body:e.body||""}}}const Me={basic:"基础: {商品名}, {支持数}, {商品类型}, {商品类型复数}, {变体数量}, {首个变体名}",smart:"智能: {智能标题}, {折扣标识}",log:"可用变量: {日期}, {内容}",discount:"可用变量: {原价}, {折扣价}, {折扣百分比}, {Fullset原价}, {Fullset折扣价}, {折扣开始时间}, {折扣结束时间}",get full(){return `${this.basic}\n${this.smart}`}},He={addButton:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",closeButton:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",saveButton:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary"},Le=["innerHTML"],Ce=["innerHTML"],Ve=["onUpdate:modelValue"],Ue={class:"form-group"},Ie=["onUpdate:modelValue"],Se={key:1,class:"empty-hint"},De=defineComponent({t:"DescriptionTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=computed({get(){var e;return (e=a.globalTemplates).descriptionTemplates||(e.descriptionTemplates=[])},set(e){a.globalTemplates.descriptionTemplates=e;}}),{addTemplate:u,removeTemplate:d,onReorder:p}=he({templates:c,defaultTemplate:{template:""}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"描述模板配置",width:"600px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=(...e)=>unref(u)&&unref(u)(...e)),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,Le)],2)]),default:withCtx(()=>[createVNode(unref(ee),null,{default:withCtx(()=>[createElementVNode("p",{class:"form-hint",innerHTML:unref(Me).full.replace("\n","<br>")},null,8,Ce),e.globalTemplates.descriptionTemplates&&e.globalTemplates.descriptionTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.descriptionTemplates,"key-extractor":e=>e.id,onRemove:unref(d),onReorder:unref(p)},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,Ve),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",Ue,[t[2]||(t[2]=createElementVNode("label",null,"模板内容",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.template=t,rows:"1",placeholder:"输入模板内容"},null,8,Ie),[[vModelText,e.template]])])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",Se,' 暂无模板，点击"添加模板"创建 '))]),o:1})]),o:1},8,["show"]))}}),Re=["innerHTML"],$e=["innerHTML"],Pe=defineComponent({t:"ItemDescriptionSection",props:{itemConfig:{},globalTemplates:{},templateVars:{},api:{},modal:{},currentItemId:{},onDescriptionUpdated:{type:Function}},emits:["applied"],setup(e,{expose:n,emit:l}){const a=e,s=l,i=computed(()=>{const e=[],t=xe(wt$1(a.globalTemplates,a.itemConfig),a.templateVars);if(t&&e.push(t),a.itemConfig.customDescription&&e.push(a.itemConfig.customDescription),a.itemConfig.discount.enabled){const t=a.itemConfig.pricing.normalVariationPrice,n=ye(t,a.itemConfig.discount),o=a.itemConfig.pricing.fullsetPrice,l=ye(o,a.itemConfig.discount),s=e=>{if(!e)return "";const t=new Date(e);return `${(t.getMonth()+1+"").padStart(2,"0")}/${(t.getDate()+"").padStart(2,"0")} ${(t.getHours()+"").padStart(2,"0")}:${(t.getMinutes()+"").padStart(2,"0")}`},i=xe(xt$1(a.globalTemplates,a.itemConfig),{...a.templateVars,originalPrice:t,discountedPrice:n,discountPercent:a.itemConfig.discount.discountPercent,fullsetOriginalPrice:o,fullsetDiscountedPrice:l,startDate:s(a.itemConfig.discount.startDate),endDate:s(a.itemConfig.discount.endDate)});e.push(i);}return e.join("\n\n")});async function u(){const e=await a.modal.openModal({type:"editDescription",title:"编辑描述",formData:{customDescription:a.itemConfig.customDescription}});e&&a.onDescriptionUpdated(e.customDescription);}function p(){a.api.setDescription(i.value),Tt$1.success("已应用描述"),s("applied");}return n({applyDescription:p}),(e,t)=>(openBlock(),createBlock(unref(ee),{title:"商品描述"},{actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"编辑描述",onClick:u},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,Re)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-primary",type:"button",title:"应用到页面",onClick:p},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).send,14)},null,8,$e)])]),default:withCtx(()=>[createVNode(unref(Q),{label:"预览:",type:"pre","is-empty":!i.value,"empty-text":'暂无描述，点击"编辑描述"添加'},{default:withCtx(()=>[createTextVNode(toDisplayString(i.value),1)]),o:1},8,["is-empty"])]),o:1}))}}),Fe=["innerHTML"],Be=["innerHTML"],Ne=["onUpdate:modelValue"],je={class:"be-flex be-flex-column be-gap-sm"},Oe={class:"form-group"},Ae=["onUpdate:modelValue"],Ee={key:1,class:"empty-hint"},ze=defineComponent({t:"NameTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=computed({get(){var e;return (e=a.globalTemplates).nameTemplates||(e.nameTemplates=[])},set(e){a.globalTemplates.nameTemplates=e;}}),{addTemplate:u,removeTemplate:d,onReorder:p}=he({templates:c,defaultTemplate:{template:"{smartTitle}"}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"商品名模板配置",width:"600px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=(...e)=>unref(u)&&unref(u)(...e)),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,Fe)],2)]),default:withCtx(()=>[createVNode(unref(ee),null,{default:withCtx(()=>[createElementVNode("p",{class:"form-hint",innerHTML:unref(Me).full.replace("\n","<br>")},null,8,Be),e.globalTemplates.nameTemplates&&e.globalTemplates.nameTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.nameTemplates,"key-extractor":e=>e.id,onRemove:unref(d),onReorder:unref(p)},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,Ne),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",je,[createElementVNode("div",Oe,[t[2]||(t[2]=createElementVNode("label",null,"模板内容",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.template=t,rows:"1",placeholder:"输入模板内容"},null,8,Ae),[[vModelText,e.template]])])])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",Ee,' 暂无模板，点击"添加模板"创建 '))]),o:1})]),o:1},8,["show"]))}}),qe=["innerHTML"],Ke={class:"modal-content"},Ge={class:"form-group"},Je={class:"form-group"},Qe={class:"form-group"},We={key:0,class:"form-group"},Xe=["innerHTML"],Ye=["value"],Ze=["innerHTML"],et=["innerHTML"],tt=defineComponent({t:"NameModal",props:{show:{type:Boolean},itemConfig:{},globalTemplates:{},totalSupport:{}},emits:["close","save"],setup(e,{emit:l}){const s=e,c=l;onMounted(function(){var e,t,n,o,l,a;s.itemConfig.selectedTemplates||(s.itemConfig.selectedTemplates={nameTemplateId:(null==(t=null==(e=s.globalTemplates.nameTemplates)?void 0:e[0])?void 0:t.id)||"",descriptionTemplateId:(null==(o=null==(n=s.globalTemplates.descriptionTemplates)?void 0:n[0])?void 0:o.id)||"",discountTemplateId:(null==(a=null==(l=s.globalTemplates.discountTemplates)?void 0:l[0])?void 0:a.id)||""});});const p=ref(false),b=computed(()=>ft$1(s.globalTemplates,s.itemConfig));function m(){c("save"),c("close");}return (e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(nt$1,{show:e.show,title:"编辑商品名","teleport-to":".booth-enhancer-sidebar",onClose:t[7]||(t[7]=e=>c("close")),width:"500px"},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=e=>p.value=true),title:"模板配置",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).settings,18)},null,8,qe)],2)]),footer:withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).closeButton),onClick:t[6]||(t[6]=e=>c("close")),title:"取消"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,18)},null,8,Ze)],2),createElementVNode("button",{class:normalizeClass(unref(He).saveButton),onClick:m,title:"保存"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,et)],2)]),default:withCtx(()=>[createElementVNode("div",Ke,[createElementVNode("div",Ge,[t[9]||(t[9]=createElementVNode("label",null,"商品基础名称",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[1]||(t[1]=t=>e.itemConfig.itemName=t),type:"text",placeholder:"输入商品名称"},null,512),[[vModelText,e.itemConfig.itemName]])]),createElementVNode("div",Je,[t[11]||(t[11]=createElementVNode("label",null,"商品类型",-1)),withDirectives(createElementVNode("select",{"onUpdate:modelValue":t[2]||(t[2]=t=>e.itemConfig.itemType=t)},t[10]||(t[10]=[createElementVNode("option",{value:"normal"},"普通商品",-1),createElementVNode("option",{value:"adaptation"},"适配商品",-1)]),512),[[vModelSelect,e.itemConfig.itemType]])]),createElementVNode("div",Qe,[t[12]||(t[12]=createElementVNode("label",null,[createTextVNode("商品类型名称 "),createElementVNode("span",{class:"label-hint"},"(用于生成复数形式，如 Avatar → Avatars)")],-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[3]||(t[3]=t=>e.itemConfig.itemTypeName=t),type:"text",placeholder:"如: Avatar, Model, Texture"},null,512),[[vModelText,e.itemConfig.itemTypeName]])]),createVNode(ae,{modelValue:e.itemConfig.selectedTemplates.nameTemplateId,"onUpdate:modelValue":t[4]||(t[4]=t=>e.itemConfig.selectedTemplates.nameTemplateId=t),templates:e.globalTemplates.nameTemplates,label:"选择模板","empty-hint":"请先在全局模板配置中添加商品名模板"},null,8,["modelValue","templates"]),e.globalTemplates.nameTemplates&&e.globalTemplates.nameTemplates.length>0?(openBlock(),createElementBlock("div",We,[t[13]||(t[13]=createElementVNode("label",null,[createTextVNode("模板内容 "),createElementVNode("span",{class:"label-hint"},"(编辑当前选中模板)")],-1)),createElementVNode("p",{class:"form-hint",innerHTML:unref(Me).full.replace("\n","<br>")},null,8,Xe),createElementVNode("input",{value:b.value,onInput:t[5]||(t[5]=e=>function(e){var t;const n=s.globalTemplates.nameTemplates,o=null==(t=s.itemConfig.selectedTemplates)?void 0:t.nameTemplateId;if(!n||!o)return;const l=e.target,a=n.find(e=>e.id===o);a&&(a.template=l.value);}(e)),type:"text",placeholder:"如: {智能标题}"},null,40,Ye)])):createCommentVNode("",true)])]),o:1},8,["show"]),createVNode(ze,{show:p.value,"global-templates":e.globalTemplates,onClose:t[8]||(t[8]=e=>p.value=false)},null,8,["show","global-templates"])],64))}}),nt=["innerHTML"],ot=["innerHTML"],lt={class:"form-group"},at={class:"be-text-primary"},st=defineComponent({t:"ItemNameSection",props:{itemConfig:{},globalTemplates:{},templateVars:{},api:{},totalSupport:{}},emits:["applied"],setup(e,{expose:l,emit:s}){const i=e,d=s,p=ref(false),b=computed(()=>xe(ft$1(i.globalTemplates,i.itemConfig),i.templateVars));function m(){i.api.setName(b.value),Tt$1.success("已应用商品名"),d("applied");}return l({applyName:m}),(e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(unref(ee),{title:"商品名称"},{actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"模板设置",onClick:t[0]||(t[0]=e=>p.value=true)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,nt)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-primary",type:"button",title:"应用到页面",onClick:m},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).send,14)},null,8,ot)])]),default:withCtx(()=>[createElementVNode("div",lt,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[1]||(t[1]=t=>e.itemConfig.itemName=t),type:"text",placeholder:"输入商品名称"},null,512),[[vModelText,e.itemConfig.itemName]])]),b.value?(openBlock(),createBlock(unref(Q),{key:0,label:"预览:",type:"text"},{default:withCtx(()=>[createElementVNode("span",at,toDisplayString(b.value),1)]),o:1})):createCommentVNode("",true)]),o:1}),createVNode(tt,{show:p.value,"item-config":e.itemConfig,"global-templates":e.globalTemplates,"total-support":e.totalSupport,onClose:t[2]||(t[2]=e=>p.value=false),onSave:t[3]||(t[3]=e=>p.value=false)},null,8,["show","item-config","global-templates","total-support"])],64))}}),it=["innerHTML"],rt={class:"be-flex be-flex-column be-gap-sm"},ct=["onUpdate:modelValue"],ut={class:"be-flex be-flex-column be-gap-sm"},dt={class:"form-group"},pt=["onUpdate:modelValue"],bt={key:1,class:"empty-hint"},mt=defineComponent({t:"ItemInfoTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=he({templates:computed({get(){var e;return (e=a.globalTemplates).itemInfoTemplates||(e.itemInfoTemplates=[])},set(e){a.globalTemplates.itemInfoTemplates=e;}}),defaultTemplate:{template:"⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -"}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"商品信息模板配置",width:"700px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=e=>unref(c).addTemplate()),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,it)],2)]),default:withCtx(()=>[createElementVNode("div",rt,[createVNode(unref(ee),null,{default:withCtx(()=>[t[3]||(t[3]=createElementVNode("p",{class:"form-hint"},"可用变量: {作者名}, {商品名}, {商品链接}",-1)),t[4]||(t[4]=createElementVNode("p",{class:"form-hint"},"系统会自动按作者分组并循环渲染所有关联商品",-1)),t[5]||(t[5]=createElementVNode("p",{class:"form-hint"},"示例：⟡ {作者名}\\nʚ {商品名} ɞ\\n- {商品链接} -",-1)),e.globalTemplates.itemInfoTemplates&&e.globalTemplates.itemInfoTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.itemInfoTemplates,"key-extractor":e=>e.id,onRemove:unref(c).removeTemplate,onReorder:unref(c).onReorder},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,ct),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",ut,[createElementVNode("div",dt,[t[2]||(t[2]=createElementVNode("label",null,"模板内容",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.template=t,rows:"3",placeholder:"输入模板内容"},null,8,pt),[[vModelText,e.template]])])])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",bt,' 暂无模板，点击"添加模板"创建 '))]),o:1,l:[3,4,5]})])]),o:1},8,["show"]))}}),ft=["innerHTML"],ht={class:"be-flex be-flex-column be-gap-sm"},yt=["onUpdate:modelValue"],vt={class:"be-flex be-flex-column be-gap-sm"},xt={class:"form-group"},gt=["onUpdate:modelValue"],Tt={key:1,class:"empty-hint"},kt=defineComponent({t:"LogTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=he({templates:computed({get(){var e;return (e=a.globalTemplates).logTemplates||(e.logTemplates=[])},set(e){a.globalTemplates.logTemplates=e;}}),defaultTemplate:{template:"⟡ {日期}\n　・ {内容}"}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"日志模板配置",width:"700px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=e=>unref(c).addTemplate()),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,ft)],2)]),default:withCtx(()=>[createElementVNode("div",ht,[createVNode(unref(ee),null,{default:withCtx(()=>[t[3]||(t[3]=createElementVNode("p",{class:"form-hint"},"可用变量: {日期}, {内容}",-1)),t[4]||(t[4]=createElementVNode("p",{class:"form-hint"},"示例：⟡ {日期}\\n　・ {内容}",-1)),e.globalTemplates.logTemplates&&e.globalTemplates.logTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.logTemplates,"key-extractor":e=>e.id,onRemove:unref(c).removeTemplate,onReorder:unref(c).onReorder},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,yt),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",vt,[createElementVNode("div",xt,[t[2]||(t[2]=createElementVNode("label",null,"模板内容",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.template=t,rows:"2",placeholder:"输入模板内容"},null,8,gt),[[vModelText,e.template]])])])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",Tt,' 暂无模板，点击"添加模板"创建 '))]),o:1,l:[3,4]})])]),o:1},8,["show"]))}}),wt=["innerHTML"],_t={class:"be-flex be-flex-column be-gap-sm"},Mt=["innerHTML"],Ht=["onUpdate:modelValue"],Lt=["onUpdate:modelValue"],Ct={class:"be-flex be-flex-column be-gap-sm"},Vt={class:"form-group"},Ut=["onUpdate:modelValue"],It={key:0,class:"form-group"},St=["onUpdate:modelValue"],Dt={key:1,class:"form-hint be-text-xs be-text-secondary"},Rt={key:2,class:"form-hint be-text-xs be-text-secondary"},$t={key:1,class:"empty-hint"},Pt=defineComponent({t:"SectionTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=he({templates:computed({get(){var e;return (e=a.globalTemplates).sectionTemplates||(e.sectionTemplates=[])},set(e){a.globalTemplates.sectionTemplates=e;}}),defaultTemplate:{type:"normal",headline:"",body:""}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"Section 模板配置",width:"700px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=e=>unref(c).addTemplate()),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,wt)],2)]),default:withCtx(()=>[createElementVNode("div",_t,[createVNode(unref(ee),null,{default:withCtx(()=>[createElementVNode("p",{class:"form-hint",innerHTML:unref(Me).full.replace("\n","<br>")},null,8,Mt),t[5]||(t[5]=createElementVNode("p",{class:"form-hint be-text-xs be-text-secondary"},[createElementVNode("strong",null,"模板类型说明："),createElementVNode("br"),createTextVNode(" • "),createElementVNode("strong",null,"普通"),createTextVNode("：常规 Section，可包含任意内容"),createElementVNode("br"),createTextVNode(" • "),createElementVNode("strong",null,"日志"),createTextVNode("：更新日志 Section，内容由日志条目动态生成（只需配置 Headline）"),createElementVNode("br"),createTextVNode(" • "),createElementVNode("strong",null,"商品信息"),createTextVNode("：自动从 Variations 关联的商品生成信息列表 ")],-1)),e.globalTemplates.sectionTemplates&&e.globalTemplates.sectionTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.sectionTemplates,"key-extractor":e=>e.id,onRemove:unref(c).removeTemplate,onReorder:unref(c).onReorder},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("select",{"onUpdate:modelValue":t=>e.type=t,class:"be-p-xs be-px-sm be-text-base",style:{height:"28px",width:"auto","flex-shrink":"0"}},t[2]||(t[2]=[createElementVNode("option",{value:"normal"},"普通",-1),createElementVNode("option",{value:"log"},"日志",-1),createElementVNode("option",{value:"iteminfo"},"商品信息",-1)]),8,Ht),[[vModelSelect,e.type]]),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,Lt),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",Ct,[createElementVNode("div",Vt,[t[3]||(t[3]=createElementVNode("label",null,"Headline",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.headline=t,type:"text",placeholder:"输入 Headline"},null,8,Ut),[[vModelText,e.headline]])]),"normal"!==e.type&&e.type?"log"===e.type?(openBlock(),createElementBlock("p",Dt," 日志类型的 Section 内容由日志条目动态生成，无需手动填写 Body ")):"iteminfo"===e.type?(openBlock(),createElementBlock("p",Rt," 商品信息类型的 Section 内容将自动从 Variations 关联的商品生成，无需手动填写 Body ")):createCommentVNode("",true):(openBlock(),createElementBlock("div",It,[t[4]||(t[4]=createElementVNode("label",null,"Body",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.body=t,rows:"1",placeholder:"输入 Body"},null,8,St),[[vModelText,e.body]])]))])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",$t,' 暂无模板，点击"添加模板"创建 '))]),o:1,l:[5]})])]),o:1},8,["show"]))}}),Ft={class:"be-flex be-flex-column be-gap-sm"},Bt={class:"template-grid"},Nt={class:"be-flex be-align-center be-gap-xs"},jt=["innerHTML"],Ot=["onClick"],At={class:"be-flex be-flex-column",style:{gap:"4px"}},Et={class:"be-flex be-align-center be-gap-xs"},zt={class:"be-text-sm be-font-medium"},qt={key:0,class:"be-text-xs be-text-secondary be-truncate"},Kt=H(defineComponent({t:"SectionTemplateSelectorModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close","select"],setup(e,{emit:t}){const i=t,d={normal:{background:"rgba(107, 114, 128, 0.1)",color:"#6b7280",label:"普通"},log:{background:"rgba(16, 185, 129, 0.1)",color:"#10b981",label:"日志"},iteminfo:{background:"rgba(59, 130, 246, 0.1)",color:"#3b82f6",label:"商品信息"}};function p(e){return d[e]||d.normal}function b(){i("select",null);}return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"选择 Section 模板",width:"500px","teleport-to":".booth-enhancer-sidebar",onClose:t[0]||(t[0]=e=>i("close"))},{default:withCtx(()=>[createElementVNode("div",Ft,[t[2]||(t[2]=createElementVNode("p",{class:"form-hint be-text-xs be-text-secondary"}," 点击创建空白 Section 或从模板快速创建 ",-1)),createElementVNode("div",Bt,[createElementVNode("button",{class:"template-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",type:"button",onClick:b},[createElementVNode("div",Nt,[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,14)},null,8,jt),t[1]||(t[1]=createElementVNode("span",{class:"be-text-sm be-font-medium"},"创建空 Section",-1))])]),(openBlock(true),createElementBlock(Fragment,null,renderList(e.globalTemplates.sectionTemplates,e=>(openBlock(),createElementBlock("button",{key:e.id,class:"template-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",type:"button",onClick:t=>function(e){i("select",e);}(e)},[createElementVNode("div",At,[createElementVNode("div",Et,[createElementVNode("span",zt,toDisplayString(e.name||"未命名模板"),1),createElementVNode("span",{class:"be-text-xs be-px-xs be-py-1 be-rounded",style:normalizeStyle({background:p(e.type).background,color:p(e.type).color})},toDisplayString(p(e.type).label),5)]),e.headline?(openBlock(),createElementBlock("div",qt,toDisplayString(e.headline),1)):createCommentVNode("",true)])],8,Ot))),128))])])]),o:1},8,["show"]))}}),[["__scopeId","data-v-b9c3c0a1"]]),Gt=["innerHTML"],Jt=["innerHTML"],Qt=["innerHTML"],Wt=["innerHTML"],Xt={key:0,class:"empty-hint"},Yt=["value","onChange"],Zt=["onUpdate:modelValue"],en=["innerHTML"],tn=["innerHTML"],nn=["onClick"],on=["innerHTML"],ln={key:0,class:"form-group"},an=["onUpdate:modelValue"],sn={key:1,class:"be-flex be-flex-column be-gap-sm"},rn=["onClick"],cn=["innerHTML"],un={key:0,class:"empty-hint"},dn=["onUpdate:modelValue","placeholder"],pn={class:"form-group"},bn=["onUpdate:modelValue"],mn={key:2,class:"be-flex be-flex-column be-gap-sm"},fn=H(defineComponent({t:"SectionsListSection",props:{itemConfig:{},globalTemplates:{},templateVars:{},api:{},modal:{},itemTree:{}},emits:["applied"],setup(e,{expose:l,emit:s}){const i=e,p=s,b=ref(false),m=ref(false),h=ref(false),w=ref(false),M=computed(()=>{const e={variations:i.itemConfig.variations,itemTree:i.itemTree};return i.itemConfig.sections.map(t=>{const n=_e(t,i.globalTemplates,e);return {headline:xe(n.headline,i.templateVars),body:xe(n.body,i.templateVars)}})});function H(){const e=i.api.sections;0!==e.length?(i.itemConfig.sections=e.map(()=>we("normal",i.globalTemplates)),e.forEach((e,t)=>{var n,o;const l=i.itemConfig.sections[t];l&&"normal"===l.type&&(l.headline=(null==(n=e.headlineInput)?void 0:n.value)||"",l.body=(null==(o=e.bodyTextarea)?void 0:o.value)||"");}),Tt$1.success(`已导入 ${e.length} 个 Sections`)):Tt$1.info("页面没有 Sections");}function L(e){if(null===e){const e=we("normal",i.globalTemplates);i.itemConfig.sections.push(e);}else {const t=function(e,t){var n,o,l,a;const s=e.type||"normal",i=crypto.randomUUID();switch(s){case "iteminfo":const s=(null==(o=null==(n=t.itemInfoTemplates)?void 0:n[0])?void 0:o.id)||"";return {id:i,type:"iteminfo",headline:e.headline||"対応アバター",itemInfoTemplateId:s};case "log":const r=(null==(a=null==(l=t.logTemplates)?void 0:l[0])?void 0:a.id)||"";return {id:i,type:"log",headline:e.headline||"更新日志",logEntries:[],logTemplateId:r};default:return {id:i,type:"normal",templateId:e.id,headline:e.headline,body:e.body||""}}}(e,i.globalTemplates);i.itemConfig.sections.push(t);}m.value=false;}function C(e){i.itemConfig.sections.splice(e,1);}async function V(){const e=M.value,t=e.length-i.api.sections.length;if(t>0){for(let n=0;t>n;n++)if(!(await i.api.addSection()))return void Tt$1.error("添加 Section 失败")}else if(0>t)for(let n=0;-t>n;n++)if(!(await i.api.removeSection(i.api.sections.length-1)))return void Tt$1.error("删除 Section 失败");e.forEach((e,t)=>{i.api.updateSection(t,{headline:e.headline,body:e.body});}),Tt$1.success(`已应用 ${e.length} 个 Sections`),p("applied");}function S(e,t){const[n]=i.itemConfig.sections.splice(e,1);i.itemConfig.sections.splice(t,0,n);}return l({applySections:V}),(e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(unref(ee),{title:`Sections (${e.itemConfig.sections.length})`},{actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-ghost",type:"button",title:"从页面导入",onClick:H},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).download,14)},null,8,Gt)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"添加",onClick:t[0]||(t[0]=e=>{m.value=true;})},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,14)},null,8,Jt)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"模板配置",onClick:t[1]||(t[1]=e=>b.value=true)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,Qt)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-primary",type:"button",title:"应用到页面",onClick:V},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).send,14)},null,8,Wt)])]),default:withCtx(()=>[0===e.itemConfig.sections.length?(openBlock(),createElementBlock("div",Xt,' 暂无 Sections，点击"添加"或"从页面导入" ')):(openBlock(),createBlock(unref(fe),{key:1,items:e.itemConfig.sections,onRemove:C,onReorder:S},{actions:withCtx(({item:e,index:l})=>[createElementVNode("select",{value:e.type,class:"be-p-xs be-px-sm be-text-base",style:{height:"28px",width:"auto","flex-shrink":"0"},onChange:e=>function(e,t){const n=i.itemConfig.sections[e],o=we(t,i.globalTemplates);("normal"===n.type&&n.headline||"log"===n.type&&n.headline||"iteminfo"===n.type&&n.headline)&&(o.headline=n.headline),i.itemConfig.sections.splice(e,1,o);}(l,e.target.value)},t[8]||(t[8]=[createElementVNode("option",{value:"normal"},"普通",-1),createElementVNode("option",{value:"log"},"日志",-1),createElementVNode("option",{value:"iteminfo"},"商品信息",-1)]),40,Yt),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.headline=t,type:"text",class:"be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0",style:{height:"28px"},placeholder:"输入 Headline"},null,8,Zt),[[vModelText,e.headline]]),"log"===e.type?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"配置日志模板",onClick:t[2]||(t[2]=withModifiers(e=>{h.value=true;},["stop","prevent"]))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,en)])):createCommentVNode("",true),"iteminfo"===e.type?(openBlock(),createElementBlock("button",{key:1,class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"配置商品信息模板",onClick:t[3]||(t[3]=withModifiers(e=>w.value=true,["stop","prevent"]))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,tn)])):createCommentVNode("",true),createElementVNode("button",{class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"预览",onClick:withModifiers(e=>function(e){i.modal.openModal({type:"alert",title:"Section 预览",formData:{sectionIndex:e}});}(l),["stop","prevent"])},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).eye,14)},null,8,on)],8,nn)]),content:withCtx(({item:l,index:a})=>["normal"===l.type?(openBlock(),createElementBlock("div",ln,[withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":e=>l.body=e,rows:"1",placeholder:"输入 Body"},null,8,an),[[vModelText,l.body]])])):"log"===l.type?(openBlock(),createElementBlock("div",sn,[createVNode(unref(ee),null,{default:withCtx(()=>[createVNode(ae,{modelValue:l.logTemplateId,"onUpdate:modelValue":e=>l.logTemplateId=e,templates:e.globalTemplates.logTemplates,label:"选择日志模板","empty-hint":"请先添加日志模板"},null,8,["modelValue","onUpdate:modelValue","templates"])]),o:2},1024),createVNode(unref(ee),{"no-border":""},{title:withCtx(()=>[createTextVNode("日志条目 ("+toDisplayString(l.logEntries.length)+")",1)]),actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"添加日志",onClick:e=>function(e){const t=i.itemConfig.sections[e];"log"===t.type&&t.logEntries.unshift({id:crypto.randomUUID(),date:Date.now(),content:""});}(a)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,14)},null,8,cn)],8,rn)]),default:withCtx(()=>[0===l.logEntries.length?(openBlock(),createElementBlock("div",un,' 暂无日志，点击"添加日志"创建 ')):(openBlock(),createBlock(unref(fe),{key:1,items:l.logEntries,onRemove:e=>function(e,t){const n=i.itemConfig.sections[e];"log"===n.type&&n.logEntries.splice(t,1);}(a,e),onReorder:(e,t)=>function(e,t,n){const o=i.itemConfig.sections[e];if("log"!==o.type)return;const[l]=o.logEntries.splice(t,1);o.logEntries.splice(n,0,l);}(a,e,t)},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.date=t,type:"number",class:"be-flex-1 be-p-xs be-px-sm be-text-base",style:{height:"28px","min-width":"120px"},placeholder:unref(ge)(Date.now())},null,8,dn),[[vModelText,e.date,void 0,{number:true}]])]),content:withCtx(({item:e})=>[createElementVNode("div",pn,[withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.content=t,rows:"1",placeholder:"输入日志内容"},null,8,bn),[[vModelText,e.content]])])]),o:2},1032,["items","onRemove","onReorder"]))]),o:2},1024)])):"iteminfo"===l.type?(openBlock(),createElementBlock("div",mn,[createVNode(unref(ee),null,{default:withCtx(()=>[createVNode(ae,{modelValue:l.itemInfoTemplateId,"onUpdate:modelValue":e=>l.itemInfoTemplateId=e,templates:e.globalTemplates.itemInfoTemplates,label:"选择商品信息模板","empty-hint":"请先添加商品信息模板"},null,8,["modelValue","onUpdate:modelValue","templates"])]),o:2},1024),t[9]||(t[9]=createElementVNode("p",{class:"form-hint be-text-xs be-text-secondary"}," 商品信息会自动从 Variations 关联的商品中收集并按作者分组显示 ",-1))])):createCommentVNode("",true)]),o:1},8,["items"]))]),o:1},8,["title"]),createVNode(Kt,{show:m.value,"global-templates":e.globalTemplates,onClose:t[4]||(t[4]=e=>m.value=false),onSelect:L},null,8,["show","global-templates"]),createVNode(Pt,{show:b.value,"global-templates":e.globalTemplates,onClose:t[5]||(t[5]=e=>b.value=false)},null,8,["show","global-templates"]),createVNode(kt,{show:h.value,"global-templates":e.globalTemplates,onClose:t[6]||(t[6]=e=>h.value=false)},null,8,["show","global-templates"]),createVNode(mt,{show:w.value,"global-templates":e.globalTemplates,onClose:t[7]||(t[7]=e=>w.value=false)},null,8,["show","global-templates"])],64))}}),[["__scopeId","data-v-268f4e4d"]]),hn=["innerHTML"],yn={class:"tag-badges-wrapper"},vn={class:"tag-text"},xn=H(defineComponent({t:"TagsSection",props:{itemConfig:{},api:{},itemTree:{},tagTree:{}},emits:["applied"],setup(e,{expose:l,emit:i}){const u=e,d=i,p=computed(()=>{var e;const t=new Set,n=u.itemConfig.tagNodeIds||[],o=n.length;for(let l=0;o>l;l++){const o=n[l],a=u.tagTree.nodes[o];(null==(e=null==a?void 0:a.data)?void 0:e.tags)&&a.data.tags.forEach(e=>t.add(e));}return Array.from(t)});async function b(){var e;const t=new Set,n=u.itemConfig.tagNodeIds||[];for(const l of n){const n=u.tagTree.nodes[l];(null==(e=null==n?void 0:n.data)?void 0:e.tags)&&n.data.tags.forEach(e=>t.add(e));}if(0===t.size)return void Tt$1.info("没有可应用的标签");const o=Array.from(t).filter(e=>!u.api.hasTag(e));o.length>0?(await u.api.addTags(o),Tt$1.success(`已添加 ${o.length} 个新标签`),d("applied")):Tt$1.info("所有标签已存在，无需添加");}return watch(()=>u.itemConfig.variations,()=>{!function(e=false){var t;const n=new Set;for(const l of u.itemConfig.variations){if(l.isFullset||!l.fileItemMap)continue;const e=Object.values(l.fileItemMap);for(const o of e){const e=u.itemTree.nodes[o];if(!(null==e?void 0:e.data))continue;const{itemName:l,authorName:a}=e.data;for(const o in u.tagTree.nodes){const e=u.tagTree.nodes[o];if(!(null==(t=e.data)?void 0:t.tags)||0===e.data.tags.length)continue;const s=e.name.toLowerCase(),i=(null==l?void 0:l.toLowerCase())||"",r=(null==a?void 0:a.toLowerCase())||"";(i&&s.includes(i)||r&&s.includes(r))&&n.add(o);}}}const o=Array.from(n);u.itemConfig.tagNodeIds||(u.itemConfig.tagNodeIds=[]),u.itemConfig.tagNodeIds.splice(0,u.itemConfig.tagNodeIds.length,...o),!e&&n.size>0&&Tt$1.success(`已匹配 ${n.size} 个标签节点`);}(true);},{deep:true,immediate:true}),l({applyTags:b}),(e,t)=>(openBlock(),createBlock(unref(ee),{title:"Tags"},{actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-primary",type:"button",title:"应用到页面",onClick:b},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).send,14)},null,8,hn)])]),default:withCtx(()=>[createVNode(unref(Q),{"is-empty":0===p.value.length,"empty-text":"标签会根据 Variations 中的商品自动匹配"},{default:withCtx(()=>[createElementVNode("div",yn,[(openBlock(true),createElementBlock(Fragment,null,renderList(p.value,(e,t)=>(openBlock(),createElementBlock("span",{key:t,class:"tag-badge"},[createElementVNode("span",vn,toDisplayString(e),1)]))),128))])]),o:1},8,["is-empty"])]),o:1}))}}),[["__scopeId","data-v-f3247bf3"]]),gn=["innerHTML"],Tn=["innerHTML"],kn=["onUpdate:modelValue"],wn={class:"form-group"},_n=["onUpdate:modelValue"],Mn={key:1,class:"empty-hint"},Hn=defineComponent({t:"DiscountTemplateModal",props:{show:{type:Boolean},globalTemplates:{}},emits:["close"],setup(e,{emit:l}){const a=e,s=l,c=computed({get(){var e;return (e=a.globalTemplates).discountTemplates||(e.discountTemplates=[])},set(e){a.globalTemplates.discountTemplates=e;}}),{addTemplate:u,removeTemplate:d,onReorder:p}=he({templates:c,defaultTemplate:{template:""}});return (e,t)=>(openBlock(),createBlock(nt$1,{show:e.show,title:"折扣模板配置",width:"600px","teleport-to":".booth-enhancer-sidebar",onClose:t[1]||(t[1]=e=>s("close"))},{"header-actions":withCtx(()=>[createElementVNode("button",{class:normalizeClass(unref(He).addButton),onClick:t[0]||(t[0]=(...e)=>unref(u)&&unref(u)(...e)),title:"添加模板",type:"button"},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,18)},null,8,gn)],2)]),default:withCtx(()=>[createVNode(unref(ee),null,{default:withCtx(()=>[createElementVNode("p",{class:"form-hint",innerHTML:unref(Me).discount.replace("\n","<br>")},null,8,Tn),e.globalTemplates.discountTemplates&&e.globalTemplates.discountTemplates.length>0?(openBlock(),createBlock(unref(fe),{key:0,items:e.globalTemplates.discountTemplates,"key-extractor":e=>e.id,onRemove:unref(d),onReorder:unref(p)},{actions:withCtx(({item:e})=>[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",placeholder:"输入模板名称",style:{flex:"1","min-width":"0"}},null,8,kn),[[vModelText,e.name]])]),content:withCtx(({item:e})=>[createElementVNode("div",wn,[t[2]||(t[2]=createElementVNode("label",null,"模板内容",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t=>e.template=t,rows:"3",placeholder:"输入模板内容"},null,8,_n),[[vModelText,e.template]])])]),o:1},8,["items","key-extractor","onRemove","onReorder"])):(openBlock(),createElementBlock("div",Mn,' 暂无模板，点击"添加模板"创建 '))]),o:1})]),o:1},8,["show"]))}}),Ln={class:"be-flex be-flex-column be-gap-sm"},Cn={class:"form-group"},Vn={class:"form-group"},Un={class:"form-hint"},In={class:"be-flex be-gap-sm be-flex-wrap"},Sn={class:"be-p-xs be-px-sm be-text-sm be-text-secondary"},Dn={class:"be-flex be-align-center be-gap-sm"},Rn={class:"booth-toggle",title:"启用打折功能"},$n=["innerHTML"],Pn={key:0,class:"discount-config"},Fn={class:"form-group"},Bn={class:"be-flex be-gap-sm"},Nn={class:"form-group be-flex-1"},jn={class:"form-group be-flex-1"},On={class:"be-flex be-flex-column be-gap-xs"},An={class:"be-flex be-justify-between"},En={class:"be-flex be-justify-between"},zn={class:"be-text-xs be-text-secondary be-mb-xs"},qn=["innerHTML"],Kn=["innerHTML"],Gn=H(defineComponent({t:"VariationConfigModal",props:{show:{type:Boolean},itemConfig:{},globalTemplates:{},availableFiles:{}},emits:["close"],setup(e,{emit:l}){const s=e,i=l,p=ref([]),b=ref(false);function h(){s.itemConfig.commonFiles=p.value,i("close");}watch(()=>s.show,e=>{e&&(p.value=[...s.itemConfig.commonFiles||[]]);});const x=computed(()=>Te(s.itemConfig.variations)),w=computed(()=>function(e,t,n){return ye(e*t,n)}(s.itemConfig.pricing.normalVariationPrice,x.value,s.itemConfig.discount)),_=computed(()=>s.itemConfig.pricing.normalVariationPrice),H=computed(()=>ye(_.value,s.itemConfig.discount)),L=computed(()=>s.itemConfig.pricing.fullsetPrice),C=computed(()=>ye(L.value,s.itemConfig.discount));function V(e){if(!e)return "";const t=new Date(e);return `${(t.getMonth()+1+"").padStart(2,"0")}/${(t.getDate()+"").padStart(2,"0")} ${(t.getHours()+"").padStart(2,"0")}:${(t.getMinutes()+"").padStart(2,"0")}`}const D=computed(()=>s.itemConfig.discount.enabled?xe(xt$1(s.globalTemplates,s.itemConfig),{originalPrice:_.value,discountedPrice:H.value,discountPercent:s.itemConfig.discount.discountPercent,fullsetOriginalPrice:L.value,fullsetDiscountedPrice:C.value,startDate:V(s.itemConfig.discount.startDate),endDate:V(s.itemConfig.discount.endDate)}):"");return (e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(nt$1,{show:e.show,title:"Variation 配置","teleport-to":".booth-enhancer-sidebar",onClose:t[10]||(t[10]=e=>i("close")),width:"500px"},{footer:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",type:"button",title:"取消",onClick:t[9]||(t[9]=e=>i("close"))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,18)},null,8,qn)]),createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",type:"button",title:"保存",onClick:h},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,Kn)])]),default:withCtx(()=>[createElementVNode("div",Ln,[createVNode(unref(ee),{title:"价格配置"},{default:withCtx(()=>[createElementVNode("div",Cn,[t[12]||(t[12]=createElementVNode("label",null,"普通 Variation 价格 (¥)",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[0]||(t[0]=t=>e.itemConfig.pricing.normalVariationPrice=t),type:"number",min:"0",placeholder:"0"},null,512),[[vModelText,e.itemConfig.pricing.normalVariationPrice,void 0,{number:true}]])]),createElementVNode("div",Vn,[t[13]||(t[13]=createElementVNode("label",null,"Fullset 价格 (¥)",-1)),createElementVNode("p",Un,"建议: ¥"+toDisplayString(w.value),1),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[1]||(t[1]=t=>e.itemConfig.pricing.fullsetPrice=t),type:"number",min:"0",placeholder:"0"},null,512),[[vModelText,e.itemConfig.pricing.fullsetPrice,void 0,{number:true}]])]),createElementVNode("div",In,[createElementVNode("span",Sn,[t[14]||(t[14]=createTextVNode(" 总支持数: ",-1)),createElementVNode("strong",null,toDisplayString(x.value),1)])])]),o:1}),createVNode(unref(ee),{title:"折扣配置"},{default:withCtx(()=>[createElementVNode("div",Dn,[createElementVNode("label",Rn,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[2]||(t[2]=t=>e.itemConfig.discount.enabled=t),type:"checkbox"},null,512),[[vModelCheckbox,e.itemConfig.discount.enabled]]),t[15]||(t[15]=createElementVNode("span",{class:"toggle-slider"},null,-1)),t[16]||(t[16]=createElementVNode("span",{class:"toggle-label"},"启用打折",-1))]),e.itemConfig.discount.enabled?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"配置折扣模板",onClick:t[3]||(t[3]=e=>b.value=true)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).settings,14)},null,8,$n)])):createCommentVNode("",true)]),e.itemConfig.discount.enabled?(openBlock(),createElementBlock("div",Pn,[createVNode(ae,{modelValue:e.itemConfig.selectedTemplates.discountTemplateId,"onUpdate:modelValue":t[4]||(t[4]=t=>e.itemConfig.selectedTemplates.discountTemplateId=t),templates:e.globalTemplates.discountTemplates,label:"选择折扣模板","empty-hint":"请先在折扣模板配置中添加模板"},null,8,["modelValue","templates"]),createElementVNode("div",Fn,[t[17]||(t[17]=createElementVNode("label",null,"折扣百分比 (%)",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[5]||(t[5]=t=>e.itemConfig.discount.discountPercent=t),type:"number",min:"0",max:"100",placeholder:"0"},null,512),[[vModelText,e.itemConfig.discount.discountPercent,void 0,{number:true}]])]),createElementVNode("div",Bn,[createElementVNode("div",Nn,[t[18]||(t[18]=createElementVNode("label",null,"折扣开始时间",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[6]||(t[6]=t=>e.itemConfig.discount.startDate=t),type:"datetime-local"},null,512),[[vModelText,e.itemConfig.discount.startDate]])]),createElementVNode("div",jn,[t[19]||(t[19]=createElementVNode("label",null,"折扣结束时间",-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[7]||(t[7]=t=>e.itemConfig.discount.endDate=t),type:"datetime-local"},null,512),[[vModelText,e.itemConfig.discount.endDate]])])]),createVNode(unref(Q),{label:"折扣描述预览:",type:"pre"},{default:withCtx(()=>[createTextVNode(toDisplayString(D.value),1)]),o:1}),createVNode(unref(Q),{label:"价格预览:",type:"text"},{default:withCtx(()=>[createElementVNode("div",On,[createElementVNode("div",An,[t[20]||(t[20]=createElementVNode("span",null,"普通 Variation:",-1)),createElementVNode("span",null,"¥"+toDisplayString(_.value)+" → ¥"+toDisplayString(H.value),1)]),createElementVNode("div",En,[t[21]||(t[21]=createElementVNode("span",null,"Fullset:",-1)),createElementVNode("span",null,"¥"+toDisplayString(L.value)+" → ¥"+toDisplayString(C.value),1)])])]),o:1})])):createCommentVNode("",true)]),o:1}),createVNode(unref(ee),{title:"通用文件配置"},{default:withCtx(()=>[t[24]||(t[24]=createElementVNode("p",{class:"form-hint be-text-xs be-text-secondary be-mb-sm"}," 选择所有 variation 共享的通用文件（如材质、配饰等），这些文件会在应用时自动添加到每个 variation ",-1)),createElementVNode("div",zn,[t[22]||(t[22]=createTextVNode(" 已选择: ",-1)),createElementVNode("strong",null,toDisplayString(p.value.length),1),t[23]||(t[23]=createTextVNode(" 个文件 ",-1))]),createVNode(unref(E),{files:e.availableFiles,"selected-file-ids":p.value,"onUpdate:selectedFileIds":t[8]||(t[8]=e=>p.value=e)},null,8,["files","selected-file-ids"])]),o:1,l:[24]})])]),o:1},8,["show"]),createVNode(Hn,{show:b.value,"global-templates":e.globalTemplates,onClose:t[11]||(t[11]=e=>b.value=false)},null,8,["show","global-templates"])],64))}}),[["__scopeId","data-v-9e5fca5f"]]),Jn=["innerHTML"],Qn=["innerHTML"],Wn=["innerHTML"],Xn=["innerHTML"],Yn=["innerHTML"],Zn={key:0,class:"common-files-preview be-mb-sm"},eo={class:"be-flex be-align-center be-gap-xs be-flex-wrap be-p-xs be-px-sm",style:{background:"var(--be-color-bg-secondary)","border-radius":"var(--be-radius-sm)",border:"1px solid var(--be-color-border)"}},to={key:1,class:"empty-hint"},no={class:"be-flex be-align-center be-gap-sm",style:{flex:"1"}},oo=["onUpdate:modelValue"],lo={key:0,class:"booth-toggle",title:"将此 Variation 设为 Fullset（合集包）"},ao=["checked","onChange"],so=["onClick"],io=["innerHTML"],ro={class:"be-flex be-flex-column be-gap-xs"},co={class:"be-flex be-align-center be-gap-sm"},uo={key:0,class:"be-text-base be-text-primary"},po={class:"be-text-base be-text-primary be-flex-shrink-0"},bo={class:"booth-toggle be-flex-shrink-0",title:"自定义此 Variation 的价格"},mo=["onUpdate:modelValue"],fo=["onUpdate:modelValue"],ho={class:"be-text-sm be-text-secondary be-flex-shrink-0"},yo={class:"item-card-header"},vo={class:"item-card-title"},xo=["onClick"],go=["innerHTML"],To={class:"item-card-content"},ko=["onClick"],wo=["innerHTML"],_o={class:"item-select-text"},Mo=H(defineComponent({t:"VariationsListSection",props:{itemConfig:{},globalTemplates:{},api:{},modal:{},itemTree:{}},emits:["applied"],setup(e,{expose:l,emit:d}){const p=e,b=d,m=ref(false),h=ref(null),w=ref([]),L=ref([]),C=ref(null),V=computed(()=>p.itemConfig.variations.some(e=>e.isFullset)),S=computed(()=>p.api.files);async function D(){const e=p.api.variations;if(0===e.length)return void Tt$1.info("页面没有 Variations");p.itemConfig.variations=e.map((e,t)=>{var n,o;const l=(null==(n=e.nameInput)?void 0:n.value)||"",a=l.toLowerCase().includes("fullset"),s=(null==(o=e.priceInput)?void 0:o.value)||"0";return {name:l,price:parseInt(s.replace(/\D/g,""))||0,isFullset:a,fileIds:p.api.getVariationFiles(t),fileItemMap:{}}}),p.itemConfig.variations.forEach((e,t)=>{e.fileIds&&e.fileIds.length>0&&z(t,e.fileIds);});const t=new Set;p.itemConfig.variations.forEach(e=>{e.fileIds&&e.fileIds.forEach(e=>t.add(e));});const n=new Set;p.itemConfig.variations.forEach(e=>{e.fileItemMap&&Object.keys(e.fileItemMap).forEach(t=>{e.fileItemMap[t]&&n.add(t);});});const o=[];t.forEach(e=>{n.has(e)||o.push(e);}),o.length>0?p.itemConfig.commonFiles=o:p.itemConfig.commonFiles=[];const l=[`已导入 ${e.length} 个 Variations`];o.length>0&&l.push(`检测到 ${o.length} 个通用文件`),Tt$1.success(l.join("，"));}function R(){var e;const t=S.value;if(0===t.length)return void Tt$1.info("暂无可用文件");let n=0,o=0;const l=[];for(const a of t){const t=q(a.name);if(t){const o=p.itemTree.nodes[t],l=(null==(e=null==o?void 0:o.data)?void 0:e.itemName)||(null==o?void 0:o.name)||a.name;p.itemConfig.variations.push({name:l,price:0,isFullset:false,fileIds:[a.id],fileItemMap:{[a.id]:t}}),n++;}else l.push(a.id),o++;}l.length>0&&(p.itemConfig.commonFiles||(p.itemConfig.commonFiles=[]),p.itemConfig.commonFiles=Array.from(new Set([...p.itemConfig.commonFiles,...l]))),n>0||o>0?Tt$1.success(`已创建 ${n} 个 Variations，${o} 个文件划分为通用文件`):Tt$1.info("没有可创建的 Variations");}function P(){const e=ye(p.itemConfig.pricing.normalVariationPrice,p.itemConfig.discount);p.itemConfig.variations.push({name:"",price:e,isFullset:false,useCustomPrice:false,fileIds:[],fileItemMap:{}});}function F(e){p.itemConfig.variations.splice(e,1);}function B(e,t){const[n]=p.itemConfig.variations.splice(e,1);p.itemConfig.variations.splice(t,0,n);}function N(e){const{pricing:t,discount:n}=p.itemConfig;return e.isFullset?ye(t.fullsetPrice,n):e.useCustomPrice&&void 0!==e.customPrice?ye(e.customPrice,n):ye(t.normalVariationPrice,n)}function j(e){return e.isFullset?1:e.fileItemMap?Object.keys(e.fileItemMap).filter(t=>e.fileItemMap[t]).length:0}function O(e){const t=S.value.find(t=>t.id===e);return t?t.name:"File #"+e}function A(e,t){var n;return null==(n=p.itemConfig.variations[e].fileItemMap)?void 0:n[t]}function E(e,t){const n=A(e,t);if(!n)return "";const o=p.itemTree.nodes[n];if(!o)return "未知商品";const l=o.data;return l?l.itemName:o.name}function z(e,t){const n=p.itemConfig.variations[e];n.fileItemMap||(n.fileItemMap={});for(const o of t){if(n.fileItemMap[o])continue;const e=S.value.find(e=>e.id===o);if(!e)continue;const t=q(e.name);t&&(n.fileItemMap[o]=t);}}function q(e){var t;if(!e||!p.itemTree)return null;const n=K(e);let o=null;for(const[l,a]of Object.entries(p.itemTree.nodes)){const e=a;if(!(null==(t=e.data)?void 0:t.itemName))continue;const s=G(n,K(e.data.itemName));0>=s||o&&s<=o.score||(o={itemId:l,score:s});}return o&&o.score>=.4?o.itemId:null}function K(e){return e.toLowerCase().replace(/\.(zip|rar|7z|unitypackage)$/i,"").replace(/[_\-\s]?v?\d+[\._]\d+[\._]?\d*/gi,"").replace(/[(\[（【][^)\]）】]*[)\]）】]/g,"").replace(/[\s\-_\.]/g,"").trim()}function G(e,t){if(!t||!e)return 0;if(e===t)return 1;if(e.startsWith(t))return .95;if(e.includes(t))return .9-e.indexOf(t)/e.length*.2;if(t.includes(e))return .6;const n=function(e,t){if(!e||!t)return "";const n=e.length,o=t.length;let l=0,a=0;const s=Array(o+1).fill(0);for(let i=1;n>=i;i++){let n=0;for(let r=1;o>=r;r++){const o=s[r];e[i-1]===t[r-1]?(s[r]=n+1,s[r]>l&&(l=s[r],a=i)):s[r]=0,n=o;}}return l>0?e.substring(a-l,a):""}(e,t);if(0===n.length)return 0;if(n.length>=.8*t.length)return .5+n.length/t.length*.3;const o=Math.min(t.length,e.length);return n.length/o*.5}async function J(){const e=p.itemConfig.variations,t=new Set,n=e.length-p.api.variations.length;if(n>0){const e=p.api.variations.length;for(let o=0;n>o;o++){if(!(await p.api.addVariation()))return void Tt$1.error("添加 Variation 失败");t.add(e+o);}}else if(0>n)for(let s=0;-n>s;s++)if(!(await p.api.removeVariation(p.api.variations.length-1)))return void Tt$1.error("删除 Variation 失败");await nextTick(),e.forEach((e,t)=>{p.api.updateVariation(t,{name:e.name,price:e.price.toString()});}),await nextTick(),await new Promise(e=>setTimeout(e,1e3));for(let s=0;s<e.length;s++){const n=[...e[s].fileIds||[],...p.itemConfig.commonFiles||[]];if(n.length>0){const e=await p.api.setVariationFiles(s,n,"replace");if(!e.success)return void Tt$1.error(`Variation ${s} 文件选择失败`);e.updated&&t.add(s);}}await nextTick();const o=p.api.variations.length,l=e.length;if(o>l){const e=o-l;for(let t=0;e>t;t++)await p.api.removeVariation(p.api.variations.length-1);}const a=t.size+Math.max(0,-n);a>0?Tt$1.success(`已应用 ${a} 个 Variations`):Tt$1.success("所有 Variations 已是最新"),b("applied");}return l({applyVariations:J}),(e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(unref(ee),{title:`Variations (${e.itemConfig.variations.length})`,"no-border":""},{actions:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-ghost",type:"button",title:"从页面导入",onClick:D},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).download,14)},null,8,Jn)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-ghost",type:"button",title:"根据文件自动创建",onClick:R},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).magic,14)},null,8,Qn)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"添加",onClick:P},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,14)},null,8,Wn)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-secondary",type:"button",title:"配置价格与通用文件",onClick:t[0]||(t[0]=e=>m.value=true)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).edit,14)},null,8,Xn)]),createElementVNode("button",{class:"booth-btn booth-btn-sm booth-btn-primary",type:"button",title:"应用到页面",onClick:J},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).send,14)},null,8,Yn)])]),default:withCtx(()=>[e.itemConfig.commonFiles&&e.itemConfig.commonFiles.length>0?(openBlock(),createElementBlock("div",Zn,[createElementVNode("div",eo,[t[2]||(t[2]=createElementVNode("span",{class:"be-text-xs be-text-secondary be-font-semibold"},"通用文件:",-1)),(openBlock(true),createElementBlock(Fragment,null,renderList(e.itemConfig.commonFiles,e=>(openBlock(),createElementBlock("span",{key:e,class:"file-tag be-text-xs be-px-xs be-py-1",style:{background:"var(--be-color-bg)",border:"1px solid var(--be-color-border)","border-radius":"4px"}},toDisplayString(O(e)),1))),128))])])):createCommentVNode("",true),0===e.itemConfig.variations.length?(openBlock(),createElementBlock("div",to,' 暂无 Variations，点击"编辑价格"添加 ')):(openBlock(),createBlock(unref(fe),{key:2,items:e.itemConfig.variations,onRemove:F,onReorder:B},{actions:withCtx(({item:e,index:l})=>[createElementVNode("div",no,[withDirectives(createElementVNode("input",{"onUpdate:modelValue":t=>e.name=t,type:"text",class:"be-flex-1 be-p-xs be-px-sm be-text-base",style:{height:"28px"},placeholder:"Variation 名称"},null,8,oo),[[vModelText,e.name]]),!V.value||e.isFullset?(openBlock(),createElementBlock("label",lo,[createElementVNode("input",{type:"checkbox",checked:e.isFullset,onChange:t=>function(e,t){e.isFullset?e.isFullset=false:(p.itemConfig.variations.forEach((e,n)=>{n!==t&&e.isFullset&&(e.isFullset=false,e.fileIds||(e.fileIds=[]));}),e.isFullset=true);}(e,l)},null,40,ao),t[3]||(t[3]=createElementVNode("span",{class:"toggle-slider"},null,-1))])):createCommentVNode("",true),e.isFullset?createCommentVNode("",true):(openBlock(),createElementBlock("button",{key:1,class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"选择关联文件",onClick:withModifiers(e=>async function(e){h.value=e;const t=p.itemConfig.variations[e];if(0===S.value.length)return Tt$1.error("无法获取文件列表，请先上传文件"),void(h.value=null);L.value=t.fileIds?[...t.fileIds]:[];const n=await p.modal.openModal({type:"selectFile",title:"选择文件（可多选）"});if(!(null==n?void 0:n.fileIds))return void(h.value=null);const o=n.fileIds,l=t.fileIds||[],a=o.filter(e=>!l.includes(e));t.fileIds=o,a.length>0&&z(e,a),h.value=null,L.value=[];}(l),["stop","prevent"])},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).folder,14)},null,8,io)],8,so))])]),content:withCtx(({item:e,index:l})=>[createElementVNode("div",ro,[createElementVNode("div",co,[e.isFullset?(openBlock(),createElementBlock("span",uo," ¥"+toDisplayString(N(e)),1)):(openBlock(),createElementBlock(Fragment,{key:1},[createElementVNode("span",po," ¥"+toDisplayString(N(e)),1),createElementVNode("label",bo,[withDirectives(createElementVNode("input",{type:"checkbox","onUpdate:modelValue":t=>e.useCustomPrice=t},null,8,mo),[[vModelCheckbox,e.useCustomPrice]]),t[4]||(t[4]=createElementVNode("span",{class:"toggle-slider"},null,-1))]),e.useCustomPrice?withDirectives((openBlock(),createElementBlock("input",{key:0,"onUpdate:modelValue":t=>e.customPrice=t,type:"number",class:"be-flex-1 be-p-xs be-px-sm be-text-base",style:{height:"28px","min-width":"80px"},min:"0",placeholder:"价格"},null,8,fo)),[[vModelText,e.customPrice,void 0,{number:true}]]):createCommentVNode("",true),createElementVNode("span",ho," 支持数: "+toDisplayString(j(e)),1)],64))]),!e.isFullset&&e.fileIds&&e.fileIds.length>0?(openBlock(),createElementBlock("div",{key:0,class:normalizeClass(["item-cards-grid",{"single-item":1===e.fileIds.length}])},[(openBlock(true),createElementBlock(Fragment,null,renderList(e.fileIds,e=>(openBlock(),createElementBlock("div",{key:e,class:"item-card"},[createElementVNode("div",yo,[createElementVNode("span",vo,toDisplayString(O(e)),1),createElementVNode("button",{class:"item-card-delete-btn",type:"button",title:"取消关联",onClick:t=>function(e,t){const n=p.itemConfig.variations[e];n.fileIds&&(n.fileIds=n.fileIds.filter(e=>e!==t)),n.fileItemMap&&delete n.fileItemMap[t];}(l,e)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,12)},null,8,go)],8,xo)]),createElementVNode("div",To,[createElementVNode("button",{class:normalizeClass(["item-select-btn",{"has-item":A(l,e)}]),type:"button",onClick:t=>async function(e,t){var n;const o=p.itemConfig.variations[e],l=null==(n=o.fileItemMap)?void 0:n[t];w.value=l?[l]:[],C.value={variationIndex:e,fileId:t};const a=await p.modal.openModal({type:"selectItem",title:`为 ${O(t)} 选择商品（单选）`});if(null==a?void 0:a.itemIds){o.fileItemMap||(o.fileItemMap={});const e=a.itemIds;0===e.length?delete o.fileItemMap[t]:o.fileItemMap[t]=e[0];}C.value=null,w.value=[];}(l,e)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).file,12)},null,8,wo),createElementVNode("span",_o,toDisplayString(A(l,e)?E(l,e):"选择商品"),1)],10,ko)])]))),128))],2)):createCommentVNode("",true)])]),o:1},8,["items"]))]),o:1},8,["title"]),createVNode(Gn,{show:m.value,"item-config":e.itemConfig,"global-templates":e.globalTemplates,"available-files":S.value,onClose:t[1]||(t[1]=e=>m.value=false)},null,8,["show","item-config","global-templates","available-files"])],64))}}),[["__scopeId","data-v-526d6f5f"]]),Ho=["innerHTML"],Lo={key:0},Co={class:"form-group"},Vo={class:"form-group"},Uo={key:1,class:"be-flex be-flex-column be-gap-sm"},Io={class:"form-group"},So=["innerHTML"],Do=["disabled"],Ro=["innerHTML"],$o=["innerHTML"],Po={key:0,class:"empty-state"},Fo=["innerHTML"],Bo={key:1,class:"empty-state"},No=["innerHTML"],jo=["innerHTML"],Oo={key:2,class:"edit-tab"},Ao={class:"edit-tab-scrollable"},Eo={key:0,class:"be-flex be-flex-column be-gap-sm"},zo={class:"be-text-base be-font-bold be-text-primary"},qo={class:"be-text-base be-text-secondary be-whitespace-pre-wrap be-break-words be-m-0"},Ko={class:"be-flex be-flex-column be-gap-sm"},Go={class:"form-hint be-text-xs be-text-secondary"},Jo={key:0,class:"item-select-list",style:{display:"grid","grid-template-columns":"repeat(2, 1fr)",gap:"8px"}},Qo=["onClick"],Wo={class:"be-flex be-flex-column",style:{gap:"2px"}},Xo={class:"be-text-sm be-font-medium"},Yo={class:"be-text-xs be-text-secondary"},Zo={key:1,class:"empty-hint"},el=["innerHTML"],tl=["innerHTML"],nl={class:"be-flex be-flex-column be-gap-sm"},ol={class:"form-hint be-text-xs be-text-secondary"},ll=["innerHTML"],al=["innerHTML"],sl=exports("default", H(defineComponent({t:"EditTab",props:{api:{}},setup(e,{expose:i}){const{data:p}=Ct$1(),b=t(),x=computed(()=>b.state.value),_=computed(()=>{var e;const t=x.value;return "alert"===t.type&&void 0!==(null==(e=t.formData)?void 0:e.sectionIndex)}),M=computed(()=>{var e;return null==(e=x.value.formData)?void 0:e.sectionIndex}),H=ref(false),V=computed(()=>{const e=window.location.pathname.match(/\/items\/(\d+)\/edit/);return e?e[1]:null}),P=computed(()=>V.value&&p.value.itemConfigs[V.value]||null),N=computed(()=>null!==P.value),j=computed(()=>p.value.globalTemplates),O=computed(()=>P.value?Te(P.value.variations):0),A=computed(()=>{const e=P.value;if(!e)return {itemName:"",supportCount:0};const t=e.variations.filter(e=>!e.isFullset),n=t[0],o=O.value,l=e.itemTypeName||"Item",a=(null==n?void 0:n.fileItemMap)?Object.values(n.fileItemMap)[0]:null,s=(null==n?void 0:n.name)||a&&(e=>{const t=p.value.itemTree.nodes[e];if(!t)return "未知商品";const n=t.data;return n?n.itemName:t.name})(a)||e.itemName,i=t.length>1||o>1?`${o} ${ke(l,o)}`:s;return {itemName:e.itemName||"",supportCount:o,itemTypeName:l,itemTypePlural:ke(l,o),variationCount:t.length,firstName:s,smartTitle:i,discountIndicator:e.discount.enabled?"[SALE] ":""}}),z=computed(()=>{if(!P.value)return [];const e={variations:P.value.variations,itemTree:p.value.itemTree};return P.value.sections.map(t=>{const n=_e(t,j.value,e);return {headline:xe(n.headline,A.value),body:xe(n.body,A.value)}})}),q=computed(()=>{var e;if(!P.value)return "";const t=[],n=xe(wt$1(j.value,P.value),A.value);n&&t.push(n);const o="editDescription"===x.value.type?null==(e=x.value.formData)?void 0:e.customDescription:P.value.customDescription;if(o&&t.push(o),P.value.discount.enabled){const e=P.value.pricing.normalVariationPrice,n=ye(e,P.value.discount),o=P.value.pricing.fullsetPrice,l=ye(o,P.value.discount),a=e=>{if(!e)return "";const t=new Date(e);return `${(t.getMonth()+1+"").padStart(2,"0")}/${(t.getDate()+"").padStart(2,"0")} ${(t.getHours()+"").padStart(2,"0")}:${(t.getMinutes()+"").padStart(2,"0")}`},s=xe(xt$1(j.value,P.value),{...A.value,originalPrice:e,discountedPrice:n,discountPercent:P.value.discount.discountPercent,fullsetOriginalPrice:o,fullsetDiscountedPrice:l,startDate:a(P.value.discount.startDate),endDate:a(P.value.discount.endDate)});t.push(s);}return t.join("\n\n")});async function K(){var e;const t=await b.openModal({type:"createItem",title:"创建商品配置",formData:{itemName:"",itemType:"adaptation"}});if((null==(e=null==t?void 0:t.itemName)?void 0:e.trim())&&V.value){const e=gt$1(V.value);e.itemName=t.itemName.trim(),e.itemType=t.itemType,p.value.itemConfigs[V.value]=e,Tt$1.success("已创建商品配置");}}function G(e){V.value&&(p.value.itemConfigs[V.value].customDescription=e);}const J=ref([]),W=ref([]);function X(e){return J.value.includes(e)}watch(()=>P.value?{pricing:P.value.pricing,discount:P.value.discount}:null,()=>{var e,t,n;P.value&&(e=P.value.variations,t=P.value.pricing,n=P.value.discount,e.forEach(e=>{const o=e.isFullset?t.fullsetPrice:t.normalVariationPrice;e.price=ye(o,n);}));},{deep:true}),onMounted(()=>{V.value||Tt$1.error("无法获取商品 ID");});const Y=ref(null),Z=ref(null),ee=ref(null),te=ref(null),ne=ref(null);return i({applyAll:async function(){var e,t,n,o,l;if(P.value)try{await(null==(e=Y.value)?void 0:e.applyName()),await(null==(t=Z.value)?void 0:t.applyDescription()),await(null==(n=ee.value)?void 0:n.applySections()),await(null==(o=te.value)?void 0:o.applyTags()),await(null==(l=ne.value)?void 0:l.applyVariations()),Tt$1.success("所有配置应用完成");}catch(a){Tt$1.error("应用配置失败");}else Tt$1.error("没有配置数据");}}),(e,t)=>(openBlock(),createElementBlock(Fragment,null,[createVNode(unref(nt$1),{show:x.value.show&&!_.value,title:x.value.title,"teleport-to":".booth-enhancer-sidebar",width:"500px",onClose:unref(b).closeModal},{"header-actions":withCtx(()=>["editDescription"===x.value.type?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",type:"button",title:"模板配置",onClick:t[0]||(t[0]=e=>H.value=true)},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).settings,18)},null,8,Ho)])):createCommentVNode("",true)]),footer:withCtx(()=>{var e;return [createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",type:"button",title:"取消",onClick:t[5]||(t[5]=(...e)=>unref(b).closeModal&&unref(b).closeModal(...e))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,18)},null,8,So)]),"createItem"===x.value.type?(openBlock(),createElementBlock("button",{key:0,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",type:"button",title:"创建配置",disabled:!(null==(e=x.value.formData.itemName)?void 0:e.trim()),onClick:t[6]||(t[6]=e=>unref(b).confirmModal(x.value.formData))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,Ro)],8,Do)):"editDescription"===x.value.type?(openBlock(),createElementBlock("button",{key:1,class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",type:"button",title:"保存",onClick:t[7]||(t[7]=e=>unref(b).confirmModal(x.value.formData))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,$o)])):createCommentVNode("",true)]}),default:withCtx(()=>["createItem"===x.value.type?(openBlock(),createElementBlock("div",Lo,[t[17]||(t[17]=createElementVNode("p",{class:"hint-text"}," 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ",-1)),createElementVNode("div",Co,[t[14]||(t[14]=createElementVNode("label",null,[createTextVNode("商品名称 "),createElementVNode("span",{class:"required"},"*")],-1)),withDirectives(createElementVNode("input",{"onUpdate:modelValue":t[1]||(t[1]=e=>x.value.formData.itemName=e),type:"text",placeholder:"输入商品名称",onKeyup:t[2]||(t[2]=withKeys(e=>unref(b).confirmModal(x.value.formData),["enter"]))},null,544),[[vModelText,x.value.formData.itemName]])]),createElementVNode("div",Vo,[t[16]||(t[16]=createElementVNode("label",null,"商品类型",-1)),withDirectives(createElementVNode("select",{"onUpdate:modelValue":t[3]||(t[3]=e=>x.value.formData.itemType=e)},t[15]||(t[15]=[createElementVNode("option",{value:"normal"},"普通商品",-1),createElementVNode("option",{value:"adaptation"},"适配商品",-1)]),512),[[vModelSelect,x.value.formData.itemType]])])])):"editDescription"===x.value.type?(openBlock(),createElementBlock("div",Uo,[createElementVNode("div",Io,[t[18]||(t[18]=createElementVNode("label",null,"自定义描述 (此商品专属)",-1)),withDirectives(createElementVNode("textarea",{"onUpdate:modelValue":t[4]||(t[4]=e=>x.value.formData.customDescription=e),rows:"8",placeholder:"输入此商品的特殊说明..."},null,512),[[vModelText,x.value.formData.customDescription]])]),createVNode(unref(Q),{label:"最终描述预览",type:"pre"},{default:withCtx(()=>[createTextVNode(toDisplayString(q.value),1)]),o:1})])):createCommentVNode("",true)]),o:1},8,["show","title","onClose"]),V.value?N.value?P.value?(openBlock(),createElementBlock("div",Oo,[createElementVNode("div",Ao,[createVNode(st,{ref_key:"itemNameSectionRef",ref:Y,"item-config":P.value,"global-templates":j.value,"template-vars":A.value,api:e.api,"total-support":O.value},null,8,["item-config","global-templates","template-vars","api","total-support"]),createVNode(Pe,{ref_key:"itemDescriptionSectionRef",ref:Z,"item-config":P.value,"global-templates":j.value,"template-vars":A.value,api:e.api,modal:unref(b),"current-item-id":V.value,"on-description-updated":G},null,8,["item-config","global-templates","template-vars","api","modal","current-item-id"]),createVNode(fn,{ref_key:"sectionsListSectionRef",ref:ee,"item-config":P.value,"global-templates":j.value,"template-vars":A.value,api:e.api,modal:unref(b),"item-tree":unref(p).itemTree},null,8,["item-config","global-templates","template-vars","api","modal","item-tree"]),createVNode(xn,{ref_key:"tagsSectionRef",ref:te,"item-config":P.value,api:e.api,"item-tree":unref(p).itemTree,"tag-tree":unref(p).tagTree},null,8,["item-config","api","item-tree","tag-tree"]),createVNode(Mo,{ref_key:"variationsListSectionRef",ref:ne,"item-config":P.value,"global-templates":j.value,api:e.api,modal:unref(b),"item-tree":unref(p).itemTree},null,8,["item-config","global-templates","api","modal","item-tree"])]),createVNode(unref(nt$1),{show:x.value.show&&_.value,title:x.value.title,width:"500px","teleport-to":".booth-enhancer-sidebar",onClose:unref(b).closeModal},{default:withCtx(()=>[void 0!==M.value&&z.value[M.value]?(openBlock(),createElementBlock("div",Eo,[createElementVNode("div",zo,toDisplayString(z.value[M.value].headline),1),createElementVNode("pre",qo,toDisplayString(z.value[M.value].body),1)])):createCommentVNode("",true)]),o:1},8,["show","title","onClose"]),createVNode(unref(nt$1),{show:x.value.show&&"selectItem"===x.value.type,title:x.value.title,width:"500px","teleport-to":".booth-enhancer-sidebar",onClose:unref(b).closeModal},{footer:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",type:"button",title:"取消",onClick:t[8]||(t[8]=(...e)=>unref(b).closeModal&&unref(b).closeModal(...e))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,18)},null,8,el)]),createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",type:"button",title:"确认",onClick:t[9]||(t[9]=e=>unref(b).confirmModal({itemIds:J.value}))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,tl)])]),default:withCtx(()=>[createElementVNode("div",Ko,[createElementVNode("p",Go," 点击选择/取消商品关联（已选择: "+toDisplayString(J.value.length)+"） ",1),Object.keys(unref(p).itemTree.nodes).filter(e=>unref(p).itemTree.nodes[e].data).length>0?(openBlock(),createElementBlock("div",Jo,[(openBlock(true),createElementBlock(Fragment,null,renderList(Object.keys(unref(p).itemTree.nodes).filter(e=>unref(p).itemTree.nodes[e].data),e=>{var t,a;return openBlock(),createElementBlock("button",{key:e,class:"item-select-btn booth-btn booth-btn-sm booth-btn-ghost be-text-left",type:"button",style:normalizeStyle({padding:"6px 8px",backgroundColor:X(e)?"rgba(59, 130, 246, 0.1)":void 0,borderColor:X(e)?"rgba(59, 130, 246, 0.3)":void 0}),onClick:t=>function(e){const t=J.value.indexOf(e);t>-1?J.value.splice(t,1):J.value.push(e);}(e)},[createElementVNode("div",Wo,[createElementVNode("span",Xo,toDisplayString((null==(t=unref(p).itemTree.nodes[e].data)?void 0:t.itemName)||unref(p).itemTree.nodes[e].name),1),createElementVNode("span",Yo,toDisplayString(null==(a=unref(p).itemTree.nodes[e].data)?void 0:a.authorName),1)])],12,Qo)}),128))])):(openBlock(),createElementBlock("div",Zo," 暂无商品数据，请先在 ItemTab 中添加 "))])]),o:1},8,["show","title","onClose"]),createVNode(unref(nt$1),{show:x.value.show&&"selectFile"===x.value.type,title:x.value.title,width:"500px","teleport-to":".booth-enhancer-sidebar",onClose:unref(b).closeModal},{footer:withCtx(()=>[createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",type:"button",title:"取消",onClick:t[11]||(t[11]=(...e)=>unref(b).closeModal&&unref(b).closeModal(...e))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).close,18)},null,8,ll)]),createElementVNode("button",{class:"booth-btn booth-btn-md booth-btn-icon booth-btn-primary",type:"button",title:"确认",onClick:t[12]||(t[12]=e=>unref(b).confirmModal({fileIds:W.value}))},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).check,18)},null,8,al)])]),default:withCtx(()=>[createElementVNode("div",nl,[createElementVNode("p",ol," 点击选择文件（可多选，已选择: "+toDisplayString(W.value.length)+"） ",1),createVNode(unref(E),{files:e.api.files,"selected-file-ids":W.value,"onUpdate:selectedFileIds":t[10]||(t[10]=e=>W.value=e)},null,8,["files","selected-file-ids"])])]),o:1},8,["show","title","onClose"]),createVNode(De,{show:H.value,"global-templates":j.value,onClose:t[13]||(t[13]=e=>H.value=false)},null,8,["show","global-templates"])])):createCommentVNode("",true):(openBlock(),createElementBlock("div",Bo,[createElementVNode("div",{class:"empty-icon",innerHTML:unref(G$1)(unref(U).file,64)},null,8,No),t[22]||(t[22]=createElementVNode("div",{class:"be-text-lg be-font-bold"},"未配置此商品",-1)),t[23]||(t[23]=createElementVNode("p",null,"为当前商品创建编辑配置，开始管理商品信息",-1)),createElementVNode("button",{class:"booth-btn booth-btn-lg booth-btn-primary",onClick:K},[createElementVNode("span",{innerHTML:unref(G$1)(unref(U).plus,16)},null,8,jo),t[21]||(t[21]=createTextVNode(" 创建商品配置 ",-1))])])):(openBlock(),createElementBlock("div",Po,[createElementVNode("div",{class:"empty-icon",innerHTML:unref(G$1)(unref(U).alertCircle,48)},null,8,Fo),t[19]||(t[19]=createElementVNode("div",{class:"be-text-lg be-font-bold"},"无法获取商品 ID",-1)),t[20]||(t[20]=createElementVNode("p",null,"请确保在商品编辑页面使用此功能",-1))]))],64))}}),[["__scopeId","data-v-d8a8cfef"]]));
+      const _hoisted_1$j = { class: "file-selector" };
+      const _hoisted_2$j = ["onClick"];
+      const _hoisted_3$i = { class: "be-text-sm be-font-medium" };
+      const _hoisted_4$h = {
+        key: 1,
+        class: "empty-hint be-text-center be-text-secondary be-py-md"
+      };
+      const _sfc_main$j = /* @__PURE__ */ defineComponent({
+        __name: "FileSelector",
+        props: {
+          files: {},
+          selectedFileIds: {},
+          emptyText: {},
+          columns: {},
+          maxHeight: {}
+        },
+        emits: ["update:selectedFileIds"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          function toggleFileSelection(fileId) {
+            const currentSelection = [...props.selectedFileIds];
+            const index = currentSelection.indexOf(fileId);
+            if (index > -1) {
+              currentSelection.splice(index, 1);
+            } else {
+              currentSelection.push(fileId);
+            }
+            emit("update:selectedFileIds", currentSelection);
+          }
+          function isFileSelected(fileId) {
+            return props.selectedFileIds.includes(fileId);
+          }
+          const gridColumns = computed(() => props.columns || 2);
+          const emptyHint = computed(() => props.emptyText || "暂无文件，请先上传文件");
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$j, [
+              _ctx.files.length > 0 ? (openBlock(), createElementBlock("div", {
+                key: 0,
+                class: "file-grid",
+                style: normalizeStyle({
+                  gridTemplateColumns: `repeat(${gridColumns.value}, 1fr)`,
+                  maxHeight: _ctx.maxHeight || "300px"
+                })
+              }, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.files, (file) => {
+                  return openBlock(), createElementBlock("button", {
+                    key: file.id,
+                    class: normalizeClass(["file-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start", { "is-selected": isFileSelected(file.id) }]),
+                    type: "button",
+                    onClick: ($event) => toggleFileSelection(file.id)
+                  }, [
+                    createElementVNode("span", _hoisted_3$i, toDisplayString(file.name), 1)
+                  ], 10, _hoisted_2$j);
+                }), 128))
+              ], 4)) : (openBlock(), createElementBlock("div", _hoisted_4$h, toDisplayString(emptyHint.value), 1))
+            ]);
+          };
+        }
+      });
+      const FileSelector = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-43c71f00"]]);
+      const _hoisted_1$i = { class: "preview-box be-flex be-flex-column be-gap-xs" };
+      const _hoisted_2$i = {
+        key: 0,
+        class: "be-text-xs be-text-secondary"
+      };
+      const _hoisted_3$h = {
+        key: 1,
+        class: "be-text-secondary"
+      };
+      const _hoisted_4$g = {
+        key: 2,
+        class: "be-whitespace-pre-wrap be-break-words be-m-0"
+      };
+      const _hoisted_5$d = { key: 3 };
+      const _sfc_main$i = /* @__PURE__ */ defineComponent({
+        __name: "PreviewBox",
+        props: {
+          label: {},
+          type: {},
+          isEmpty: { type: Boolean },
+          emptyText: {}
+        },
+        setup(__props) {
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$i, [
+              _ctx.label ? (openBlock(), createElementBlock("div", _hoisted_2$i, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
+              _ctx.isEmpty ? (openBlock(), createElementBlock("div", _hoisted_3$h, toDisplayString(_ctx.emptyText || "暂无内容"), 1)) : _ctx.type === "pre" ? (openBlock(), createElementBlock("pre", _hoisted_4$g, [
+                _cache[0] || (_cache[0] = createTextVNode("      ", -1)),
+                renderSlot(_ctx.$slots, "default", {}, void 0, true),
+                _cache[1] || (_cache[1] = createTextVNode("\n    ", -1))
+              ])) : (openBlock(), createElementBlock("div", _hoisted_5$d, [
+                renderSlot(_ctx.$slots, "default", {}, void 0, true)
+              ]))
+            ]);
+          };
+        }
+      });
+      const PreviewBox = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-93d09832"]]);
+      const _hoisted_1$h = {
+        key: 0,
+        class: "section-header"
+      };
+      const _hoisted_2$h = {
+        key: 0,
+        class: "be-text-base be-font-bold"
+      };
+      const _hoisted_3$g = {
+        key: 1,
+        class: "actions"
+      };
+      const _hoisted_4$f = { class: "section-content" };
+      const _sfc_main$h = /* @__PURE__ */ defineComponent({
+        __name: "SectionHeader",
+        props: {
+          title: { default: "" },
+          noBorder: { type: Boolean, default: false }
+        },
+        setup(__props) {
+          const props = __props;
+          const slots = useSlots();
+          const hasHeader = computed(() => props.title || slots.title || slots.actions);
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("section", {
+              class: normalizeClass(["section-header-container", { "no-header": !hasHeader.value, "no-border": _ctx.noBorder }])
+            }, [
+              hasHeader.value ? (openBlock(), createElementBlock("div", _hoisted_1$h, [
+                _ctx.title || _ctx.$slots.title ? (openBlock(), createElementBlock("div", _hoisted_2$h, [
+                  renderSlot(_ctx.$slots, "title", {}, () => [
+                    createTextVNode(toDisplayString(_ctx.title), 1)
+                  ], true)
+                ])) : createCommentVNode("", true),
+                _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_3$g, [
+                  renderSlot(_ctx.$slots, "actions", {}, void 0, true)
+                ])) : createCommentVNode("", true)
+              ])) : createCommentVNode("", true),
+              createElementVNode("div", _hoisted_4$f, [
+                renderSlot(_ctx.$slots, "default", {}, void 0, true)
+              ])
+            ], 2);
+          };
+        }
+      });
+      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-5643104c"]]);
+      const _hoisted_1$g = { class: "template-selector" };
+      const _hoisted_2$g = {
+        key: 0,
+        class: "template-selector-label"
+      };
+      const _hoisted_3$f = ["value"];
+      const _hoisted_4$e = {
+        key: 2,
+        class: "empty-hint"
+      };
+      const _sfc_main$g = /* @__PURE__ */ defineComponent({
+        __name: "TemplateSelector",
+        props: {
+          modelValue: {},
+          templates: { default: () => [] },
+          label: { default: "选择模板" },
+          placeholder: { default: "请选择模板" },
+          emptyHint: { default: "暂无可用模板" }
+        },
+        emits: ["update:modelValue"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const selectedValue = computed({
+            get() {
+              return props.modelValue;
+            },
+            set(value) {
+              emit("update:modelValue", value);
+            }
+          });
+          function ensureValidSelection(templates) {
+            if (!templates || templates.length === 0) {
+              emit("update:modelValue", "");
+              return;
+            }
+            const currentExists = templates.some((t) => t.id === props.modelValue);
+            if (!currentExists) {
+              emit("update:modelValue", templates[0].id);
+            }
+          }
+          watch(() => props.templates, ensureValidSelection, { immediate: true });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$g, [
+              _ctx.label ? (openBlock(), createElementBlock("label", _hoisted_2$g, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
+              _ctx.templates && _ctx.templates.length > 0 ? withDirectives((openBlock(), createElementBlock("select", {
+                key: 1,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => selectedValue.value = $event),
+                class: "template-selector-select"
+              }, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.templates, (template) => {
+                  return openBlock(), createElementBlock("option", {
+                    key: template.id,
+                    value: template.id
+                  }, toDisplayString(template.name), 9, _hoisted_3$f);
+                }), 128))
+              ], 512)), [
+                [vModelSelect, selectedValue.value]
+              ]) : (openBlock(), createElementBlock("div", _hoisted_4$e, toDisplayString(_ctx.emptyHint), 1))
+            ]);
+          };
+        }
+      });
+      const TemplateSelector = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-08bcafdd"]]);
+      const _hoisted_1$f = { class: "draggable-card-list" };
+      const _hoisted_2$f = ["onDragstart", "onDrop"];
+      const _hoisted_3$e = { class: "card-actions" };
+      const _hoisted_4$d = ["innerHTML"];
+      const _hoisted_5$c = { class: "card-number" };
+      const _hoisted_6$c = { class: "actions-content" };
+      const _hoisted_7$a = ["onClick"];
+      const _hoisted_8$7 = ["innerHTML"];
+      const _hoisted_9$7 = { class: "card-content" };
+      const _sfc_main$f = /* @__PURE__ */ defineComponent({
+        __name: "DraggableCardList",
+        props: {
+          items: {},
+          keyExtractor: { type: Function, default: (item, index) => {
+            return (item == null ? void 0 : item.id) !== void 0 ? item.id : index;
+          } }
+        },
+        emits: ["remove", "reorder"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const draggedIndex = ref(null);
+          function onDragStart(index) {
+            draggedIndex.value = index;
+          }
+          function onDragOver(event) {
+            event.preventDefault();
+          }
+          function onDrop(event, targetIndex) {
+            event.preventDefault();
+            if (draggedIndex.value === null || draggedIndex.value === targetIndex) {
+              draggedIndex.value = null;
+              return;
+            }
+            emit("reorder", draggedIndex.value, targetIndex);
+            draggedIndex.value = null;
+          }
+          function handleRemove(index) {
+            emit("remove", index);
+          }
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$f, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.items, (item, index) => {
+                return openBlock(), createElementBlock("div", {
+                  key: _ctx.keyExtractor(item, index),
+                  class: "draggable-card",
+                  draggable: "true",
+                  onDragstart: ($event) => onDragStart(index),
+                  onDragover: onDragOver,
+                  onDrop: ($event) => onDrop($event, index)
+                }, [
+                  createElementVNode("div", _hoisted_3$e, [
+                    createElementVNode("span", {
+                      class: "drag-handle",
+                      innerHTML: unref(withSize)(unref(icons).moreVertical, 14)
+                    }, null, 8, _hoisted_4$d),
+                    createElementVNode("span", _hoisted_5$c, "#" + toDisplayString(index + 1), 1),
+                    createElementVNode("div", _hoisted_6$c, [
+                      renderSlot(_ctx.$slots, "actions", {
+                        item,
+                        index
+                      }, void 0, true)
+                    ]),
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                      onClick: ($event) => handleRemove(index),
+                      title: "删除"
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).trash, 14)
+                      }, null, 8, _hoisted_8$7)
+                    ], 8, _hoisted_7$a)
+                  ]),
+                  createElementVNode("div", _hoisted_9$7, [
+                    renderSlot(_ctx.$slots, "content", {
+                      item,
+                      index
+                    }, void 0, true)
+                  ])
+                ], 40, _hoisted_2$f);
+              }), 128))
+            ]);
+          };
+        }
+      });
+      const DraggableCardList = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-6cf94b77"]]);
+      function useTemplateManager(options) {
+        const { templates, defaultTemplate, minTemplates = 1 } = options;
+        function addTemplate() {
+          const templateArray = templates.value || (templates.value = []);
+          const newTemplate = {
+            id: crypto.randomUUID(),
+            name: `模板 ${templateArray.length + 1}`,
+            isDefault: false,
+            ...defaultTemplate
+          };
+          templateArray.push(newTemplate);
+        }
+        function removeTemplate(index) {
+          const templateArray = templates.value;
+          if (!templateArray || templateArray.length <= minTemplates) return;
+          templateArray.splice(index, 1);
+        }
+        function setDefaultTemplate(index) {
+          const templateArray = templates.value;
+          if (!templateArray) return;
+          templateArray.forEach((t, i) => {
+            t.isDefault = i === index;
+          });
+        }
+        function onReorder(fromIndex, toIndex) {
+          const templateArray = templates.value;
+          if (!templateArray) return;
+          const [removed] = templateArray.splice(fromIndex, 1);
+          templateArray.splice(toIndex, 0, removed);
+        }
+        return {
+          addTemplate,
+          removeTemplate,
+          setDefaultTemplate,
+          onReorder
+        };
+      }
+      function applyDiscount(originalPrice, discount) {
+        if (!discount.enabled || discount.discountPercent === 0) {
+          return originalPrice;
+        }
+        return Math.round(originalPrice * (1 - discount.discountPercent / 100));
+      }
+      function calculateVariationPrices(variations, pricing, discount) {
+        variations.forEach((variation) => {
+          const basePrice = variation.isFullset ? pricing.fullsetPrice : pricing.normalVariationPrice;
+          variation.price = applyDiscount(basePrice, discount);
+        });
+      }
+      function suggestFullsetPrice(normalPrice, totalSupport, discount) {
+        const baseFullsetPrice = normalPrice * totalSupport;
+        return applyDiscount(baseFullsetPrice, discount);
+      }
+      const TEMPLATE_VAR_MAP = {
+        "商品名": "itemName",
+        "支持数": "supportCount",
+        "商品类型": "itemTypeName",
+        "商品类型复数": "itemTypePlural",
+        "变体数量": "variationCount",
+        "首个变体名": "firstName",
+        "智能标题": "smartTitle",
+        "折扣标识": "discountIndicator",
+        "原价": "originalPrice",
+        "折扣价": "discountedPrice",
+        "折扣百分比": "discountPercent",
+        "Fullset原价": "fullsetOriginalPrice",
+        "Fullset折扣价": "fullsetDiscountedPrice",
+        "折扣开始时间": "startDate",
+        "折扣结束时间": "endDate",
+        "日期": "date",
+        "内容": "content",
+        "作者名": "authorName",
+        "商品链接": "itemUrl"
+      };
+      function parseTemplate(template, variables) {
+        let result = template;
+        Object.entries(TEMPLATE_VAR_MAP).forEach(([chineseName, englishName]) => {
+          const value = variables[englishName];
+          if (value !== void 0 && value !== null) {
+            const regex = new RegExp(`\\{${chineseName}\\}`, "g");
+            result = result.replace(regex, String(value));
+          }
+        });
+        return result;
+      }
+      function formatDate(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${year}/${month}/${day}`;
+      }
+      function calculateTotalSupport(variations) {
+        return variations.filter((v) => !v.isFullset).reduce((sum, v) => {
+          if (!v.fileItemMap) return sum;
+          const count = Object.keys(v.fileItemMap).filter((fileId) => v.fileItemMap[fileId]).length;
+          return sum + count;
+        }, 0);
+      }
+      function pluralize(word, count) {
+        if (count === 1) return word;
+        const lowerWord = word.toLowerCase();
+        if (/[sxz]$|[cs]h$/.test(lowerWord)) {
+          return word + "es";
+        }
+        if (/[^aeiou]y$/.test(lowerWord)) {
+          return word.slice(0, -1) + "ies";
+        }
+        return word + "s";
+      }
+      function createSectionByType(type, globalTemplates) {
+        var _a, _b, _c, _d;
+        const id = crypto.randomUUID();
+        switch (type) {
+          case "normal":
+            return {
+              id,
+              type: "normal",
+              headline: "",
+              body: ""
+            };
+          case "log":
+            const firstLogTemplate = ((_b = (_a = globalTemplates.logTemplates) == null ? void 0 : _a[0]) == null ? void 0 : _b.id) || "";
+            return {
+              id,
+              type: "log",
+              headline: "更新日志",
+              logEntries: [],
+              logTemplateId: firstLogTemplate
+            };
+          case "iteminfo":
+            const firstItemInfoTemplate = ((_d = (_c = globalTemplates.itemInfoTemplates) == null ? void 0 : _c[0]) == null ? void 0 : _d.id) || "";
+            return {
+              id,
+              type: "iteminfo",
+              headline: "対応アバター",
+              itemInfoTemplateId: firstItemInfoTemplate
+            };
+        }
+      }
+      function createSectionFromTemplate(template, globalTemplates) {
+        var _a, _b, _c, _d;
+        const templateType = template.type || "normal";
+        const id = crypto.randomUUID();
+        switch (templateType) {
+          case "iteminfo":
+            const firstItemInfoTemplate = ((_b = (_a = globalTemplates.itemInfoTemplates) == null ? void 0 : _a[0]) == null ? void 0 : _b.id) || "";
+            return {
+              id,
+              type: "iteminfo",
+              headline: template.headline || "対応アバター",
+              itemInfoTemplateId: firstItemInfoTemplate
+            };
+          case "log":
+            const firstLogTemplate = ((_d = (_c = globalTemplates.logTemplates) == null ? void 0 : _c[0]) == null ? void 0 : _d.id) || "";
+            return {
+              id,
+              type: "log",
+              headline: template.headline || "更新日志",
+              logEntries: [],
+              logTemplateId: firstLogTemplate
+            };
+          default:
+            return {
+              id,
+              type: "normal",
+              templateId: template.id,
+              headline: template.headline,
+              body: template.body || ""
+            };
+        }
+      }
+      function resolveSectionContent(section, globalTemplates, context) {
+        if (!section.type) {
+          section.type = "normal";
+        }
+        switch (section.type) {
+          case "normal":
+            return resolveNormalSection(section, globalTemplates.sectionTemplates);
+          case "log":
+            return resolveLogSection(section, globalTemplates.logTemplates);
+          case "iteminfo":
+            return resolveItemInfoSection(
+              section,
+              globalTemplates.itemInfoTemplates,
+              context
+            );
+          default:
+            return { headline: section.headline || "", body: section.body || "" };
+        }
+      }
+      function resolveNormalSection(section, templates) {
+        if (section.templateId && templates) {
+          const template = templates.find((t) => t.id === section.templateId);
+          if (template) {
+            return {
+              headline: section.headline ?? template.headline,
+              body: section.body ?? template.body ?? ""
+            };
+          }
+        }
+        return {
+          headline: section.headline ?? "",
+          body: section.body ?? ""
+        };
+      }
+      function resolveLogSection(section, templates) {
+        const headline = section.headline ?? "更新日志";
+        const template = templates == null ? void 0 : templates.find((t) => t.id === section.logTemplateId);
+        const templateStr = (template == null ? void 0 : template.template) || "{日期} - {内容}";
+        const entries = section.logEntries.map((entry) => {
+          return parseTemplate(templateStr, {
+            date: formatDate(entry.date),
+            content: entry.content
+          });
+        });
+        const body = entries.join("\n\n");
+        return { headline, body };
+      }
+      function resolveItemInfoSection(section, templates, context) {
+        const headline = section.headline ?? "対応アバター";
+        const template = templates == null ? void 0 : templates.find((t) => t.id === section.itemInfoTemplateId);
+        const templateStr = (template == null ? void 0 : template.template) || "⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -";
+        const items = collectItemsFromVariations(context.variations, context.itemTree);
+        const body = formatItemInfoList(items, templateStr);
+        return { headline, body };
+      }
+      function collectItemsFromVariations(variations, itemTree) {
+        const items = [];
+        const seen = /* @__PURE__ */ new Set();
+        variations.forEach((variation) => {
+          if (variation.fileItemMap) {
+            Object.values(variation.fileItemMap).forEach((itemId) => {
+              if (itemId && !seen.has(itemId)) {
+                const node = itemTree.nodes[itemId];
+                if (node == null ? void 0 : node.data) {
+                  items.push(node.data);
+                  seen.add(itemId);
+                }
+              }
+            });
+          }
+        });
+        return items;
+      }
+      function groupItemsByAuthor(items) {
+        const grouped = /* @__PURE__ */ new Map();
+        items.forEach((item) => {
+          const author = item.authorName || "未知作者";
+          if (!grouped.has(author)) {
+            grouped.set(author, []);
+          }
+          grouped.get(author).push(item);
+        });
+        return grouped;
+      }
+      function formatItemInfoList(items, itemInfoTemplate) {
+        const grouped = groupItemsByAuthor(items);
+        const results = [];
+        grouped.forEach((authorItems) => {
+          authorItems.forEach((item) => {
+            const formatted = parseTemplate(itemInfoTemplate, {
+              authorName: item.authorName,
+              itemName: item.itemName,
+              itemUrl: item.itemUrl
+            });
+            results.push(formatted);
+          });
+        });
+        return results.join("\n\n");
+      }
+      const TEMPLATE_HINTS = {
+        // 基础模板变量提示（用于名称、描述、Section 模板）
+        basic: "基础: {商品名}, {支持数}, {商品类型}, {商品类型复数}, {变体数量}, {首个变体名}",
+        smart: "智能: {智能标题}, {折扣标识}",
+        // Log 模板变量提示
+        log: "可用变量: {日期}, {内容}",
+        // 折扣模板变量提示
+        discount: "可用变量: {原价}, {折扣价}, {折扣百分比}, {Fullset原价}, {Fullset折扣价}, {折扣开始时间}, {折扣结束时间}",
+        // 完整的基础和智能变量提示
+        get full() {
+          return `${this.basic}
+${this.smart}`;
+        }
+      };
+      const BUTTON_CLASSES = {
+        addButton: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+        closeButton: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+        saveButton: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
+      };
+      const _hoisted_1$e = ["innerHTML"];
+      const _hoisted_2$e = ["innerHTML"];
+      const _hoisted_3$d = ["onUpdate:modelValue"];
+      const _hoisted_4$c = { class: "form-group" };
+      const _hoisted_5$b = ["onUpdate:modelValue"];
+      const _hoisted_6$b = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$e = /* @__PURE__ */ defineComponent({
+        __name: "DescriptionTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).descriptionTemplates || (_a.descriptionTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.descriptionTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { template: "" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "描述模板配置",
+              width: "600px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$e)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    createElementVNode("p", {
+                      class: "form-hint",
+                      innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
+                    }, null, 8, _hoisted_2$e),
+                    _ctx.globalTemplates.descriptionTemplates && _ctx.globalTemplates.descriptionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.descriptionTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item }) => [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => item.name = $event,
+                          type: "text",
+                          placeholder: "输入模板名称",
+                          style: { "flex": "1", "min-width": "0" }
+                        }, null, 8, _hoisted_3$d), [
+                          [vModelText, item.name]
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_4$c, [
+                          _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                          withDirectives(createElementVNode("textarea", {
+                            "onUpdate:modelValue": ($event) => item.template = $event,
+                            rows: "1",
+                            placeholder: "输入模板内容"
+                          }, null, 8, _hoisted_5$b), [
+                            [vModelText, item.template]
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$b, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$d = ["innerHTML"];
+      const _hoisted_2$d = ["innerHTML"];
+      const _sfc_main$d = /* @__PURE__ */ defineComponent({
+        __name: "ItemDescriptionSection",
+        props: {
+          itemConfig: {},
+          globalTemplates: {},
+          templateVars: {},
+          api: {},
+          modal: {},
+          currentItemId: {},
+          onDescriptionUpdated: { type: Function }
+        },
+        emits: ["applied"],
+        setup(__props, { expose: __expose, emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const previewDescription = computed(() => {
+            const parts = [];
+            const descTemplate = getSelectedDescriptionTemplate(props.globalTemplates, props.itemConfig);
+            const templateDesc = parseTemplate(descTemplate, props.templateVars);
+            if (templateDesc) parts.push(templateDesc);
+            if (props.itemConfig.customDescription) {
+              parts.push(props.itemConfig.customDescription);
+            }
+            if (props.itemConfig.discount.enabled) {
+              const normalOriginalPrice = props.itemConfig.pricing.normalVariationPrice;
+              const normalDiscountedPrice = applyDiscount(
+                normalOriginalPrice,
+                props.itemConfig.discount
+              );
+              const fullsetOriginalPrice = props.itemConfig.pricing.fullsetPrice;
+              const fullsetDiscountedPrice = applyDiscount(
+                fullsetOriginalPrice,
+                props.itemConfig.discount
+              );
+              const formatDateTime = (isoString) => {
+                if (!isoString) return "";
+                const date = new Date(isoString);
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hour = String(date.getHours()).padStart(2, "0");
+                const minute = String(date.getMinutes()).padStart(2, "0");
+                return `${month}/${day} ${hour}:${minute}`;
+              };
+              const discountTemplate = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
+              const discountText = parseTemplate(
+                discountTemplate,
+                {
+                  ...props.templateVars,
+                  originalPrice: normalOriginalPrice,
+                  discountedPrice: normalDiscountedPrice,
+                  discountPercent: props.itemConfig.discount.discountPercent,
+                  fullsetOriginalPrice,
+                  fullsetDiscountedPrice,
+                  startDate: formatDateTime(props.itemConfig.discount.startDate),
+                  endDate: formatDateTime(props.itemConfig.discount.endDate)
+                }
+              );
+              parts.push(discountText);
+            }
+            return parts.join("\n\n");
+          });
+          async function handleEditDescription() {
+            const result = await props.modal.openModal({
+              type: "editDescription",
+              title: "编辑描述",
+              formData: {
+                customDescription: props.itemConfig.customDescription
+              }
+            });
+            if (result) {
+              props.onDescriptionUpdated(result.customDescription);
+            }
+          }
+          function applyDescription() {
+            props.api.setDescription(previewDescription.value);
+            toast.success("已应用描述");
+            emit("applied");
+          }
+          __expose({
+            applyDescription
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(unref(SectionHeader), { title: "商品描述" }, {
+              actions: withCtx(() => [
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-sm booth-btn-secondary",
+                  type: "button",
+                  title: "编辑描述",
+                  onClick: handleEditDescription
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).edit, 14)
+                  }, null, 8, _hoisted_1$d)
+                ]),
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-sm booth-btn-primary",
+                  type: "button",
+                  title: "应用到页面",
+                  onClick: applyDescription
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).send, 14)
+                  }, null, 8, _hoisted_2$d)
+                ])
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(PreviewBox), {
+                  label: "预览:",
+                  type: "pre",
+                  "is-empty": !previewDescription.value,
+                  "empty-text": '暂无描述，点击"编辑描述"添加'
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(toDisplayString(previewDescription.value), 1)
+                  ]),
+                  _: 1
+                }, 8, ["is-empty"])
+              ]),
+              _: 1
+            });
+          };
+        }
+      });
+      const _hoisted_1$c = ["innerHTML"];
+      const _hoisted_2$c = ["innerHTML"];
+      const _hoisted_3$c = ["onUpdate:modelValue"];
+      const _hoisted_4$b = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$a = { class: "form-group" };
+      const _hoisted_6$a = ["onUpdate:modelValue"];
+      const _hoisted_7$9 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$c = /* @__PURE__ */ defineComponent({
+        __name: "NameTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).nameTemplates || (_a.nameTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.nameTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { template: "{smartTitle}" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "商品名模板配置",
+              width: "600px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$c)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    createElementVNode("p", {
+                      class: "form-hint",
+                      innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
+                    }, null, 8, _hoisted_2$c),
+                    _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.nameTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item: template }) => [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => template.name = $event,
+                          type: "text",
+                          placeholder: "输入模板名称",
+                          style: { "flex": "1", "min-width": "0" }
+                        }, null, 8, _hoisted_3$c), [
+                          [vModelText, template.name]
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_4$b, [
+                          createElementVNode("div", _hoisted_5$a, [
+                            _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                            withDirectives(createElementVNode("textarea", {
+                              "onUpdate:modelValue": ($event) => item.template = $event,
+                              rows: "1",
+                              placeholder: "输入模板内容"
+                            }, null, 8, _hoisted_6$a), [
+                              [vModelText, item.template]
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$9, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$b = ["innerHTML"];
+      const _hoisted_2$b = { class: "modal-content" };
+      const _hoisted_3$b = { class: "form-group" };
+      const _hoisted_4$a = { class: "form-group" };
+      const _hoisted_5$9 = { class: "form-group" };
+      const _hoisted_6$9 = {
+        key: 0,
+        class: "form-group"
+      };
+      const _hoisted_7$8 = ["innerHTML"];
+      const _hoisted_8$6 = ["value"];
+      const _hoisted_9$6 = ["innerHTML"];
+      const _hoisted_10$5 = ["innerHTML"];
+      const _sfc_main$b = /* @__PURE__ */ defineComponent({
+        __name: "NameModal",
+        props: {
+          show: { type: Boolean },
+          itemConfig: {},
+          globalTemplates: {},
+          totalSupport: {}
+        },
+        emits: ["close", "save"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          function initializeSelectedTemplates() {
+            var _a, _b, _c, _d, _e, _f;
+            if (!props.itemConfig.selectedTemplates) {
+              props.itemConfig.selectedTemplates = {
+                nameTemplateId: ((_b = (_a = props.globalTemplates.nameTemplates) == null ? void 0 : _a[0]) == null ? void 0 : _b.id) || "",
+                descriptionTemplateId: ((_d = (_c = props.globalTemplates.descriptionTemplates) == null ? void 0 : _c[0]) == null ? void 0 : _d.id) || "",
+                discountTemplateId: ((_f = (_e = props.globalTemplates.discountTemplates) == null ? void 0 : _e[0]) == null ? void 0 : _f.id) || ""
+              };
+            }
+          }
+          onMounted(initializeSelectedTemplates);
+          const showTemplateModal = ref(false);
+          const selectedTemplate = computed(
+            () => getSelectedNameTemplate(props.globalTemplates, props.itemConfig)
+          );
+          function updateCurrentTemplate(event) {
+            var _a;
+            const templates = props.globalTemplates.nameTemplates;
+            const selectedId = (_a = props.itemConfig.selectedTemplates) == null ? void 0 : _a.nameTemplateId;
+            if (!templates || !selectedId) return;
+            const target = event.target;
+            const template = templates.find((t) => t.id === selectedId);
+            if (template) {
+              template.template = target.value;
+            }
+          }
+          function handleSave() {
+            emit("save");
+            emit("close");
+          }
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "编辑商品名",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[7] || (_cache[7] = ($event) => emit("close")),
+                width: "500px"
+              }, {
+                "header-actions": withCtx(() => [
+                  createElementVNode("button", {
+                    class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                    onClick: _cache[0] || (_cache[0] = ($event) => showTemplateModal.value = true),
+                    title: "模板配置",
+                    type: "button"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                    }, null, 8, _hoisted_1$b)
+                  ], 2)
+                ]),
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: normalizeClass(unref(BUTTON_CLASSES).closeButton),
+                    onClick: _cache[6] || (_cache[6] = ($event) => emit("close")),
+                    title: "取消"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_9$6)
+                  ], 2),
+                  createElementVNode("button", {
+                    class: normalizeClass(unref(BUTTON_CLASSES).saveButton),
+                    onClick: handleSave,
+                    title: "保存"
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_10$5)
+                  ], 2)
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_2$b, [
+                    createElementVNode("div", _hoisted_3$b, [
+                      _cache[9] || (_cache[9] = createElementVNode("label", null, "商品基础名称", -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemName = $event),
+                        type: "text",
+                        placeholder: "输入商品名称"
+                      }, null, 512), [
+                        [vModelText, _ctx.itemConfig.itemName]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_4$a, [
+                      _cache[11] || (_cache[11] = createElementVNode("label", null, "商品类型", -1)),
+                      withDirectives(createElementVNode("select", {
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.itemType = $event)
+                      }, _cache[10] || (_cache[10] = [
+                        createElementVNode("option", { value: "normal" }, "普通商品", -1),
+                        createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
+                      ]), 512), [
+                        [vModelSelect, _ctx.itemConfig.itemType]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_5$9, [
+                      _cache[12] || (_cache[12] = createElementVNode("label", null, [
+                        createTextVNode("商品类型名称 "),
+                        createElementVNode("span", { class: "label-hint" }, "(用于生成复数形式，如 Avatar → Avatars)")
+                      ], -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.itemTypeName = $event),
+                        type: "text",
+                        placeholder: "如: Avatar, Model, Texture"
+                      }, null, 512), [
+                        [vModelText, _ctx.itemConfig.itemTypeName]
+                      ])
+                    ]),
+                    createVNode(TemplateSelector, {
+                      modelValue: _ctx.itemConfig.selectedTemplates.nameTemplateId,
+                      "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.itemConfig.selectedTemplates.nameTemplateId = $event),
+                      templates: _ctx.globalTemplates.nameTemplates,
+                      label: "选择模板",
+                      "empty-hint": "请先在全局模板配置中添加商品名模板"
+                    }, null, 8, ["modelValue", "templates"]),
+                    _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$9, [
+                      _cache[13] || (_cache[13] = createElementVNode("label", null, [
+                        createTextVNode("模板内容 "),
+                        createElementVNode("span", { class: "label-hint" }, "(编辑当前选中模板)")
+                      ], -1)),
+                      createElementVNode("p", {
+                        class: "form-hint",
+                        innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
+                      }, null, 8, _hoisted_7$8),
+                      createElementVNode("input", {
+                        value: selectedTemplate.value,
+                        onInput: _cache[5] || (_cache[5] = ($event) => updateCurrentTemplate($event)),
+                        type: "text",
+                        placeholder: "如: {智能标题}"
+                      }, null, 40, _hoisted_8$6)
+                    ])) : createCommentVNode("", true)
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(_sfc_main$c, {
+                show: showTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[8] || (_cache[8] = ($event) => showTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
+          };
+        }
+      });
+      const _hoisted_1$a = ["innerHTML"];
+      const _hoisted_2$a = ["innerHTML"];
+      const _hoisted_3$a = { class: "form-group" };
+      const _hoisted_4$9 = { class: "be-text-primary" };
+      const _sfc_main$a = /* @__PURE__ */ defineComponent({
+        __name: "ItemNameSection",
+        props: {
+          itemConfig: {},
+          globalTemplates: {},
+          templateVars: {},
+          api: {},
+          totalSupport: {}
+        },
+        emits: ["applied"],
+        setup(__props, { expose: __expose, emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const showNameModal = ref(false);
+          const previewName = computed(() => {
+            const template = getSelectedNameTemplate(props.globalTemplates, props.itemConfig);
+            return parseTemplate(template, props.templateVars);
+          });
+          function applyName() {
+            props.api.setName(previewName.value);
+            toast.success("已应用商品名");
+            emit("applied");
+          }
+          __expose({
+            applyName
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(unref(SectionHeader), { title: "商品名称" }, {
+                actions: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "模板设置",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showNameModal.value = true)
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).edit, 14)
+                    }, null, 8, _hoisted_1$a)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-primary",
+                    type: "button",
+                    title: "应用到页面",
+                    onClick: applyName
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).send, 14)
+                    }, null, 8, _hoisted_2$a)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_3$a, [
+                    withDirectives(createElementVNode("input", {
+                      "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemName = $event),
+                      type: "text",
+                      placeholder: "输入商品名称"
+                    }, null, 512), [
+                      [vModelText, _ctx.itemConfig.itemName]
+                    ])
+                  ]),
+                  previewName.value ? (openBlock(), createBlock(unref(PreviewBox), {
+                    key: 0,
+                    label: "预览:",
+                    type: "text"
+                  }, {
+                    default: withCtx(() => [
+                      createElementVNode("span", _hoisted_4$9, toDisplayString(previewName.value), 1)
+                    ]),
+                    _: 1
+                  })) : createCommentVNode("", true)
+                ]),
+                _: 1
+              }),
+              createVNode(_sfc_main$b, {
+                show: showNameModal.value,
+                "item-config": _ctx.itemConfig,
+                "global-templates": _ctx.globalTemplates,
+                "total-support": _ctx.totalSupport,
+                onClose: _cache[2] || (_cache[2] = ($event) => showNameModal.value = false),
+                onSave: _cache[3] || (_cache[3] = ($event) => showNameModal.value = false)
+              }, null, 8, ["show", "item-config", "global-templates", "total-support"])
+            ], 64);
+          };
+        }
+      });
+      const _hoisted_1$9 = ["innerHTML"];
+      const _hoisted_2$9 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$9 = ["onUpdate:modelValue"];
+      const _hoisted_4$8 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$8 = { class: "form-group" };
+      const _hoisted_6$8 = ["onUpdate:modelValue"];
+      const _hoisted_7$7 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+        __name: "ItemInfoTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const itemInfoTemplates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).itemInfoTemplates || (_a.itemInfoTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.itemInfoTemplates = value;
+            }
+          });
+          const itemInfoManager = useTemplateManager({
+            templates: itemInfoTemplates,
+            defaultTemplate: { template: "⟡ {作者名}\nʚ {商品名} ɞ\n- {商品链接} -" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "商品信息模板配置",
+              width: "700px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = ($event) => unref(itemInfoManager).addTemplate()),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$9)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createElementVNode("div", _hoisted_2$9, [
+                  createVNode(unref(SectionHeader), null, {
+                    default: withCtx(() => [
+                      _cache[3] || (_cache[3] = createElementVNode("p", { class: "form-hint" }, "可用变量: {作者名}, {商品名}, {商品链接}", -1)),
+                      _cache[4] || (_cache[4] = createElementVNode("p", { class: "form-hint" }, "系统会自动按作者分组并循环渲染所有关联商品", -1)),
+                      _cache[5] || (_cache[5] = createElementVNode("p", { class: "form-hint" }, "示例：⟡ {作者名}\\nʚ {商品名} ɞ\\n- {商品链接} -", -1)),
+                      _ctx.globalTemplates.itemInfoTemplates && _ctx.globalTemplates.itemInfoTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                        key: 0,
+                        items: _ctx.globalTemplates.itemInfoTemplates,
+                        "key-extractor": (item) => item.id,
+                        onRemove: unref(itemInfoManager).removeTemplate,
+                        onReorder: unref(itemInfoManager).onReorder
+                      }, {
+                        actions: withCtx(({ item }) => [
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": ($event) => item.name = $event,
+                            type: "text",
+                            placeholder: "输入模板名称",
+                            style: { "flex": "1", "min-width": "0" }
+                          }, null, 8, _hoisted_3$9), [
+                            [vModelText, item.name]
+                          ])
+                        ]),
+                        content: withCtx(({ item }) => [
+                          createElementVNode("div", _hoisted_4$8, [
+                            createElementVNode("div", _hoisted_5$8, [
+                              _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                              withDirectives(createElementVNode("textarea", {
+                                "onUpdate:modelValue": ($event) => item.template = $event,
+                                rows: "3",
+                                placeholder: "输入模板内容"
+                              }, null, 8, _hoisted_6$8), [
+                                [vModelText, item.template]
+                              ])
+                            ])
+                          ])
+                        ]),
+                        _: 1
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$7, ' 暂无模板，点击"添加模板"创建 '))
+                    ]),
+                    _: 1,
+                    __: [3, 4, 5]
+                  })
+                ])
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$8 = ["innerHTML"];
+      const _hoisted_2$8 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$8 = ["onUpdate:modelValue"];
+      const _hoisted_4$7 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$7 = { class: "form-group" };
+      const _hoisted_6$7 = ["onUpdate:modelValue"];
+      const _hoisted_7$6 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+        __name: "LogTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const logTemplates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).logTemplates || (_a.logTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.logTemplates = value;
+            }
+          });
+          const logManager = useTemplateManager({
+            templates: logTemplates,
+            defaultTemplate: { template: "⟡ {日期}\n　・ {内容}" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "日志模板配置",
+              width: "700px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = ($event) => unref(logManager).addTemplate()),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$8)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createElementVNode("div", _hoisted_2$8, [
+                  createVNode(unref(SectionHeader), null, {
+                    default: withCtx(() => [
+                      _cache[3] || (_cache[3] = createElementVNode("p", { class: "form-hint" }, "可用变量: {日期}, {内容}", -1)),
+                      _cache[4] || (_cache[4] = createElementVNode("p", { class: "form-hint" }, "示例：⟡ {日期}\\n　・ {内容}", -1)),
+                      _ctx.globalTemplates.logTemplates && _ctx.globalTemplates.logTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                        key: 0,
+                        items: _ctx.globalTemplates.logTemplates,
+                        "key-extractor": (item) => item.id,
+                        onRemove: unref(logManager).removeTemplate,
+                        onReorder: unref(logManager).onReorder
+                      }, {
+                        actions: withCtx(({ item }) => [
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": ($event) => item.name = $event,
+                            type: "text",
+                            placeholder: "输入模板名称",
+                            style: { "flex": "1", "min-width": "0" }
+                          }, null, 8, _hoisted_3$8), [
+                            [vModelText, item.name]
+                          ])
+                        ]),
+                        content: withCtx(({ item }) => [
+                          createElementVNode("div", _hoisted_4$7, [
+                            createElementVNode("div", _hoisted_5$7, [
+                              _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                              withDirectives(createElementVNode("textarea", {
+                                "onUpdate:modelValue": ($event) => item.template = $event,
+                                rows: "2",
+                                placeholder: "输入模板内容"
+                              }, null, 8, _hoisted_6$7), [
+                                [vModelText, item.template]
+                              ])
+                            ])
+                          ])
+                        ]),
+                        _: 1
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$6, ' 暂无模板，点击"添加模板"创建 '))
+                    ]),
+                    _: 1,
+                    __: [3, 4]
+                  })
+                ])
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$7 = ["innerHTML"];
+      const _hoisted_2$7 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$7 = ["innerHTML"];
+      const _hoisted_4$6 = ["onUpdate:modelValue"];
+      const _hoisted_5$6 = ["onUpdate:modelValue"];
+      const _hoisted_6$6 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_7$5 = { class: "form-group" };
+      const _hoisted_8$5 = ["onUpdate:modelValue"];
+      const _hoisted_9$5 = {
+        key: 0,
+        class: "form-group"
+      };
+      const _hoisted_10$4 = ["onUpdate:modelValue"];
+      const _hoisted_11$4 = {
+        key: 1,
+        class: "form-hint be-text-xs be-text-secondary"
+      };
+      const _hoisted_12$4 = {
+        key: 2,
+        class: "form-hint be-text-xs be-text-secondary"
+      };
+      const _hoisted_13$4 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+        __name: "SectionTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const sectionTemplates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).sectionTemplates || (_a.sectionTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.sectionTemplates = value;
+            }
+          });
+          const sectionManager = useTemplateManager({
+            templates: sectionTemplates,
+            defaultTemplate: { type: "normal", headline: "", body: "" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "Section 模板配置",
+              width: "700px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = ($event) => unref(sectionManager).addTemplate()),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$7)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createElementVNode("div", _hoisted_2$7, [
+                  createVNode(unref(SectionHeader), null, {
+                    default: withCtx(() => [
+                      createElementVNode("p", {
+                        class: "form-hint",
+                        innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
+                      }, null, 8, _hoisted_3$7),
+                      _cache[5] || (_cache[5] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, [
+                        createElementVNode("strong", null, "模板类型说明："),
+                        createElementVNode("br"),
+                        createTextVNode(" • "),
+                        createElementVNode("strong", null, "普通"),
+                        createTextVNode("：常规 Section，可包含任意内容"),
+                        createElementVNode("br"),
+                        createTextVNode(" • "),
+                        createElementVNode("strong", null, "日志"),
+                        createTextVNode("：更新日志 Section，内容由日志条目动态生成（只需配置 Headline）"),
+                        createElementVNode("br"),
+                        createTextVNode(" • "),
+                        createElementVNode("strong", null, "商品信息"),
+                        createTextVNode("：自动从 Variations 关联的商品生成信息列表 ")
+                      ], -1)),
+                      _ctx.globalTemplates.sectionTemplates && _ctx.globalTemplates.sectionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                        key: 0,
+                        items: _ctx.globalTemplates.sectionTemplates,
+                        "key-extractor": (item) => item.id,
+                        onRemove: unref(sectionManager).removeTemplate,
+                        onReorder: unref(sectionManager).onReorder
+                      }, {
+                        actions: withCtx(({ item }) => [
+                          withDirectives(createElementVNode("select", {
+                            "onUpdate:modelValue": ($event) => item.type = $event,
+                            class: "be-p-xs be-px-sm be-text-base",
+                            style: { "height": "28px", "width": "auto", "flex-shrink": "0" }
+                          }, _cache[2] || (_cache[2] = [
+                            createElementVNode("option", { value: "normal" }, "普通", -1),
+                            createElementVNode("option", { value: "log" }, "日志", -1),
+                            createElementVNode("option", { value: "iteminfo" }, "商品信息", -1)
+                          ]), 8, _hoisted_4$6), [
+                            [vModelSelect, item.type]
+                          ]),
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": ($event) => item.name = $event,
+                            type: "text",
+                            placeholder: "输入模板名称",
+                            style: { "flex": "1", "min-width": "0" }
+                          }, null, 8, _hoisted_5$6), [
+                            [vModelText, item.name]
+                          ])
+                        ]),
+                        content: withCtx(({ item }) => [
+                          createElementVNode("div", _hoisted_6$6, [
+                            createElementVNode("div", _hoisted_7$5, [
+                              _cache[3] || (_cache[3] = createElementVNode("label", null, "Headline", -1)),
+                              withDirectives(createElementVNode("input", {
+                                "onUpdate:modelValue": ($event) => item.headline = $event,
+                                type: "text",
+                                placeholder: "输入 Headline"
+                              }, null, 8, _hoisted_8$5), [
+                                [vModelText, item.headline]
+                              ])
+                            ]),
+                            item.type === "normal" || !item.type ? (openBlock(), createElementBlock("div", _hoisted_9$5, [
+                              _cache[4] || (_cache[4] = createElementVNode("label", null, "Body", -1)),
+                              withDirectives(createElementVNode("textarea", {
+                                "onUpdate:modelValue": ($event) => item.body = $event,
+                                rows: "1",
+                                placeholder: "输入 Body"
+                              }, null, 8, _hoisted_10$4), [
+                                [vModelText, item.body]
+                              ])
+                            ])) : item.type === "log" ? (openBlock(), createElementBlock("p", _hoisted_11$4, " 日志类型的 Section 内容由日志条目动态生成，无需手动填写 Body ")) : item.type === "iteminfo" ? (openBlock(), createElementBlock("p", _hoisted_12$4, " 商品信息类型的 Section 内容将自动从 Variations 关联的商品生成，无需手动填写 Body ")) : createCommentVNode("", true)
+                          ])
+                        ]),
+                        _: 1
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_13$4, ' 暂无模板，点击"添加模板"创建 '))
+                    ]),
+                    _: 1,
+                    __: [5]
+                  })
+                ])
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$6 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_2$6 = { class: "template-grid" };
+      const _hoisted_3$6 = { class: "be-flex be-align-center be-gap-xs" };
+      const _hoisted_4$5 = ["innerHTML"];
+      const _hoisted_5$5 = ["onClick"];
+      const _hoisted_6$5 = {
+        class: "be-flex be-flex-column",
+        style: { "gap": "4px" }
+      };
+      const _hoisted_7$4 = { class: "be-flex be-align-center be-gap-xs" };
+      const _hoisted_8$4 = { class: "be-text-sm be-font-medium" };
+      const _hoisted_9$4 = {
+        key: 0,
+        class: "be-text-xs be-text-secondary be-truncate"
+      };
+      const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+        __name: "SectionTemplateSelectorModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close", "select"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const TYPE_STYLES = {
+            normal: {
+              background: "rgba(107, 114, 128, 0.1)",
+              color: "#6b7280",
+              label: "普通"
+            },
+            log: {
+              background: "rgba(16, 185, 129, 0.1)",
+              color: "#10b981",
+              label: "日志"
+            },
+            iteminfo: {
+              background: "rgba(59, 130, 246, 0.1)",
+              color: "#3b82f6",
+              label: "商品信息"
+            }
+          };
+          function getTypeStyle(type) {
+            return TYPE_STYLES[type] || TYPE_STYLES.normal;
+          }
+          function handleSelectTemplate(template) {
+            emit("select", template);
+          }
+          function handleCreateEmpty() {
+            emit("select", null);
+          }
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "选择 Section 模板",
+              width: "500px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[0] || (_cache[0] = ($event) => emit("close"))
+            }, {
+              default: withCtx(() => [
+                createElementVNode("div", _hoisted_1$6, [
+                  _cache[2] || (_cache[2] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, " 点击创建空白 Section 或从模板快速创建 ", -1)),
+                  createElementVNode("div", _hoisted_2$6, [
+                    createElementVNode("button", {
+                      class: "template-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",
+                      type: "button",
+                      onClick: handleCreateEmpty
+                    }, [
+                      createElementVNode("div", _hoisted_3$6, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).plus, 14)
+                        }, null, 8, _hoisted_4$5),
+                        _cache[1] || (_cache[1] = createElementVNode("span", { class: "be-text-sm be-font-medium" }, "创建空 Section", -1))
+                      ])
+                    ]),
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.globalTemplates.sectionTemplates, (template) => {
+                      return openBlock(), createElementBlock("button", {
+                        key: template.id,
+                        class: "template-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",
+                        type: "button",
+                        onClick: ($event) => handleSelectTemplate(template)
+                      }, [
+                        createElementVNode("div", _hoisted_6$5, [
+                          createElementVNode("div", _hoisted_7$4, [
+                            createElementVNode("span", _hoisted_8$4, toDisplayString(template.name || "未命名模板"), 1),
+                            createElementVNode("span", {
+                              class: "be-text-xs be-px-xs be-py-1 be-rounded",
+                              style: normalizeStyle({
+                                background: getTypeStyle(template.type).background,
+                                color: getTypeStyle(template.type).color
+                              })
+                            }, toDisplayString(getTypeStyle(template.type).label), 5)
+                          ]),
+                          template.headline ? (openBlock(), createElementBlock("div", _hoisted_9$4, toDisplayString(template.headline), 1)) : createCommentVNode("", true)
+                        ])
+                      ], 8, _hoisted_5$5);
+                    }), 128))
+                  ])
+                ])
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const SectionTemplateSelectorModal = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-b9c3c0a1"]]);
+      const _hoisted_1$5 = ["innerHTML"];
+      const _hoisted_2$5 = ["innerHTML"];
+      const _hoisted_3$5 = ["innerHTML"];
+      const _hoisted_4$4 = ["innerHTML"];
+      const _hoisted_5$4 = {
+        key: 0,
+        class: "empty-hint"
+      };
+      const _hoisted_6$4 = ["value", "onChange"];
+      const _hoisted_7$3 = ["onUpdate:modelValue"];
+      const _hoisted_8$3 = ["innerHTML"];
+      const _hoisted_9$3 = ["innerHTML"];
+      const _hoisted_10$3 = ["onClick"];
+      const _hoisted_11$3 = ["innerHTML"];
+      const _hoisted_12$3 = {
+        key: 0,
+        class: "form-group"
+      };
+      const _hoisted_13$3 = ["onUpdate:modelValue"];
+      const _hoisted_14$3 = {
+        key: 1,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _hoisted_15$3 = ["onClick"];
+      const _hoisted_16$3 = ["innerHTML"];
+      const _hoisted_17$3 = {
+        key: 0,
+        class: "empty-hint"
+      };
+      const _hoisted_18$3 = ["onUpdate:modelValue", "placeholder"];
+      const _hoisted_19$3 = { class: "form-group" };
+      const _hoisted_20$3 = ["onUpdate:modelValue"];
+      const _hoisted_21$2 = {
+        key: 2,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+        __name: "SectionsListSection",
+        props: {
+          itemConfig: {},
+          globalTemplates: {},
+          templateVars: {},
+          api: {},
+          modal: {},
+          itemTree: {}
+        },
+        emits: ["applied"],
+        setup(__props, { expose: __expose, emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const showSectionTemplateModal = ref(false);
+          const showSectionTemplateSelectorModal = ref(false);
+          const showLogTemplateModal = ref(false);
+          const showItemInfoTemplateModal = ref(false);
+          const resolvedSections = computed(() => {
+            const context = {
+              variations: props.itemConfig.variations,
+              itemTree: props.itemTree
+            };
+            return props.itemConfig.sections.map((section) => {
+              const resolved = resolveSectionContent(section, props.globalTemplates, context);
+              return {
+                headline: parseTemplate(resolved.headline, props.templateVars),
+                body: parseTemplate(resolved.body, props.templateVars)
+              };
+            });
+          });
+          function importSections() {
+            const pageSections = props.api.sections;
+            if (pageSections.length === 0) {
+              toast.info("页面没有 Sections");
+              return;
+            }
+            props.itemConfig.sections = pageSections.map(
+              () => createSectionByType("normal", props.globalTemplates)
+            );
+            pageSections.forEach((section, index) => {
+              var _a, _b;
+              const targetSection = props.itemConfig.sections[index];
+              if (targetSection && targetSection.type === "normal") {
+                targetSection.headline = ((_a = section.headlineInput) == null ? void 0 : _a.value) || "";
+                targetSection.body = ((_b = section.bodyTextarea) == null ? void 0 : _b.value) || "";
+              }
+            });
+            toast.success(`已导入 ${pageSections.length} 个 Sections`);
+          }
+          function addSection() {
+            showSectionTemplateSelectorModal.value = true;
+          }
+          function handleTemplateSelect(template) {
+            if (template === null) {
+              const newSection = createSectionByType("normal", props.globalTemplates);
+              props.itemConfig.sections.push(newSection);
+            } else {
+              const newSection = createSectionFromTemplate(template, props.globalTemplates);
+              props.itemConfig.sections.push(newSection);
+            }
+            showSectionTemplateSelectorModal.value = false;
+          }
+          function removeSection(index) {
+            props.itemConfig.sections.splice(index, 1);
+          }
+          function changeSectionType(index, newType) {
+            const oldSection = props.itemConfig.sections[index];
+            const newSection = createSectionByType(newType, props.globalTemplates);
+            if (oldSection.type === "normal" && oldSection.headline) {
+              newSection.headline = oldSection.headline;
+            } else if (oldSection.type === "log" && oldSection.headline) {
+              newSection.headline = oldSection.headline;
+            } else if (oldSection.type === "iteminfo" && oldSection.headline) {
+              newSection.headline = oldSection.headline;
+            }
+            props.itemConfig.sections.splice(index, 1, newSection);
+          }
+          function addLogEntry(sectionIndex) {
+            const section = props.itemConfig.sections[sectionIndex];
+            if (section.type !== "log") return;
+            section.logEntries.unshift({
+              id: crypto.randomUUID(),
+              date: Date.now(),
+              content: ""
+            });
+          }
+          function removeLogEntry(sectionIndex, entryIndex) {
+            const section = props.itemConfig.sections[sectionIndex];
+            if (section.type !== "log") return;
+            section.logEntries.splice(entryIndex, 1);
+          }
+          function onLogEntryReorder(sectionIndex, fromIndex, toIndex) {
+            const section = props.itemConfig.sections[sectionIndex];
+            if (section.type !== "log") return;
+            const [removed] = section.logEntries.splice(fromIndex, 1);
+            section.logEntries.splice(toIndex, 0, removed);
+          }
+          function handlePreviewSection(index) {
+            props.modal.openModal({
+              type: "alert",
+              title: "Section 预览",
+              formData: { sectionIndex: index }
+            });
+          }
+          async function applySections() {
+            const sectionsToApply = resolvedSections.value;
+            const diff = sectionsToApply.length - props.api.sections.length;
+            if (diff > 0) {
+              for (let i = 0; i < diff; i++) {
+                if (!await props.api.addSection()) {
+                  toast.error(`添加 Section 失败`);
+                  return;
+                }
+              }
+            } else if (diff < 0) {
+              for (let i = 0; i < -diff; i++) {
+                if (!await props.api.removeSection(props.api.sections.length - 1)) {
+                  toast.error(`删除 Section 失败`);
+                  return;
+                }
+              }
+            }
+            sectionsToApply.forEach((section, index) => {
+              props.api.updateSection(index, {
+                headline: section.headline,
+                body: section.body
+              });
+            });
+            toast.success(`已应用 ${sectionsToApply.length} 个 Sections`);
+            emit("applied");
+          }
+          function onSectionReorder(fromIndex, toIndex) {
+            const [removed] = props.itemConfig.sections.splice(fromIndex, 1);
+            props.itemConfig.sections.splice(toIndex, 0, removed);
+          }
+          function openLogTemplateModal() {
+            showLogTemplateModal.value = true;
+          }
+          __expose({
+            applySections
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(unref(SectionHeader), {
+                title: `Sections (${_ctx.itemConfig.sections.length})`
+              }, {
+                actions: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-ghost",
+                    type: "button",
+                    title: "从页面导入",
+                    onClick: importSections
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).download, 14)
+                    }, null, 8, _hoisted_1$5)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "添加",
+                    onClick: _cache[0] || (_cache[0] = ($event) => addSection())
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).plus, 14)
+                    }, null, 8, _hoisted_2$5)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "模板配置",
+                    onClick: _cache[1] || (_cache[1] = ($event) => showSectionTemplateModal.value = true)
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).edit, 14)
+                    }, null, 8, _hoisted_3$5)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-primary",
+                    type: "button",
+                    title: "应用到页面",
+                    onClick: applySections
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).send, 14)
+                    }, null, 8, _hoisted_4$4)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  _ctx.itemConfig.sections.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_5$4, ' 暂无 Sections，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                    key: 1,
+                    items: _ctx.itemConfig.sections,
+                    onRemove: removeSection,
+                    onReorder: onSectionReorder
+                  }, {
+                    actions: withCtx(({ item: section, index }) => [
+                      createElementVNode("select", {
+                        value: section.type,
+                        class: "be-p-xs be-px-sm be-text-base",
+                        style: { "height": "28px", "width": "auto", "flex-shrink": "0" },
+                        onChange: ($event) => changeSectionType(index, $event.target.value)
+                      }, _cache[8] || (_cache[8] = [
+                        createElementVNode("option", { value: "normal" }, "普通", -1),
+                        createElementVNode("option", { value: "log" }, "日志", -1),
+                        createElementVNode("option", { value: "iteminfo" }, "商品信息", -1)
+                      ]), 40, _hoisted_6$4),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": ($event) => section.headline = $event,
+                        type: "text",
+                        class: "be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0",
+                        style: { "height": "28px" },
+                        placeholder: "输入 Headline"
+                      }, null, 8, _hoisted_7$3), [
+                        [vModelText, section.headline]
+                      ]),
+                      section.type === "log" ? (openBlock(), createElementBlock("button", {
+                        key: 0,
+                        class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                        type: "button",
+                        title: "配置日志模板",
+                        onClick: _cache[2] || (_cache[2] = withModifiers(($event) => openLogTemplateModal(), ["stop", "prevent"]))
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_8$3)
+                      ])) : createCommentVNode("", true),
+                      section.type === "iteminfo" ? (openBlock(), createElementBlock("button", {
+                        key: 1,
+                        class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                        type: "button",
+                        title: "配置商品信息模板",
+                        onClick: _cache[3] || (_cache[3] = withModifiers(($event) => showItemInfoTemplateModal.value = true, ["stop", "prevent"]))
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).edit, 14)
+                        }, null, 8, _hoisted_9$3)
+                      ])) : createCommentVNode("", true),
+                      createElementVNode("button", {
+                        class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                        type: "button",
+                        title: "预览",
+                        onClick: withModifiers(($event) => handlePreviewSection(index), ["stop", "prevent"])
+                      }, [
+                        createElementVNode("span", {
+                          innerHTML: unref(withSize)(unref(icons).eye, 14)
+                        }, null, 8, _hoisted_11$3)
+                      ], 8, _hoisted_10$3)
+                    ]),
+                    content: withCtx(({ item: section, index }) => [
+                      section.type === "normal" ? (openBlock(), createElementBlock("div", _hoisted_12$3, [
+                        withDirectives(createElementVNode("textarea", {
+                          "onUpdate:modelValue": ($event) => section.body = $event,
+                          rows: "1",
+                          placeholder: "输入 Body"
+                        }, null, 8, _hoisted_13$3), [
+                          [vModelText, section.body]
+                        ])
+                      ])) : section.type === "log" ? (openBlock(), createElementBlock("div", _hoisted_14$3, [
+                        createVNode(unref(SectionHeader), null, {
+                          default: withCtx(() => [
+                            createVNode(TemplateSelector, {
+                              modelValue: section.logTemplateId,
+                              "onUpdate:modelValue": ($event) => section.logTemplateId = $event,
+                              templates: _ctx.globalTemplates.logTemplates,
+                              label: "选择日志模板",
+                              "empty-hint": "请先添加日志模板"
+                            }, null, 8, ["modelValue", "onUpdate:modelValue", "templates"])
+                          ]),
+                          _: 2
+                        }, 1024),
+                        createVNode(unref(SectionHeader), { "no-border": "" }, {
+                          title: withCtx(() => [
+                            createTextVNode("日志条目 (" + toDisplayString(section.logEntries.length) + ")", 1)
+                          ]),
+                          actions: withCtx(() => [
+                            createElementVNode("button", {
+                              class: "booth-btn booth-btn-sm booth-btn-secondary",
+                              type: "button",
+                              title: "添加日志",
+                              onClick: ($event) => addLogEntry(index)
+                            }, [
+                              createElementVNode("span", {
+                                innerHTML: unref(withSize)(unref(icons).plus, 14)
+                              }, null, 8, _hoisted_16$3)
+                            ], 8, _hoisted_15$3)
+                          ]),
+                          default: withCtx(() => [
+                            section.logEntries.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_17$3, ' 暂无日志，点击"添加日志"创建 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                              key: 1,
+                              items: section.logEntries,
+                              onRemove: (entryIndex) => removeLogEntry(index, entryIndex),
+                              onReorder: (from, to) => onLogEntryReorder(index, from, to)
+                            }, {
+                              actions: withCtx(({ item: entry }) => [
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => entry.date = $event,
+                                  type: "number",
+                                  class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                                  style: { "height": "28px", "min-width": "120px" },
+                                  placeholder: unref(formatDate)(Date.now())
+                                }, null, 8, _hoisted_18$3), [
+                                  [
+                                    vModelText,
+                                    entry.date,
+                                    void 0,
+                                    { number: true }
+                                  ]
+                                ])
+                              ]),
+                              content: withCtx(({ item: entry }) => [
+                                createElementVNode("div", _hoisted_19$3, [
+                                  withDirectives(createElementVNode("textarea", {
+                                    "onUpdate:modelValue": ($event) => entry.content = $event,
+                                    rows: "1",
+                                    placeholder: "输入日志内容"
+                                  }, null, 8, _hoisted_20$3), [
+                                    [vModelText, entry.content]
+                                  ])
+                                ])
+                              ]),
+                              _: 2
+                            }, 1032, ["items", "onRemove", "onReorder"]))
+                          ]),
+                          _: 2
+                        }, 1024)
+                      ])) : section.type === "iteminfo" ? (openBlock(), createElementBlock("div", _hoisted_21$2, [
+                        createVNode(unref(SectionHeader), null, {
+                          default: withCtx(() => [
+                            createVNode(TemplateSelector, {
+                              modelValue: section.itemInfoTemplateId,
+                              "onUpdate:modelValue": ($event) => section.itemInfoTemplateId = $event,
+                              templates: _ctx.globalTemplates.itemInfoTemplates,
+                              label: "选择商品信息模板",
+                              "empty-hint": "请先添加商品信息模板"
+                            }, null, 8, ["modelValue", "onUpdate:modelValue", "templates"])
+                          ]),
+                          _: 2
+                        }, 1024),
+                        _cache[9] || (_cache[9] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, " 商品信息会自动从 Variations 关联的商品中收集并按作者分组显示 ", -1))
+                      ])) : createCommentVNode("", true)
+                    ]),
+                    _: 1
+                  }, 8, ["items"]))
+                ]),
+                _: 1
+              }, 8, ["title"]),
+              createVNode(SectionTemplateSelectorModal, {
+                show: showSectionTemplateSelectorModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[4] || (_cache[4] = ($event) => showSectionTemplateSelectorModal.value = false),
+                onSelect: handleTemplateSelect
+              }, null, 8, ["show", "global-templates"]),
+              createVNode(_sfc_main$7, {
+                show: showSectionTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[5] || (_cache[5] = ($event) => showSectionTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"]),
+              createVNode(_sfc_main$8, {
+                show: showLogTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[6] || (_cache[6] = ($event) => showLogTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"]),
+              createVNode(_sfc_main$9, {
+                show: showItemInfoTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[7] || (_cache[7] = ($event) => showItemInfoTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
+          };
+        }
+      });
+      const SectionsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-268f4e4d"]]);
+      const _hoisted_1$4 = ["innerHTML"];
+      const _hoisted_2$4 = { class: "tag-badges-wrapper" };
+      const _hoisted_3$4 = { class: "tag-text" };
+      const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+        __name: "TagsSection",
+        props: {
+          itemConfig: {},
+          api: {},
+          itemTree: {},
+          tagTree: {}
+        },
+        emits: ["applied"],
+        setup(__props, { expose: __expose, emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const allTags = computed(() => {
+            var _a;
+            const tagsSet = /* @__PURE__ */ new Set();
+            const nodeIds = props.itemConfig.tagNodeIds || [];
+            const nodeCount = nodeIds.length;
+            for (let i = 0; i < nodeCount; i++) {
+              const nodeId = nodeIds[i];
+              const node = props.tagTree.nodes[nodeId];
+              if ((_a = node == null ? void 0 : node.data) == null ? void 0 : _a.tags) {
+                node.data.tags.forEach((tag) => tagsSet.add(tag));
+              }
+            }
+            return Array.from(tagsSet);
+          });
+          function smartFetchTags(silent = false) {
+            var _a;
+            const matchedNodeIds = /* @__PURE__ */ new Set();
+            for (const variation of props.itemConfig.variations) {
+              if (variation.isFullset || !variation.fileItemMap) continue;
+              const itemIds = Object.values(variation.fileItemMap);
+              for (const itemId of itemIds) {
+                const itemNode = props.itemTree.nodes[itemId];
+                if (!(itemNode == null ? void 0 : itemNode.data)) continue;
+                const { itemName, authorName } = itemNode.data;
+                for (const nodeId in props.tagTree.nodes) {
+                  const tagNode = props.tagTree.nodes[nodeId];
+                  if (!((_a = tagNode.data) == null ? void 0 : _a.tags) || tagNode.data.tags.length === 0) continue;
+                  const nodeName = tagNode.name.toLowerCase();
+                  const itemNameLower = (itemName == null ? void 0 : itemName.toLowerCase()) || "";
+                  const authorNameLower = (authorName == null ? void 0 : authorName.toLowerCase()) || "";
+                  if (itemNameLower && nodeName.includes(itemNameLower) || authorNameLower && nodeName.includes(authorNameLower)) {
+                    matchedNodeIds.add(nodeId);
+                  }
+                }
+              }
+            }
+            const newIds = Array.from(matchedNodeIds);
+            if (!props.itemConfig.tagNodeIds) {
+              props.itemConfig.tagNodeIds = [];
+            }
+            props.itemConfig.tagNodeIds.splice(0, props.itemConfig.tagNodeIds.length, ...newIds);
+            if (!silent && matchedNodeIds.size > 0) {
+              toast.success(`已匹配 ${matchedNodeIds.size} 个标签节点`);
+            }
+          }
+          watch(
+            () => props.itemConfig.variations,
+            () => {
+              smartFetchTags(true);
+            },
+            { deep: true, immediate: true }
+          );
+          async function applyTags() {
+            var _a;
+            const tagsToApply = /* @__PURE__ */ new Set();
+            const nodeIds = props.itemConfig.tagNodeIds || [];
+            for (const nodeId of nodeIds) {
+              const node = props.tagTree.nodes[nodeId];
+              if ((_a = node == null ? void 0 : node.data) == null ? void 0 : _a.tags) {
+                node.data.tags.forEach((tag) => tagsToApply.add(tag));
+              }
+            }
+            if (tagsToApply.size === 0) {
+              toast.info("没有可应用的标签");
+              return;
+            }
+            const newTags = Array.from(tagsToApply).filter((tag) => !props.api.hasTag(tag));
+            if (newTags.length > 0) {
+              await props.api.addTags(newTags);
+              toast.success(`已添加 ${newTags.length} 个新标签`);
+              emit("applied");
+            } else {
+              toast.info("所有标签已存在，无需添加");
+            }
+          }
+          __expose({
+            applyTags
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(unref(SectionHeader), { title: "Tags" }, {
+              actions: withCtx(() => [
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-sm booth-btn-primary",
+                  type: "button",
+                  title: "应用到页面",
+                  onClick: applyTags
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).send, 14)
+                  }, null, 8, _hoisted_1$4)
+                ])
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(PreviewBox), {
+                  "is-empty": allTags.value.length === 0,
+                  "empty-text": "标签会根据 Variations 中的商品自动匹配"
+                }, {
+                  default: withCtx(() => [
+                    createElementVNode("div", _hoisted_2$4, [
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(allTags.value, (tag, index) => {
+                        return openBlock(), createElementBlock("span", {
+                          key: index,
+                          class: "tag-badge"
+                        }, [
+                          createElementVNode("span", _hoisted_3$4, toDisplayString(tag), 1)
+                        ]);
+                      }), 128))
+                    ])
+                  ]),
+                  _: 1
+                }, 8, ["is-empty"])
+              ]),
+              _: 1
+            });
+          };
+        }
+      });
+      const TagsSection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-f3247bf3"]]);
+      const _hoisted_1$3 = ["innerHTML"];
+      const _hoisted_2$3 = ["innerHTML"];
+      const _hoisted_3$3 = ["onUpdate:modelValue"];
+      const _hoisted_4$3 = { class: "form-group" };
+      const _hoisted_5$3 = ["onUpdate:modelValue"];
+      const _hoisted_6$3 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+        __name: "DiscountTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).discountTemplates || (_a.discountTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.discountTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { template: "" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "折扣模板配置",
+              width: "600px",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 18)
+                  }, null, 8, _hoisted_1$3)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    createElementVNode("p", {
+                      class: "form-hint",
+                      innerHTML: unref(TEMPLATE_HINTS).discount.replace("\n", "<br>")
+                    }, null, 8, _hoisted_2$3),
+                    _ctx.globalTemplates.discountTemplates && _ctx.globalTemplates.discountTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.discountTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item }) => [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => item.name = $event,
+                          type: "text",
+                          placeholder: "输入模板名称",
+                          style: { "flex": "1", "min-width": "0" }
+                        }, null, 8, _hoisted_3$3), [
+                          [vModelText, item.name]
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_4$3, [
+                          _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                          withDirectives(createElementVNode("textarea", {
+                            "onUpdate:modelValue": ($event) => item.template = $event,
+                            rows: "3",
+                            placeholder: "输入模板内容"
+                          }, null, 8, _hoisted_5$3), [
+                            [vModelText, item.template]
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$3, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$2 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_2$2 = { class: "form-group" };
+      const _hoisted_3$2 = { class: "form-group" };
+      const _hoisted_4$2 = { class: "form-hint" };
+      const _hoisted_5$2 = { class: "be-flex be-gap-sm be-flex-wrap" };
+      const _hoisted_6$2 = { class: "be-p-xs be-px-sm be-text-sm be-text-secondary" };
+      const _hoisted_7$2 = { class: "be-flex be-align-center be-gap-sm" };
+      const _hoisted_8$2 = {
+        class: "booth-toggle",
+        title: "启用打折功能"
+      };
+      const _hoisted_9$2 = ["innerHTML"];
+      const _hoisted_10$2 = {
+        key: 0,
+        class: "discount-config"
+      };
+      const _hoisted_11$2 = { class: "form-group" };
+      const _hoisted_12$2 = { class: "be-flex be-gap-sm" };
+      const _hoisted_13$2 = { class: "form-group be-flex-1" };
+      const _hoisted_14$2 = { class: "form-group be-flex-1" };
+      const _hoisted_15$2 = { class: "be-flex be-flex-column be-gap-xs" };
+      const _hoisted_16$2 = { class: "be-flex be-justify-between" };
+      const _hoisted_17$2 = { class: "be-flex be-justify-between" };
+      const _hoisted_18$2 = { class: "be-text-xs be-text-secondary be-mb-xs" };
+      const _hoisted_19$2 = ["innerHTML"];
+      const _hoisted_20$2 = ["innerHTML"];
+      const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+        __name: "VariationConfigModal",
+        props: {
+          show: { type: Boolean },
+          itemConfig: {},
+          globalTemplates: {},
+          availableFiles: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const tempCommonFiles = ref([]);
+          const showDiscountTemplateModal = ref(false);
+          watch(() => props.show, (show) => {
+            if (show) {
+              tempCommonFiles.value = [...props.itemConfig.commonFiles || []];
+            }
+          });
+          function handleSave() {
+            props.itemConfig.commonFiles = tempCommonFiles.value;
+            emit("close");
+          }
+          const totalSupport = computed(
+            () => calculateTotalSupport(props.itemConfig.variations)
+          );
+          const suggestedPrice = computed(
+            () => suggestFullsetPrice(
+              props.itemConfig.pricing.normalVariationPrice,
+              totalSupport.value,
+              props.itemConfig.discount
+            )
+          );
+          const normalOriginalPrice = computed(
+            () => props.itemConfig.pricing.normalVariationPrice
+          );
+          const normalDiscountedPrice = computed(
+            () => applyDiscount(normalOriginalPrice.value, props.itemConfig.discount)
+          );
+          const fullsetOriginalPrice = computed(
+            () => props.itemConfig.pricing.fullsetPrice
+          );
+          const fullsetDiscountedPrice = computed(
+            () => applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount)
+          );
+          function formatDateTime(isoString) {
+            if (!isoString) return "";
+            const date = new Date(isoString);
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const hour = String(date.getHours()).padStart(2, "0");
+            const minute = String(date.getMinutes()).padStart(2, "0");
+            return `${month}/${day} ${hour}:${minute}`;
+          }
+          const discountPreview = computed(() => {
+            if (!props.itemConfig.discount.enabled) return "";
+            const discountTemplate = getSelectedDiscountTemplate(
+              props.globalTemplates,
+              props.itemConfig
+            );
+            return parseTemplate(discountTemplate, {
+              originalPrice: normalOriginalPrice.value,
+              discountedPrice: normalDiscountedPrice.value,
+              discountPercent: props.itemConfig.discount.discountPercent,
+              fullsetOriginalPrice: fullsetOriginalPrice.value,
+              fullsetDiscountedPrice: fullsetDiscountedPrice.value,
+              startDate: formatDateTime(props.itemConfig.discount.startDate),
+              endDate: formatDateTime(props.itemConfig.discount.endDate)
+            });
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "Variation 配置",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[10] || (_cache[10] = ($event) => emit("close")),
+                width: "500px"
+              }, {
+                footer: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                    type: "button",
+                    title: "取消",
+                    onClick: _cache[9] || (_cache[9] = ($event) => emit("close"))
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                    }, null, 8, _hoisted_19$2)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                    type: "button",
+                    title: "保存",
+                    onClick: handleSave
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                    }, null, 8, _hoisted_20$2)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_1$2, [
+                    createVNode(unref(SectionHeader), { title: "价格配置" }, {
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_2$2, [
+                          _cache[12] || (_cache[12] = createElementVNode("label", null, "普通 Variation 价格 (¥)", -1)),
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.pricing.normalVariationPrice = $event),
+                            type: "number",
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.normalVariationPrice,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_3$2, [
+                          _cache[13] || (_cache[13] = createElementVNode("label", null, "Fullset 价格 (¥)", -1)),
+                          createElementVNode("p", _hoisted_4$2, "建议: ¥" + toDisplayString(suggestedPrice.value), 1),
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.pricing.fullsetPrice = $event),
+                            type: "number",
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.fullsetPrice,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_5$2, [
+                          createElementVNode("span", _hoisted_6$2, [
+                            _cache[14] || (_cache[14] = createTextVNode(" 总支持数: ", -1)),
+                            createElementVNode("strong", null, toDisplayString(totalSupport.value), 1)
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(unref(SectionHeader), { title: "折扣配置" }, {
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_7$2, [
+                          createElementVNode("label", _hoisted_8$2, [
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.discount.enabled = $event),
+                              type: "checkbox"
+                            }, null, 512), [
+                              [vModelCheckbox, _ctx.itemConfig.discount.enabled]
+                            ]),
+                            _cache[15] || (_cache[15] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                            _cache[16] || (_cache[16] = createElementVNode("span", { class: "toggle-label" }, "启用打折", -1))
+                          ]),
+                          _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("button", {
+                            key: 0,
+                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                            type: "button",
+                            title: "配置折扣模板",
+                            onClick: _cache[3] || (_cache[3] = ($event) => showDiscountTemplateModal.value = true)
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(withSize)(unref(icons).settings, 14)
+                            }, null, 8, _hoisted_9$2)
+                          ])) : createCommentVNode("", true)
+                        ]),
+                        _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
+                          createVNode(TemplateSelector, {
+                            modelValue: _ctx.itemConfig.selectedTemplates.discountTemplateId,
+                            "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.itemConfig.selectedTemplates.discountTemplateId = $event),
+                            templates: _ctx.globalTemplates.discountTemplates,
+                            label: "选择折扣模板",
+                            "empty-hint": "请先在折扣模板配置中添加模板"
+                          }, null, 8, ["modelValue", "templates"]),
+                          createElementVNode("div", _hoisted_11$2, [
+                            _cache[17] || (_cache[17] = createElementVNode("label", null, "折扣百分比 (%)", -1)),
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => _ctx.itemConfig.discount.discountPercent = $event),
+                              type: "number",
+                              min: "0",
+                              max: "100",
+                              placeholder: "0"
+                            }, null, 512), [
+                              [
+                                vModelText,
+                                _ctx.itemConfig.discount.discountPercent,
+                                void 0,
+                                { number: true }
+                              ]
+                            ])
+                          ]),
+                          createElementVNode("div", _hoisted_12$2, [
+                            createElementVNode("div", _hoisted_13$2, [
+                              _cache[18] || (_cache[18] = createElementVNode("label", null, "折扣开始时间", -1)),
+                              withDirectives(createElementVNode("input", {
+                                "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => _ctx.itemConfig.discount.startDate = $event),
+                                type: "datetime-local"
+                              }, null, 512), [
+                                [vModelText, _ctx.itemConfig.discount.startDate]
+                              ])
+                            ]),
+                            createElementVNode("div", _hoisted_14$2, [
+                              _cache[19] || (_cache[19] = createElementVNode("label", null, "折扣结束时间", -1)),
+                              withDirectives(createElementVNode("input", {
+                                "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => _ctx.itemConfig.discount.endDate = $event),
+                                type: "datetime-local"
+                              }, null, 512), [
+                                [vModelText, _ctx.itemConfig.discount.endDate]
+                              ])
+                            ])
+                          ]),
+                          createVNode(unref(PreviewBox), {
+                            label: "折扣描述预览:",
+                            type: "pre"
+                          }, {
+                            default: withCtx(() => [
+                              createTextVNode(toDisplayString(discountPreview.value), 1)
+                            ]),
+                            _: 1
+                          }),
+                          createVNode(unref(PreviewBox), {
+                            label: "价格预览:",
+                            type: "text"
+                          }, {
+                            default: withCtx(() => [
+                              createElementVNode("div", _hoisted_15$2, [
+                                createElementVNode("div", _hoisted_16$2, [
+                                  _cache[20] || (_cache[20] = createElementVNode("span", null, "普通 Variation:", -1)),
+                                  createElementVNode("span", null, "¥" + toDisplayString(normalOriginalPrice.value) + " → ¥" + toDisplayString(normalDiscountedPrice.value), 1)
+                                ]),
+                                createElementVNode("div", _hoisted_17$2, [
+                                  _cache[21] || (_cache[21] = createElementVNode("span", null, "Fullset:", -1)),
+                                  createElementVNode("span", null, "¥" + toDisplayString(fullsetOriginalPrice.value) + " → ¥" + toDisplayString(fullsetDiscountedPrice.value), 1)
+                                ])
+                              ])
+                            ]),
+                            _: 1
+                          })
+                        ])) : createCommentVNode("", true)
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(unref(SectionHeader), { title: "通用文件配置" }, {
+                      default: withCtx(() => [
+                        _cache[24] || (_cache[24] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary be-mb-sm" }, " 选择所有 variation 共享的通用文件（如材质、配饰等），这些文件会在应用时自动添加到每个 variation ", -1)),
+                        createElementVNode("div", _hoisted_18$2, [
+                          _cache[22] || (_cache[22] = createTextVNode(" 已选择: ", -1)),
+                          createElementVNode("strong", null, toDisplayString(tempCommonFiles.value.length), 1),
+                          _cache[23] || (_cache[23] = createTextVNode(" 个文件 ", -1))
+                        ]),
+                        createVNode(unref(FileSelector), {
+                          files: _ctx.availableFiles,
+                          "selected-file-ids": tempCommonFiles.value,
+                          "onUpdate:selectedFileIds": _cache[8] || (_cache[8] = ($event) => tempCommonFiles.value = $event)
+                        }, null, 8, ["files", "selected-file-ids"])
+                      ]),
+                      _: 1,
+                      __: [24]
+                    })
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(_sfc_main$3, {
+                show: showDiscountTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[11] || (_cache[11] = ($event) => showDiscountTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
+          };
+        }
+      });
+      const VariationConfigModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-9e5fca5f"]]);
+      const _hoisted_1$1 = ["innerHTML"];
+      const _hoisted_2$1 = ["innerHTML"];
+      const _hoisted_3$1 = ["innerHTML"];
+      const _hoisted_4$1 = ["innerHTML"];
+      const _hoisted_5$1 = ["innerHTML"];
+      const _hoisted_6$1 = {
+        key: 0,
+        class: "common-files-preview be-mb-sm"
+      };
+      const _hoisted_7$1 = {
+        class: "be-flex be-align-center be-gap-xs be-flex-wrap be-p-xs be-px-sm",
+        style: { "background": "var(--be-color-bg-secondary)", "border-radius": "var(--be-radius-sm)", "border": "1px solid var(--be-color-border)" }
+      };
+      const _hoisted_8$1 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _hoisted_9$1 = {
+        class: "be-flex be-align-center be-gap-sm",
+        style: { "flex": "1" }
+      };
+      const _hoisted_10$1 = ["onUpdate:modelValue"];
+      const _hoisted_11$1 = {
+        key: 0,
+        class: "booth-toggle",
+        title: "将此 Variation 设为 Fullset（合集包）"
+      };
+      const _hoisted_12$1 = ["checked", "onChange"];
+      const _hoisted_13$1 = ["onClick"];
+      const _hoisted_14$1 = ["innerHTML"];
+      const _hoisted_15$1 = { class: "be-flex be-flex-column be-gap-xs" };
+      const _hoisted_16$1 = { class: "be-flex be-align-center be-gap-sm" };
+      const _hoisted_17$1 = {
+        key: 0,
+        class: "be-text-base be-text-primary"
+      };
+      const _hoisted_18$1 = { class: "be-text-base be-text-primary be-flex-shrink-0" };
+      const _hoisted_19$1 = {
+        class: "booth-toggle be-flex-shrink-0",
+        title: "自定义此 Variation 的价格"
+      };
+      const _hoisted_20$1 = ["onUpdate:modelValue"];
+      const _hoisted_21$1 = ["onUpdate:modelValue"];
+      const _hoisted_22$1 = { class: "be-text-sm be-text-secondary be-flex-shrink-0" };
+      const _hoisted_23$1 = { class: "item-card-header" };
+      const _hoisted_24$1 = { class: "item-card-title" };
+      const _hoisted_25$1 = ["onClick"];
+      const _hoisted_26$1 = ["innerHTML"];
+      const _hoisted_27$1 = { class: "item-card-content" };
+      const _hoisted_28$1 = ["onClick"];
+      const _hoisted_29$1 = ["innerHTML"];
+      const _hoisted_30$1 = { class: "item-select-text" };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "VariationsListSection",
+        props: {
+          itemConfig: {},
+          globalTemplates: {},
+          api: {},
+          modal: {},
+          itemTree: {}
+        },
+        emits: ["applied"],
+        setup(__props, { expose: __expose, emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const showPriceModal = ref(false);
+          const selectedVariationIndex = ref(null);
+          const tempSelectedItems = ref([]);
+          const tempSelectedFileIds = ref([]);
+          const selectingItemForFile = ref(null);
+          const hasFullset = computed(
+            () => props.itemConfig.variations.some((v) => v.isFullset)
+          );
+          const availableFiles = computed(() => props.api.files);
+          async function importVariations() {
+            const pageVariations = props.api.variations;
+            if (pageVariations.length === 0) {
+              toast.info("页面没有 Variations");
+              return;
+            }
+            props.itemConfig.variations = pageVariations.map((variation, index) => {
+              var _a, _b;
+              const name = ((_a = variation.nameInput) == null ? void 0 : _a.value) || "";
+              const isFullset = name.toLowerCase().includes("fullset");
+              const priceStr = ((_b = variation.priceInput) == null ? void 0 : _b.value) || "0";
+              const price = parseInt(priceStr.replace(/\D/g, "")) || 0;
+              const fileIds = props.api.getVariationFiles(index);
+              return {
+                name,
+                price,
+                isFullset,
+                fileIds,
+                // 导入已关联的文件
+                fileItemMap: {}
+                // 初始化为空对象，待自动匹配
+              };
+            });
+            props.itemConfig.variations.forEach((variation, index) => {
+              if (variation.fileIds && variation.fileIds.length > 0) {
+                autoMatchItemsForFiles(index, variation.fileIds);
+              }
+            });
+            const allFiles = /* @__PURE__ */ new Set();
+            props.itemConfig.variations.forEach((variation) => {
+              if (variation.fileIds) {
+                variation.fileIds.forEach((fileId) => allFiles.add(fileId));
+              }
+            });
+            const mappedFiles = /* @__PURE__ */ new Set();
+            props.itemConfig.variations.forEach((variation) => {
+              if (variation.fileItemMap) {
+                Object.keys(variation.fileItemMap).forEach((fileId) => {
+                  if (variation.fileItemMap[fileId]) {
+                    mappedFiles.add(fileId);
+                  }
+                });
+              }
+            });
+            const commonFiles = [];
+            allFiles.forEach((fileId) => {
+              if (!mappedFiles.has(fileId)) {
+                commonFiles.push(fileId);
+              }
+            });
+            if (commonFiles.length > 0) {
+              props.itemConfig.commonFiles = commonFiles;
+            } else {
+              props.itemConfig.commonFiles = [];
+            }
+            const messages = [`已导入 ${pageVariations.length} 个 Variations`];
+            if (commonFiles.length > 0) {
+              messages.push(`检测到 ${commonFiles.length} 个通用文件`);
+            }
+            toast.success(messages.join("，"));
+          }
+          function autoCreateVariationsFromFiles() {
+            var _a;
+            const files = availableFiles.value;
+            if (files.length === 0) {
+              toast.info("暂无可用文件");
+              return;
+            }
+            let createdCount = 0;
+            let commonFilesCount = 0;
+            const commonFiles = [];
+            for (const file of files) {
+              const matchedItemId = findBestMatchItem(file.name);
+              if (matchedItemId) {
+                const node = props.itemTree.nodes[matchedItemId];
+                const itemName = ((_a = node == null ? void 0 : node.data) == null ? void 0 : _a.itemName) || (node == null ? void 0 : node.name) || file.name;
+                props.itemConfig.variations.push({
+                  name: itemName,
+                  price: 0,
+                  // 默认价格，后续可在配置中调整
+                  isFullset: false,
+                  fileIds: [file.id],
+                  fileItemMap: {
+                    [file.id]: matchedItemId
+                  }
+                });
+                createdCount++;
+              } else {
+                commonFiles.push(file.id);
+                commonFilesCount++;
+              }
+            }
+            if (commonFiles.length > 0) {
+              if (!props.itemConfig.commonFiles) {
+                props.itemConfig.commonFiles = [];
+              }
+              props.itemConfig.commonFiles = Array.from(/* @__PURE__ */ new Set([...props.itemConfig.commonFiles, ...commonFiles]));
+            }
+            if (createdCount > 0 || commonFilesCount > 0) {
+              toast.success(`已创建 ${createdCount} 个 Variations，${commonFilesCount} 个文件划分为通用文件`);
+            } else {
+              toast.info("没有可创建的 Variations");
+            }
+          }
+          function addVariation() {
+            const price = applyDiscount(
+              props.itemConfig.pricing.normalVariationPrice,
+              props.itemConfig.discount
+            );
+            props.itemConfig.variations.push({
+              name: "",
+              price,
+              isFullset: false,
+              useCustomPrice: false,
+              fileIds: [],
+              fileItemMap: {}
+            });
+          }
+          function removeVariation(index) {
+            props.itemConfig.variations.splice(index, 1);
+          }
+          function onVariationReorder(fromIndex, toIndex) {
+            const [removed] = props.itemConfig.variations.splice(fromIndex, 1);
+            props.itemConfig.variations.splice(toIndex, 0, removed);
+          }
+          function toggleFullset(variation, index) {
+            if (variation.isFullset) {
+              variation.isFullset = false;
+              return;
+            }
+            props.itemConfig.variations.forEach((v, i) => {
+              if (i !== index && v.isFullset) {
+                v.isFullset = false;
+                if (!v.fileIds) {
+                  v.fileIds = [];
+                }
+              }
+            });
+            variation.isFullset = true;
+          }
+          function getVariationPrice(variation) {
+            const { pricing, discount } = props.itemConfig;
+            if (variation.isFullset) {
+              return applyDiscount(pricing.fullsetPrice, discount);
+            }
+            if (variation.useCustomPrice && variation.customPrice !== void 0) {
+              return applyDiscount(variation.customPrice, discount);
+            }
+            return applyDiscount(pricing.normalVariationPrice, discount);
+          }
+          function getVariationSupportCount(variation) {
+            if (variation.isFullset) return 1;
+            if (!variation.fileItemMap) return 0;
+            return Object.keys(variation.fileItemMap).filter((fileId) => variation.fileItemMap[fileId]).length;
+          }
+          async function selectFilesForVariation(variationIndex) {
+            selectedVariationIndex.value = variationIndex;
+            const variation = props.itemConfig.variations[variationIndex];
+            if (availableFiles.value.length === 0) {
+              toast.error("无法获取文件列表，请先上传文件");
+              selectedVariationIndex.value = null;
+              return;
+            }
+            tempSelectedFileIds.value = variation.fileIds ? [...variation.fileIds] : [];
+            const fileResult = await props.modal.openModal({
+              type: "selectFile",
+              title: "选择文件（可多选）"
+            });
+            if (!(fileResult == null ? void 0 : fileResult.fileIds)) {
+              selectedVariationIndex.value = null;
+              return;
+            }
+            const selectedFileIds = fileResult.fileIds;
+            const oldFileIds = variation.fileIds || [];
+            const newFileIds = selectedFileIds.filter((id) => !oldFileIds.includes(id));
+            variation.fileIds = selectedFileIds;
+            if (newFileIds.length > 0) {
+              autoMatchItemsForFiles(variationIndex, newFileIds);
+            }
+            selectedVariationIndex.value = null;
+            tempSelectedFileIds.value = [];
+          }
+          async function selectItemForFile(variationIndex, fileId) {
+            var _a;
+            const variation = props.itemConfig.variations[variationIndex];
+            const currentItemId = (_a = variation.fileItemMap) == null ? void 0 : _a[fileId];
+            tempSelectedItems.value = currentItemId ? [currentItemId] : [];
+            selectingItemForFile.value = { variationIndex, fileId };
+            const result = await props.modal.openModal({
+              type: "selectItem",
+              title: `为 ${getFileName(fileId)} 选择商品（单选）`
+            });
+            if (result == null ? void 0 : result.itemIds) {
+              if (!variation.fileItemMap) {
+                variation.fileItemMap = {};
+              }
+              const selectedItemIds = result.itemIds;
+              if (selectedItemIds.length === 0) {
+                delete variation.fileItemMap[fileId];
+              } else {
+                variation.fileItemMap[fileId] = selectedItemIds[0];
+              }
+            }
+            selectingItemForFile.value = null;
+            tempSelectedItems.value = [];
+          }
+          function getFileName(fileId) {
+            const file = availableFiles.value.find((f) => f.id === fileId);
+            return file ? file.name : `File #${fileId}`;
+          }
+          function getFileItemId(variationIndex, fileId) {
+            var _a;
+            const variation = props.itemConfig.variations[variationIndex];
+            return (_a = variation.fileItemMap) == null ? void 0 : _a[fileId];
+          }
+          function getFileItemName(variationIndex, fileId) {
+            const itemId = getFileItemId(variationIndex, fileId);
+            if (!itemId) return "";
+            const node = props.itemTree.nodes[itemId];
+            if (!node) return "未知商品";
+            const itemData = node.data;
+            if (!itemData) return node.name;
+            return itemData.itemName;
+          }
+          function removeFileFromVariation(variationIndex, fileId) {
+            const variation = props.itemConfig.variations[variationIndex];
+            if (variation.fileIds) {
+              variation.fileIds = variation.fileIds.filter((id) => id !== fileId);
+            }
+            if (variation.fileItemMap) {
+              delete variation.fileItemMap[fileId];
+            }
+          }
+          function autoMatchItemsForFiles(variationIndex, fileIds) {
+            const variation = props.itemConfig.variations[variationIndex];
+            if (!variation.fileItemMap) {
+              variation.fileItemMap = {};
+            }
+            for (const fileId of fileIds) {
+              if (variation.fileItemMap[fileId]) {
+                continue;
+              }
+              const file = availableFiles.value.find((f) => f.id === fileId);
+              if (!file) continue;
+              const matchedItemId = findBestMatchItem(file.name);
+              if (matchedItemId) {
+                variation.fileItemMap[fileId] = matchedItemId;
+              }
+            }
+          }
+          function findBestMatchItem(fileName) {
+            var _a;
+            if (!fileName || !props.itemTree) return null;
+            const normalizedFileName = normalizeString(fileName);
+            let bestMatch = null;
+            for (const [nodeId, node] of Object.entries(props.itemTree.nodes)) {
+              const typedNode = node;
+              if (!((_a = typedNode.data) == null ? void 0 : _a.itemName)) continue;
+              const normalizedItemName = normalizeString(typedNode.data.itemName);
+              const score = calculateMatchScore(normalizedFileName, normalizedItemName);
+              if (score > 0 && (!bestMatch || score > bestMatch.score)) {
+                bestMatch = { itemId: nodeId, score };
+              }
+            }
+            return bestMatch && bestMatch.score >= 0.4 ? bestMatch.itemId : null;
+          }
+          function normalizeString(str) {
+            return str.toLowerCase().replace(/\.(zip|rar|7z|unitypackage)$/i, "").replace(/[_\-\s]?v?\d+[\._]\d+[\._]?\d*/gi, "").replace(/[(\[（【][^)\]）】]*[)\]）】]/g, "").replace(/[\s\-_\.]/g, "").trim();
+          }
+          function calculateMatchScore(fileName, itemName) {
+            if (!itemName || !fileName) return 0;
+            if (fileName === itemName) return 1;
+            if (fileName.startsWith(itemName)) {
+              return 0.95;
+            }
+            if (fileName.includes(itemName)) {
+              const position = fileName.indexOf(itemName);
+              const relativePosition = position / fileName.length;
+              return 0.9 - relativePosition * 0.2;
+            }
+            if (itemName.includes(fileName)) {
+              return 0.6;
+            }
+            const lcs = longestCommonSubstring(fileName, itemName);
+            if (lcs.length === 0) return 0;
+            if (lcs.length >= itemName.length * 0.8) {
+              return 0.5 + lcs.length / itemName.length * 0.3;
+            }
+            const minLen = Math.min(itemName.length, fileName.length);
+            return lcs.length / minLen * 0.5;
+          }
+          function longestCommonSubstring(str1, str2) {
+            if (!str1 || !str2) return "";
+            const m = str1.length;
+            const n = str2.length;
+            let maxLength = 0;
+            let endIndex = 0;
+            const dp = new Array(n + 1).fill(0);
+            for (let i = 1; i <= m; i++) {
+              let prev = 0;
+              for (let j = 1; j <= n; j++) {
+                const temp = dp[j];
+                if (str1[i - 1] === str2[j - 1]) {
+                  dp[j] = prev + 1;
+                  if (dp[j] > maxLength) {
+                    maxLength = dp[j];
+                    endIndex = i;
+                  }
+                } else {
+                  dp[j] = 0;
+                }
+                prev = temp;
+              }
+            }
+            return maxLength > 0 ? str1.substring(endIndex - maxLength, endIndex) : "";
+          }
+          async function applyVariations() {
+            const variations = props.itemConfig.variations;
+            const updatedVariations = /* @__PURE__ */ new Set();
+            const diff = variations.length - props.api.variations.length;
+            if (diff > 0) {
+              const startIndex = props.api.variations.length;
+              for (let i = 0; i < diff; i++) {
+                if (!await props.api.addVariation()) {
+                  toast.error("添加 Variation 失败");
+                  return;
+                }
+                updatedVariations.add(startIndex + i);
+              }
+            } else if (diff < 0) {
+              for (let i = 0; i < -diff; i++) {
+                if (!await props.api.removeVariation(props.api.variations.length - 1)) {
+                  toast.error("删除 Variation 失败");
+                  return;
+                }
+              }
+            }
+            await nextTick();
+            variations.forEach((variation, index) => {
+              props.api.updateVariation(index, {
+                name: variation.name,
+                price: variation.price.toString()
+              });
+            });
+            await nextTick();
+            await new Promise((resolve) => setTimeout(resolve, 1e3));
+            for (let i = 0; i < variations.length; i++) {
+              const variation = variations[i];
+              const fileIds = [
+                ...variation.fileIds || [],
+                ...props.itemConfig.commonFiles || []
+              ];
+              if (fileIds.length > 0) {
+                const result = await props.api.setVariationFiles(i, fileIds, "replace");
+                if (!result.success) {
+                  toast.error(`Variation ${i} 文件选择失败`);
+                  return;
+                }
+                if (result.updated) {
+                  updatedVariations.add(i);
+                }
+              }
+            }
+            await nextTick();
+            const currentCount = props.api.variations.length;
+            const targetCount = variations.length;
+            if (currentCount > targetCount) {
+              const excessCount = currentCount - targetCount;
+              for (let i = 0; i < excessCount; i++) {
+                await props.api.removeVariation(props.api.variations.length - 1);
+              }
+            }
+            const updatedCount = updatedVariations.size + Math.max(0, -diff);
+            if (updatedCount > 0) {
+              toast.success(`已应用 ${updatedCount} 个 Variations`);
+            } else {
+              toast.success("所有 Variations 已是最新");
+            }
+            emit("applied");
+          }
+          __expose({
+            applyVariations
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(unref(SectionHeader), {
+                title: `Variations (${_ctx.itemConfig.variations.length})`,
+                "no-border": ""
+              }, {
+                actions: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-ghost",
+                    type: "button",
+                    title: "从页面导入",
+                    onClick: importVariations
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).download, 14)
+                    }, null, 8, _hoisted_1$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-ghost",
+                    type: "button",
+                    title: "根据文件自动创建",
+                    onClick: autoCreateVariationsFromFiles
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).magic, 14)
+                    }, null, 8, _hoisted_2$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "添加",
+                    onClick: addVariation
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).plus, 14)
+                    }, null, 8, _hoisted_3$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "配置价格与通用文件",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showPriceModal.value = true)
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).edit, 14)
+                    }, null, 8, _hoisted_4$1)
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-primary",
+                    type: "button",
+                    title: "应用到页面",
+                    onClick: applyVariations
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).send, 14)
+                    }, null, 8, _hoisted_5$1)
+                  ])
+                ]),
+                default: withCtx(() => [
+                  _ctx.itemConfig.commonFiles && _ctx.itemConfig.commonFiles.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, [
+                    createElementVNode("div", _hoisted_7$1, [
+                      _cache[2] || (_cache[2] = createElementVNode("span", { class: "be-text-xs be-text-secondary be-font-semibold" }, "通用文件:", -1)),
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.itemConfig.commonFiles, (fileId) => {
+                        return openBlock(), createElementBlock("span", {
+                          key: fileId,
+                          class: "file-tag be-text-xs be-px-xs be-py-1",
+                          style: { "background": "var(--be-color-bg)", "border": "1px solid var(--be-color-border)", "border-radius": "4px" }
+                        }, toDisplayString(getFileName(fileId)), 1);
+                      }), 128))
+                    ])
+                  ])) : createCommentVNode("", true),
+                  _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_8$1, ' 暂无 Variations，点击"编辑价格"添加 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                    key: 2,
+                    items: _ctx.itemConfig.variations,
+                    onRemove: removeVariation,
+                    onReorder: onVariationReorder
+                  }, {
+                    actions: withCtx(({ item: variation, index }) => [
+                      createElementVNode("div", _hoisted_9$1, [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => variation.name = $event,
+                          type: "text",
+                          class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                          style: { "height": "28px" },
+                          placeholder: "Variation 名称"
+                        }, null, 8, _hoisted_10$1), [
+                          [vModelText, variation.name]
+                        ]),
+                        !hasFullset.value || variation.isFullset ? (openBlock(), createElementBlock("label", _hoisted_11$1, [
+                          createElementVNode("input", {
+                            type: "checkbox",
+                            checked: variation.isFullset,
+                            onChange: ($event) => toggleFullset(variation, index)
+                          }, null, 40, _hoisted_12$1),
+                          _cache[3] || (_cache[3] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                        ])) : createCommentVNode("", true),
+                        !variation.isFullset ? (openBlock(), createElementBlock("button", {
+                          key: 1,
+                          class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                          type: "button",
+                          title: "选择关联文件",
+                          onClick: withModifiers(($event) => selectFilesForVariation(index), ["stop", "prevent"])
+                        }, [
+                          createElementVNode("span", {
+                            innerHTML: unref(withSize)(unref(icons).folder, 14)
+                          }, null, 8, _hoisted_14$1)
+                        ], 8, _hoisted_13$1)) : createCommentVNode("", true)
+                      ])
+                    ]),
+                    content: withCtx(({ item: variation, index }) => [
+                      createElementVNode("div", _hoisted_15$1, [
+                        createElementVNode("div", _hoisted_16$1, [
+                          variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_17$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                            createElementVNode("span", _hoisted_18$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1),
+                            createElementVNode("label", _hoisted_19$1, [
+                              withDirectives(createElementVNode("input", {
+                                type: "checkbox",
+                                "onUpdate:modelValue": ($event) => variation.useCustomPrice = $event
+                              }, null, 8, _hoisted_20$1), [
+                                [vModelCheckbox, variation.useCustomPrice]
+                              ]),
+                              _cache[4] || (_cache[4] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
+                            ]),
+                            variation.useCustomPrice ? withDirectives((openBlock(), createElementBlock("input", {
+                              key: 0,
+                              "onUpdate:modelValue": ($event) => variation.customPrice = $event,
+                              type: "number",
+                              class: "be-flex-1 be-p-xs be-px-sm be-text-base",
+                              style: { "height": "28px", "min-width": "80px" },
+                              min: "0",
+                              placeholder: "价格"
+                            }, null, 8, _hoisted_21$1)), [
+                              [
+                                vModelText,
+                                variation.customPrice,
+                                void 0,
+                                { number: true }
+                              ]
+                            ]) : createCommentVNode("", true),
+                            createElementVNode("span", _hoisted_22$1, " 支持数: " + toDisplayString(getVariationSupportCount(variation)), 1)
+                          ], 64))
+                        ]),
+                        !variation.isFullset && variation.fileIds && variation.fileIds.length > 0 ? (openBlock(), createElementBlock("div", {
+                          key: 0,
+                          class: normalizeClass(["item-cards-grid", { "single-item": variation.fileIds.length === 1 }])
+                        }, [
+                          (openBlock(true), createElementBlock(Fragment, null, renderList(variation.fileIds, (fileId) => {
+                            return openBlock(), createElementBlock("div", {
+                              key: fileId,
+                              class: "item-card"
+                            }, [
+                              createElementVNode("div", _hoisted_23$1, [
+                                createElementVNode("span", _hoisted_24$1, toDisplayString(getFileName(fileId)), 1),
+                                createElementVNode("button", {
+                                  class: "item-card-delete-btn",
+                                  type: "button",
+                                  title: "取消关联",
+                                  onClick: ($event) => removeFileFromVariation(index, fileId)
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).close, 12)
+                                  }, null, 8, _hoisted_26$1)
+                                ], 8, _hoisted_25$1)
+                              ]),
+                              createElementVNode("div", _hoisted_27$1, [
+                                createElementVNode("button", {
+                                  class: normalizeClass(["item-select-btn", { "has-item": getFileItemId(index, fileId) }]),
+                                  type: "button",
+                                  onClick: ($event) => selectItemForFile(index, fileId)
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).file, 12)
+                                  }, null, 8, _hoisted_29$1),
+                                  createElementVNode("span", _hoisted_30$1, toDisplayString(getFileItemId(index, fileId) ? getFileItemName(index, fileId) : "选择商品"), 1)
+                                ], 10, _hoisted_28$1)
+                              ])
+                            ]);
+                          }), 128))
+                        ], 2)) : createCommentVNode("", true)
+                      ])
+                    ]),
+                    _: 1
+                  }, 8, ["items"]))
+                ]),
+                _: 1
+              }, 8, ["title"]),
+              createVNode(VariationConfigModal, {
+                show: showPriceModal.value,
+                "item-config": _ctx.itemConfig,
+                "global-templates": _ctx.globalTemplates,
+                "available-files": availableFiles.value,
+                onClose: _cache[1] || (_cache[1] = ($event) => showPriceModal.value = false)
+              }, null, 8, ["show", "item-config", "global-templates", "available-files"])
+            ], 64);
+          };
+        }
+      });
+      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-526d6f5f"]]);
+      const _hoisted_1 = ["innerHTML"];
+      const _hoisted_2 = { key: 0 };
+      const _hoisted_3 = { class: "form-group" };
+      const _hoisted_4 = { class: "form-group" };
+      const _hoisted_5 = {
+        key: 1,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _hoisted_6 = { class: "form-group" };
+      const _hoisted_7 = ["innerHTML"];
+      const _hoisted_8 = ["disabled"];
+      const _hoisted_9 = ["innerHTML"];
+      const _hoisted_10 = ["innerHTML"];
+      const _hoisted_11 = {
+        key: 0,
+        class: "empty-state"
+      };
+      const _hoisted_12 = ["innerHTML"];
+      const _hoisted_13 = {
+        key: 1,
+        class: "empty-state"
+      };
+      const _hoisted_14 = ["innerHTML"];
+      const _hoisted_15 = ["innerHTML"];
+      const _hoisted_16 = {
+        key: 2,
+        class: "edit-tab"
+      };
+      const _hoisted_17 = { class: "edit-tab-scrollable" };
+      const _hoisted_18 = {
+        key: 0,
+        class: "be-flex be-flex-column be-gap-sm"
+      };
+      const _hoisted_19 = { class: "be-text-base be-font-bold be-text-primary" };
+      const _hoisted_20 = { class: "be-text-base be-text-secondary be-whitespace-pre-wrap be-break-words be-m-0" };
+      const _hoisted_21 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_22 = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_23 = {
+        key: 0,
+        class: "item-select-list",
+        style: { "display": "grid", "grid-template-columns": "repeat(2, 1fr)", "gap": "8px" }
+      };
+      const _hoisted_24 = ["onClick"];
+      const _hoisted_25 = {
+        class: "be-flex be-flex-column",
+        style: { "gap": "2px" }
+      };
+      const _hoisted_26 = { class: "be-text-sm be-font-medium" };
+      const _hoisted_27 = { class: "be-text-xs be-text-secondary" };
+      const _hoisted_28 = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _hoisted_29 = ["innerHTML"];
+      const _hoisted_30 = ["innerHTML"];
+      const _hoisted_31 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_32 = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_33 = ["innerHTML"];
+      const _hoisted_34 = ["innerHTML"];
+      const _sfc_main = /* @__PURE__ */ defineComponent({
+        __name: "EditTab",
+        props: {
+          api: {}
+        },
+        setup(__props, { expose: __expose }) {
+          const { data } = useStorage();
+          const modal = useModal();
+          const modalState = computed(() => modal.state.value);
+          const isPreviewModal = computed(() => {
+            var _a;
+            const state = modalState.value;
+            return state.type === "alert" && ((_a = state.formData) == null ? void 0 : _a.sectionIndex) !== void 0;
+          });
+          const previewSectionIndex = computed(
+            () => {
+              var _a;
+              return (_a = modalState.value.formData) == null ? void 0 : _a.sectionIndex;
+            }
+          );
+          const showDescTemplateModal = ref(false);
+          const currentItemId = computed(() => {
+            const match = window.location.pathname.match(/\/items\/(\d+)\/edit/);
+            return match ? match[1] : null;
+          });
+          const currentItemConfig = computed(() => {
+            if (!currentItemId.value) return null;
+            return data.value.itemConfigs[currentItemId.value] || null;
+          });
+          const hasConfig = computed(() => currentItemConfig.value !== null);
+          const globalTemplates = computed(() => data.value.globalTemplates);
+          const totalSupport = computed(() => {
+            if (!currentItemConfig.value) return 0;
+            return calculateTotalSupport(currentItemConfig.value.variations);
+          });
+          const templateVars = computed(() => {
+            const config = currentItemConfig.value;
+            if (!config) return { itemName: "", supportCount: 0 };
+            const normalVariations = config.variations.filter((v) => !v.isFullset);
+            const firstVariation = normalVariations[0];
+            const supportCount = totalSupport.value;
+            const itemTypeName = config.itemTypeName || "Item";
+            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap)[0] : null;
+            const getItemName = (itemId) => {
+              const node = data.value.itemTree.nodes[itemId];
+              if (!node) return "未知商品";
+              const itemData = node.data;
+              if (!itemData) return node.name;
+              return itemData.itemName;
+            };
+            const firstName = (firstVariation == null ? void 0 : firstVariation.name) || firstItemId && getItemName(firstItemId) || config.itemName;
+            const smartTitle = normalVariations.length > 1 || supportCount > 1 ? `${supportCount} ${pluralize(itemTypeName, supportCount)}` : firstName;
+            return {
+              itemName: config.itemName || "",
+              supportCount,
+              itemTypeName,
+              itemTypePlural: pluralize(itemTypeName, supportCount),
+              variationCount: normalVariations.length,
+              firstName,
+              smartTitle,
+              discountIndicator: config.discount.enabled ? "[SALE] " : ""
+            };
+          });
+          const resolvedSections = computed(() => {
+            if (!currentItemConfig.value) return [];
+            const context = {
+              variations: currentItemConfig.value.variations,
+              itemTree: data.value.itemTree
+            };
+            return currentItemConfig.value.sections.map((section) => {
+              const resolved = resolveSectionContent(section, globalTemplates.value, context);
+              return {
+                headline: parseTemplate(resolved.headline, templateVars.value),
+                body: parseTemplate(resolved.body, templateVars.value)
+              };
+            });
+          });
+          const previewDescription = computed(() => {
+            var _a;
+            if (!currentItemConfig.value) return "";
+            const parts = [];
+            const descTemplate = getSelectedDescriptionTemplate(globalTemplates.value, currentItemConfig.value);
+            const templateDesc = parseTemplate(descTemplate, templateVars.value);
+            if (templateDesc) parts.push(templateDesc);
+            const customDesc = modalState.value.type === "editDescription" ? (_a = modalState.value.formData) == null ? void 0 : _a.customDescription : currentItemConfig.value.customDescription;
+            if (customDesc) {
+              parts.push(customDesc);
+            }
+            if (currentItemConfig.value.discount.enabled) {
+              const normalOriginalPrice = currentItemConfig.value.pricing.normalVariationPrice;
+              const normalDiscountedPrice = applyDiscount(
+                normalOriginalPrice,
+                currentItemConfig.value.discount
+              );
+              const fullsetOriginalPrice = currentItemConfig.value.pricing.fullsetPrice;
+              const fullsetDiscountedPrice = applyDiscount(
+                fullsetOriginalPrice,
+                currentItemConfig.value.discount
+              );
+              const formatDateTime = (isoString) => {
+                if (!isoString) return "";
+                const date = new Date(isoString);
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hour = String(date.getHours()).padStart(2, "0");
+                const minute = String(date.getMinutes()).padStart(2, "0");
+                return `${month}/${day} ${hour}:${minute}`;
+              };
+              const discountTemplate = getSelectedDiscountTemplate(globalTemplates.value, currentItemConfig.value);
+              const discountText = parseTemplate(
+                discountTemplate,
+                {
+                  ...templateVars.value,
+                  originalPrice: normalOriginalPrice,
+                  discountedPrice: normalDiscountedPrice,
+                  discountPercent: currentItemConfig.value.discount.discountPercent,
+                  fullsetOriginalPrice,
+                  fullsetDiscountedPrice,
+                  startDate: formatDateTime(currentItemConfig.value.discount.startDate),
+                  endDate: formatDateTime(currentItemConfig.value.discount.endDate)
+                }
+              );
+              parts.push(discountText);
+            }
+            return parts.join("\n\n");
+          });
+          async function handleCreateItem() {
+            var _a;
+            const result = await modal.openModal({
+              type: "createItem",
+              title: "创建商品配置",
+              formData: {
+                itemName: "",
+                itemType: "adaptation"
+              }
+            });
+            if (((_a = result == null ? void 0 : result.itemName) == null ? void 0 : _a.trim()) && currentItemId.value) {
+              const config = createDefaultItemConfig(currentItemId.value);
+              config.itemName = result.itemName.trim();
+              config.itemType = result.itemType;
+              data.value.itemConfigs[currentItemId.value] = config;
+              toast.success("已创建商品配置");
+            }
+          }
+          function handleDescriptionUpdated(description) {
+            if (currentItemId.value) {
+              data.value.itemConfigs[currentItemId.value].customDescription = description;
+            }
+          }
+          const tempSelectedItems = ref([]);
+          const tempSelectedFileIds = ref([]);
+          function toggleItemSelection(itemId) {
+            const index = tempSelectedItems.value.indexOf(itemId);
+            if (index > -1) {
+              tempSelectedItems.value.splice(index, 1);
+            } else {
+              tempSelectedItems.value.push(itemId);
+            }
+          }
+          function isItemSelected(itemId) {
+            return tempSelectedItems.value.includes(itemId);
+          }
+          watch(
+            () => {
+              if (!currentItemConfig.value) return null;
+              return {
+                pricing: currentItemConfig.value.pricing,
+                discount: currentItemConfig.value.discount
+              };
+            },
+            () => {
+              if (currentItemConfig.value) {
+                calculateVariationPrices(
+                  currentItemConfig.value.variations,
+                  currentItemConfig.value.pricing,
+                  currentItemConfig.value.discount
+                );
+              }
+            },
+            { deep: true }
+          );
+          onMounted(() => {
+            if (!currentItemId.value) {
+              toast.error("无法获取商品 ID");
+            }
+          });
+          const itemNameSectionRef = ref(null);
+          const itemDescriptionSectionRef = ref(null);
+          const sectionsListSectionRef = ref(null);
+          const tagsSectionRef = ref(null);
+          const variationsListSectionRef = ref(null);
+          async function applyAll() {
+            var _a, _b, _c, _d, _e;
+            if (!currentItemConfig.value) {
+              toast.error("没有配置数据");
+              return;
+            }
+            try {
+              await ((_a = itemNameSectionRef.value) == null ? void 0 : _a.applyName());
+              await ((_b = itemDescriptionSectionRef.value) == null ? void 0 : _b.applyDescription());
+              await ((_c = sectionsListSectionRef.value) == null ? void 0 : _c.applySections());
+              await ((_d = tagsSectionRef.value) == null ? void 0 : _d.applyTags());
+              await ((_e = variationsListSectionRef.value) == null ? void 0 : _e.applyVariations());
+              toast.success("所有配置应用完成");
+            } catch (error) {
+              console.error("应用配置失败:", error);
+              toast.error("应用配置失败");
+            }
+          }
+          __expose({
+            applyAll
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(unref(Modal), {
+                show: modalState.value.show && !isPreviewModal.value,
+                title: modalState.value.title,
+                "teleport-to": ".booth-enhancer-sidebar",
+                width: "500px",
+                onClose: unref(modal).closeModal
+              }, {
+                "header-actions": withCtx(() => [
+                  modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
+                    key: 0,
+                    class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                    type: "button",
+                    title: "模板配置",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showDescTemplateModal.value = true)
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                    }, null, 8, _hoisted_1)
+                  ])) : createCommentVNode("", true)
+                ]),
+                footer: withCtx(() => {
+                  var _a;
+                  return [
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                      type: "button",
+                      title: "取消",
+                      onClick: _cache[5] || (_cache[5] = //@ts-ignore
+                      (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).close, 18)
+                      }, null, 8, _hoisted_7)
+                    ]),
+                    modalState.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
+                      key: 0,
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      type: "button",
+                      title: "创建配置",
+                      disabled: !((_a = modalState.value.formData.itemName) == null ? void 0 : _a.trim()),
+                      onClick: _cache[6] || (_cache[6] = ($event) => unref(modal).confirmModal(modalState.value.formData))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_9)
+                    ], 8, _hoisted_8)) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
+                      key: 1,
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      type: "button",
+                      title: "保存",
+                      onClick: _cache[7] || (_cache[7] = ($event) => unref(modal).confirmModal(modalState.value.formData))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_10)
+                    ])) : createCommentVNode("", true)
+                  ];
+                }),
+                default: withCtx(() => [
+                  modalState.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_2, [
+                    _cache[17] || (_cache[17] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
+                    createElementVNode("div", _hoisted_3, [
+                      _cache[14] || (_cache[14] = createElementVNode("label", null, [
+                        createTextVNode("商品名称 "),
+                        createElementVNode("span", { class: "required" }, "*")
+                      ], -1)),
+                      withDirectives(createElementVNode("input", {
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => modalState.value.formData.itemName = $event),
+                        type: "text",
+                        placeholder: "输入商品名称",
+                        onKeyup: _cache[2] || (_cache[2] = withKeys(($event) => unref(modal).confirmModal(modalState.value.formData), ["enter"]))
+                      }, null, 544), [
+                        [vModelText, modalState.value.formData.itemName]
+                      ])
+                    ]),
+                    createElementVNode("div", _hoisted_4, [
+                      _cache[16] || (_cache[16] = createElementVNode("label", null, "商品类型", -1)),
+                      withDirectives(createElementVNode("select", {
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => modalState.value.formData.itemType = $event)
+                      }, _cache[15] || (_cache[15] = [
+                        createElementVNode("option", { value: "normal" }, "普通商品", -1),
+                        createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
+                      ]), 512), [
+                        [vModelSelect, modalState.value.formData.itemType]
+                      ])
+                    ])
+                  ])) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_5, [
+                    createElementVNode("div", _hoisted_6, [
+                      _cache[18] || (_cache[18] = createElementVNode("label", null, "自定义描述 (此商品专属)", -1)),
+                      withDirectives(createElementVNode("textarea", {
+                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => modalState.value.formData.customDescription = $event),
+                        rows: "8",
+                        placeholder: "输入此商品的特殊说明..."
+                      }, null, 512), [
+                        [vModelText, modalState.value.formData.customDescription]
+                      ])
+                    ]),
+                    createVNode(unref(PreviewBox), {
+                      label: "最终描述预览",
+                      type: "pre"
+                    }, {
+                      default: withCtx(() => [
+                        createTextVNode(toDisplayString(previewDescription.value), 1)
+                      ]),
+                      _: 1
+                    })
+                  ])) : createCommentVNode("", true)
+                ]),
+                _: 1
+              }, 8, ["show", "title", "onClose"]),
+              !currentItemId.value ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                createElementVNode("div", {
+                  class: "empty-icon",
+                  innerHTML: unref(withSize)(unref(icons).alertCircle, 48)
+                }, null, 8, _hoisted_12),
+                _cache[19] || (_cache[19] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "无法获取商品 ID", -1)),
+                _cache[20] || (_cache[20] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
+              ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_13, [
+                createElementVNode("div", {
+                  class: "empty-icon",
+                  innerHTML: unref(withSize)(unref(icons).file, 64)
+                }, null, 8, _hoisted_14),
+                _cache[22] || (_cache[22] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "未配置此商品", -1)),
+                _cache[23] || (_cache[23] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-lg booth-btn-primary",
+                  onClick: handleCreateItem
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_15),
+                  _cache[21] || (_cache[21] = createTextVNode(" 创建商品配置 ", -1))
+                ])
+              ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                createElementVNode("div", _hoisted_17, [
+                  createVNode(_sfc_main$a, {
+                    ref_key: "itemNameSectionRef",
+                    ref: itemNameSectionRef,
+                    "item-config": currentItemConfig.value,
+                    "global-templates": globalTemplates.value,
+                    "template-vars": templateVars.value,
+                    api: _ctx.api,
+                    "total-support": totalSupport.value
+                  }, null, 8, ["item-config", "global-templates", "template-vars", "api", "total-support"]),
+                  createVNode(_sfc_main$d, {
+                    ref_key: "itemDescriptionSectionRef",
+                    ref: itemDescriptionSectionRef,
+                    "item-config": currentItemConfig.value,
+                    "global-templates": globalTemplates.value,
+                    "template-vars": templateVars.value,
+                    api: _ctx.api,
+                    modal: unref(modal),
+                    "current-item-id": currentItemId.value,
+                    "on-description-updated": handleDescriptionUpdated
+                  }, null, 8, ["item-config", "global-templates", "template-vars", "api", "modal", "current-item-id"]),
+                  createVNode(SectionsListSection, {
+                    ref_key: "sectionsListSectionRef",
+                    ref: sectionsListSectionRef,
+                    "item-config": currentItemConfig.value,
+                    "global-templates": globalTemplates.value,
+                    "template-vars": templateVars.value,
+                    api: _ctx.api,
+                    modal: unref(modal),
+                    "item-tree": unref(data).itemTree
+                  }, null, 8, ["item-config", "global-templates", "template-vars", "api", "modal", "item-tree"]),
+                  createVNode(TagsSection, {
+                    ref_key: "tagsSectionRef",
+                    ref: tagsSectionRef,
+                    "item-config": currentItemConfig.value,
+                    api: _ctx.api,
+                    "item-tree": unref(data).itemTree,
+                    "tag-tree": unref(data).tagTree
+                  }, null, 8, ["item-config", "api", "item-tree", "tag-tree"]),
+                  createVNode(VariationsListSection, {
+                    ref_key: "variationsListSectionRef",
+                    ref: variationsListSectionRef,
+                    "item-config": currentItemConfig.value,
+                    "global-templates": globalTemplates.value,
+                    api: _ctx.api,
+                    modal: unref(modal),
+                    "item-tree": unref(data).itemTree
+                  }, null, 8, ["item-config", "global-templates", "api", "modal", "item-tree"])
+                ]),
+                createVNode(unref(Modal), {
+                  show: modalState.value.show && isPreviewModal.value,
+                  title: modalState.value.title,
+                  width: "500px",
+                  "teleport-to": ".booth-enhancer-sidebar",
+                  onClose: unref(modal).closeModal
+                }, {
+                  default: withCtx(() => [
+                    previewSectionIndex.value !== void 0 && resolvedSections.value[previewSectionIndex.value] ? (openBlock(), createElementBlock("div", _hoisted_18, [
+                      createElementVNode("div", _hoisted_19, toDisplayString(resolvedSections.value[previewSectionIndex.value].headline), 1),
+                      createElementVNode("pre", _hoisted_20, toDisplayString(resolvedSections.value[previewSectionIndex.value].body), 1)
+                    ])) : createCommentVNode("", true)
+                  ]),
+                  _: 1
+                }, 8, ["show", "title", "onClose"]),
+                createVNode(unref(Modal), {
+                  show: modalState.value.show && modalState.value.type === "selectItem",
+                  title: modalState.value.title,
+                  width: "500px",
+                  "teleport-to": ".booth-enhancer-sidebar",
+                  onClose: unref(modal).closeModal
+                }, {
+                  footer: withCtx(() => [
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                      type: "button",
+                      title: "取消",
+                      onClick: _cache[8] || (_cache[8] = //@ts-ignore
+                      (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).close, 18)
+                      }, null, 8, _hoisted_29)
+                    ]),
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      type: "button",
+                      title: "确认",
+                      onClick: _cache[9] || (_cache[9] = ($event) => unref(modal).confirmModal({ itemIds: tempSelectedItems.value }))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_30)
+                    ])
+                  ]),
+                  default: withCtx(() => [
+                    createElementVNode("div", _hoisted_21, [
+                      createElementVNode("p", _hoisted_22, " 点击选择/取消商品关联（已选择: " + toDisplayString(tempSelectedItems.value.length) + "） ", 1),
+                      Object.keys(unref(data).itemTree.nodes).filter((id) => unref(data).itemTree.nodes[id].data).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_23, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(Object.keys(unref(data).itemTree.nodes).filter((id) => unref(data).itemTree.nodes[id].data), (nodeId) => {
+                          var _a, _b;
+                          return openBlock(), createElementBlock("button", {
+                            key: nodeId,
+                            class: "item-select-btn booth-btn booth-btn-sm booth-btn-ghost be-text-left",
+                            type: "button",
+                            style: normalizeStyle({
+                              padding: "6px 8px",
+                              backgroundColor: isItemSelected(nodeId) ? "rgba(59, 130, 246, 0.1)" : void 0,
+                              borderColor: isItemSelected(nodeId) ? "rgba(59, 130, 246, 0.3)" : void 0
+                            }),
+                            onClick: ($event) => toggleItemSelection(nodeId)
+                          }, [
+                            createElementVNode("div", _hoisted_25, [
+                              createElementVNode("span", _hoisted_26, toDisplayString(((_a = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _a.itemName) || unref(data).itemTree.nodes[nodeId].name), 1),
+                              createElementVNode("span", _hoisted_27, toDisplayString((_b = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _b.authorName), 1)
+                            ])
+                          ], 12, _hoisted_24);
+                        }), 128))
+                      ])) : (openBlock(), createElementBlock("div", _hoisted_28, " 暂无商品数据，请先在 ItemTab 中添加 "))
+                    ])
+                  ]),
+                  _: 1
+                }, 8, ["show", "title", "onClose"]),
+                createVNode(unref(Modal), {
+                  show: modalState.value.show && modalState.value.type === "selectFile",
+                  title: modalState.value.title,
+                  width: "500px",
+                  "teleport-to": ".booth-enhancer-sidebar",
+                  onClose: unref(modal).closeModal
+                }, {
+                  footer: withCtx(() => [
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                      type: "button",
+                      title: "取消",
+                      onClick: _cache[11] || (_cache[11] = //@ts-ignore
+                      (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).close, 18)
+                      }, null, 8, _hoisted_33)
+                    ]),
+                    createElementVNode("button", {
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                      type: "button",
+                      title: "确认",
+                      onClick: _cache[12] || (_cache[12] = ($event) => unref(modal).confirmModal({ fileIds: tempSelectedFileIds.value }))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 18)
+                      }, null, 8, _hoisted_34)
+                    ])
+                  ]),
+                  default: withCtx(() => [
+                    createElementVNode("div", _hoisted_31, [
+                      createElementVNode("p", _hoisted_32, " 点击选择文件（可多选，已选择: " + toDisplayString(tempSelectedFileIds.value.length) + "） ", 1),
+                      createVNode(unref(FileSelector), {
+                        files: _ctx.api.files,
+                        "selected-file-ids": tempSelectedFileIds.value,
+                        "onUpdate:selectedFileIds": _cache[10] || (_cache[10] = ($event) => tempSelectedFileIds.value = $event)
+                      }, null, 8, ["files", "selected-file-ids"])
+                    ])
+                  ]),
+                  _: 1
+                }, 8, ["show", "title", "onClose"]),
+                createVNode(_sfc_main$e, {
+                  show: showDescTemplateModal.value,
+                  "global-templates": globalTemplates.value,
+                  onClose: _cache[13] || (_cache[13] = ($event) => showDescTemplateModal.value = false)
+                }, null, 8, ["show", "global-templates"])
+              ])) : createCommentVNode("", true)
+            ], 64);
+          };
+        }
+      });
+      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-d8a8cfef"]]));
 
-		})
-	};
+    })
+  };
 }));
 
-System.register("./useModal-CEDTPuIh-FnhElVKI.js", ['vue'], (function (exports, module) {
-	'use strict';
-	var ref;
-	return {
-		setters: [module => {
-			ref = module.ref;
-		}],
-		execute: (function () {
+System.register("./useModal-Cv530RMh-DbZQZjC8.js", ['vue'], (function (exports, module) {
+  'use strict';
+  var ref;
+  return {
+    setters: [module => {
+      ref = module.ref;
+    }],
+    execute: (function () {
 
-			exports("t", t);
+      exports("u", useModal);
 
-			function t(){const t=ref({show:false,type:"",title:"",message:"",inputValue:"",placeholder:"",targetId:"",formData:{}});let l=null;const o=e=>(t.value={show:true,type:e.type,title:e.title,message:e.message||"",inputValue:e.defaultValue||"",placeholder:e.placeholder||"",targetId:e.targetId||"",formData:e.formData||{}},new Promise(e=>{l=e;}));return {state:t,openModal:o,closeModal:()=>{t.value.show=false,l&&(l(void 0),l=null);},confirmModal:e=>{t.value.show=false,l&&(l(void 0!==e?e:t.value.inputValue),l=null);},confirm:(e,t)=>o({type:"delete",title:e,defaultValue:t||""}).then(e=>!!e)}}
+      function useModal() {
+        const state = ref({
+          show: false,
+          type: "",
+          title: "",
+          message: "",
+          inputValue: "",
+          placeholder: "",
+          targetId: "",
+          formData: {}
+        });
+        let resolvePromise = null;
+        const openModal = (options) => {
+          state.value = {
+            show: true,
+            type: options.type,
+            title: options.title,
+            message: options.message || "",
+            inputValue: options.defaultValue || "",
+            placeholder: options.placeholder || "",
+            targetId: options.targetId || "",
+            formData: options.formData || {}
+          };
+          return new Promise((resolve) => {
+            resolvePromise = resolve;
+          });
+        };
+        const closeModal = () => {
+          state.value.show = false;
+          if (resolvePromise) {
+            resolvePromise(void 0);
+            resolvePromise = null;
+          }
+        };
+        const confirmModal = (result) => {
+          state.value.show = false;
+          if (resolvePromise) {
+            resolvePromise(result !== void 0 ? result : state.value.inputValue);
+            resolvePromise = null;
+          }
+        };
+        const confirm = (title, message) => {
+          return openModal({
+            type: "delete",
+            title,
+            defaultValue: message || ""
+          }).then((result) => !!result);
+        };
+        return {
+          state,
+          openModal,
+          closeModal,
+          confirmModal,
+          confirm
+        };
+      }
 
-		})
-	};
+    })
+  };
 }));
 
 System.import("./__entry.js", "./");

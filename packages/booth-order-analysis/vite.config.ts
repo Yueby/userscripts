@@ -7,32 +7,7 @@ import monkey, { cdn } from 'vite-plugin-monkey';
 export default defineConfig({
 	build: {
 		outDir: resolve(__dirname, '../../dist'),
-		emptyOutDir: false,
-		minify: 'terser',
-		terserOptions: {
-			compress: {
-				drop_console: true,
-				drop_debugger: true,
-				pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-				passes: 3,
-				unsafe: true,
-				unsafe_arrows: true,
-				unsafe_comps: true,
-				unsafe_math: true,
-				unsafe_methods: true,
-				unsafe_proto: true,
-				unsafe_regexp: true,
-				unsafe_undefined: true
-			},
-			mangle: {
-				properties: {
-					regex: /^_/
-				}
-			},
-			format: {
-				comments: false
-			}
-		}
+		emptyOutDir: false
 	},
 	plugins: [
 		vue(),
