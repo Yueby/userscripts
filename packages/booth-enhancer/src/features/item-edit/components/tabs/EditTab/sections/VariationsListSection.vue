@@ -25,8 +25,6 @@ const emit = defineEmits<{
 // Modal 状态
 const showPriceModal = ref(false);
 const selectedVariationIndex = ref<number | null>(null);
-const tempSelectedItems = ref<string[]>([]);
-const tempSelectedFileIds = ref<string[]>([]);
 const selectingItemForFile = ref<{ variationIndex: number; fileId: string } | null>(null);
 
 // Computed
@@ -239,29 +237,29 @@ function getVariationSupportCount(variation: any): number {
 
 // 文件选择
 async function selectFilesForVariation(variationIndex: number): Promise<void> {
-  selectedVariationIndex.value = variationIndex;
   const variation = props.itemConfig.variations[variationIndex];
   
   if (availableFiles.value.length === 0) {
     toast.error('无法获取文件列表，请先上传文件');
-    selectedVariationIndex.value = null;
     return;
   }
   
-  tempSelectedFileIds.value = variation.fileIds ? [...variation.fileIds] : [];
+  selectedVariationIndex.value = variationIndex;
   
   const fileResult = await props.modal.openModal({
     type: 'selectFile',
-    title: '选择文件（可多选）'
+    title: '选择文件（可多选）',
+    formData: {
+      fileIds: variation.fileIds ?? []
+    }
   });
   
-  if (!fileResult?.fileIds) {
-    selectedVariationIndex.value = null;
-    return;
-  }
+  selectedVariationIndex.value = null;
+  
+  if (!fileResult?.fileIds) return;
   
   const selectedFileIds = fileResult.fileIds as string[];
-  const oldFileIds = variation.fileIds || [];
+  const oldFileIds = variation.fileIds ?? [];
   const newFileIds = selectedFileIds.filter(id => !oldFileIds.includes(id));
   
   variation.fileIds = selectedFileIds;
@@ -269,40 +267,38 @@ async function selectFilesForVariation(variationIndex: number): Promise<void> {
   if (newFileIds.length > 0) {
     autoMatchItemsForFiles(variationIndex, newFileIds);
   }
-  
-  selectedVariationIndex.value = null;
-  tempSelectedFileIds.value = [];
 }
 
 // 商品选择
 async function selectItemForFile(variationIndex: number, fileId: string): Promise<void> {
   const variation = props.itemConfig.variations[variationIndex];
-  
   const currentItemId = variation.fileItemMap?.[fileId];
-  tempSelectedItems.value = currentItemId ? [currentItemId] : [];
+  
   selectingItemForFile.value = { variationIndex, fileId };
   
   const result = await props.modal.openModal({
     type: 'selectItem',
-    title: `为 ${getFileName(fileId)} 选择商品（单选）`
+    title: `为 ${getFileName(fileId)} 选择商品（单选）`,
+    formData: {
+      itemIds: currentItemId ? [currentItemId] : []
+    }
   });
   
-  if (result?.itemIds) {
-    if (!variation.fileItemMap) {
-      variation.fileItemMap = {};
-    }
-    
-    const selectedItemIds = result.itemIds as string[];
-    
-    if (selectedItemIds.length === 0) {
-      delete variation.fileItemMap[fileId];
-    } else {
-      variation.fileItemMap[fileId] = selectedItemIds[0];
-    }
+  selectingItemForFile.value = null;
+  
+  if (!result?.itemIds) return;
+  
+  const selectedItemIds = result.itemIds as string[];
+  
+  if (!variation.fileItemMap) {
+    variation.fileItemMap = {};
   }
   
-  selectingItemForFile.value = null;
-  tempSelectedItems.value = [];
+  if (selectedItemIds.length === 0) {
+    delete variation.fileItemMap[fileId];
+  } else {
+    variation.fileItemMap[fileId] = selectedItemIds[0];
+  }
 }
 
 // 辅助函数
@@ -710,7 +706,7 @@ defineExpose({
                   class="item-select-btn"
                   :class="{ 'has-item': getFileItemId(index, fileId) }"
                   type="button"
-                  @click="selectItemForFile(index, fileId)"
+                  @click.stop="selectItemForFile(index, fileId)"
                 >
                   <span v-html="withSize(icons.file, 12)"></span>
                   <span class="item-select-text">

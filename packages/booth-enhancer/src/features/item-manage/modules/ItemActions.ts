@@ -1,41 +1,25 @@
 import { ItemManageAPI } from "../../../api/item-manage";
+import { ItemElement } from "../../../api/item-manage/types";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
-import { PageModule } from "../../PageModule";
-import { BatchProcessor } from "./batchProcessor";
+import { LazyLoadModule } from "./LazyLoadModule";
 
 /**
  * 商品操作功能模块
- * 提供删除商品、复制标签等操作功能
+ * 提供删除商品、复制标签等操作功能（仅在可视范围内添加）
  */
-export class ItemActions extends PageModule<ItemManageAPI> {
-    private batchProcessor?: BatchProcessor<HTMLElement>;
-
+export class ItemActions extends LazyLoadModule {
     constructor(api: ItemManageAPI) {
         super(api);
     }
 
-    protected initialize(api: ItemManageAPI): void {
-        if (!this.batchProcessor) {
-            this.batchProcessor = new BatchProcessor<HTMLElement>();
-        }
-        
-        const items = api.getItems();
-        const elements = items.map(item => item.element);
-        
-        this.batchProcessor.process(
-            elements,
-            element => this.addToItem(element),
-            20
-        );
-    }
-
     /**
-     * 为商品添加操作按钮
-     * @param item 商品元素
+     * 处理单个商品，添加操作按钮
      */
-    addToItem(item: HTMLElement): void {
+    protected processItem(itemElement: ItemElement): void {
         try {
+            const item = itemElement.element;
+            
             // 检查是否已经添加过按钮
             if (item.querySelector('.tag-copy-btn') || item.querySelector('.item-delete-btn-x')) return;
 

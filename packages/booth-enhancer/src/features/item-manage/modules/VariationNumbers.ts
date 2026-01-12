@@ -3,41 +3,24 @@ import { ItemElement } from "../../../api/item-manage/types";
 import { Config } from "../../../utils/config";
 import { handleError } from "../../../utils/error";
 import { Utils } from "../../../utils/utils";
-import { PageModule } from "../../PageModule";
-import { BatchProcessor } from "./batchProcessor";
+import { LazyLoadModule } from "./LazyLoadModule";
 
 /**
  * 变体序号功能模块
- * 为变体列表添加序号显示
+ * 为变体列表添加序号显示（仅在可视范围内）
  */
-export class VariationNumbers extends PageModule<ItemManageAPI> {
-    private batchProcessor?: BatchProcessor<ItemElement>;
-
+export class VariationNumbers extends LazyLoadModule {
     constructor(api: ItemManageAPI) {
         super(api);
     }
 
-    protected initialize(api: ItemManageAPI): void {
-        if (!this.batchProcessor) {
-            this.batchProcessor = new BatchProcessor<ItemElement>();
-        }
-        
-        const items = api.getItems();
-        this.batchProcessor.process(
-            items,
-            item => this.addToItem(item),
-            15
-        );
-    }
-
     /**
-     * 为商品添加变体序号（使用 API 数据）
-     * @param itemElement API 提供的商品元素
+     * 处理单个商品，添加变体序号
      */
-    addToItem(itemElement: ItemElement): void {
+    protected processItem(itemElement: ItemElement): void {
         try {
             const { element, variationsUl, variations } = itemElement;
-            if (!variationsUl || !variations.length) return;
+            if (!variationsUl || variations.length === 0) return;
 
             this.addNumbersToVariations(variations);
             this.setupVariationObserver(element, variationsUl, variations);

@@ -10,13 +10,13 @@ export class BatchProcessor<T> {
      * 批处理任务
      * @param items 待处理的项目列表
      * @param processor 处理单个项目的函数
-     * @param batchSize 每批处理的数量
+     * @param batchSize 每批处理的数量（增大以提高性能）
      * @param onComplete 完成回调
      */
     async process(
         items: T[],
         processor: (item: T) => void,
-        batchSize: number = 10,
+        batchSize: number = 20,
         onComplete?: (processedCount: number) => void
     ): Promise<void> {
         if (this.isProcessing) return;

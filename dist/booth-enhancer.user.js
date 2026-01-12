@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.17
+// @version            0.1.18
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -22,12 +22,12 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const a=document.createElement("style");a.textContent=e,document.head.append(a)})(` .menu-fade-enter-active[data-v-e4cdf605]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-e4cdf605]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-e4cdf605]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-e4cdf605]{opacity:0;transform:scale(.95)}.context-menu[data-v-e4cdf605]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-e4cdf605]{transition:none!important}.menu-item[data-v-e4cdf605]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-e4cdf605]:hover{background:#f3f4f6}.menu-item-danger[data-v-e4cdf605]{color:#ef4444}.menu-item-danger[data-v-e4cdf605]:hover{background:#fef2f2}.menu-item-disabled[data-v-e4cdf605]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-e4cdf605]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-e4cdf605]{color:#ef4444}.menu-icon[data-v-e4cdf605] svg{width:14px;height:14px}.menu-label[data-v-e4cdf605]{flex:1}.menu-separator[data-v-e4cdf605]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-1fc2a23e]{width:100%}.file-grid[data-v-1fc2a23e]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-1fc2a23e]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-1fc2a23e]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-1fc2a23e]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-db693591]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-db693591]{position:absolute;z-index:2000}.modal-container[data-v-db693591]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-db693591]{max-height:70%}.modal-header[data-v-db693591]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-db693591]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-db693591]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-db693591] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-db693591]{padding:8px;overflow-y:auto;flex:1;min-height:0;color:#374151}.modal-footer[data-v-db693591]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-db693591] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-db693591]{width:100%}.modal-enter-active[data-v-db693591],.modal-leave-active[data-v-db693591]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-db693591],.modal-leave-active .modal-container[data-v-db693591]{transition:transform .3s ease}.modal-enter-from[data-v-db693591],.modal-leave-to[data-v-db693591]{opacity:0}.modal-enter-from .modal-container[data-v-db693591],.modal-leave-to .modal-container[data-v-db693591]{transform:translateY(100%)}.modal-body[data-v-db693591]::-webkit-scrollbar{width:6px}.modal-body[data-v-db693591]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-db693591]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-db693591]::-webkit-scrollbar-thumb:hover{background:#999}.preview-box[data-v-f666c5ea]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-f666c5ea]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-bd8a2399]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-bd8a2399]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-bd8a2399]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-bd8a2399]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-bd8a2399]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.template-selector[data-v-08bcafdd]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-08bcafdd]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-08bcafdd]{width:100%}.tree-item[data-v-afafc707]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-afafc707]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-afafc707]{cursor:move}.tree-node-wrapper[data-v-afafc707]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-afafc707]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-afafc707]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-afafc707 1s ease-in-out infinite}@keyframes pulse-afafc707{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-afafc707]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-afafc707]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-afafc707]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-afafc707]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-afafc707]{cursor:default}.node-item[data-v-afafc707]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-afafc707]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-afafc707]{background:#bfdbfe}.tree-node-content[data-v-afafc707]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-afafc707]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-afafc707]{cursor:default}.toggle-area[data-v-afafc707]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-afafc707]:hover{opacity:.7}.toggle-area .expand-icon[data-v-afafc707]{margin-right:4px}.toggle-area .icon[data-v-afafc707]{margin-right:0}.expand-icon[data-v-afafc707]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-afafc707]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-afafc707]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-afafc707]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-afafc707] svg{width:12px;height:12px}.icon[data-v-afafc707]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-afafc707] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-afafc707]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-afafc707]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-afafc707]{opacity:.6;pointer-events:none}.node-name-input[data-v-afafc707]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-afafc707]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-afafc707]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-afafc707]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-83df827c]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-83df827c]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-83df827c]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-83df827c]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-83df827c]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-83df827c]::placeholder{color:#9ca3af}.search-results[data-v-83df827c]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-83df827c]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-83df827c]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-83df827c]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-83df827c]{position:relative;z-index:1}.empty-state[data-v-83df827c]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-6cf94b77]{display:flex;flex-direction:column;gap:6px;padding:var(--be-space-sm);background:#00000005;border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.draggable-card-list .draggable-card-list[data-v-6cf94b77]{background:transparent;border:none;padding:0}.draggable-card[data-v-6cf94b77]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:move;transition:var(--be-transition-normal)}.draggable-card[data-v-6cf94b77]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.card-actions[data-v-6cf94b77]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-6cf94b77]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center}.drag-handle[data-v-6cf94b77]:active{cursor:grabbing}.card-number[data-v-6cf94b77]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-6cf94b77]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-6cf94b77]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-2b9f00bf]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-2b9f00bf]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-2b9f00bf]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-2b9f00bf]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-2b9f00bf]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-2b9f00bf]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-2b9f00bf],.tab-slide-leave-from[data-v-2b9f00bf]{opacity:1;transform:translate(0)}.sidebar-content[data-v-2b9f00bf]>*{width:100%;height:100%}.tag-preset-tab[data-v-7a79a3ec]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-7a79a3ec]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-7a79a3ec]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-7a79a3ec]::-webkit-scrollbar{width:6px}.tree-container[data-v-7a79a3ec]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-7a79a3ec]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-7a79a3ec]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-7a79a3ec]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-7a79a3ec]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-7a79a3ec]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-7a79a3ec]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-7a79a3ec]{width:100%}.tag-badges-wrapper[data-v-7a79a3ec]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-7a79a3ec]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-7a79a3ec]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-7a79a3ec]{flex-shrink:0}.tag-delete-btn[data-v-7a79a3ec]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-7a79a3ec]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-7a79a3ec]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-7a79a3ec]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-7a79a3ec]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-7a79a3ec]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-7a79a3ec]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-2ddd1249]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-2ddd1249]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-2ddd1249]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-2ddd1249]{flex-shrink:0}.modal-message[data-v-2ddd1249]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-2ddd1249]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-2ddd1249]{font-family:Consolas,Monaco,monospace;line-height:1.5}.template-grid[data-v-b9c3c0a1]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-b9c3c0a1]{padding:8px;transition:all .15s ease}.template-item[data-v-b9c3c0a1]:hover{transform:translateY(-1px)}.empty-hint[data-v-268f4e4d]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.tag-badges-wrapper[data-v-f3247bf3]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-f3247bf3]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-f3247bf3]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-f3247bf3]{flex-shrink:0}.tag-delete-btn[data-v-f3247bf3]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-f3247bf3]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.discount-config[data-v-b1d3a0f8]{display:flex;flex-direction:column;gap:var(--be-space-sm);margin-top:var(--be-space-sm)}.empty-hint[data-v-635b7bcf]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-635b7bcf]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-635b7bcf]{grid-template-columns:1fr}.item-card[data-v-635b7bcf]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-635b7bcf]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-635b7bcf]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-delete-btn[data-v-635b7bcf]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-635b7bcf]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-content[data-v-635b7bcf]{padding:6px 8px}.item-select-btn[data-v-635b7bcf]{width:100%;display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:var(--be-radius-sm);font-size:10px;color:var(--be-color-text-secondary);cursor:pointer}.item-select-btn[data-v-635b7bcf]:hover,.item-select-btn.has-item[data-v-635b7bcf]{border-style:solid}.item-select-text[data-v-635b7bcf]{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.empty-state[data-v-4ab4361c]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-4ab4361c]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-4ab4361c]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.empty-hint[data-v-4ab4361c]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.edit-tab[data-v-4ab4361c]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-4ab4361c]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-4ab4361c]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-4ab4361c]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-4ab4361c]:hover{background:var(--be-color-bg-hover)} `);
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(` .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-43c71f00]{width:100%}.file-grid[data-v-43c71f00]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-43c71f00]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-43c71f00]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-43c71f00]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-db693591]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-db693591]{position:absolute;z-index:2000}.modal-container[data-v-db693591]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-width:500px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-db693591]{max-height:70%}.modal-header[data-v-db693591]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-db693591]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-db693591]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-db693591] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-db693591]{padding:8px;overflow-y:auto;flex:1;min-height:0;color:#374151}.modal-footer[data-v-db693591]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-db693591] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-db693591]{width:100%}.modal-enter-active[data-v-db693591],.modal-leave-active[data-v-db693591]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-db693591],.modal-leave-active .modal-container[data-v-db693591]{transition:transform .3s ease}.modal-enter-from[data-v-db693591],.modal-leave-to[data-v-db693591]{opacity:0}.modal-enter-from .modal-container[data-v-db693591],.modal-leave-to .modal-container[data-v-db693591]{transform:translateY(100%)}.modal-body[data-v-db693591]::-webkit-scrollbar{width:6px}.modal-body[data-v-db693591]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-db693591]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-db693591]::-webkit-scrollbar-thumb:hover{background:#999}.preview-box[data-v-93d09832]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-93d09832]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-5643104c]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-5643104c]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-5643104c]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-5643104c]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-5643104c]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.template-selector[data-v-08bcafdd]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-08bcafdd]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-08bcafdd]{width:100%}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-d653bc39]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-d653bc39]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-d653bc39]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-d653bc39]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-d653bc39]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-d653bc39]::placeholder{color:#9ca3af}.search-results[data-v-d653bc39]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-d653bc39]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-d653bc39]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-d653bc39]{position:relative;z-index:1}.empty-state[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-6cf94b77]{display:flex;flex-direction:column;gap:6px;padding:var(--be-space-sm);background:#00000005;border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.draggable-card-list .draggable-card-list[data-v-6cf94b77]{background:transparent;border:none;padding:0}.draggable-card[data-v-6cf94b77]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:move;transition:var(--be-transition-normal)}.draggable-card[data-v-6cf94b77]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.card-actions[data-v-6cf94b77]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-6cf94b77]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center}.drag-handle[data-v-6cf94b77]:active{cursor:grabbing}.card-number[data-v-6cf94b77]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-6cf94b77]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-6cf94b77]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-2b9f00bf]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-2b9f00bf]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-2b9f00bf]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-2b9f00bf]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-2b9f00bf]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-2b9f00bf]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-2b9f00bf],.tab-slide-leave-from[data-v-2b9f00bf]{opacity:1;transform:translate(0)}.sidebar-content[data-v-2b9f00bf]>*{width:100%;height:100%}.tag-preset-tab[data-v-1e4b60a4]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-1e4b60a4]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-1e4b60a4]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-1e4b60a4]::-webkit-scrollbar{width:6px}.tree-container[data-v-1e4b60a4]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-1e4b60a4]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-1e4b60a4]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-1e4b60a4]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-1e4b60a4]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-1e4b60a4]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-1e4b60a4]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-1e4b60a4]{width:100%}.tag-badges-wrapper[data-v-1e4b60a4]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-1e4b60a4]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-1e4b60a4]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-1e4b60a4]{flex-shrink:0}.tag-delete-btn[data-v-1e4b60a4]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-1e4b60a4]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-1e4b60a4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-1e4b60a4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-1e4b60a4]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-1e4b60a4]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-1e4b60a4]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-6c6b3856]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-6c6b3856]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-6c6b3856]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-6c6b3856]{flex-shrink:0}.modal-message[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-6c6b3856]{font-family:Consolas,Monaco,monospace;line-height:1.5}.template-grid[data-v-b9c3c0a1]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-b9c3c0a1]{padding:8px;transition:all .15s ease}.template-item[data-v-b9c3c0a1]:hover{transform:translateY(-1px)}.empty-hint[data-v-268f4e4d]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.tag-badges-wrapper[data-v-f3247bf3]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-f3247bf3]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-f3247bf3]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-f3247bf3]{flex-shrink:0}.tag-delete-btn[data-v-f3247bf3]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-f3247bf3]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.discount-config[data-v-9e5fca5f]{display:flex;flex-direction:column;gap:var(--be-space-sm);margin-top:var(--be-space-sm)}.empty-hint[data-v-e5536c7a]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-e5536c7a]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-e5536c7a]{grid-template-columns:1fr}.item-card[data-v-e5536c7a]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-e5536c7a]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-e5536c7a]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-delete-btn[data-v-e5536c7a]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-e5536c7a]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-content[data-v-e5536c7a]{padding:6px 8px}.item-select-btn[data-v-e5536c7a]{width:100%;display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:var(--be-radius-sm);font-size:10px;color:var(--be-color-text-secondary);cursor:pointer}.item-select-btn[data-v-e5536c7a]:hover,.item-select-btn.has-item[data-v-e5536c7a]{border-style:solid}.item-select-text[data-v-e5536c7a]{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.empty-state[data-v-223a6bfd]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-223a6bfd]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-223a6bfd]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.empty-hint[data-v-223a6bfd]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.edit-tab[data-v-223a6bfd]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-223a6bfd]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-223a6bfd]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-223a6bfd]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-223a6bfd]:hover{background:var(--be-color-bg-hover)} `);
 
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-G3tyXJqp.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-C5Z0k1jH.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,7 +39,7 @@ System.register("./__entry.js", ['./__monkey.entry-G3tyXJqp.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-C5Z0k1jH.js", ['vue'], (function (exports, module) {
   'use strict';
   var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
@@ -1550,7 +1550,7 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         }
         return target;
       });
-      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-e4cdf605"]]));
+      const ContextMenu = exports("a", /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-4d60a255"]]));
       const _hoisted_1$3 = ["title"];
       const _hoisted_2$3 = ["innerHTML"];
       const _sfc_main$3 = /* @__PURE__ */ defineComponent({
@@ -2649,9 +2649,9 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-LRJuqzC0-D579Kldw.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-Di9mVMmj-BbbOt570.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-BbuQCLR1-Bj53HxBV.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-eWHEmAY--D9DbTQpM.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-CO1Mtu9t-BnGyXWWY.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DS1sar7m-BN29kOl0.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -2997,8 +2997,10 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         constructor(api) {
           __publicField(this, "api");
           this.api = api;
-          this.api.onReady((api2) => {
-            this.initialize(api2);
+          this.api.onReady(() => {
+            setTimeout(() => {
+              this.initialize();
+            }, 0);
           });
         }
       }
@@ -3094,19 +3096,19 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
           }
           return this._observedContainers;
         }
-        initialize(api) {
+        initialize() {
           const containers = /* @__PURE__ */ new Set();
-          api.sections.forEach((section) => containers.add(section.container));
-          api.variations.forEach((variation) => containers.add(variation.container));
+          this.api.sections.forEach((section) => containers.add(section.container));
+          this.api.variations.forEach((variation) => containers.add(variation.container));
           containers.forEach((container) => {
             this.addNumbersToList(container);
           });
-          api.onSectionAdded((section) => {
+          this.api.onSectionAdded((section) => {
             if (!this.observedContainers.has(section.container)) {
               this.addNumbersToList(section.container);
             }
           });
-          api.onVariationAdded((variation) => {
+          this.api.onVariationAdded((variation) => {
             if (!this.observedContainers.has(variation.container)) {
               this.addNumbersToList(variation.container);
             }
@@ -3223,20 +3225,20 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         constructor(api) {
           super(api);
         }
-        initialize(api) {
-          this.waitForTagContainer(api);
+        initialize() {
+          this.waitForTagContainer();
         }
         /**
          * 等待标签容器出现
          */
-        waitForTagContainer(api) {
-          const tagElements = api.tagElements;
+        waitForTagContainer() {
+          const tagElements = this.api.tagElements;
           if (tagElements) {
             this.addTagButtons(tagElements.inputContainer);
             return;
           }
           const observer = new MutationObserver(() => {
-            const elements = api.tagElements;
+            const elements = this.api.tagElements;
             if (elements) {
               this.addTagButtons(elements.inputContainer);
               observer.disconnect();
@@ -3616,31 +3618,34 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
           return match ? match[1] : "";
         }
         /**
+         * 从文本中提取数字
+         */
+        extractNumber(text) {
+          return parseInt(text.replace(/[^\d]/g, ""), 10) || 0;
+        }
+        /**
          * 解析变体列表（数据+元素）
          */
         parseVariations(element) {
-          const variations = [];
           const rows = element.querySelectorAll(".dashboard-items-variation .row");
+          if (rows.length === 0) return [];
+          const variations = [];
           rows.forEach((row) => {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e, _f;
+            const htmlRow = row;
             const labelEl = row.querySelector(".dashboard-items-variation-label");
-            let name = "";
-            if (labelEl) {
-              const textContent = labelEl.textContent || "";
-              const match = textContent.match(/#\d+\s*(.+)/);
-              name = match ? match[1].trim() : textContent.trim();
-            }
-            const priceEl = row.querySelector(".price");
-            const priceText = ((_a = priceEl == null ? void 0 : priceEl.textContent) == null ? void 0 : _a.trim()) || "0";
-            const price = parseInt(priceText.replace(/[^\d]/g, ""), 10) || 0;
-            const salesText = ((_c = (_b = row.querySelector(".sales_quantity .count")) == null ? void 0 : _b.textContent) == null ? void 0 : _c.trim()) || "0";
-            const salesCount = parseInt(salesText, 10) || 0;
-            const revenueEl = row.querySelector(".sales_subtotal");
-            const revenueText = ((_d = revenueEl == null ? void 0 : revenueEl.textContent) == null ? void 0 : _d.trim()) || "0";
-            const revenue = parseInt(revenueText.replace(/[^\d]/g, ""), 10) || 0;
+            const textContent = (labelEl == null ? void 0 : labelEl.textContent) || "";
+            const nameMatch = textContent.match(/#\d+\s*(.+)/);
+            const name = nameMatch ? nameMatch[1].trim() : textContent.trim();
+            const priceText = ((_b = (_a = row.querySelector(".price")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "0";
+            const price = this.extractNumber(priceText);
+            const salesText = ((_d = (_c = row.querySelector(".sales_quantity .count")) == null ? void 0 : _c.textContent) == null ? void 0 : _d.trim()) || "0";
+            const salesCount = this.extractNumber(salesText);
+            const revenueText = ((_f = (_e = row.querySelector(".sales_subtotal")) == null ? void 0 : _e.textContent) == null ? void 0 : _f.trim()) || "0";
+            const revenue = this.extractNumber(revenueText);
             variations.push({
               data: { name, price, salesCount, revenue },
-              element: row
+              element: htmlRow
             });
           });
           return variations;
@@ -3649,12 +3654,12 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
          * 解析标签列表（文本+元素）
          */
         parseTags(element) {
-          const tags = [];
           const tagElements = element.querySelectorAll(".dashboard-items-tags li");
+          if (tagElements.length === 0) return [];
+          const tags = [];
           tagElements.forEach((li) => {
-            var _a;
-            const textEl = li.querySelector(".tag-text");
-            const text = (_a = textEl == null ? void 0 : textEl.textContent) == null ? void 0 : _a.trim();
+            var _a, _b;
+            const text = (_b = (_a = li.querySelector(".tag-text")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim();
             if (text) {
               tags.push({
                 text,
@@ -3665,9 +3670,9 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
           return tags;
         }
         /**
-         * 解析单个商品（只返回数据）
+         * 解析单个商品的基础信息（不包含 variations 和 tags 详细数据）
          */
-        parseItem(element) {
+        parseItemBasic(element) {
           var _a, _b, _c, _d;
           try {
             const id = this.extractId(element);
@@ -3675,8 +3680,6 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
             const name = ((_b = (_a = element.querySelector(".nav")) == null ? void 0 : _a.textContent) == null ? void 0 : _b.trim()) || "";
             const url = ((_c = element.querySelector(".nav")) == null ? void 0 : _c.getAttribute("href")) || "";
             const thumbnail = ((_d = element.querySelector(".thumbnail img")) == null ? void 0 : _d.src) || "";
-            const tags = this.parseTags(element).map((t) => t.text);
-            const variations = this.parseVariations(element).map((v) => v.data);
             const favElement = element.querySelector(".item-stat.favs .count");
             const favoritesCount = favElement ? parseInt(favElement.textContent || "0", 10) || 0 : 0;
             return {
@@ -3684,14 +3687,93 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
               name,
               url,
               thumbnail,
-              tags,
-              variations,
               favoritesCount
             };
           } catch (error) {
-            console.error("解析商品失败:", error);
+            console.error("解析商品基础信息失败:", error);
             return null;
           }
+        }
+        /**
+         * 解析单个商品（完整数据）
+         */
+        parseItem(element) {
+          const basic = this.parseItemBasic(element);
+          if (!basic) return null;
+          try {
+            const tags = this.parseTags(element).map((t) => t.text);
+            const variations = this.parseVariations(element).map((v) => v.data);
+            return {
+              ...basic,
+              tags,
+              variations
+            };
+          } catch (error) {
+            console.error("解析商品完整数据失败:", error);
+            return null;
+          }
+        }
+      }
+      class ProgressiveParser {
+        constructor(parser) {
+          __publicField(this, "parsed", /* @__PURE__ */ new WeakSet());
+          // 已解析标记
+          __publicField(this, "parser");
+          this.parser = parser;
+        }
+        /**
+         * 检查元素是否已解析
+         */
+        isParsed(element) {
+          return this.parsed.has(element);
+        }
+        /**
+         * 按需解析单个商品的完整数据
+         * 返回解析后的数据结构（不修改原对象）
+         */
+        parseItem(element) {
+          if (this.parsed.has(element)) return null;
+          const itemData = this.parser.parseItem(element);
+          if (!itemData) return null;
+          this.parsed.add(element);
+          return {
+            data: itemData,
+            variations: this.parser.parseVariations(element),
+            tags: this.parser.parseTags(element)
+          };
+        }
+        /**
+         * 仅解析基础信息（不包含 variations 和 tags）
+         * 用于快速初始化
+         */
+        parseBasicInfo(element) {
+          const basicData = this.parser.parseItemBasic(element);
+          if (!basicData) {
+            return null;
+          }
+          return {
+            ...basicData,
+            tags: [],
+            variations: []
+          };
+        }
+        /**
+         * 按需解析 variations（懒加载）
+         */
+        parseVariations(element) {
+          return this.parser.parseVariations(element);
+        }
+        /**
+         * 按需解析 tags（懒加载）
+         */
+        parseTags(element) {
+          return this.parser.parseTags(element);
+        }
+        /**
+         * 重置解析状态（用于调试或重新加载）
+         */
+        reset() {
+          this.parsed = /* @__PURE__ */ new WeakSet();
         }
       }
       class ItemManageAPI extends BaseAPI {
@@ -3699,6 +3781,7 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
           super();
           __publicField(this, "_items", []);
           __publicField(this, "_parser");
+          __publicField(this, "_progressiveParser");
           this._parser = new ItemManageParser();
         }
         /**
@@ -3714,21 +3797,22 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
          */
         waitForElements(timeout = 5e3) {
           return new Promise((resolve, reject) => {
-            if (document.querySelector(".item-wrapper")) {
+            const selector = ".item-wrapper";
+            if (document.querySelector(selector)) {
               resolve();
               return;
             }
-            const timer = setTimeout(() => {
-              observer.disconnect();
-              reject(new Error("等待商品元素超时"));
-            }, timeout);
             const observer = new MutationObserver(() => {
-              if (document.querySelector(".item-wrapper")) {
+              if (document.querySelector(selector)) {
                 clearTimeout(timer);
                 observer.disconnect();
                 resolve();
               }
             });
+            const timer = setTimeout(() => {
+              observer.disconnect();
+              reject(new Error("等待商品元素超时"));
+            }, timeout);
             observer.observe(document.body, {
               childList: true,
               subtree: true
@@ -3737,30 +3821,33 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         }
         /**
          * 加载商品数据
-         * 等待商品元素出现后再加载
+         * ⚡ 性能优化：只收集元素引用，不解析数据
          */
         async load() {
           await this.waitForElements();
-          this._items = [];
           const elements = document.querySelectorAll(".item-wrapper");
-          elements.forEach((element) => {
-            const htmlElement = element;
-            const data = this._parser.parseItem(element);
-            if (data) {
-              const variationsUl = htmlElement.querySelector(".dashboard-items-variation");
-              const tagsUl = htmlElement.querySelector(".dashboard-items-tags");
-              const variations = this._parser.parseVariations(htmlElement);
-              const tags = this._parser.parseTags(htmlElement);
-              this._items.push({
-                data,
-                element: htmlElement,
-                variationsUl,
-                tagsUl,
-                variations,
-                tags
-              });
-            }
-          });
+          this._items = Array.from(elements).map((element) => ({
+            element,
+            data: null,
+            // 延迟解析
+            variations: [],
+            tags: [],
+            variationsUl: element.querySelector(".dashboard-items-variation"),
+            tagsUl: element.querySelector(".dashboard-items-tags")
+          }));
+          this._progressiveParser = new ProgressiveParser(this._parser);
+        }
+        /**
+         * 按需解析商品数据
+         * 在元素进入可视范围时调用
+         */
+        parseItemData(item) {
+          if (!this._progressiveParser || item.data) return;
+          const parsed = this._progressiveParser.parseItem(item.element);
+          if (!parsed) return;
+          item.data = parsed.data;
+          item.variations = parsed.variations;
+          item.tags = parsed.tags;
         }
         /**
          * 获取所有商品（包含数据和DOM元素）
@@ -3770,29 +3857,40 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         }
         /**
          * 获取所有商品数据（只返回数据，不含DOM元素）
+         * 注意：未解析的商品数据为 null
          */
         getItemsData() {
           return this._items.map((item) => item.data);
         }
         /**
          * 根据ID获取商品（包含数据和DOM元素）
+         * 注意：需要先解析数据才能按ID查找
          */
         getItem(id) {
-          return this._items.find((item) => item.data.id === id);
+          return this._items.find((item) => {
+            var _a;
+            return ((_a = item.data) == null ? void 0 : _a.id) === id;
+          });
         }
         /**
          * 根据ID获取商品数据（只返回数据）
          */
         getItemData(id) {
           var _a;
-          return (_a = this._items.find((item) => item.data.id === id)) == null ? void 0 : _a.data;
+          return (_a = this._items.find((item) => {
+            var _a2;
+            return ((_a2 = item.data) == null ? void 0 : _a2.id) === id;
+          })) == null ? void 0 : _a.data;
         }
         /**
          * 根据ID获取DOM元素
          */
         getItemElement(id) {
           var _a;
-          return (_a = this._items.find((item) => item.data.id === id)) == null ? void 0 : _a.element;
+          return (_a = this._items.find((item) => {
+            var _a2;
+            return ((_a2 = item.data) == null ? void 0 : _a2.id) === id;
+          })) == null ? void 0 : _a.element;
         }
         /**
          * 刷新数据（重新解析DOM）
@@ -3802,22 +3900,19 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
         }
         /**
          * 复制商品标签到剪贴板
-         * @param itemId 商品ID
-         * @returns 是否复制成功
          */
         async copyItemTags(itemId) {
           const item = this.getItem(itemId);
-          if (!item) {
-            console.error(`未找到商品: ${itemId}`);
+          if (!(item == null ? void 0 : item.data)) {
+            console.error(`未找到商品或数据未解析: ${itemId}`);
             return false;
           }
-          const tags = item.data.tags;
-          if (tags.length === 0) {
+          if (item.data.tags.length === 0) {
             alert("没有找到标签");
             return false;
           }
           try {
-            await navigator.clipboard.writeText(JSON.stringify(tags));
+            await navigator.clipboard.writeText(JSON.stringify(item.data.tags));
             return true;
           } catch (error) {
             console.error("复制标签失败:", error);
@@ -3825,66 +3920,134 @@ System.register("./__monkey.entry-G3tyXJqp.js", ['vue'], (function (exports, mod
           }
         }
       }
-      class BatchProcessor {
-        constructor() {
-          __publicField(this, "queue", []);
-          __publicField(this, "isProcessing", false);
+      class LazyLoadManager {
+        constructor(items, api, options = {
+          root: null,
+          rootMargin: "200px",
+          // 提前加载，但不要太激进
+          threshold: 0.01
+        }) {
+          __publicField(this, "observer");
+          __publicField(this, "itemMap", /* @__PURE__ */ new WeakMap());
+          __publicField(this, "handlers", /* @__PURE__ */ new Map());
+          __publicField(this, "processedMap", /* @__PURE__ */ new Map());
+          __publicField(this, "pendingItems", []);
+          __publicField(this, "rafId", null);
+          __publicField(this, "api");
+          this.api = api;
+          items.forEach((item) => {
+            this.itemMap.set(item.element, item);
+          });
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const element = entry.target;
+                const item = this.itemMap.get(element);
+                if (item) {
+                  this.pendingItems.push(item);
+                }
+              }
+            });
+            if (this.pendingItems.length > 0 && !this.rafId) {
+              this.rafId = requestAnimationFrame(() => this.processPendingItems());
+            }
+          }, options);
+          items.forEach((item) => {
+            this.observer.observe(item.element);
+          });
         }
         /**
-         * 批处理任务
-         * @param items 待处理的项目列表
-         * @param processor 处理单个项目的函数
-         * @param batchSize 每批处理的数量
-         * @param onComplete 完成回调
+         * 批量处理待处理的元素
          */
-        async process(items, processor, batchSize = 10, onComplete) {
-          if (this.isProcessing) return;
-          this.isProcessing = true;
-          this.queue = [...items];
-          let processedCount = 0;
-          const processBatch = () => {
-            const batch = this.queue.splice(0, batchSize);
-            batch.forEach((item) => {
-              processor(item);
-              processedCount++;
-            });
-            if (this.queue.length > 0) {
-              if ("requestIdleCallback" in window) {
-                requestIdleCallback(processBatch, { timeout: 1e3 });
-              } else {
-                setTimeout(processBatch, 16);
-              }
-            } else {
-              this.isProcessing = false;
-              onComplete == null ? void 0 : onComplete(processedCount);
+        processPendingItems() {
+          const items = this.pendingItems.splice(0);
+          this.rafId = null;
+          items.forEach((item) => {
+            if (!item.data) {
+              this.api.parseItemData(item);
             }
-          };
-          processBatch();
+            if (!item.data) return;
+            this.handlers.forEach((handler, handlerId) => {
+              const processedSet = this.processedMap.get(handlerId);
+              if (!processedSet || processedSet.has(item.element)) return;
+              handler(item);
+              processedSet.add(item.element);
+            });
+          });
+        }
+        /**
+         * 注册处理器
+         * @param id 处理器唯一标识
+         * @param handler 处理函数
+         */
+        registerHandler(id, handler) {
+          this.handlers.set(id, handler);
+          this.processedMap.set(id, /* @__PURE__ */ new WeakSet());
+        }
+        /**
+         * 注销处理器
+         */
+        unregisterHandler(id) {
+          this.handlers.delete(id);
+          this.processedMap.delete(id);
+        }
+        /**
+         * 清理观察器
+         */
+        destroy() {
+          if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+          }
+          this.observer.disconnect();
+          this.handlers.clear();
+          this.processedMap.clear();
+          this.itemMap = /* @__PURE__ */ new WeakMap();
+          this.pendingItems = [];
+          this.rafId = null;
         }
       }
-      class ItemActions extends PageModule {
+      class LazyLoadModule extends PageModule {
         constructor(api) {
           super(api);
-          __publicField(this, "batchProcessor");
+          __publicField(this, "lazyLoadManager");
+          __publicField(this, "handlerId");
+          this.handlerId = this.constructor.name;
         }
-        initialize(api) {
-          if (!this.batchProcessor) {
-            this.batchProcessor = new BatchProcessor();
-          }
-          const items = api.getItems();
-          const elements = items.map((item) => item.element);
-          this.batchProcessor.process(
-            elements,
-            (element) => this.addToItem(element),
-            20
+        /**
+         * PageModule 的 initialize 在这里不做任何事
+         * 懒加载模块使用独立的生命周期
+         */
+        initialize() {
+        }
+        /**
+         * 当 LazyLoadManager 准备好时调用
+         */
+        onLazyLoadReady(manager) {
+          this.lazyLoadManager = manager;
+          manager.registerHandler(
+            this.handlerId,
+            (item) => this.processItem(item)
           );
         }
         /**
-         * 为商品添加操作按钮
-         * @param item 商品元素
+         * 清理
          */
-        addToItem(item) {
+        destroy() {
+          if (this.lazyLoadManager) {
+            this.lazyLoadManager.unregisterHandler(this.handlerId);
+          }
+        }
+      }
+      class ItemActions extends LazyLoadModule {
+        constructor(api) {
+          super(api);
+        }
+        /**
+         * 处理单个商品，添加操作按钮
+         */
+        processItem(itemElement) {
           try {
+            const item = itemElement.element;
             if (item.querySelector(".tag-copy-btn") || item.querySelector(".item-delete-btn-x")) return;
             this.addDeleteButton(item);
             this.addCopyTagsButton(item);
@@ -4027,116 +4190,118 @@ ${errorText}`);
           }
         }
       }
-      class ItemCollapse extends PageModule {
+      class ItemCollapse extends LazyLoadModule {
+        // 缓存标签 header
         constructor(api) {
           super(api);
-          __publicField(this, "_processedItems");
           __publicField(this, "stylesInjected", false);
-          __publicField(this, "batchProcessor");
-        }
-        get processedItems() {
-          if (!this._processedItems) {
-            this._processedItems = /* @__PURE__ */ new Set();
-          }
-          return this._processedItems;
-        }
-        initialize(api) {
-          if (!this.batchProcessor) {
-            this.batchProcessor = new BatchProcessor();
-          }
-          this.injectStyles();
-          const items = api.getItems();
-          this.batchProcessor.process(
-            items,
-            (item) => this.addToItem(item),
-            10
-          );
+          __publicField(this, "eventDelegateSetup", false);
+          __publicField(this, "tagHeaderCache", null);
         }
         /**
-         * 为商品添加折叠功能
-         * @param itemElement API 提供的商品元素
+         * 快速千分位格式化（比 toLocaleString 快 10 倍）
          */
-        addToItem(itemElement) {
-          var _a, _b;
+        static formatNumber(num) {
+          if (num < 1e3) return num.toString();
+          const str = num.toString();
+          const len = str.length;
+          const mod = len % 3;
+          let result = mod > 0 ? str.slice(0, mod) : "";
+          for (let i = mod; i < len; i += 3) {
+            if (result) result += ",";
+            result += str.slice(i, i + 3);
+          }
+          return result;
+        }
+        initialize() {
+          this.injectStyles();
+          this.setupEventDelegate();
+          super.initialize();
+        }
+        /**
+         * 使用事件委托代替每个 header 的独立事件监听器
+         */
+        setupEventDelegate() {
+          if (this.eventDelegateSetup) return;
+          this.eventDelegateSetup = true;
+          document.addEventListener("click", (e) => {
+            var _a;
+            const target = e.target;
+            const header = target.closest(".item-collapse-header");
+            if (!header) return;
+            const targetElement = header.nextElementSibling;
+            if (!targetElement) return;
+            const icon = (_a = header.firstElementChild) == null ? void 0 : _a.firstElementChild;
+            if (icon) {
+              const isCollapsed = targetElement.classList.contains("collapsed");
+              targetElement.classList.toggle("collapsed", !isCollapsed);
+              icon.classList.toggle("collapsed", !isCollapsed);
+            }
+          }, { passive: true });
+        }
+        /**
+         * 处理单个商品，添加折叠功能
+         */
+        processItem(itemElement) {
+          var _a, _b, _c, _d;
           try {
-            const { element, variationsUl, tagsUl, variations } = itemElement;
-            if (this.processedItems.has(element)) return;
-            this.processedItems.add(element);
-            const headers = [];
+            const { variationsUl, tagsUl, variations } = itemElement;
             if (variationsUl && variations.length > 0 && !((_a = variationsUl.previousElementSibling) == null ? void 0 : _a.classList.contains("item-collapse-header"))) {
               const header = this.createVariationHeader(itemElement);
-              headers.push({ header, target: variationsUl });
+              (_b = variationsUl.parentElement) == null ? void 0 : _b.insertBefore(header, variationsUl);
+              variationsUl.classList.add("item-collapsible", "collapsed");
             }
-            if (tagsUl && itemElement.tags.length > 0 && !((_b = tagsUl.previousElementSibling) == null ? void 0 : _b.classList.contains("item-collapse-header"))) {
-              const header = this.createTagHeader(tagsUl);
-              headers.push({ header, target: tagsUl });
+            if (tagsUl && itemElement.tags.length > 0 && !((_c = tagsUl.previousElementSibling) == null ? void 0 : _c.classList.contains("item-collapse-header"))) {
+              const header = this.createTagHeader();
+              (_d = tagsUl.parentElement) == null ? void 0 : _d.insertBefore(header, tagsUl);
+              tagsUl.classList.add("item-collapsible", "collapsed");
             }
-            headers.forEach(({ header, target }) => {
-              var _a2;
-              (_a2 = target.parentElement) == null ? void 0 : _a2.insertBefore(header, target);
-              target.classList.add("item-collapsible", "collapsed");
-            });
           } catch (error) {
             handleError(error);
           }
         }
         /**
-         * 设置折叠功能
-         */
-        setupCollapseToggle(header, target) {
-          const icon = header.querySelector(".item-collapse-icon");
-          let isCollapsed = true;
-          header.onclick = () => {
-            isCollapsed = !isCollapsed;
-            target.classList.toggle("collapsed", isCollapsed);
-            icon.classList.toggle("collapsed", isCollapsed);
-          };
-        }
-        /**
-         * 创建基础折叠标题
+         * 创建基础折叠标题（使用 innerHTML 减少 DOM 操作）
          */
         createBaseHeader(title, badgesHTML) {
           const header = document.createElement("div");
           header.className = "item-collapse-header";
-          const titleSection = document.createElement("div");
-          titleSection.className = "item-collapse-title";
-          titleSection.innerHTML = `
-            <span class="item-collapse-icon collapsed">▼</span>
-            <span>${title}</span>
+          header.innerHTML = `
+            <div class="item-collapse-title">
+                <span class="item-collapse-icon collapsed">▼</span>
+                <span>${title}</span>
+            </div>
+            ${badgesHTML ? `<div class="item-collapse-badges">${badgesHTML}</div>` : ""}
         `;
-          header.appendChild(titleSection);
-          if (badgesHTML) {
-            const badgesContainer = document.createElement("div");
-            badgesContainer.className = "item-collapse-badges";
-            badgesContainer.innerHTML = badgesHTML;
-            header.appendChild(badgesContainer);
-          }
           return header;
         }
         /**
-         * 创建变体列表折叠标题（使用 API 数据）
+         * 创建变体列表折叠标题（优化统计计算）
          */
         createVariationHeader(itemElement) {
-          const { variations, variationsUl } = itemElement;
+          const { variations } = itemElement;
+          let totalSales = 0;
+          let totalRevenue = 0;
           const count = variations.length;
-          const totalSales = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
-          const totalRevenue = variations.reduce((sum, v) => sum + v.data.revenue, 0);
+          for (let i = 0; i < count; i++) {
+            totalSales += variations[i].data.salesCount;
+            totalRevenue += variations[i].data.revenue;
+          }
           const badgesHTML = `
             <span class="item-badge item-badge-count">变体: <strong>${count}</strong></span>
             <span class="item-badge item-badge-sales">销量: <strong>${totalSales}</strong></span>
-            <span class="item-badge item-badge-revenue">收益: <strong>${totalRevenue.toLocaleString()}</strong></span>
+            <span class="item-badge item-badge-revenue">收益: <strong>${ItemCollapse.formatNumber(totalRevenue)}</strong></span>
         `;
-          const header = this.createBaseHeader("变体列表", badgesHTML);
-          this.setupCollapseToggle(header, variationsUl);
-          return header;
+          return this.createBaseHeader("变体列表", badgesHTML);
         }
         /**
-         * 创建标签列表折叠标题
+         * 创建标签列表折叠标题（使用缓存）
          */
-        createTagHeader(tagsUl) {
-          const header = this.createBaseHeader("标签列表");
-          this.setupCollapseToggle(header, tagsUl);
-          return header;
+        createTagHeader() {
+          if (!this.tagHeaderCache) {
+            this.tagHeaderCache = this.createBaseHeader("标签列表");
+          }
+          return this.tagHeaderCache.cloneNode(true);
         }
         /**
          * 注入样式表
@@ -4151,42 +4316,28 @@ ${errorText}`);
           style.textContent = `
             /* 折叠图标样式 */
             .item-collapse-icon {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
                 width: 16px;
                 height: 16px;
                 margin-right: 6px;
                 font-size: 10px;
                 color: #666;
                 flex-shrink: 0;
-                transition: transform 0.2s ease;
             }
 
             .item-collapse-icon.collapsed {
                 transform: rotate(-90deg);
             }
 
-            /* 折叠容器样式 - 使用 GPU 加速属性 */
+            /* 折叠容器样式 - 无动画，直接隐藏 */
             .item-collapsible {
-                overflow: hidden;
-                max-height: 5000px;
-                will-change: max-height, opacity; /* 提示浏览器优化 */
                 contain: layout style paint; /* 限制重排范围 */
             }
 
             .item-collapsible.collapsed {
-                max-height: 0 !important;
-                opacity: 0;
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-                /* 使用 transform 代替部分属性，GPU 加速 */
-                transform: translateZ(0);
+                display: none !important;
             }
 
-            /* 折叠标题容器 */
+            /* 折叠标题容器 - 无动画 */
             .item-collapse-header {
                 display: flex;
                 align-items: center;
@@ -4199,12 +4350,14 @@ ${errorText}`);
                 user-select: none;
                 border-bottom: 1px solid #e0e0e0;
                 cursor: pointer;
-                transition: background-color 0.2s ease;
                 gap: 12px;
+                contain: layout style paint;
             }
             
-            .item-collapse-header:hover {
-                background-color: #f5f5f5;
+            @media (hover: hover) {
+                .item-collapse-header:hover {
+                    background-color: #f5f5f5;
+                }
             }
             
             .item-collapse-header:first-of-type {
@@ -4230,11 +4383,8 @@ ${errorText}`);
 
             /* Badge 基础样式 */
             .item-badge {
-                display: inline-flex;
-                align-items: center;
                 padding: 4px 10px;
                 font-size: 11px;
-                font-weight: 400;
                 border-radius: 12px;
                 white-space: nowrap;
             }
@@ -4265,6 +4415,7 @@ ${errorText}`);
         }
       }
       class ItemNavigation extends PageModule {
+        // 过滤后的商品列表
         constructor(api) {
           super(api);
           __publicField(this, "navigationContainer", null);
@@ -4272,33 +4423,237 @@ ${errorText}`);
           __publicField(this, "items", []);
           __publicField(this, "isExpanded", false);
           __publicField(this, "searchInput", null);
-          __publicField(this, "filteredItems", []);
           __publicField(this, "isScrolling", false);
           __publicField(this, "scrollTimeout", null);
           __publicField(this, "hoverTimeout", null);
-        }
-        initialize(api) {
-          this.injectStyles();
-          setTimeout(() => {
-            this.items = this.api.getItems();
-            this.createNavigation();
-          }, 1e3);
+          // 虚拟列表相关
+          __publicField(this, "virtualScrollContainer", null);
+          __publicField(this, "virtualContentWrapper", null);
+          __publicField(this, "itemHeight", 60);
+          // 每个导航项的高度
+          __publicField(this, "bufferSize", 5);
+          // 上下缓冲区的元素数量
+          __publicField(this, "visibleRange", { start: 0, end: 0 });
+          __publicField(this, "renderedItems", /* @__PURE__ */ new Map());
+          // 已渲染的元素缓存
+          __publicField(this, "filteredItems", []);
         }
         /**
-         * 创建商品导航栏
+         * 初始化：立即创建导航栏框架，然后异步解析数据
          */
-        createNavigation() {
-          try {
-            if (document.querySelector(".item-navigation")) return;
-            if (this.items.length === 0) return;
-            this.injectStyles();
-            this.createToggleButton();
-            this.createNavigationContainer();
-            this.createNavigationItems();
-            this.setupScrollListener();
-          } catch (error) {
-            handleError(error);
+        initialize() {
+          if (document.querySelector(".item-navigation")) {
+            return;
           }
+          this.injectStyles();
+          this.items = this.api.getItems();
+          if (this.items.length === 0) return;
+          this.createToggleButton();
+          this.createNavigationContainer();
+          this.setupScrollListener();
+          setTimeout(() => {
+            this.showLoadingState();
+          }, 0);
+          this.parseAndPopulateItems();
+        }
+        /**
+         * 分批解析商品数据并填充导航栏
+         */
+        async parseAndPopulateItems() {
+          const batchSize = 20;
+          for (let i = 0; i < this.items.length; i += batchSize) {
+            const batch = this.items.slice(i, i + batchSize);
+            batch.forEach((item) => {
+              if (!item.data) {
+                this.api.parseItemData(item);
+              }
+            });
+            if (i + batchSize < this.items.length) {
+              await new Promise((resolve) => setTimeout(resolve, 0));
+            }
+          }
+          this.hideLoadingState();
+          this.createNavigationItems();
+        }
+        /**
+         * 显示加载状态
+         */
+        showLoadingState() {
+          var _a;
+          const container = (_a = this.navigationContainer) == null ? void 0 : _a.querySelector(".navigation-items-container");
+          if (!container) return;
+          const loadingState = document.createElement("div");
+          loadingState.className = "navigation-loading-state";
+          loadingState.style.cssText = `
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 14px;
+        `;
+          loadingState.innerHTML = `
+            <div style="margin-bottom: 8px;">正在加载商品...</div>
+            <div style="font-size: 12px; color: #999;">0 / ${this.items.length}</div>
+        `;
+          container.appendChild(loadingState);
+        }
+        /**
+         * 隐藏加载状态
+         */
+        hideLoadingState() {
+          var _a;
+          const container = (_a = this.navigationContainer) == null ? void 0 : _a.querySelector(".navigation-items-container");
+          if (!container) return;
+          const loadingState = container.querySelector(".navigation-loading-state");
+          loadingState == null ? void 0 : loadingState.remove();
+        }
+        /**
+         * 创建虚拟列表容器
+         */
+        createNavigationItems() {
+          if (!this.navigationContainer) return;
+          const itemsContainer = this.navigationContainer.querySelector(".navigation-items-container");
+          if (!itemsContainer) return;
+          itemsContainer.innerHTML = "";
+          if (this.items.length === 0) {
+            const emptyState = document.createElement("div");
+            emptyState.className = "navigation-empty-state";
+            emptyState.textContent = "暂无商品";
+            itemsContainer.appendChild(emptyState);
+            return;
+          }
+          this.virtualScrollContainer = itemsContainer;
+          this.virtualScrollContainer.style.cssText = `
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+        `;
+          this.virtualContentWrapper = document.createElement("div");
+          this.virtualContentWrapper.style.cssText = `
+            position: relative;
+            height: ${this.items.length * this.itemHeight}px;
+        `;
+          this.virtualScrollContainer.appendChild(this.virtualContentWrapper);
+          this.filteredItems = this.items;
+          this.setupVirtualScroll();
+          this.updateVisibleItems();
+        }
+        /**
+         * 设置虚拟滚动监听
+         */
+        setupVirtualScroll() {
+          if (!this.virtualScrollContainer) return;
+          let rafId = null;
+          this.virtualScrollContainer.addEventListener("scroll", () => {
+            if (rafId) return;
+            rafId = requestAnimationFrame(() => {
+              this.updateVisibleItems();
+              rafId = null;
+            });
+          }, { passive: true });
+        }
+        /**
+         * 更新可见区域的元素
+         */
+        updateVisibleItems() {
+          if (!this.virtualScrollContainer || !this.virtualContentWrapper) return;
+          const scrollTop = this.virtualScrollContainer.scrollTop;
+          const containerHeight = this.virtualScrollContainer.clientHeight;
+          const totalItems = this.filteredItems.length;
+          const start = Math.max(0, Math.floor(scrollTop / this.itemHeight) - this.bufferSize);
+          const end = Math.min(
+            totalItems - 1,
+            Math.ceil((scrollTop + containerHeight) / this.itemHeight) + this.bufferSize
+          );
+          if (start === this.visibleRange.start && end === this.visibleRange.end) {
+            return;
+          }
+          this.visibleRange = { start, end };
+          this.renderedItems.forEach((element, index) => {
+            if (index < start || index > end) {
+              element.remove();
+              this.renderedItems.delete(index);
+            }
+          });
+          for (let i = start; i <= end; i++) {
+            if (!this.renderedItems.has(i)) {
+              const itemElement = this.filteredItems[i];
+              if (!itemElement.data) continue;
+              const navItem = this.createNavigationItem(itemElement, i);
+              this.renderedItems.set(i, navItem);
+              this.virtualContentWrapper.appendChild(navItem);
+            }
+          }
+        }
+        /**
+         * 创建单个导航项元素
+         */
+        createNavigationItem(itemElement, index) {
+          const { element, variations } = itemElement;
+          const data = itemElement.data;
+          const variationCount = variations.length;
+          let salesCount = 0;
+          for (let i = 0; i < variationCount; i++) {
+            salesCount += variations[i].data.salesCount;
+          }
+          const favoritesCount = data.favoritesCount;
+          const navItem = document.createElement("div");
+          navItem.className = "navigation-item";
+          navItem.setAttribute("data-item-id", data.id);
+          navItem.style.cssText = `
+            position: absolute;
+            top: ${index * this.itemHeight}px;
+            left: 0;
+            right: 0;
+            height: ${this.itemHeight}px;
+        `;
+          const thumbnailContainer = document.createElement("div");
+          thumbnailContainer.className = "navigation-thumbnail";
+          if (data.thumbnail) {
+            const img = document.createElement("img");
+            img.src = data.thumbnail;
+            img.onerror = () => {
+              thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+            };
+            thumbnailContainer.appendChild(img);
+          } else {
+            thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+          }
+          const itemInfo = document.createElement("div");
+          itemInfo.className = "navigation-item-info";
+          const nameRow = document.createElement("div");
+          nameRow.className = "navigation-item-name-row";
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "navigation-item-name";
+          nameSpan.textContent = data.name;
+          const countSpan = document.createElement("span");
+          countSpan.className = "navigation-item-variant-count";
+          countSpan.textContent = `${variationCount}变体`;
+          nameRow.appendChild(nameSpan);
+          nameRow.appendChild(countSpan);
+          const statsRow = document.createElement("div");
+          statsRow.className = "navigation-item-stats-row";
+          const statsLeft = document.createElement("div");
+          statsLeft.className = "navigation-item-stats-left";
+          const salesSpan = document.createElement("span");
+          salesSpan.className = `navigation-item-sales ${salesCount > 0 ? "has-sales" : "no-sales"}`;
+          salesSpan.textContent = `销量: ${salesCount}`;
+          const favsSpan = document.createElement("span");
+          favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? "has-favorites" : "no-favorites"}`;
+          favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
+          statsLeft.appendChild(salesSpan);
+          statsLeft.appendChild(favsSpan);
+          const indexSpan = document.createElement("span");
+          indexSpan.className = "navigation-item-index";
+          indexSpan.textContent = `#${index + 1}`;
+          statsRow.appendChild(statsLeft);
+          statsRow.appendChild(indexSpan);
+          itemInfo.appendChild(statsRow);
+          itemInfo.appendChild(nameRow);
+          navItem.appendChild(thumbnailContainer);
+          navItem.appendChild(itemInfo);
+          navItem.onclick = () => this.scrollToItem(element, navItem);
+          return navItem;
         }
         /**
          * 注入样式表
@@ -4370,8 +4725,7 @@ ${errorText}`);
 
             /* 导航项样式 */
             .navigation-item {
-                padding: 6px 8px;
-                margin-bottom: 1px;
+                padding: 8px;
                 border-radius: 4px;
                 cursor: pointer;
                 transition: all 0.2s ease;
@@ -4379,8 +4733,9 @@ ${errorText}`);
                 background: #fff;
                 border: 1px solid transparent;
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
                 gap: 8px;
+                box-sizing: border-box;
             }
 
             /* 导航项hover效果 */
@@ -4756,6 +5111,7 @@ ${errorText}`);
         showNavigation() {
           if (!this.navigationContainer) return;
           this.navigationContainer.classList.add("expanded");
+          this.navigationContainer.style.pointerEvents = "auto";
           this.isExpanded = true;
           if (this.toggleButton) {
             this.toggleButton.innerHTML = "▶";
@@ -4767,100 +5123,39 @@ ${errorText}`);
         hideNavigation() {
           if (!this.navigationContainer) return;
           this.navigationContainer.classList.remove("expanded");
+          this.navigationContainer.style.pointerEvents = "none";
           this.isExpanded = false;
           if (this.toggleButton) {
             this.toggleButton.innerHTML = "◀";
           }
         }
         /**
-         * 创建导航项（使用 API 数据）
+         * 过滤商品（基于搜索词显示/隐藏导航项）
          */
-        createNavigationItems() {
-          var _a;
-          if (!this.navigationContainer) return;
-          const itemsContainer = this.navigationContainer.querySelector(".navigation-items-container");
-          if (!itemsContainer) return;
-          itemsContainer.innerHTML = "";
-          const itemsToShow = this.filteredItems.length > 0 ? this.filteredItems : this.items;
-          if (itemsToShow.length === 0) {
-            const emptyState = document.createElement("div");
-            emptyState.className = "navigation-empty-state";
-            emptyState.textContent = ((_a = this.searchInput) == null ? void 0 : _a.value) ? "未找到匹配的商品" : "暂无商品";
-            itemsContainer.appendChild(emptyState);
-            return;
-          }
-          itemsToShow.forEach((itemElement, index) => {
-            const { data, element, variations } = itemElement;
-            const variationCount = variations.length;
-            const salesCount = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
-            const favoritesCount = data.favoritesCount;
-            const navItem = document.createElement("div");
-            navItem.className = "navigation-item";
-            navItem.setAttribute("data-item-id", data.id);
-            const thumbnailContainer = document.createElement("div");
-            thumbnailContainer.className = "navigation-thumbnail";
-            if (data.thumbnail) {
-              const img = document.createElement("img");
-              img.src = data.thumbnail;
-              img.onerror = () => {
-                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-              };
-              thumbnailContainer.appendChild(img);
-            } else {
-              thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-            }
-            const itemInfo = document.createElement("div");
-            itemInfo.className = "navigation-item-info";
-            const nameRow = document.createElement("div");
-            nameRow.className = "navigation-item-name-row";
-            const nameSpan = document.createElement("span");
-            nameSpan.className = "navigation-item-name";
-            nameSpan.textContent = data.name;
-            const countSpan = document.createElement("span");
-            countSpan.className = "navigation-item-variant-count";
-            countSpan.textContent = `${variationCount}变体`;
-            nameRow.appendChild(nameSpan);
-            nameRow.appendChild(countSpan);
-            const statsRow = document.createElement("div");
-            statsRow.className = "navigation-item-stats-row";
-            const statsLeft = document.createElement("div");
-            statsLeft.className = "navigation-item-stats-left";
-            const salesSpan = document.createElement("span");
-            salesSpan.className = `navigation-item-sales ${salesCount > 0 ? "has-sales" : "no-sales"}`;
-            salesSpan.textContent = `销量: ${salesCount}`;
-            const favsSpan = document.createElement("span");
-            favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? "has-favorites" : "no-favorites"}`;
-            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
-            statsLeft.appendChild(salesSpan);
-            statsLeft.appendChild(favsSpan);
-            const indexSpan = document.createElement("span");
-            indexSpan.className = "navigation-item-index";
-            indexSpan.textContent = `#${index + 1}`;
-            statsRow.appendChild(statsLeft);
-            statsRow.appendChild(indexSpan);
-            itemInfo.appendChild(statsRow);
-            itemInfo.appendChild(nameRow);
-            navItem.appendChild(thumbnailContainer);
-            navItem.appendChild(itemInfo);
-            navItem.onclick = () => this.scrollToItem(element, navItem);
-            itemsContainer.appendChild(navItem);
-          });
-        }
         /**
-         * 过滤商品（使用 API 数据）
+         * 过滤商品（虚拟列表版本）
          */
         filterItems() {
-          if (!this.searchInput) return;
+          if (!this.searchInput || !this.virtualContentWrapper) return;
           const searchTerm = this.searchInput.value.toLowerCase().trim();
           if (searchTerm === "") {
-            this.filteredItems = [];
+            this.filteredItems = this.items;
           } else {
-            this.filteredItems = this.items.filter((itemElement) => {
-              const { data } = itemElement;
-              return data.name.toLowerCase().includes(searchTerm) || data.id.includes(searchTerm);
+            this.filteredItems = this.items.filter((item) => {
+              if (!item.data) return false;
+              const name = item.data.name.toLowerCase();
+              const id = item.data.id.toLowerCase();
+              return name.includes(searchTerm) || id.includes(searchTerm);
             });
           }
-          this.createNavigationItems();
+          this.virtualContentWrapper.style.height = `${this.filteredItems.length * this.itemHeight}px`;
+          this.renderedItems.forEach((element) => element.remove());
+          this.renderedItems.clear();
+          if (this.virtualScrollContainer) {
+            this.virtualScrollContainer.scrollTop = 0;
+          }
+          this.visibleRange = { start: 0, end: 0 };
+          this.updateVisibleItems();
         }
         /**
          * 滚动到指定商品
@@ -4955,30 +5250,17 @@ ${errorText}`);
           this.scrollListener = onScroll;
         }
       }
-      class VariationNumbers extends PageModule {
+      class VariationNumbers extends LazyLoadModule {
         constructor(api) {
           super(api);
-          __publicField(this, "batchProcessor");
-        }
-        initialize(api) {
-          if (!this.batchProcessor) {
-            this.batchProcessor = new BatchProcessor();
-          }
-          const items = api.getItems();
-          this.batchProcessor.process(
-            items,
-            (item) => this.addToItem(item),
-            15
-          );
         }
         /**
-         * 为商品添加变体序号（使用 API 数据）
-         * @param itemElement API 提供的商品元素
+         * 处理单个商品，添加变体序号
          */
-        addToItem(itemElement) {
+        processItem(itemElement) {
           try {
             const { element, variationsUl, variations } = itemElement;
-            if (!variationsUl || !variations.length) return;
+            if (!variationsUl || variations.length === 0) return;
             this.addNumbersToVariations(variations);
             this.setupVariationObserver(element, variationsUl, variations);
           } catch (error) {
@@ -5026,6 +5308,8 @@ ${errorText}`);
         constructor(context) {
           super(context);
           __publicField(this, "modules", []);
+          __publicField(this, "lazyLoadModules", []);
+          __publicField(this, "lazyLoadManager");
         }
         shouldExecute() {
           return this.path === "/items" || this.path === "/items/";
@@ -5034,14 +5318,37 @@ ${errorText}`);
           return new ItemManageAPI();
         }
         async initialize() {
-          if (this.api) {
-            this.modules.push(
-              new ItemNavigation(this.api),
-              new ItemActions(this.api),
-              new VariationNumbers(this.api),
-              new ItemCollapse(this.api)
-            );
-          }
+          if (!this.api) return;
+          this.lazyLoadModules = [
+            new ItemActions(this.api),
+            new VariationNumbers(this.api),
+            new ItemCollapse(this.api)
+          ];
+          this.modules = [
+            ...this.lazyLoadModules,
+            new ItemNavigation(this.api)
+            // ItemNavigation 立即加载
+          ];
+          this.api.onReady(() => {
+            this.lazyLoadManager = new LazyLoadManager(this.api.getItems(), this.api);
+            this.lazyLoadModules.forEach((module) => {
+              module.onLazyLoadReady(this.lazyLoadManager);
+            });
+          });
+        }
+        /**
+         * 清理资源
+         */
+        destroy() {
+          var _a;
+          (_a = this.lazyLoadManager) == null ? void 0 : _a.destroy();
+          this.modules.forEach((module) => {
+            if (typeof module.destroy === "function") {
+              module.destroy();
+            }
+          });
+          this.modules = [];
+          this.lazyLoadModules = [];
         }
       }
       class SessionAPI extends BaseAPI {
@@ -5212,7 +5519,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-LRJuqzC0-D579Kldw.js", ['vue', './useTreeTab-D-L1MHVe-CrZIlHD6.js', './__monkey.entry-G3tyXJqp.js'], (function (exports, module) {
+System.register("./TagTab-eWHEmAY--D9DbTQpM.js", ['vue', './useTreeTab-DKUdFqBG-B2bN27D1.js', './__monkey.entry-C5Z0k1jH.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -5291,22 +5598,29 @@ System.register("./TagTab-LRJuqzC0-D579Kldw.js", ['vue', './useTreeTab-D-L1MHVe-
           const props = __props;
           const { data, createNode, renameNode } = useStorage();
           const tree = computed(() => data.value.tagTree);
-          function hasTagsRecursive(node) {
+          function hasTags(node) {
             var _a;
             if (!node) return false;
-            const hasTags = ((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags) && node.data.tags.length > 0;
-            if (hasTags) return true;
+            return ((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags) && node.data.tags.length > 0;
+          }
+          function hasTagsRecursive(node) {
+            if (!node) return false;
+            const nodeHasTags = hasTags(node);
+            if (nodeHasTags) return true;
             if (!node.children || node.children.length === 0) return false;
             return node.children.some((childId) => {
               const childNode = tree.value.nodes[childId];
               return childNode && hasTagsRecursive(childNode);
             });
           }
-          function extractTagsRecursive(node, tagsSet) {
+          function extractTagsFromNode(node, tagsSet) {
             var _a;
             if (((_a = node.data) == null ? void 0 : _a.tags) && Array.isArray(node.data.tags)) {
               node.data.tags.forEach((tag) => tagsSet.add(tag));
             }
+          }
+          function extractTagsRecursive(node, tagsSet) {
+            extractTagsFromNode(node, tagsSet);
             if (node.children && node.children.length > 0) {
               node.children.forEach((childId) => {
                 const childNode = tree.value.nodes[childId];
@@ -5318,7 +5632,27 @@ System.register("./TagTab-LRJuqzC0-D579Kldw.js", ['vue', './useTreeTab-D-L1MHVe-
           }
           const customMenuItems = computed(() => [
             {
-              label: "应用标签",
+              label: "应用当前节点标签",
+              action: (node, selection) => {
+                const tagsToApply = /* @__PURE__ */ new Set();
+                if (selection && selection.length > 0) {
+                  selection.forEach((n) => extractTagsFromNode(n, tagsToApply));
+                } else if (node) {
+                  extractTagsFromNode(node, tagsToApply);
+                }
+                if (tagsToApply.size > 0) {
+                  props.api.addTags(Array.from(tagsToApply));
+                }
+              },
+              show: (node, selection) => {
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTags);
+                }
+                return hasTags(node);
+              }
+            },
+            {
+              label: "应用所有标签（递归）",
               action: (node, selection) => {
                 const tagsToApply = /* @__PURE__ */ new Set();
                 if (selection && selection.length > 0) {
@@ -5335,10 +5669,32 @@ System.register("./TagTab-LRJuqzC0-D579Kldw.js", ['vue', './useTreeTab-D-L1MHVe-
                   return selection.some(hasTagsRecursive);
                 }
                 return hasTagsRecursive(node);
-              }
+              },
+              separator: true
             },
             {
-              label: "移除标签",
+              label: "移除当前节点标签",
+              action: (node, selection) => {
+                const tagsToRemove = /* @__PURE__ */ new Set();
+                if (selection && selection.length > 0) {
+                  selection.forEach((n) => extractTagsFromNode(n, tagsToRemove));
+                } else if (node) {
+                  extractTagsFromNode(node, tagsToRemove);
+                }
+                if (tagsToRemove.size > 0) {
+                  props.api.removeTags(Array.from(tagsToRemove));
+                }
+              },
+              show: (node, selection) => {
+                if (selection && selection.length > 0) {
+                  return selection.some(hasTags);
+                }
+                return hasTags(node);
+              },
+              danger: true
+            },
+            {
+              label: "移除所有标签（递归）",
               action: (node, selection) => {
                 const tagsToRemove = /* @__PURE__ */ new Set();
                 if (selection && selection.length > 0) {
@@ -5591,13 +5947,13 @@ System.register("./TagTab-LRJuqzC0-D579Kldw.js", ['vue', './useTreeTab-D-L1MHVe-
           };
         }
       });
-      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-7a79a3ec"]]));
+      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-1e4b60a4"]]));
 
     })
   };
 }));
 
-System.register("./ItemTab-Di9mVMmj-BbbOt570.js", ['vue', './useTreeTab-D-L1MHVe-CrZIlHD6.js', './__monkey.entry-G3tyXJqp.js'], (function (exports, module) {
+System.register("./ItemTab-CO1Mtu9t-BnGyXWWY.js", ['vue', './useTreeTab-DKUdFqBG-B2bN27D1.js', './__monkey.entry-C5Z0k1jH.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -5872,13 +6228,13 @@ System.register("./ItemTab-Di9mVMmj-BbbOt570.js", ['vue', './useTreeTab-D-L1MHVe
           };
         }
       });
-      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-2ddd1249"]]));
+      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6c6b3856"]]));
 
     })
   };
 }));
 
-System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G3tyXJqp.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-DKUdFqBG-B2bN27D1.js", ['vue', './__monkey.entry-C5Z0k1jH.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -6299,7 +6655,7 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
           };
         }
       });
-      const TreeNode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-afafc707"]]);
+      const TreeNode = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-fbb1ef76"]]);
       const _hoisted_1 = {
         key: 0,
         class: "tree-search"
@@ -6435,8 +6791,7 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
             }
             items.push({
               label: "新建数据节点",
-              action: handleCreateItem,
-              separator: true
+              action: handleCreateItem
             });
           }
           const menuItems = computed(() => {
@@ -6444,6 +6799,9 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
             const selectedNodes = getSelectedNodes();
             addBaseCreateItems(items);
             if (targetNode.value) {
+              if (items.length > 0) {
+                items[items.length - 1].separator = true;
+              }
               items.push({
                 label: "重命名",
                 action: handleRename
@@ -6558,6 +6916,7 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
             if (e.target.closest(".tree-node-content")) {
               return;
             }
+            clearSelection();
             showContextMenu(e, null);
           };
           const handleTreeClick = (e) => {
@@ -6749,7 +7108,7 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
           };
         }
       });
-      const Tree = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-83df827c"]]));
+      const Tree = exports("T", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-d653bc39"]]));
       function tagSearchFilter(node, searchText) {
         var _a;
         if (!((_a = node.data) == null ? void 0 : _a.tags)) return false;
@@ -6833,7 +7192,7 @@ System.register("./useTreeTab-D-L1MHVe-CrZIlHD6.js", ['vue', './__monkey.entry-G
   };
 }));
 
-System.register("./EditTab-BbuQCLR1-Bj53HxBV.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-G3tyXJqp.js'], (function (exports, module) {
+System.register("./EditTab-DS1sar7m-BN29kOl0.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-C5Z0k1jH.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, renderList, normalizeStyle, createBlock, normalizeClass, renderSlot, withModifiers, vModelCheckbox, useSlots, nextTick, useModal, _export_sfc, useStorage, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate;
   return {
@@ -6942,7 +7301,7 @@ System.register("./EditTab-BbuQCLR1-Bj53HxBV.js", ['vue', './useModal-Cv530RMh-D
           };
         }
       });
-      const FileSelector = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-1fc2a23e"]]);
+      const FileSelector = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-43c71f00"]]);
       const _hoisted_1$i = { class: "preview-box be-flex be-flex-column be-gap-xs" };
       const _hoisted_2$i = {
         key: 0,
@@ -6980,7 +7339,7 @@ System.register("./EditTab-BbuQCLR1-Bj53HxBV.js", ['vue', './useModal-Cv530RMh-D
           };
         }
       });
-      const PreviewBox = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-f666c5ea"]]);
+      const PreviewBox = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-93d09832"]]);
       const _hoisted_1$h = {
         key: 0,
         class: "section-header"
@@ -7025,7 +7384,7 @@ System.register("./EditTab-BbuQCLR1-Bj53HxBV.js", ['vue', './useModal-Cv530RMh-D
           };
         }
       });
-      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-bd8a2399"]]);
+      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__scopeId", "data-v-5643104c"]]);
       const _hoisted_1$g = { class: "template-selector" };
       const _hoisted_2$g = {
         key: 0,
@@ -9465,7 +9824,7 @@ ${this.smart}`;
           };
         }
       });
-      const VariationConfigModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b1d3a0f8"]]);
+      const VariationConfigModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-9e5fca5f"]]);
       const _hoisted_1$1 = ["innerHTML"];
       const _hoisted_2$1 = ["innerHTML"];
       const _hoisted_3$1 = ["innerHTML"];
@@ -9533,8 +9892,6 @@ ${this.smart}`;
           const emit = __emit;
           const showPriceModal = ref(false);
           const selectedVariationIndex = ref(null);
-          const tempSelectedItems = ref([]);
-          const tempSelectedFileIds = ref([]);
           const selectingItemForFile = ref(null);
           const hasFullset = computed(
             () => props.itemConfig.variations.some((v) => v.isFullset)
@@ -9696,55 +10053,52 @@ ${this.smart}`;
             return Object.keys(variation.fileItemMap).filter((fileId) => variation.fileItemMap[fileId]).length;
           }
           async function selectFilesForVariation(variationIndex) {
-            selectedVariationIndex.value = variationIndex;
             const variation = props.itemConfig.variations[variationIndex];
             if (availableFiles.value.length === 0) {
               toast.error("无法获取文件列表，请先上传文件");
-              selectedVariationIndex.value = null;
               return;
             }
-            tempSelectedFileIds.value = variation.fileIds ? [...variation.fileIds] : [];
+            selectedVariationIndex.value = variationIndex;
             const fileResult = await props.modal.openModal({
               type: "selectFile",
-              title: "选择文件（可多选）"
+              title: "选择文件（可多选）",
+              formData: {
+                fileIds: variation.fileIds ?? []
+              }
             });
-            if (!(fileResult == null ? void 0 : fileResult.fileIds)) {
-              selectedVariationIndex.value = null;
-              return;
-            }
+            selectedVariationIndex.value = null;
+            if (!(fileResult == null ? void 0 : fileResult.fileIds)) return;
             const selectedFileIds = fileResult.fileIds;
-            const oldFileIds = variation.fileIds || [];
+            const oldFileIds = variation.fileIds ?? [];
             const newFileIds = selectedFileIds.filter((id) => !oldFileIds.includes(id));
             variation.fileIds = selectedFileIds;
             if (newFileIds.length > 0) {
               autoMatchItemsForFiles(variationIndex, newFileIds);
             }
-            selectedVariationIndex.value = null;
-            tempSelectedFileIds.value = [];
           }
           async function selectItemForFile(variationIndex, fileId) {
             var _a;
             const variation = props.itemConfig.variations[variationIndex];
             const currentItemId = (_a = variation.fileItemMap) == null ? void 0 : _a[fileId];
-            tempSelectedItems.value = currentItemId ? [currentItemId] : [];
             selectingItemForFile.value = { variationIndex, fileId };
             const result = await props.modal.openModal({
               type: "selectItem",
-              title: `为 ${getFileName(fileId)} 选择商品（单选）`
+              title: `为 ${getFileName(fileId)} 选择商品（单选）`,
+              formData: {
+                itemIds: currentItemId ? [currentItemId] : []
+              }
             });
-            if (result == null ? void 0 : result.itemIds) {
-              if (!variation.fileItemMap) {
-                variation.fileItemMap = {};
-              }
-              const selectedItemIds = result.itemIds;
-              if (selectedItemIds.length === 0) {
-                delete variation.fileItemMap[fileId];
-              } else {
-                variation.fileItemMap[fileId] = selectedItemIds[0];
-              }
-            }
             selectingItemForFile.value = null;
-            tempSelectedItems.value = [];
+            if (!(result == null ? void 0 : result.itemIds)) return;
+            const selectedItemIds = result.itemIds;
+            if (!variation.fileItemMap) {
+              variation.fileItemMap = {};
+            }
+            if (selectedItemIds.length === 0) {
+              delete variation.fileItemMap[fileId];
+            } else {
+              variation.fileItemMap[fileId] = selectedItemIds[0];
+            }
           }
           function getFileName(fileId) {
             const file = availableFiles.value.find((f) => f.id === fileId);
@@ -10091,7 +10445,7 @@ ${this.smart}`;
                                 createElementVNode("button", {
                                   class: normalizeClass(["item-select-btn", { "has-item": getFileItemId(index, fileId) }]),
                                   type: "button",
-                                  onClick: ($event) => selectItemForFile(index, fileId)
+                                  onClick: withModifiers(($event) => selectItemForFile(index, fileId), ["stop"])
                                 }, [
                                   createElementVNode("span", {
                                     innerHTML: unref(withSize)(unref(icons).file, 12)
@@ -10120,7 +10474,7 @@ ${this.smart}`;
           };
         }
       });
-      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-635b7bcf"]]);
+      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e5536c7a"]]);
       const _hoisted_1 = ["innerHTML"];
       const _hoisted_2 = { key: 0 };
       const _hoisted_3 = { class: "form-group" };
@@ -10194,6 +10548,9 @@ ${this.smart}`;
             const state = modalState.value;
             return state.type === "alert" && ((_a = state.formData) == null ? void 0 : _a.sectionIndex) !== void 0;
           });
+          const isGeneralModal = computed(
+            () => !isPreviewModal.value && modalState.value.type !== "selectItem" && modalState.value.type !== "selectFile"
+          );
           const previewSectionIndex = computed(
             () => {
               var _a;
@@ -10342,6 +10699,20 @@ ${this.smart}`;
           function isItemSelected(itemId) {
             return tempSelectedItems.value.includes(itemId);
           }
+          watch(() => modalState.value.show, (isOpen) => {
+            if (!isOpen) {
+              tempSelectedItems.value = [];
+              tempSelectedFileIds.value = [];
+              return;
+            }
+            const { type, formData } = modalState.value;
+            if (type === "selectItem" && (formData == null ? void 0 : formData.itemIds)) {
+              tempSelectedItems.value = [...formData.itemIds];
+            }
+            if (type === "selectFile" && (formData == null ? void 0 : formData.fileIds)) {
+              tempSelectedFileIds.value = [...formData.fileIds];
+            }
+          });
           watch(
             () => {
               if (!currentItemConfig.value) return null;
@@ -10395,7 +10766,7 @@ ${this.smart}`;
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock(Fragment, null, [
               createVNode(unref(Modal), {
-                show: modalState.value.show && !isPreviewModal.value,
+                show: modalState.value.show && isGeneralModal.value,
                 title: modalState.value.title,
                 "teleport-to": ".booth-enhancer-sidebar",
                 width: "500px",
@@ -10702,7 +11073,7 @@ ${this.smart}`;
           };
         }
       });
-      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4ab4361c"]]));
+      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-223a6bfd"]]));
 
     })
   };

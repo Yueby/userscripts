@@ -19,12 +19,12 @@ export class ItemNumbers extends PageModule<ItemEditAPI> {
         super(api);
     }
 
-    protected initialize(api: ItemEditAPI): void {
+    protected initialize(): void {
         // 收集所有唯一的容器
         const containers = new Set<HTMLElement>();
         
-        api.sections.forEach(section => containers.add(section.container));
-        api.variations.forEach(variation => containers.add(variation.container));
+        this.api.sections.forEach(section => containers.add(section.container));
+        this.api.variations.forEach(variation => containers.add(variation.container));
         
         // 为每个容器添加序号
         containers.forEach(container => {
@@ -32,14 +32,14 @@ export class ItemNumbers extends PageModule<ItemEditAPI> {
         });
 
         // 监听新增的元素
-        api.onSectionAdded((section) => {
+        this.api.onSectionAdded((section) => {
             // 检查是否已经为该容器设置了观察器
             if (!this.observedContainers.has(section.container)) {
                 this.addNumbersToList(section.container);
             }
         });
 
-        api.onVariationAdded((variation) => {
+        this.api.onVariationAdded((variation) => {
             // 检查是否已经为该容器设置了观察器
             if (!this.observedContainers.has(variation.container)) {
                 this.addNumbersToList(variation.container);

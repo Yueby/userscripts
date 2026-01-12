@@ -24,16 +24,16 @@ export class TagManager extends PageModule<ItemEditAPI> {
         super(api);
     }
 
-    protected initialize(api: ItemEditAPI): void {
+    protected initialize(): void {
         // 等待标签容器出现后添加按钮
-        this.waitForTagContainer(api);
+        this.waitForTagContainer();
     }
 
     /**
      * 等待标签容器出现
      */
-    private waitForTagContainer(api: ItemEditAPI): void {
-        const tagElements = api.tagElements;
+    private waitForTagContainer(): void {
+        const tagElements = this.api.tagElements;
         
         if (tagElements) {
             this.addTagButtons(tagElements.inputContainer);
@@ -42,7 +42,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
 
         // 使用 MutationObserver 等待容器出现
         const observer = new MutationObserver(() => {
-            const elements = api.tagElements;
+            const elements = this.api.tagElements;
             if (elements) {
                 this.addTagButtons(elements.inputContainer);
                 observer.disconnect();

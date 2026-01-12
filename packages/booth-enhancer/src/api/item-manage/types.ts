@@ -41,7 +41,7 @@ export interface ItemData {
  * 商品项（数据 + DOM元素）
  */
 export interface ItemElement {
-    data: ItemData;                    // 商品数据
+    data: ItemData | null;             // 商品数据（延迟解析，初始为 null）
     element: HTMLElement;              // 对应的商品卡片元素
     variationsUl?: HTMLElement;        // 变体列表ul元素
     tagsUl?: HTMLElement;              // 标签列表ul元素

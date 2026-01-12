@@ -189,8 +189,7 @@ function addBaseCreateItems(items: MenuItem[]): void {
   }
   items.push({
     label: '新建数据节点',
-    action: handleCreateItem,
-    separator: true
+    action: handleCreateItem
   });
 }
 
@@ -203,7 +202,11 @@ const menuItems = computed<MenuItem[]>(() => {
   addBaseCreateItems(items);
   
   if (targetNode.value) {
-    // 节点右键菜单
+    // 节点右键菜单 - 在基础菜单后添加分隔符
+    if (items.length > 0) {
+      items[items.length - 1].separator = true;
+    }
+    
     items.push({
       label: '重命名',
       action: handleRename
@@ -219,7 +222,7 @@ const menuItems = computed<MenuItem[]>(() => {
     // 自定义菜单项
     appendCustomMenuItems(items, visibleCustomMenuItems.value, targetNode.value, selectedNodes);
     
-    // 删除按钮
+    // 删除按钮前添加分隔符
     if (items.length > 0) {
       items[items.length - 1].separator = true;
     }
@@ -363,6 +366,8 @@ const handleRootContextmenu = (e: MouseEvent) => {
   if ((e.target as HTMLElement).closest('.tree-node-content')) {
     return;
   }
+  // 清除所有选择
+  clearSelection();
   showContextMenu(e, null);
 };
 

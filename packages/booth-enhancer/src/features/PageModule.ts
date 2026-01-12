@@ -15,16 +15,19 @@ export abstract class PageModule<TApi extends BaseAPI = BaseAPI> {
         this.api = api;
         
         // 基类统一注册 API 就绪回调
-        this.api.onReady((api) => {
-            this.initialize(api);
+        // 使用 setTimeout 确保在子类字段初始化之后执行
+        this.api.onReady(() => {
+            setTimeout(() => {
+                this.initialize();
+            }, 0);
         });
     }
 
     /**
      * 初始化模块
      * 在 API 数据加载完成后调用
-     * @param api API实例
+     * 可通过 this.api 访问 API 实例
      */
-    protected abstract initialize(api: TApi): void;
+    protected abstract initialize(): void;
 }
 

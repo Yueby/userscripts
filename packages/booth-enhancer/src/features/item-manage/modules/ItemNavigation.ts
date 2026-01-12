@@ -6,6 +6,7 @@ import { PageModule } from "../../PageModule";
 /**
  * 商品导航栏模块
  * 在页面右侧提供商品导航功能
+ * ⚡ 立即加载所有商品基础信息并显示完整导航
  */
 export class ItemNavigation extends PageModule<ItemManageAPI> {
     private navigationContainer: HTMLElement | null = null;
@@ -13,41 +14,319 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
     private items: ItemElement[] = [];
     private isExpanded = false;
     private searchInput: HTMLInputElement | null = null;
-    private filteredItems: ItemElement[] = [];
     private isScrolling = false;
     private scrollTimeout: number | null = null;
     private hoverTimeout: number | null = null;
+    
+    // 虚拟列表相关
+    private virtualScrollContainer: HTMLElement | null = null;
+    private virtualContentWrapper: HTMLElement | null = null;
+    private itemHeight = 60; // 每个导航项的高度
+    private bufferSize = 5; // 上下缓冲区的元素数量
+    private visibleRange = { start: 0, end: 0 };
+    private renderedItems = new Map<number, HTMLElement>(); // 已渲染的元素缓存
+    private filteredItems: ItemElement[] = []; // 过滤后的商品列表
 
     constructor(api: ItemManageAPI) {
         super(api);
     }
 
-    protected initialize(api: ItemManageAPI): void {
+    /**
+     * 初始化：立即创建导航栏框架，然后异步解析数据
+     */
+    protected initialize(): void {
+        // 防止重复初始化
+        if (document.querySelector('.item-navigation')) {
+            return;
+        }
+        
         this.injectStyles();
         
-        // 延迟创建导航栏，确保DOM稳定
+        // 获取所有商品
+        this.items = this.api.getItems();
+        
+        if (this.items.length === 0) return;
+        
+        // 立即创建导航栏框架
+        this.createToggleButton();
+        this.createNavigationContainer();
+        this.setupScrollListener();
+        
+        // 使用 setTimeout 确保 DOM 已挂载
         setTimeout(() => {
-            this.items = this.api.getItems();
-            this.createNavigation();
-        }, 1000);
+            this.showLoadingState();
+        }, 0);
+        
+        // 异步批量解析并填充数据
+        this.parseAndPopulateItems();
     }
 
     /**
-     * 创建商品导航栏
+     * 分批解析商品数据并填充导航栏
      */
-    createNavigation(): void {
-        try {
-            if (document.querySelector('.item-navigation')) return;
-            if (this.items.length === 0) return;
-
-            this.injectStyles();
-            this.createToggleButton();
-            this.createNavigationContainer();
-            this.createNavigationItems();
-            this.setupScrollListener();
-        } catch (error) {
-            handleError(error);
+    private async parseAndPopulateItems(): Promise<void> {
+        const batchSize = 20;
+        
+        for (let i = 0; i < this.items.length; i += batchSize) {
+            const batch = this.items.slice(i, i + batchSize);
+            
+            // 解析当前批次
+            batch.forEach(item => {
+                if (!item.data) {
+                    this.api.parseItemData(item);
+                }
+            });
+            
+            // 让出主线程
+            if (i + batchSize < this.items.length) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
         }
+        
+        // 所有数据解析完成后创建导航项
+        this.hideLoadingState();
+        this.createNavigationItems();
+    }
+
+    /**
+     * 显示加载状态
+     */
+    private showLoadingState(): void {
+        const container = this.navigationContainer?.querySelector('.navigation-items-container');
+        if (!container) return;
+
+        const loadingState = document.createElement('div');
+        loadingState.className = 'navigation-loading-state';
+        loadingState.style.cssText = `
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 14px;
+        `;
+        loadingState.innerHTML = `
+            <div style="margin-bottom: 8px;">正在加载商品...</div>
+            <div style="font-size: 12px; color: #999;">0 / ${this.items.length}</div>
+        `;
+        container.appendChild(loadingState);
+    }
+
+    /**
+     * 隐藏加载状态
+     */
+    private hideLoadingState(): void {
+        const container = this.navigationContainer?.querySelector('.navigation-items-container');
+        if (!container) return;
+
+        const loadingState = container.querySelector('.navigation-loading-state');
+        loadingState?.remove();
+    }
+
+    /**
+     * 创建虚拟列表容器
+     */
+    private createNavigationItems(): void {
+        if (!this.navigationContainer) return;
+
+        const itemsContainer = this.navigationContainer.querySelector('.navigation-items-container') as HTMLElement;
+        if (!itemsContainer) return;
+
+        // 清空现有内容
+        itemsContainer.innerHTML = '';
+
+        if (this.items.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'navigation-empty-state';
+            emptyState.textContent = '暂无商品';
+            itemsContainer.appendChild(emptyState);
+            return;
+        }
+
+        // 设置虚拟滚动容器
+        this.virtualScrollContainer = itemsContainer;
+        this.virtualScrollContainer.style.cssText = `
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+        `;
+
+        // 创建内容包装器（占位，设置总高度）
+        this.virtualContentWrapper = document.createElement('div');
+        this.virtualContentWrapper.style.cssText = `
+            position: relative;
+            height: ${this.items.length * this.itemHeight}px;
+        `;
+        this.virtualScrollContainer.appendChild(this.virtualContentWrapper);
+
+        // 初始化过滤列表
+        this.filteredItems = this.items;
+
+        // 监听滚动事件
+        this.setupVirtualScroll();
+
+        // 初始渲染
+        this.updateVisibleItems();
+    }
+
+    /**
+     * 设置虚拟滚动监听
+     */
+    private setupVirtualScroll(): void {
+        if (!this.virtualScrollContainer) return;
+
+        let rafId: number | null = null;
+
+        this.virtualScrollContainer.addEventListener('scroll', () => {
+            if (rafId) return; // 防止重复调用
+
+            rafId = requestAnimationFrame(() => {
+                this.updateVisibleItems();
+                rafId = null;
+            });
+        }, { passive: true });
+    }
+
+    /**
+     * 更新可见区域的元素
+     */
+    private updateVisibleItems(): void {
+        if (!this.virtualScrollContainer || !this.virtualContentWrapper) return;
+
+        const scrollTop = this.virtualScrollContainer.scrollTop;
+        const containerHeight = this.virtualScrollContainer.clientHeight;
+        const totalItems = this.filteredItems.length;
+
+        // 计算可见范围（加上缓冲区）
+        const start = Math.max(0, Math.floor(scrollTop / this.itemHeight) - this.bufferSize);
+        const end = Math.min(
+            totalItems - 1,
+            Math.ceil((scrollTop + containerHeight) / this.itemHeight) + this.bufferSize
+        );
+
+        // 如果范围没变，直接返回
+        if (start === this.visibleRange.start && end === this.visibleRange.end) {
+            return;
+        }
+
+        this.visibleRange = { start, end };
+
+        // 移除不在可见范围内的元素
+        this.renderedItems.forEach((element, index) => {
+            if (index < start || index > end) {
+                element.remove();
+                this.renderedItems.delete(index);
+            }
+        });
+
+        // 渲染可见范围内的元素
+        for (let i = start; i <= end; i++) {
+            if (!this.renderedItems.has(i)) {
+                const itemElement = this.filteredItems[i];
+                if (!itemElement.data) continue; // 跳过未解析的商品
+                
+                const navItem = this.createNavigationItem(itemElement, i);
+                this.renderedItems.set(i, navItem);
+                this.virtualContentWrapper!.appendChild(navItem);
+            }
+        }
+    }
+
+    /**
+     * 创建单个导航项元素
+     */
+    private createNavigationItem(itemElement: ItemElement, index: number): HTMLElement {
+        const { element, variations } = itemElement;
+        const data = itemElement.data!; // 非空断言：调用前已检查
+        const variationCount = variations.length;
+        
+        // 优化：使用单次循环计算统计
+        let salesCount = 0;
+        for (let i = 0; i < variationCount; i++) {
+            salesCount += variations[i].data.salesCount;
+        }
+        const favoritesCount = data.favoritesCount;
+
+        const navItem = document.createElement('div');
+        navItem.className = 'navigation-item';
+        navItem.setAttribute('data-item-id', data.id);
+        
+        // 设置绝对定位
+        navItem.style.cssText = `
+            position: absolute;
+            top: ${index * this.itemHeight}px;
+            left: 0;
+            right: 0;
+            height: ${this.itemHeight}px;
+        `;
+
+        // 创建封面图
+        const thumbnailContainer = document.createElement('div');
+        thumbnailContainer.className = 'navigation-thumbnail';
+
+        if (data.thumbnail) {
+            const img = document.createElement('img');
+            img.src = data.thumbnail;
+            img.onerror = () => {
+                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+            };
+            thumbnailContainer.appendChild(img);
+        } else {
+            thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
+        }
+
+        // 创建商品信息
+        const itemInfo = document.createElement('div');
+        itemInfo.className = 'navigation-item-info';
+
+        const nameRow = document.createElement('div');
+        nameRow.className = 'navigation-item-name-row';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'navigation-item-name';
+        nameSpan.textContent = data.name;
+
+        const countSpan = document.createElement('span');
+        countSpan.className = 'navigation-item-variant-count';
+        countSpan.textContent = `${variationCount}变体`;
+
+        nameRow.appendChild(nameSpan);
+        nameRow.appendChild(countSpan);
+
+        // 添加销量和点赞信息
+        const statsRow = document.createElement('div');
+        statsRow.className = 'navigation-item-stats-row';
+        
+        const statsLeft = document.createElement('div');
+        statsLeft.className = 'navigation-item-stats-left';
+        
+        const salesSpan = document.createElement('span');
+        salesSpan.className = `navigation-item-sales ${salesCount > 0 ? 'has-sales' : 'no-sales'}`;
+        salesSpan.textContent = `销量: ${salesCount}`;
+
+        const favsSpan = document.createElement('span');
+        favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? 'has-favorites' : 'no-favorites'}`;
+        favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
+
+        statsLeft.appendChild(salesSpan);
+        statsLeft.appendChild(favsSpan);
+
+        const indexSpan = document.createElement('span');
+        indexSpan.className = 'navigation-item-index';
+        indexSpan.textContent = `#${index + 1}`;
+
+        statsRow.appendChild(statsLeft);
+        statsRow.appendChild(indexSpan);
+        
+        // 组装元素
+        itemInfo.appendChild(statsRow);
+        itemInfo.appendChild(nameRow);
+        navItem.appendChild(thumbnailContainer);
+        navItem.appendChild(itemInfo);
+
+        // 添加点击事件
+        navItem.onclick = () => this.scrollToItem(element, navItem);
+
+        return navItem;
     }
 
     /**
@@ -121,8 +400,7 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
 
             /* 导航项样式 */
             .navigation-item {
-                padding: 6px 8px;
-                margin-bottom: 1px;
+                padding: 8px;
                 border-radius: 4px;
                 cursor: pointer;
                 transition: all 0.2s ease;
@@ -130,8 +408,9 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
                 background: #fff;
                 border: 1px solid transparent;
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
                 gap: 8px;
+                box-sizing: border-box;
             }
 
             /* 导航项hover效果 */
@@ -391,7 +670,7 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
             this.toggleNavigation();
         };
 
-        // PC端：hover显示，离开隐藏（通过CSS处理）
+        // PC端：hover显示
         this.toggleButton.onmouseenter = () => {
             if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
                 this.showNavigation();
@@ -551,7 +830,9 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
      */
     private showNavigation(): void {
         if (!this.navigationContainer) return;
+        
         this.navigationContainer.classList.add('expanded');
+        this.navigationContainer.style.pointerEvents = 'auto'; // 启用鼠标事件
         this.isExpanded = true;
         if (this.toggleButton) {
             this.toggleButton.innerHTML = '▶';
@@ -564,6 +845,7 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
     private hideNavigation(): void {
         if (!this.navigationContainer) return;
         this.navigationContainer.classList.remove('expanded');
+        this.navigationContainer.style.pointerEvents = 'none'; // 禁用鼠标事件
         this.isExpanded = false;
         if (this.toggleButton) {
             this.toggleButton.innerHTML = '◀';
@@ -571,126 +853,45 @@ export class ItemNavigation extends PageModule<ItemManageAPI> {
     }
 
     /**
-     * 创建导航项（使用 API 数据）
+     * 过滤商品（基于搜索词显示/隐藏导航项）
      */
-    private createNavigationItems(): void {
-        if (!this.navigationContainer) return;
-
-        const itemsContainer = this.navigationContainer.querySelector('.navigation-items-container');
-        if (!itemsContainer) return;
-
-        // 清空现有内容
-        itemsContainer.innerHTML = '';
-
-        const itemsToShow = this.filteredItems.length > 0 ? this.filteredItems : this.items;
-
-        if (itemsToShow.length === 0) {
-            const emptyState = document.createElement('div');
-            emptyState.className = 'navigation-empty-state';
-            emptyState.textContent = this.searchInput?.value ? '未找到匹配的商品' : '暂无商品';
-            itemsContainer.appendChild(emptyState);
-            return;
-        }
-
-        itemsToShow.forEach((itemElement, index) => {
-            const { data, element, variations } = itemElement;
-            const variationCount = variations.length;
-            const salesCount = variations.reduce((sum, v) => sum + v.data.salesCount, 0);
-            const favoritesCount = data.favoritesCount;
-
-            const navItem = document.createElement('div');
-            navItem.className = 'navigation-item';
-            navItem.setAttribute('data-item-id', data.id);
-
-            // 创建封面图
-            const thumbnailContainer = document.createElement('div');
-            thumbnailContainer.className = 'navigation-thumbnail';
-
-            if (data.thumbnail) {
-                const img = document.createElement('img');
-                img.src = data.thumbnail;
-                img.onerror = () => {
-                    thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-                };
-                thumbnailContainer.appendChild(img);
-            } else {
-                thumbnailContainer.innerHTML = '<div style="color: #999; font-size: 10px;">无图</div>';
-            }
-
-            // 创建商品信息
-            const itemInfo = document.createElement('div');
-            itemInfo.className = 'navigation-item-info';
-
-            const nameRow = document.createElement('div');
-            nameRow.className = 'navigation-item-name-row';
-
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'navigation-item-name';
-            nameSpan.textContent = data.name;
-
-            const countSpan = document.createElement('span');
-            countSpan.className = 'navigation-item-variant-count';
-            countSpan.textContent = `${variationCount}变体`;
-
-            nameRow.appendChild(nameSpan);
-            nameRow.appendChild(countSpan);
-
-            // 添加销量和点赞信息（始终显示，包括0销量）
-            const statsRow = document.createElement('div');
-            statsRow.className = 'navigation-item-stats-row';
-            
-            const statsLeft = document.createElement('div');
-            statsLeft.className = 'navigation-item-stats-left';
-            
-            const salesSpan = document.createElement('span');
-            salesSpan.className = `navigation-item-sales ${salesCount > 0 ? 'has-sales' : 'no-sales'}`;
-            salesSpan.textContent = `销量: ${salesCount}`;
-
-            const favsSpan = document.createElement('span');
-            favsSpan.className = `navigation-item-favorites ${favoritesCount > 0 ? 'has-favorites' : 'no-favorites'}`;
-            favsSpan.innerHTML = `<span style="color: inherit;">❤️</span> ${favoritesCount}`;
-
-            statsLeft.appendChild(salesSpan);
-            statsLeft.appendChild(favsSpan);
-
-            const indexSpan = document.createElement('span');
-            indexSpan.className = 'navigation-item-index';
-            indexSpan.textContent = `#${index + 1}`;
-
-            statsRow.appendChild(statsLeft);
-            statsRow.appendChild(indexSpan);
-            itemInfo.appendChild(statsRow);
-
-            itemInfo.appendChild(nameRow);
-            navItem.appendChild(thumbnailContainer);
-            navItem.appendChild(itemInfo);
-
-            // 添加点击事件
-            navItem.onclick = () => this.scrollToItem(element, navItem);
-
-            itemsContainer.appendChild(navItem);
-        });
-    }
-
     /**
-     * 过滤商品（使用 API 数据）
+     * 过滤商品（虚拟列表版本）
      */
     private filterItems(): void {
-        if (!this.searchInput) return;
+        if (!this.searchInput || !this.virtualContentWrapper) return;
 
         const searchTerm = this.searchInput.value.toLowerCase().trim();
-        
+
+        // 过滤商品列表
         if (searchTerm === '') {
-            this.filteredItems = [];
+            this.filteredItems = this.items;
         } else {
-            this.filteredItems = this.items.filter(itemElement => {
-                const { data } = itemElement;
-                return data.name.toLowerCase().includes(searchTerm) || 
-                       data.id.includes(searchTerm);
+            this.filteredItems = this.items.filter(item => {
+                if (!item.data) return false;
+                const name = item.data.name.toLowerCase();
+                const id = item.data.id.toLowerCase();
+                return name.includes(searchTerm) || id.includes(searchTerm);
             });
         }
 
-        this.createNavigationItems();
+        // 更新容器高度
+        this.virtualContentWrapper.style.height = `${this.filteredItems.length * this.itemHeight}px`;
+
+        // 清空已渲染的元素
+        this.renderedItems.forEach(element => element.remove());
+        this.renderedItems.clear();
+
+        // 重置滚动位置
+        if (this.virtualScrollContainer) {
+            this.virtualScrollContainer.scrollTop = 0;
+        }
+
+        // 重置可见范围
+        this.visibleRange = { start: 0, end: 0 };
+
+        // 重新渲染
+        this.updateVisibleItems();
     }
 
     /**

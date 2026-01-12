@@ -1,5 +1,6 @@
 import { BaseAPI } from '../BaseAPI';
 import { ItemManageParser } from './parser';
+import { ProgressiveParser } from './progressive-parser';
 import { ItemData, ItemElement } from './types';
 
 /**
@@ -10,6 +11,7 @@ import { ItemData, ItemElement } from './types';
 export class ItemManageAPI extends BaseAPI<ItemManageAPI> {
     private _items: ItemElement[] = [];
     private _parser: ItemManageParser;
+    private _progressiveParser?: ProgressiveParser;
 
     constructor() {
         super();
@@ -31,25 +33,27 @@ export class ItemManageAPI extends BaseAPI<ItemManageAPI> {
     /**
      * 等待商品元素出现
      */
-    private waitForElements(timeout: number = 5000): Promise<void> {
+    private waitForElements(timeout = 5000): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (document.querySelector('.item-wrapper')) {
+            const selector = '.item-wrapper';
+            
+            if (document.querySelector(selector)) {
                 resolve();
                 return;
             }
 
-            const timer = setTimeout(() => {
-                observer.disconnect();
-                reject(new Error('等待商品元素超时'));
-            }, timeout);
-
             const observer = new MutationObserver(() => {
-                if (document.querySelector('.item-wrapper')) {
+                if (document.querySelector(selector)) {
                     clearTimeout(timer);
                     observer.disconnect();
                     resolve();
                 }
             });
+
+            const timer = setTimeout(() => {
+                observer.disconnect();
+                reject(new Error('等待商品元素超时'));
+            }, timeout);
 
             observer.observe(document.body, {
                 childList: true,
@@ -60,37 +64,38 @@ export class ItemManageAPI extends BaseAPI<ItemManageAPI> {
 
     /**
      * 加载商品数据
-     * 等待商品元素出现后再加载
+     * ⚡ 性能优化：只收集元素引用，不解析数据
      */
     protected async load(): Promise<void> {
-        // 等待商品元素出现
         await this.waitForElements();
         
-        this._items = [];
-        const elements = document.querySelectorAll('.item-wrapper');
+        const elements = document.querySelectorAll<HTMLElement>('.item-wrapper');
         
-        elements.forEach(element => {
-            const htmlElement = element as HTMLElement;
-            const data = this._parser.parseItem(element);
-            if (data) {
-                // 获取变体和标签的ul元素
-                const variationsUl = htmlElement.querySelector('.dashboard-items-variation') as HTMLElement | undefined;
-                const tagsUl = htmlElement.querySelector('.dashboard-items-tags') as HTMLElement | undefined;
-                
-                // 解析变体和标签（包含元素引用）
-                const variations = this._parser.parseVariations(htmlElement);
-                const tags = this._parser.parseTags(htmlElement);
-                
-                this._items.push({
-                    data,
-                    element: htmlElement,
-                    variationsUl,
-                    tagsUl,
-                    variations,
-                    tags
-                });
-            }
-        });
+        this._items = Array.from(elements).map(element => ({
+            element,
+            data: null, // 延迟解析
+            variations: [],
+            tags: [],
+            variationsUl: element.querySelector('.dashboard-items-variation') as HTMLElement | undefined,
+            tagsUl: element.querySelector('.dashboard-items-tags') as HTMLElement | undefined
+        }));
+        
+        this._progressiveParser = new ProgressiveParser(this._parser);
+    }
+
+    /**
+     * 按需解析商品数据
+     * 在元素进入可视范围时调用
+     */
+    parseItemData(item: ItemElement): void {
+        if (!this._progressiveParser || item.data) return;
+        
+        const parsed = this._progressiveParser.parseItem(item.element);
+        if (!parsed) return;
+        
+        item.data = parsed.data;
+        item.variations = parsed.variations;
+        item.tags = parsed.tags;
     }
 
     /**
@@ -102,30 +107,32 @@ export class ItemManageAPI extends BaseAPI<ItemManageAPI> {
 
     /**
      * 获取所有商品数据（只返回数据，不含DOM元素）
+     * 注意：未解析的商品数据为 null
      */
-    getItemsData(): ItemData[] {
+    getItemsData(): (ItemData | null)[] {
         return this._items.map(item => item.data);
     }
 
     /**
      * 根据ID获取商品（包含数据和DOM元素）
+     * 注意：需要先解析数据才能按ID查找
      */
     getItem(id: string): ItemElement | undefined {
-        return this._items.find(item => item.data.id === id);
+        return this._items.find(item => item.data?.id === id);
     }
 
     /**
      * 根据ID获取商品数据（只返回数据）
      */
-    getItemData(id: string): ItemData | undefined {
-        return this._items.find(item => item.data.id === id)?.data;
+    getItemData(id: string): ItemData | null | undefined {
+        return this._items.find(item => item.data?.id === id)?.data;
     }
 
     /**
      * 根据ID获取DOM元素
      */
     getItemElement(id: string): HTMLElement | undefined {
-        return this._items.find(item => item.data.id === id)?.element;
+        return this._items.find(item => item.data?.id === id)?.element;
     }
 
     /**
@@ -137,24 +144,22 @@ export class ItemManageAPI extends BaseAPI<ItemManageAPI> {
 
     /**
      * 复制商品标签到剪贴板
-     * @param itemId 商品ID
-     * @returns 是否复制成功
      */
     async copyItemTags(itemId: string): Promise<boolean> {
         const item = this.getItem(itemId);
-        if (!item) {
-            console.error(`未找到商品: ${itemId}`);
+        
+        if (!item?.data) {
+            console.error(`未找到商品或数据未解析: ${itemId}`);
             return false;
         }
 
-        const tags = item.data.tags;
-        if (tags.length === 0) {
+        if (item.data.tags.length === 0) {
             alert('没有找到标签');
             return false;
         }
 
         try {
-            await navigator.clipboard.writeText(JSON.stringify(tags));
+            await navigator.clipboard.writeText(JSON.stringify(item.data.tags));
             return true;
         } catch (error) {
             console.error('复制标签失败:', error);

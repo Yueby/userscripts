@@ -32,6 +32,13 @@ const isPreviewModal = computed(() => {
   return state.type === 'alert' && state.formData?.sectionIndex !== undefined;
 });
 
+// 通用 Modal：排除预览、选择商品、选择文件
+const isGeneralModal = computed(() => 
+  !isPreviewModal.value 
+  && modalState.value.type !== 'selectItem' 
+  && modalState.value.type !== 'selectFile'
+);
+
 const previewSectionIndex = computed((): number | undefined => 
   modalState.value.formData?.sectionIndex as number | undefined
 );
@@ -227,6 +234,25 @@ function isItemSelected(itemId: string): boolean {
   return tempSelectedItems.value.includes(itemId);
 }
 
+// 监听 modal 显示状态，自动初始化或清空选择值
+watch(() => modalState.value.show, (isOpen) => {
+  if (!isOpen) {
+    tempSelectedItems.value = [];
+    tempSelectedFileIds.value = [];
+    return;
+  }
+  
+  const { type, formData } = modalState.value;
+  
+  if (type === 'selectItem' && formData?.itemIds) {
+    tempSelectedItems.value = [...formData.itemIds];
+  }
+  
+  if (type === 'selectFile' && formData?.fileIds) {
+    tempSelectedFileIds.value = [...formData.fileIds];
+  }
+})
+
 // 监听价格和折扣变化，自动更新 variation 价格
 watch(
   () => {
@@ -292,7 +318,7 @@ defineExpose({
 <template>
   <!-- Modals（放在最外层，确保任何状态下都能显示） -->
   <Modal
-    :show="modalState.show && !isPreviewModal"
+    :show="modalState.show && isGeneralModal"
     :title="modalState.title"
     :teleport-to="'.booth-enhancer-sidebar'"
     width="500px"

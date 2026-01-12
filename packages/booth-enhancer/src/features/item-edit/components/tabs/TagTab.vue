@@ -18,12 +18,18 @@ const { data, createNode, renameNode } = useStorage();
 // 树形数据
 const tree = computed(() => data.value.tagTree);
 
-// 递归检查节点是否包含标签
+// 检查节点本身是否包含标签
+function hasTags(node: Node | null): boolean {
+  if (!node) return false;
+  return node.data?.tags && Array.isArray(node.data.tags) && node.data.tags.length > 0;
+}
+
+// 递归检查节点是否包含标签（包括子节点）
 function hasTagsRecursive(node: Node | null): boolean {
   if (!node) return false;
   
-  const hasTags = node.data?.tags && Array.isArray(node.data.tags) && node.data.tags.length > 0;
-  if (hasTags) return true;
+  const nodeHasTags = hasTags(node);
+  if (nodeHasTags) return true;
   
   if (!node.children || node.children.length === 0) return false;
   
@@ -33,18 +39,23 @@ function hasTagsRecursive(node: Node | null): boolean {
   });
 }
 
-// 递归提取节点及其子节点的所有标签
-function extractTagsRecursive(node: Node, tagsSet: Set<string>): void {
+// 提取单个节点的标签（不递归）
+function extractTagsFromNode(node: Node, tagsSet: Set<string>): void {
   if (node.data?.tags && Array.isArray(node.data.tags)) {
     node.data.tags.forEach((tag: string) => tagsSet.add(tag));
   }
+}
+
+// 递归提取节点及其子节点的所有标签
+function extractTagsRecursive(node: Node, tagsSet: Set<string>): void {
+  extractTagsFromNode(node, tagsSet);
   
   if (node.children && node.children.length > 0) {
     node.children.forEach((childId: string) => {
       const childNode = tree.value.nodes[childId];
       if (childNode) {
         extractTagsRecursive(childNode, tagsSet);
-  }
+      }
     });
   }
 }
@@ -52,7 +63,29 @@ function extractTagsRecursive(node: Node, tagsSet: Set<string>): void {
 // 自定义右键菜单项（导出/导入功能已移至顶栏菜单）
 const customMenuItems = computed<ContextMenuItem[]>(() => [
   {
-    label: '应用标签',
+    label: '应用当前节点标签',
+    action: (node, selection) => {
+      const tagsToApply = new Set<string>();
+
+      if (selection && selection.length > 0) {
+        selection.forEach(n => extractTagsFromNode(n, tagsToApply));
+      } else if (node) {
+        extractTagsFromNode(node, tagsToApply);
+      }
+
+      if (tagsToApply.size > 0) {
+        props.api.addTags(Array.from(tagsToApply));
+      }
+    },
+    show: (node, selection) => {
+      if (selection && selection.length > 0) {
+        return selection.some(hasTags);
+      }
+      return hasTags(node);
+    },
+  },
+  {
+    label: '应用所有标签（递归）',
     action: (node, selection) => {
       const tagsToApply = new Set<string>();
 
@@ -72,9 +105,33 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
       }
       return hasTagsRecursive(node);
     },
+    separator: true,
   },
   {
-    label: '移除标签',
+    label: '移除当前节点标签',
+    action: (node, selection) => {
+      const tagsToRemove = new Set<string>();
+
+      if (selection && selection.length > 0) {
+        selection.forEach(n => extractTagsFromNode(n, tagsToRemove));
+      } else if (node) {
+        extractTagsFromNode(node, tagsToRemove);
+      }
+
+      if (tagsToRemove.size > 0) {
+        props.api.removeTags(Array.from(tagsToRemove));
+      }
+    },
+    show: (node, selection) => {
+      if (selection && selection.length > 0) {
+        return selection.some(hasTags);
+      }
+      return hasTags(node);
+    },
+    danger: true,
+  },
+  {
+    label: '移除所有标签（递归）',
     action: (node, selection) => {
       const tagsToRemove = new Set<string>();
 
