@@ -612,7 +612,7 @@ defineExpose({
     </div>
 
     <div v-if="itemConfig.variations.length === 0" class="empty-hint">
-      暂无 Variations，点击"编辑价格"添加
+      暂无 Variations，点击"添加"或"从页面导入"
     </div>
 
     <DraggableCardList
