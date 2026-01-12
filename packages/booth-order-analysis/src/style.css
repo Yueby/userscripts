@@ -15,7 +15,7 @@
     user-select: none;
     position: relative;
     overflow: hidden;
-    /* 默认样式 - 如果没有指定颜色变体，使用 secondary 样式 */
+
     background: #f3f4f6;
     color: #374151;
     border: 1px solid #d1d5db;
@@ -51,7 +51,6 @@
     min-height: 40px;
 }
 
-/* 按钮颜色变体 */
 .booth-btn-primary {
     background: #3b82f6;
     color: white;
@@ -322,7 +321,6 @@
     transform: translateX(20px);
 }
 
-/* Toggle 尺寸变体 */
 .booth-toggle-sm .toggle-slider {
     width: 36px;
     height: 20px;
