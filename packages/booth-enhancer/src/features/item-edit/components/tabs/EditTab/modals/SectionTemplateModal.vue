@@ -37,7 +37,6 @@ const sectionManager = useTemplateManager({
   <Modal
     :show="show"
     title="Section 模板配置"
-    width="700px"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
   >

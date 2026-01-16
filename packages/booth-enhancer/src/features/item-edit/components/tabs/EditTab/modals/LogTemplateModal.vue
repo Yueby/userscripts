@@ -37,7 +37,6 @@ const logManager = useTemplateManager({
   <Modal
     :show="show"
     title="日志模板配置"
-    width="700px"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
   >

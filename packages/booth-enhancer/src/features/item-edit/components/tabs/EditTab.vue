@@ -2,10 +2,10 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../../../api/item-edit';
 import { useModal, useStorage } from '../../composables';
-import { createDefaultItemConfig, getSelectedDescriptionTemplate, getSelectedDiscountTemplate } from '../../config-types';
+import { createDefaultItemConfig, getSelectedDescriptionTemplate, getSelectedDiscountIndicatorTemplate, getSelectedDiscountTemplate } from '../../config-types';
 import { applyDiscount, calculateVariationPrices } from '../../utils/priceCalculator';
 import { resolveSectionContent, type ResolveContext } from '../../utils/sectionResolver';
-import { calculateTotalSupport, parseTemplate, pluralize } from '../../utils/templateParser';
+import { calculateTotalSupport, formatDateTime, parseTemplate, pluralize } from '../../utils/templateParser';
 import { FileSelector, Modal, PreviewBox } from '../ui';
 import { icons, withSize } from '../ui/icons';
 import { toast } from '../ui/Toast';
@@ -97,6 +97,16 @@ const templateVars = computed(() => {
     ? `${supportCount} ${pluralize(itemTypeName, supportCount)}`
     : firstName;
   
+  // 获取折扣标识模板
+  const discountIndicatorTemplate = config.discount.enabled 
+    ? getSelectedDiscountIndicatorTemplate(globalTemplates.value, config)
+    : '';
+  
+  // 解析折扣标识模板（支持 {折扣百分比} 变量）
+  const discountIndicator = parseTemplate(discountIndicatorTemplate, {
+    discountPercent: config.discount.discountPercent
+  });
+  
   return {
     itemName: config.itemName || '',
     supportCount,
@@ -105,7 +115,7 @@ const templateVars = computed(() => {
     variationCount: normalVariations.length,
     firstName,
     smartTitle,
-    discountIndicator: config.discount.enabled ? '[SALE] ' : ''
+    discountIndicator
   };
 });
 
@@ -157,17 +167,6 @@ const previewDescription = computed((): string => {
       fullsetOriginalPrice,
       currentItemConfig.value.discount
     );
-    
-    // 格式化时间
-    const formatDateTime = (isoString?: string): string => {
-      if (!isoString) return '';
-      const date = new Date(isoString);
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hour = String(date.getHours()).padStart(2, '0');
-      const minute = String(date.getMinutes()).padStart(2, '0');
-      return `${month}/${day} ${hour}:${minute}`;
-    };
     
     const discountTemplate = getSelectedDiscountTemplate(globalTemplates.value, currentItemConfig.value);
     const discountText = parseTemplate(
@@ -321,7 +320,6 @@ defineExpose({
     :show="modalState.show && isGeneralModal"
     :title="modalState.title"
     :teleport-to="'.booth-enhancer-sidebar'"
-    width="500px"
     @close="modal.closeModal"
   >
     <!-- Header Actions -->
@@ -436,6 +434,7 @@ defineExpose({
         :template-vars="templateVars"
         :api="api"
         :total-support="totalSupport"
+        :item-tree="data.itemTree"
       />
 
       <!-- 2. 商品描述区 -->
@@ -485,21 +484,19 @@ defineExpose({
     <Modal
       :show="modalState.show && isPreviewModal"
       :title="modalState.title"
-      width="500px"
       :teleport-to="'.booth-enhancer-sidebar'"
       @close="modal.closeModal"
     >
-      <div v-if="previewSectionIndex !== undefined && resolvedSections[previewSectionIndex]" class="be-flex be-flex-column be-gap-sm">
-        <div class="be-text-base be-font-bold be-text-primary">{{ resolvedSections[previewSectionIndex].headline }}</div>
-        <pre class="be-text-base be-text-secondary be-whitespace-pre-wrap be-break-words be-m-0">{{ resolvedSections[previewSectionIndex].body }}</pre>
-      </div>
+      <PreviewBox v-if="previewSectionIndex !== undefined && resolvedSections[previewSectionIndex]" label="Section 预览:" type="pre">
+        <div class="be-text-primary be-font-bold be-mb-sm">{{ resolvedSections[previewSectionIndex].headline }}</div>
+        <div class="be-text-secondary">{{ resolvedSections[previewSectionIndex].body }}</div>
+      </PreviewBox>
     </Modal>
 
     <!-- 商品选择 Modal -->
     <Modal
       :show="modalState.show && modalState.type === 'selectItem'"
       :title="modalState.title"
-      width="500px"
       :teleport-to="'.booth-enhancer-sidebar'"
       @close="modal.closeModal"
     >
@@ -561,7 +558,6 @@ defineExpose({
     <Modal
       :show="modalState.show && modalState.type === 'selectFile'"
       :title="modalState.title"
-      width="500px"
       :teleport-to="'.booth-enhancer-sidebar'"
       @close="modal.closeModal"
     >

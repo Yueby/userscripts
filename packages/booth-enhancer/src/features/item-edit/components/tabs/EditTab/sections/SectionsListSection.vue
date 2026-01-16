@@ -106,12 +106,8 @@ function changeSectionType(index: number, newType: SectionType): void {
   const oldSection = props.itemConfig.sections[index];
   const newSection = createSectionByType(newType, props.globalTemplates);
   
-  // 保留 headline
-  if (oldSection.type === 'normal' && oldSection.headline) {
-    newSection.headline = oldSection.headline;
-  } else if (oldSection.type === 'log' && oldSection.headline) {
-    newSection.headline = oldSection.headline;
-  } else if (oldSection.type === 'iteminfo' && oldSection.headline) {
+  // 保留 headline（如果旧 section 有的话）
+  if (oldSection.headline) {
     newSection.headline = oldSection.headline;
   }
   
@@ -248,6 +244,7 @@ defineExpose({
     <DraggableCardList
       v-else
       :items="itemConfig.sections"
+      :key-extractor="(item: any) => item.id"
       @remove="removeSection"
       @reorder="onSectionReorder"
     >
@@ -349,6 +346,7 @@ defineExpose({
             <DraggableCardList
               v-else
               :items="section.logEntries"
+              :key-extractor="(item: any) => item.id"
               @remove="(entryIndex: number) => removeLogEntry(index, entryIndex)"
               @reorder="(from: number, to: number) => onLogEntryReorder(index, from, to)"
             >

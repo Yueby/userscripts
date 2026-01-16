@@ -2,7 +2,7 @@
 import { computed, watch } from 'vue';
 
 interface Props {
-  modelValue: string;
+  modelValue?: string;
   templates?: T[];
   label?: string;
   placeholder?: string;
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
   templates: () => [],
   label: '选择模板',
   placeholder: '请选择模板',
@@ -23,7 +24,7 @@ const emit = defineEmits<{
 // 当前选中的值
 const selectedValue = computed({
   get() {
-    return props.modelValue;
+    return props.modelValue || '';
   },
   set(value: string) {
     emit('update:modelValue', value);
@@ -37,8 +38,9 @@ function ensureValidSelection(templates?: T[]): void {
     return;
   }
   
-  // 如果当前选中的模板不存在，自动选择第一个
-  const currentExists = templates.some(t => t.id === props.modelValue);
+  // 如果当前选中的模板不存在或为空，自动选择第一个
+  const currentValue = props.modelValue || '';
+  const currentExists = templates.some(t => t.id === currentValue);
   if (!currentExists) {
     emit('update:modelValue', templates[0].id);
   }

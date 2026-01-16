@@ -246,19 +246,77 @@ function handleEditExport() {
   }
 }
 
-// 导入商品配置
+/**
+ * 清理配置中的无效文件ID
+ * @returns 被清理的无效文件数量
+ */
+function cleanInvalidFileIds(config: any, availableFileIds: Set<string>): number {
+  let removedCount = 0;
+  
+  // 清理通用文件
+  if (config.commonFiles) {
+    const initialLength = config.commonFiles.length;
+    config.commonFiles = config.commonFiles.filter((fileId: string) => 
+      availableFileIds.has(fileId)
+    );
+    removedCount += initialLength - config.commonFiles.length;
+  }
+  
+  // 清理每个 variation 的文件ID
+  if (config.variations) {
+    config.variations.forEach((variation: any) => {
+      // 清理 fileIds 数组
+      if (variation.fileIds) {
+        const initialLength = variation.fileIds.length;
+        variation.fileIds = variation.fileIds.filter((fileId: string) => 
+          availableFileIds.has(fileId)
+        );
+        removedCount += initialLength - variation.fileIds.length;
+      }
+      
+      // 清理 fileItemMap 对象
+      if (variation.fileItemMap) {
+        const validFileItemMap: Record<string, string> = {};
+        for (const [fileId, itemId] of Object.entries(variation.fileItemMap)) {
+          if (availableFileIds.has(fileId)) {
+            validFileItemMap[fileId] = itemId as string;
+          } else {
+            removedCount++;
+          }
+        }
+        variation.fileItemMap = validFileItemMap;
+      }
+    });
+  }
+  
+  return removedCount;
+}
+
+/**
+ * 导入商品配置
+ */
 function handleEditImport() {
   triggerFileInput('.json,application/json', async (file) => {
     try {
       const config = await readJSONFile(file);
-      const success = importSingleItem(config, { replace: false });
       
-      if (!success) {
-        pendingImportConfig.value = config;
-        showImportConflictDialog.value = true;
-      } else {
-        toast.success('商品配置导入成功');
-      }
+      // 将导入的配置应用到当前商品
+      config.itemId = props.itemId;
+      
+      // 清理无效的文件ID
+      const availableFileIds = new Set(props.api.files.map(f => f.id));
+      const removedCount = cleanInvalidFileIds(config, availableFileIds);
+      
+      // 直接替换当前商品配置
+      importSingleItem(config, { replace: true });
+      
+      // 显示结果提示
+      const message = removedCount > 0 
+        ? `当前商品配置已成功替换（已清理 ${removedCount} 个无效文件引用）`
+        : '当前商品配置已成功替换';
+      
+      toast.success(message, 3000);
+      console.log('[导入成功]', message, config.itemId, config.itemName);
     } catch (error) {
       console.error('导入失败:', error);
       toast.error('导入失败：' + (error as Error).message);
@@ -286,6 +344,18 @@ function cancelImport() {
 const menuItems = computed<MenuItem[]>(() => {
   const isEditTab = data.value.ui.activeTab === 'edit';
   
+  // 根据当前 Tab 确定导出/导入标签
+  const exportLabel = isEditTab 
+    ? '导出当前商品 (JSON)' 
+    : `导出${currentTabLabel.value}数据 (JSON)`;
+  
+  const importLabel = isEditTab 
+    ? '导入商品配置 (JSON)' 
+    : `导入${currentTabLabel.value}数据 (JSON)`;
+  
+  const exportAction = isEditTab ? handleEditExport : handleTabExport;
+  const importAction = isEditTab ? handleEditImport : handleTabImport;
+  
   return [
     {
       label: '导出完整备份 (JSON)',
@@ -303,14 +373,14 @@ const menuItems = computed<MenuItem[]>(() => {
       action: () => {}
     },
     {
-      label: isEditTab ? '导出当前商品 (JSON)' : `导出${currentTabLabel.value}数据 (JSON)`,
+      label: exportLabel,
       icon: withSize(icons.upload, 14),
-      action: isEditTab ? handleEditExport : handleTabExport
+      action: exportAction
     },
     {
-      label: isEditTab ? '导入商品配置 (JSON)' : `导入${currentTabLabel.value}数据 (JSON)`,
+      label: importLabel,
       icon: withSize(icons.download, 14),
-      action: isEditTab ? handleEditImport : handleTabImport
+      action: importAction
     }
   ];
 });
@@ -362,7 +432,6 @@ onUnmounted(() => {
       title="导入确认"
       :teleport-to="'.booth-enhancer-sidebar'"
       @close="cancelImport"
-      width="400px"
     >
       <div class="modal-content">
         <p>商品 ID <strong>{{ pendingImportConfig?.itemId }}</strong> 已存在配置。</p>

@@ -206,6 +206,7 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
             nameInput,
             priceInput,
             deleteButton: this.findDeleteButton(item),
+            dragHandle: this.findDragHandle(item),
           }];
         })
       );
@@ -290,6 +291,7 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
       nameInput,
       priceInput,
       deleteButton: this.findDeleteButton(item),
+      dragHandle: this.findDragHandle(item),
     };
     
     this._newVariationCallback?.(variationElement);
@@ -678,6 +680,17 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     // li 下的第二个 button 就是删除按钮
     const buttons = itemElement.querySelectorAll<HTMLButtonElement>('button');
     return buttons.length >= 2 ? buttons[1] : null;
+  }
+
+  /**
+   * 查找 Variation 的拖拽按钮
+   * @param itemElement Variation 的 li 元素
+   * @returns 拖拽按钮或 null
+   */
+  private findDragHandle(itemElement: HTMLElement): HTMLButtonElement | null {
+    // li 下的第一个 button 就是拖拽按钮（class 包含 variation-box-head）
+    const firstButton = itemElement.querySelector<HTMLButtonElement>('button.variation-box-head');
+    return firstButton;
   }
 
   /**
@@ -1337,6 +1350,43 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     
     this.closeVariationEditPanel(panel);
     return { success: true, updated: true };
+  }
+
+  /**
+   * 调整 Variation 的顺序（通过拖拽模拟）
+   * @param fromIndex 源索引
+   * @param toIndex 目标索引
+   * @returns 是否成功
+   */
+  moveVariation(fromIndex: number, toIndex: number): boolean {
+    // 每次访问 this.variations 都会重新从 DOM 解析，确保数据最新
+    const variations = this.variations;
+    
+    if (fromIndex < 0 || fromIndex >= variations.length ||
+        toIndex < 0 || toIndex >= variations.length ||
+        fromIndex === toIndex) {
+      return false;
+    }
+    
+    const sourceVar = variations[fromIndex];
+    const targetVar = variations[toIndex];
+    
+    // 获取拖拽句柄和实际元素
+    const sourceDragHandle = sourceVar.dragHandle || sourceVar.element;
+    const targetDragHandle = targetVar.dragHandle || targetVar.element;
+    const sourceElement = sourceVar.element;
+    const targetElement = targetVar.element;
+    
+    // 模拟拖拽并移动 DOM
+    // DOM 更新后，下次访问 this.variations 会自动得到新的顺序
+    const position = fromIndex < toIndex ? 'after' : 'before';
+    return Simulate.dragAndDrop(
+      sourceDragHandle,
+      targetDragHandle,
+      sourceElement,
+      targetElement,
+      position
+    );
   }
 }
 

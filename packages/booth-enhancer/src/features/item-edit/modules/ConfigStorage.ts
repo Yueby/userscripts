@@ -45,7 +45,12 @@ export class ConfigStorage {
     try {
       const stored = GM_getValue(STORAGE_KEY, null);
       if (stored) {
-        return JSON.parse(stored) as AppData;
+        const data = JSON.parse(stored) as AppData;
+        // 每次打开页面时，侧边栏默认关闭（不保存窗口打开状态）
+        if (data.ui) {
+          data.ui.sidebarOpen = false;
+        }
+        return data;
       }
     } catch (e) {
       console.error('Failed to load config:', e);

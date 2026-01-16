@@ -115,6 +115,7 @@ export interface SectionTemplate extends BaseTemplate {
 export type NameTemplate = TextTemplate;         // 可用变量: {itemName}, {supportCount}
 export type DescriptionTemplate = TextTemplate;  // 可用变量: {itemName}, {supportCount}
 export type DiscountTemplate = TextTemplate;     // 可用变量: {originalPrice}, {discountedPrice}, {discountPercent}, {fullsetOriginalPrice}, {fullsetDiscountedPrice}, {startDate}, {endDate}
+export type DiscountIndicatorTemplate = TextTemplate; // 折扣标识模板（纯文本，如 [SALE]、🔥特价🔥）
 export type LogTemplate = TextTemplate;          // 可用变量: {date}, {content}
 export type ItemInfoTemplate = TextTemplate;     // 可用变量: {authorName}, {itemName}, {itemUrl}
 
@@ -123,6 +124,7 @@ export interface GlobalTemplateConfig {
   nameTemplates: NameTemplate[];
   descriptionTemplates: DescriptionTemplate[];
   discountTemplates: DiscountTemplate[];
+  discountIndicatorTemplates: DiscountIndicatorTemplate[]; // 新增：折扣标识模板
   logTemplates: LogTemplate[];
   itemInfoTemplates: ItemInfoTemplate[];
   sectionTemplates: SectionTemplate[];
@@ -177,6 +179,7 @@ export interface SingleItemConfig {
     nameTemplateId: string;
     descriptionTemplateId: string;
     discountTemplateId: string;
+    discountIndicatorTemplateId: string; // 折扣标识模板ID
   };
   
   customDescription: string; // 自定义描述内容
@@ -254,6 +257,32 @@ export function createDefaultGlobalTemplates(): GlobalTemplateConfig {
         isDefault: false
       }
     ],
+    discountIndicatorTemplates: [
+      {
+        id: 'default-discount-indicator',
+        name: '默认标识',
+        template: '[SALE] ',
+        isDefault: true
+      },
+      {
+        id: 'fire-emoji',
+        name: '火焰表情',
+        template: '🔥 ',
+        isDefault: false
+      },
+      {
+        id: 'japanese-sale',
+        name: '日文特价',
+        template: '【セール中】',
+        isDefault: false
+      },
+      {
+        id: 'percent-off',
+        name: '折扣标签',
+        template: '[-{折扣百分比}%] ',
+        isDefault: false
+      }
+    ],
     logTemplates: [
       {
         id: 'default-log',
@@ -300,7 +329,8 @@ export function createDefaultSingleItemConfig(itemId: string): SingleItemConfig 
     selectedTemplates: {
       nameTemplateId: 'default-name',
       descriptionTemplateId: 'default-desc',
-      discountTemplateId: 'default-discount'
+      discountTemplateId: 'default-discount',
+      discountIndicatorTemplateId: 'default-discount-indicator'
     },
     customDescription: '',
     discount: {
@@ -325,10 +355,17 @@ export function createDefaultItemConfig(itemId: string): ItemEditConfig {
 // ===== 模板获取辅助函数 =====
 
 /**
+ * 类型守卫：检查模板是否为 TextTemplate
+ */
+function isTextTemplate(template: BaseTemplate): template is TextTemplate {
+  return 'template' in template;
+}
+
+/**
  * 通用模板获取函数
  * @param templates - 模板数组
  * @param selectedTemplateId - 选中的模板ID（可选）
- * @returns 模板内容字符串，如果是 TextTemplate 返回 template 字段
+ * @returns 模板内容字符串
  */
 function getSelectedTemplate<T extends BaseTemplate>(
   templates: T[] | undefined,
@@ -339,20 +376,48 @@ function getSelectedTemplate<T extends BaseTemplate>(
     return '';
   }
   
-  let template: T | undefined;
+  // 查找选中的模板，或使用默认模板，或使用第一个模板
+  const template = selectedTemplateId
+    ? templates.find(t => t.id === selectedTemplateId)
+    : undefined;
   
-  // 如果有选中的模板ID，尝试查找
-  if (selectedTemplateId) {
-    template = templates.find(t => t.id === selectedTemplateId);
-  }
+  const selectedTemplate = template 
+    || templates.find(t => t.isDefault) 
+    || templates[0];
   
-  // 如果没找到，使用默认模板或第一个模板
-  if (!template) {
-    template = templates.find(t => t.isDefault) || templates[0];
-  }
-  
-  // 返回 template 字段（TextTemplate 类型）
-  return (template as any)?.template || '';
+  // 使用类型守卫安全地访问 template 字段
+  return selectedTemplate && isTextTemplate(selectedTemplate)
+    ? selectedTemplate.template
+    : '';
+}
+
+/**
+ * 模板类型键映射
+ */
+type TemplateTypeKey = keyof Pick<GlobalTemplateConfig, 
+  'nameTemplates' | 'descriptionTemplates' | 'discountTemplates' | 'discountIndicatorTemplates'
+>;
+
+type TemplateIdKey = keyof SingleItemConfig['selectedTemplates'];
+
+/**
+ * 通用模板获取辅助函数
+ * @param config - 全局模板配置
+ * @param itemConfig - 商品配置
+ * @param templateKey - 模板类型键
+ * @param idKey - 模板ID键
+ * @returns 模板内容字符串
+ */
+function getTemplateByType(
+  config: GlobalTemplateConfig,
+  itemConfig: SingleItemConfig,
+  templateKey: TemplateTypeKey,
+  idKey: TemplateIdKey
+): string {
+  return getSelectedTemplate(
+    config[templateKey] as TextTemplate[],
+    itemConfig.selectedTemplates?.[idKey]
+  );
 }
 
 /**
@@ -362,10 +427,7 @@ export function getSelectedNameTemplate(
   config: GlobalTemplateConfig,
   itemConfig: SingleItemConfig
 ): string {
-  return getSelectedTemplate(
-    config.nameTemplates,
-    itemConfig.selectedTemplates?.nameTemplateId
-  );
+  return getTemplateByType(config, itemConfig, 'nameTemplates', 'nameTemplateId');
 }
 
 /**
@@ -375,10 +437,7 @@ export function getSelectedDescriptionTemplate(
   config: GlobalTemplateConfig,
   itemConfig: SingleItemConfig
 ): string {
-  return getSelectedTemplate(
-    config.descriptionTemplates,
-    itemConfig.selectedTemplates?.descriptionTemplateId
-  );
+  return getTemplateByType(config, itemConfig, 'descriptionTemplates', 'descriptionTemplateId');
 }
 
 /**
@@ -388,10 +447,17 @@ export function getSelectedDiscountTemplate(
   config: GlobalTemplateConfig,
   itemConfig: SingleItemConfig
 ): string {
-  return getSelectedTemplate(
-    config.discountTemplates,
-    itemConfig.selectedTemplates?.discountTemplateId
-  );
+  return getTemplateByType(config, itemConfig, 'discountTemplates', 'discountTemplateId');
+}
+
+/**
+ * 获取选中的折扣标识模板
+ */
+export function getSelectedDiscountIndicatorTemplate(
+  config: GlobalTemplateConfig,
+  itemConfig: SingleItemConfig
+): string {
+  return getTemplateByType(config, itemConfig, 'discountIndicatorTemplates', 'discountIndicatorTemplateId');
 }
 
 // 创建默认数据

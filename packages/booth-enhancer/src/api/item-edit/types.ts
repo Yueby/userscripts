@@ -28,6 +28,8 @@ export interface ItemEditVariationElement {
     priceInput: HTMLInputElement | null;
     /** 删除按钮 */
     deleteButton?: HTMLButtonElement | null;
+    /** 拖拽按钮 */
+    dragHandle?: HTMLButtonElement | null;
 }
 
 /**

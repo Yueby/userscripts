@@ -18,6 +18,10 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
     private app: App | null = null;
     private container: HTMLElement | null = null;
     private toggleBtn: HTMLElement | null = null;
+    
+    // 预编译的图标（避免重复创建）
+    private readonly chevronLeftIcon = withSize(icons.chevronLeft, 20, 2.5);
+    private readonly chevronRightIcon = withSize(icons.chevronRight, 20, 2.5);
 
     constructor(context: FeatureContext) {
         super(context);
@@ -93,9 +97,9 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
                 top: 50%;
                 right: 0;
                 transform: translateY(-50%) translateX(100%);
-                width: 400px;
-                min-width: 300px;
-                max-width: 500px;
+                width: 500px;
+                min-width: 400px;
+                max-width: 650px;
                 height: 80vh;
                 max-height: 80vh;
                 z-index: 1000;
@@ -137,9 +141,9 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
     /**
      * 更新侧边栏状态
      */
-    private updateSidebarState(isOpen: boolean, chevronRight: string, chevronLeft: string): void {
+    private updateSidebarState(isOpen: boolean): void {
         if (this.toggleBtn) {
-            this.toggleBtn.innerHTML = isOpen ? chevronRight : chevronLeft;
+            this.toggleBtn.innerHTML = isOpen ? this.chevronRightIcon : this.chevronLeftIcon;
         }
         if (this.container) {
             this.container.classList.toggle('panel-open', isOpen);
@@ -153,22 +157,17 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
         this.toggleBtn = document.createElement('div');
         this.toggleBtn.className = 'booth-enhancer-toggle';
         this.toggleBtn.title = '配置面板';
-
-        // 使用 SVG 图标
-        const chevronLeft = withSize(icons.chevronLeft, 20, 2.5);
-        const chevronRight = withSize(icons.chevronRight, 20, 2.5);
-        
-        this.toggleBtn.innerHTML = chevronLeft;
+        this.toggleBtn.innerHTML = this.chevronLeftIcon;
 
         this.toggleBtn.addEventListener('click', () => {
             const storage = ConfigStorage.getInstance();
             const isOpen = !storage.data.value.ui.sidebarOpen;
             storage.data.value.ui.sidebarOpen = isOpen;
-            this.updateSidebarState(isOpen, chevronRight, chevronLeft);
+            this.updateSidebarState(isOpen);
         });
 
         document.body.appendChild(this.toggleBtn);
-            }
+    }
 
     /**
      * 创建面板容器
@@ -182,9 +181,7 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
         const sidebarOpen = storage.data.value.ui.sidebarOpen;
         
         if (sidebarOpen) {
-            const chevronRight = withSize(icons.chevronRight, 20, 2.5);
-            const chevronLeft = withSize(icons.chevronLeft, 20, 2.5);
-            this.updateSidebarState(sidebarOpen, chevronRight, chevronLeft);
+            this.updateSidebarState(sidebarOpen);
         }
         
         document.body.appendChild(this.container);

@@ -24,6 +24,11 @@ function hasTags(node: Node | null): boolean {
   return node.data?.tags && Array.isArray(node.data.tags) && node.data.tags.length > 0;
 }
 
+// 检查节点是否有子节点
+function hasChildren(node: Node | null): boolean {
+  return Boolean(node?.children && node.children.length > 0);
+}
+
 // 递归检查节点是否包含标签（包括子节点）
 function hasTagsRecursive(node: Node | null): boolean {
   if (!node) return false;
@@ -31,12 +36,20 @@ function hasTagsRecursive(node: Node | null): boolean {
   const nodeHasTags = hasTags(node);
   if (nodeHasTags) return true;
   
-  if (!node.children || node.children.length === 0) return false;
+  if (!hasChildren(node)) return false;
   
-  return node.children.some((childId: string) => {
+  return node.children!.some((childId: string) => {
     const childNode = tree.value.nodes[childId];
     return childNode && hasTagsRecursive(childNode);
   });
+}
+
+// 检查节点是否应该显示递归选项（有子节点且子节点有标签）
+function shouldShowRecursiveOption(node: Node | null, selection?: Node[]): boolean {
+  if (selection && selection.length > 0) {
+    return selection.some(n => hasChildren(n) && hasTagsRecursive(n));
+  }
+  return hasChildren(node) && hasTagsRecursive(node);
 }
 
 // 提取单个节点的标签（不递归）
@@ -99,12 +112,7 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
         props.api.addTags(Array.from(tagsToApply));
       }
     },
-    show: (node, selection) => {
-      if (selection && selection.length > 0) {
-        return selection.some(hasTagsRecursive);
-      }
-      return hasTagsRecursive(node);
-    },
+    show: shouldShowRecursiveOption,
     separator: true,
   },
   {
@@ -145,12 +153,7 @@ const customMenuItems = computed<ContextMenuItem[]>(() => [
         props.api.removeTags(Array.from(tagsToRemove));
       }
     },
-    show: (node, selection) => {
-      if (selection && selection.length > 0) {
-        return selection.some(hasTagsRecursive);
-      }
-      return hasTagsRecursive(node);
-    },
+    show: shouldShowRecursiveOption,
     danger: true,
   },
 ]);

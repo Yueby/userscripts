@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
 import { useModal } from '../../../../composables';
 import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
@@ -26,6 +26,9 @@ const emit = defineEmits<{
 const showPriceModal = ref(false);
 const selectedVariationIndex = ref<number | null>(null);
 const selectingItemForFile = ref<{ variationIndex: number; fileId: string } | null>(null);
+
+// 响应式的页面 variation 名称集合
+const pageVariationNames = ref<Set<string>>(new Set());
 
 // Computed
 const hasFullset = computed((): boolean => 
@@ -69,44 +72,252 @@ async function importVariations(): Promise<void> {
     }
   });
   
-  // 自动检测通用文件
+  // 自动检测通用文件（未映射到商品的文件）
   const allFiles = new Set<string>();
-  props.itemConfig.variations.forEach((variation: any) => {
-    if (variation.fileIds) {
-      variation.fileIds.forEach((fileId: string) => allFiles.add(fileId));
-    }
-  });
-  
   const mappedFiles = new Set<string>();
+  
   props.itemConfig.variations.forEach((variation: any) => {
+    // 收集所有文件
+    variation.fileIds?.forEach((fileId: string) => allFiles.add(fileId));
+    
+    // 收集已映射的文件
     if (variation.fileItemMap) {
-      Object.keys(variation.fileItemMap).forEach((fileId: string) => {
-        if (variation.fileItemMap![fileId]) {
-          mappedFiles.add(fileId);
-        }
+      Object.entries(variation.fileItemMap).forEach(([fileId, itemId]) => {
+        if (itemId) mappedFiles.add(fileId);
       });
     }
   });
   
-  const commonFiles: string[] = [];
-  allFiles.forEach((fileId: string) => {
-    if (!mappedFiles.has(fileId)) {
-      commonFiles.push(fileId);
-    }
-  });
-  
-  if (commonFiles.length > 0) {
-    props.itemConfig.commonFiles = commonFiles;
-  } else {
-    props.itemConfig.commonFiles = [];
-  }
+  // 计算通用文件（所有文件减去已映射文件）
+  const commonFiles = Array.from(allFiles).filter(fileId => !mappedFiles.has(fileId));
+  props.itemConfig.commonFiles = commonFiles;
   
   const messages: string[] = [`已导入 ${pageVariations.length} 个 Variations`];
   if (commonFiles.length > 0) {
     messages.push(`检测到 ${commonFiles.length} 个通用文件`);
   }
   toast.success(messages.join('，'));
+  
+  // 导入不会改变页面 DOM，但会改变配置数据，需要刷新锁定状态
+  updatePageVariationNames();
 }
+
+// 根据页面 Variation 顺序同步配置顺序
+function syncVariationOrderFromPage(): void {
+  const pageVariations = props.api.variations;
+  
+  if (pageVariations.length === 0 || props.itemConfig.variations.length === 0) {
+    return;
+  }
+  
+  // 获取页面 variation 的名称顺序
+  const pageNames = pageVariations.map(v => v.nameInput?.value?.trim() || '');
+  const pageNameSet = new Set(pageNames);
+  
+  // 按页面顺序重组配置项
+  const configInPageOrder = pageNames
+    .map(pageName => props.itemConfig.variations.find(v => (v.name?.trim() || '') === pageName))
+    .filter((v): v is any => v !== undefined);
+  
+  // 添加配置中有但页面没有的项（保持原有顺序）
+  const configNotInPage = props.itemConfig.variations.filter(
+    v => !pageNameSet.has(v.name?.trim() || '')
+  );
+  
+  const newOrder = [...configInPageOrder, ...configNotInPage];
+  
+  // 检查顺序是否改变
+  const currentOrder = props.itemConfig.variations.map(v => v.name?.trim() || '');
+  const targetOrder = newOrder.map(v => v.name?.trim() || '');
+  
+  if (JSON.stringify(currentOrder) !== JSON.stringify(targetOrder)) {
+    props.itemConfig.variations = newOrder;
+  }
+}
+
+// MutationObserver 用于监听页面 variation 列表变化
+let variationObserver: MutationObserver | null = null;
+
+// 等待 API 的 variations 数据加载完成
+function waitForVariationsReady(timeout: number = 5000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    
+    const checkVariations = () => {
+      const variations = props.api.variations;
+      
+      // 检查是否有 variations（至少有数据）
+      if (variations && variations.length > 0) {
+        resolve(true);
+        return;
+      }
+      
+      // 超时检查
+      if (Date.now() - startTime > timeout) {
+        console.warn('[VariationsListSection] 等待 variations 数据超时，可能页面暂无 variation');
+        resolve(false);
+        return;
+      }
+      
+      // 继续轮询
+      setTimeout(checkVariations, 100);
+    };
+    
+    checkVariations();
+  });
+}
+
+// 找到 variation 列表的容器元素（用于监听 DOM 变化）
+function findVariationListContainer(): HTMLElement | null {
+  const variations = props.api.variations;
+  if (variations.length === 0) return null;
+  
+  // 从第一个 variation 元素向上查找 ul 容器
+  const firstVariationElement = variations[0]?.element;
+  if (!firstVariationElement) return null;
+  
+  return firstVariationElement.parentElement as HTMLElement | null;
+}
+
+// 启动页面 variation 顺序监听
+async function startVariationOrderSync(): Promise<void> {
+  // 等待 API 的 variations 数据加载完成
+  const hasVariations = await waitForVariationsReady();
+  
+  if (!hasVariations) {
+    console.log('[VariationsListSection] 页面暂无 variations，跳过顺序同步');
+    return;
+  }
+  
+  // 首次加载时同步顺序
+  syncVariationOrderFromPage();
+  
+  // 更新页面输入框禁用状态
+  updatePageVariationInputsDisabledState();
+  
+  // 刷新锁定状态（首次启动需要手动刷新一次）
+  updatePageVariationNames();
+  
+  // 找到 variation 列表容器
+  const variationListContainer = findVariationListContainer();
+  
+  if (!variationListContainer) {
+    console.warn('[VariationsListSection] 无法找到 variation 列表容器，跳过 DOM 监听');
+    return;
+  }
+  
+  // 创建 MutationObserver 监听 DOM 变化
+  variationObserver = new MutationObserver((mutations) => {
+    // 检查是否有子节点顺序变化
+    const hasOrderChange = mutations.some(mutation => {
+      return mutation.type === 'childList' && (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0);
+    });
+    
+    if (hasOrderChange) {
+      // 延迟执行，确保 DOM 更新完成
+      setTimeout(() => {
+        syncVariationOrderFromPage();
+        updatePageVariationInputsDisabledState();
+        updatePageVariationNames();
+      }, 100);
+    }
+  });
+  
+  // 监听子节点变化
+  variationObserver.observe(variationListContainer, {
+    childList: true, // 监听子节点添加/删除
+    subtree: false   // 不监听更深层级
+  });
+}
+
+// 停止监听
+function stopVariationOrderSync(): void {
+  if (variationObserver) {
+    variationObserver.disconnect();
+    variationObserver = null;
+  }
+}
+
+// 更新页面 variation 输入框的禁用状态
+/**
+ * 为单个输入框添加或移除锁定状态和锁图标
+ */
+function toggleInputLock(
+  input: HTMLInputElement,
+  shouldLock: boolean,
+  inputType: 'name' | 'price'
+): void {
+  const LOCKED_ICON_CLASS = 'booth-enhancer-lock-icon';
+  
+  input.disabled = shouldLock;
+  
+  const parent = input.parentElement;
+  if (!parent) return;
+  
+  const lockIcon = parent.querySelector(
+    `.${LOCKED_ICON_CLASS}[data-for="${inputType}"]`
+  ) as HTMLElement | null;
+  
+  if (shouldLock) {
+    // 确保父元素可以定位锁图标
+    if (getComputedStyle(parent).position === 'static') {
+      parent.style.position = 'relative';
+    }
+    
+    // 创建锁图标（如果不存在）
+    if (!lockIcon) {
+      const icon = document.createElement('span');
+      icon.className = LOCKED_ICON_CLASS;
+      icon.setAttribute('data-for', inputType);
+      icon.innerHTML = withSize(icons.lock, 14);
+      icon.title = '此项由脚本管理，禁止手动编辑';
+      parent.appendChild(icon);
+    }
+  } else {
+    lockIcon?.remove();
+  }
+}
+
+/**
+ * 更新页面 variation 输入框的禁用状态
+ */
+function updatePageVariationInputsDisabledState(): void {
+  const configNameSet = new Set(
+    props.itemConfig.variations
+      .map(v => v.name?.trim())
+      .filter(Boolean)
+  );
+  
+  props.api.variations.forEach(pageVar => {
+    const pageName = pageVar.nameInput?.value?.trim() || '';
+    const shouldDisable = Boolean(pageName && configNameSet.has(pageName));
+    
+    if (pageVar.nameInput) {
+      toggleInputLock(pageVar.nameInput, shouldDisable, 'name');
+    }
+    
+    if (pageVar.priceInput) {
+      toggleInputLock(pageVar.priceInput, shouldDisable, 'price');
+    }
+  });
+}
+
+// 组件挂载时启动监听
+onMounted(() => {
+  // 注册 API 回调：监听 variation 添加/删除
+  props.api.onVariationAdded(() => {
+    updatePageVariationNames();
+    updatePageVariationInputsDisabledState();
+  });
+  
+  // 启动顺序同步和 DOM 监听
+  startVariationOrderSync();
+});
+
+// 组件卸载时停止监听
+onUnmounted(() => {
+  stopVariationOrderSync();
+});
 
 // 自动根据文件创建 Variations
 function autoCreateVariationsFromFiles(): void {
@@ -117,48 +328,60 @@ function autoCreateVariationsFromFiles(): void {
     return;
   }
   
+  // 构建现有 variation 名称集合（用于去重）
+  const existingNames = new Set(
+    props.itemConfig.variations.map(v => v.name?.trim()).filter(Boolean)
+  );
+  
   let createdCount = 0;
-  let commonFilesCount = 0;
+  let skippedCount = 0;
   const commonFiles: string[] = [];
   
   for (const file of files) {
-    // 尝试匹配商品
     const matchedItemId = findBestMatchItem(file.name);
     
     if (matchedItemId) {
-      // 找到匹配的商品，创建 variation
+      // 找到匹配的商品
       const node = props.itemTree.nodes[matchedItemId];
-      const itemName = node?.data?.itemName || node?.name || file.name;
+      const itemName = (node?.data?.itemName || node?.name || file.name).trim();
       
+      // 检查是否已存在同名 variation
+      if (existingNames.has(itemName)) {
+        skippedCount++;
+        continue;
+      }
+      
+      // 创建新 variation
       props.itemConfig.variations.push({
         name: itemName,
-        price: 0, // 默认价格，后续可在配置中调整
+        price: 0,
         isFullset: false,
         fileIds: [file.id],
-        fileItemMap: {
-          [file.id]: matchedItemId
-        }
+        fileItemMap: { [file.id]: matchedItemId }
       });
       
+      existingNames.add(itemName);
       createdCount++;
     } else {
       // 找不到匹配的商品，划分到通用文件
       commonFiles.push(file.id);
-      commonFilesCount++;
     }
   }
   
-  // 更新通用文件列表
+  // 更新通用文件列表（合并并去重）
   if (commonFiles.length > 0) {
-    if (!props.itemConfig.commonFiles) {
-      props.itemConfig.commonFiles = [];
-    }
-    // 合并并去重
-    props.itemConfig.commonFiles = Array.from(new Set([...props.itemConfig.commonFiles, ...commonFiles]));
+    const existing = props.itemConfig.commonFiles || [];
+    props.itemConfig.commonFiles = Array.from(new Set([...existing, ...commonFiles]));
   }
   
-  if (createdCount > 0 || commonFilesCount > 0) {
-    toast.success(`已创建 ${createdCount} 个 Variations，${commonFilesCount} 个文件划分为通用文件`);
+  // 显示结果
+  const messages: string[] = [];
+  if (createdCount > 0) messages.push(`已创建 ${createdCount} 个 Variations`);
+  if (skippedCount > 0) messages.push(`跳过 ${skippedCount} 个已存在`);
+  if (commonFiles.length > 0) messages.push(`${commonFiles.length} 个文件划分为通用文件`);
+  
+  if (messages.length > 0) {
+    toast.success(messages.join('，'));
   } else {
     toast.info('没有可创建的 Variations');
   }
@@ -319,10 +542,7 @@ function getFileItemName(variationIndex: number, fileId: string): string {
   const node = props.itemTree.nodes[itemId];
   if (!node) return '未知商品';
   
-  const itemData = node.data;
-  if (!itemData) return node.name;
-  
-  return itemData.itemName;
+  return node.data?.itemName || node.name;
 }
 
 function removeFileFromVariation(variationIndex: number, fileId: string): void {
@@ -363,14 +583,15 @@ function findBestMatchItem(fileName: string): string | null {
   if (!fileName || !props.itemTree) return null;
   
   const normalizedFileName = normalizeString(fileName);
+  const MIN_SCORE_THRESHOLD = 0.4;
   
   let bestMatch: { itemId: string; score: number } | null = null;
   
   for (const [nodeId, node] of Object.entries(props.itemTree.nodes)) {
-    const typedNode = node as any;
-    if (!typedNode.data?.itemName) continue;
+    const itemName = (node as any).data?.itemName;
+    if (!itemName) continue;
     
-    const normalizedItemName = normalizeString(typedNode.data.itemName);
+    const normalizedItemName = normalizeString(itemName);
     const score = calculateMatchScore(normalizedFileName, normalizedItemName);
     
     if (score > 0 && (!bestMatch || score > bestMatch.score)) {
@@ -378,7 +599,7 @@ function findBestMatchItem(fileName: string): string | null {
     }
   }
   
-  return bestMatch && bestMatch.score >= 0.4 ? bestMatch.itemId : null;
+  return bestMatch && bestMatch.score >= MIN_SCORE_THRESHOLD ? bestMatch.itemId : null;
 }
 
 function normalizeString(str: string): string {
@@ -393,12 +614,8 @@ function normalizeString(str: string): string {
 
 function calculateMatchScore(fileName: string, itemName: string): number {
   if (!itemName || !fileName) return 0;
-  
   if (fileName === itemName) return 1.0;
-  
-  if (fileName.startsWith(itemName)) {
-    return 0.95;
-  }
+  if (fileName.startsWith(itemName)) return 0.95;
   
   if (fileName.includes(itemName)) {
     const position = fileName.indexOf(itemName);
@@ -406,16 +623,15 @@ function calculateMatchScore(fileName: string, itemName: string): number {
     return 0.9 - (relativePosition * 0.2);
   }
   
-  if (itemName.includes(fileName)) {
-    return 0.6;
-  }
+  if (itemName.includes(fileName)) return 0.6;
   
+  // 使用最长公共子串计算相似度
   const lcs = longestCommonSubstring(fileName, itemName);
-  
   if (lcs.length === 0) return 0;
   
-  if (lcs.length >= itemName.length * 0.8) {
-    return 0.5 + (lcs.length / itemName.length) * 0.3;
+  const lcsRatio = lcs.length / itemName.length;
+  if (lcsRatio >= 0.8) {
+    return 0.5 + lcsRatio * 0.3;
   }
   
   const minLen = Math.min(itemName.length, fileName.length);
@@ -452,87 +668,186 @@ function longestCommonSubstring(str1: string, str2: string): string {
   return maxLength > 0 ? str1.substring(endIndex - maxLength, endIndex) : '';
 }
 
+/**
+ * 比较两个文件ID数组是否包含相同的文件（忽略顺序）
+ */
+function fileIdsEqual(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  const setA = new Set(a);
+  const setB = new Set(b);
+  // 如果去重后大小不同，说明有重复元素
+  if (setA.size !== a.length || setB.size !== b.length) return false;
+  // 只需检查一个方向，因为长度已经相等
+  return Array.from(setA).every(id => setB.has(id));
+}
+
+/**
+ * 更新响应式的页面 variation 名称集合
+ */
+function updatePageVariationNames(): void {
+  const names = props.api.variations
+    .map(v => v.nameInput?.value?.trim())
+    .filter(Boolean) as string[];
+  
+  pageVariationNames.value = new Set(names);
+}
+
+/**
+ * 判断配置项是否应该被锁定（不允许拖动）
+ * 规则：如果配置项的名称在页面中存在，则锁定
+ */
+function isVariationLocked(variation: any): boolean {
+  const configName = variation.name?.trim();
+  return configName ? pageVariationNames.value.has(configName) : false;
+}
+
+/**
+ * 获取 variation 的完整文件列表（包含通用文件）
+ */
+function getVariationFileIds(config: any): string[] {
+  return [
+    ...(config.fileIds || []),
+    ...(props.itemConfig.commonFiles || [])
+  ];
+}
+
 // 应用到页面
 async function applyVariations(): Promise<void> {
-  const variations = props.itemConfig.variations;
-  const updatedVariations = new Set<number>(); // 记录被更新的 variation 索引
+  const configVariations = props.itemConfig.variations;
+  const pageVariations = props.api.variations;
   
-  // 同步数量
-  const diff = variations.length - props.api.variations.length;
-  
-  if (diff > 0) {
-    // 添加新 variations
-    const startIndex = props.api.variations.length;
-    for (let i = 0; i < diff; i++) {
-      if (!await props.api.addVariation()) {
-        toast.error('添加 Variation 失败');
-        return;
-      }
-      updatedVariations.add(startIndex + i); // 标记新添加的 variations
+  // ========== 步骤1: 检测配置中的重复名称 ==========
+  const configNameCount = new Map<string, number>();
+  configVariations.forEach(v => {
+    const name = v.name?.trim() || '';
+    if (name) {
+      configNameCount.set(name, (configNameCount.get(name) || 0) + 1);
     }
-  } else if (diff < 0) {
-    // 删除的 variations 计入更新数（虽然已删除，但也算是应用了）
-    for (let i = 0; i < -diff; i++) {
-      if (!await props.api.removeVariation(props.api.variations.length - 1)) {
-        toast.error('删除 Variation 失败');
-        return;
-      }
-    }
-  }
-  
-  await nextTick();
-  
-  // 填充数据
-  variations.forEach((variation: any, index: number) => {
-    props.api.updateVariation(index, {
-      name: variation.name,
-      price: variation.price.toString()
-    });
   });
   
-  await nextTick();
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const duplicates = Array.from(configNameCount.entries())
+    .filter(([_, count]) => count > 1)
+    .map(([name]) => name);
   
-  // 选择文件
-  for (let i = 0; i < variations.length; i++) {
-    const variation = variations[i];
-    const fileIds = [
-      ...(variation.fileIds || []),
-      ...(props.itemConfig.commonFiles || [])
-    ];
+  if (duplicates.length > 0) {
+    toast.error(
+      `配置中存在重复名称：${duplicates.join('、')}，请先修正`,
+      5000
+    );
+    return;
+  }
+  
+  // ========== 步骤2: 构建页面 variation 名称映射 ==========
+  const pageNameMap = new Map<string, number>(); // name -> index
+  pageVariations.forEach((v, idx) => {
+    const name = v.nameInput?.value?.trim() || '';
+    if (name) pageNameMap.set(name, idx);
+  });
+  
+  // ========== 步骤3: 分类配置项 ==========
+  const toCreate: any[] = []; // 配置有但页面没有
+  const toUpdate: Array<{ config: any; pageIndex: number }> = []; // 两者都有
+  
+  configVariations.forEach(config => {
+    const name = config.name?.trim() || '';
+    if (!name) return; // 跳过空名称
     
-    if (fileIds.length > 0) {
-      const result = await props.api.setVariationFiles(i, fileIds, 'replace');
-      if (!result.success) {
-        toast.error(`Variation ${i} 文件选择失败`);
-        return;
-      }
-      if (result.updated) {
-        updatedVariations.add(i); // 标记文件被更新的 variations
-      }
+    const pageIndex = pageNameMap.get(name);
+    if (pageIndex !== undefined) {
+      toUpdate.push({ config, pageIndex });
+    } else {
+      toCreate.push(config);
+    }
+  });
+  
+  // ========== 步骤4: 检查页面多余的项 ==========
+  const configNames = new Set(configVariations.map(v => v.name?.trim()).filter(Boolean));
+  const extraOnPage = pageVariations.filter(v => {
+    const name = v.nameInput?.value?.trim() || '';
+    return name && !configNames.has(name);
+  });
+  
+  if (extraOnPage.length > 0) {
+    toast.warning(
+      `页面有 ${extraOnPage.length} 个配置中不存在的 Variation，请手动删除`,
+      5000
+    );
+  }
+  
+  // ========== 步骤5: 创建缺失的 variation ==========
+  let createdCount = 0;
+  
+  if (toCreate.length > 3) {
+    toast.info(`正在创建 ${toCreate.length} 个 Variations...`, 3000);
+  }
+  
+  for (const config of toCreate) {
+    const success = await props.api.addVariation();
+    if (!success) {
+      toast.error(`创建 Variation "${config.name}" 失败`);
+      return;
+    }
+    
+    // 获取最新的页面 variations
+    const currentVariations = props.api.variations;
+    const newIndex = currentVariations.length - 1; // 新创建的在最后
+    
+    // 设置名称和价格
+    const targetPrice = getVariationPrice(config);
+    props.api.updateVariation(newIndex, {
+      name: config.name,
+      price: targetPrice.toString()
+    });
+    
+    // 设置文件
+    const targetFileIds = getVariationFileIds(config);
+    if (targetFileIds.length > 0) {
+      await props.api.setVariationFiles(newIndex, targetFileIds, 'replace');
+    }
+    
+    createdCount++;
+  }
+  
+  // ========== 步骤6: 更新已存在的 variation ==========
+  let updatedPriceCount = 0;
+  let updatedFileCount = 0;
+  
+  for (const { config, pageIndex } of toUpdate) {
+    const pageVar = props.api.variations[pageIndex];
+    if (!pageVar) continue;
+    
+    // 检查并更新价格
+    const targetPrice = getVariationPrice(config);
+    const currentPrice = pageVar.priceInput?.value?.trim() || '';
+    if (currentPrice !== targetPrice.toString()) {
+      props.api.updateVariation(pageIndex, { price: targetPrice.toString() });
+      updatedPriceCount++;
+    }
+    
+    // 检查并更新文件
+    const targetFileIds = getVariationFileIds(config);
+    const currentFiles = props.api.getVariationFiles(pageIndex);
+    if (!fileIdsEqual(currentFiles, targetFileIds) && targetFileIds.length > 0) {
+      await props.api.setVariationFiles(pageIndex, targetFileIds, 'replace');
+      updatedFileCount++;
     }
   }
   
-  // 清理多余的 variations（健壮性检查）
-  await nextTick();
-  const currentCount = props.api.variations.length;
-  const targetCount = variations.length;
+  // ========== 步骤7: 显示结果 ==========
+  const messages: string[] = [];
+  if (createdCount > 0) messages.push(`创建 ${createdCount} 个`);
+  if (updatedPriceCount > 0) messages.push(`更新 ${updatedPriceCount} 个价格`);
+  if (updatedFileCount > 0) messages.push(`更新 ${updatedFileCount} 个文件`);
   
-  if (currentCount > targetCount) {
-    // 页面上有多余的 variations，删除它们
-    const excessCount = currentCount - targetCount;
-    for (let i = 0; i < excessCount; i++) {
-      await props.api.removeVariation(props.api.variations.length - 1);
-    }
-  }
-  
-  const updatedCount = updatedVariations.size + Math.max(0, -diff); // Set 大小 + 删除数量
-  
-  if (updatedCount > 0) {
-    toast.success(`已应用 ${updatedCount} 个 Variations`);
+  if (messages.length > 0) {
+    toast.success(`已应用：${messages.join('，')}`);
   } else {
     toast.success('所有 Variations 已是最新');
   }
+  
+  // ========== 步骤8: 更新页面输入框禁用状态 ==========
+  // 页面 DOM 已改变，MutationObserver 会自动触发 updatePageVariationNames() 和 updatePageVariationInputsDisabledState()
+  
   emit('applied');
 }
 
@@ -545,6 +860,7 @@ defineExpose({
   <SectionHeader :title="`Variations (${itemConfig.variations.length})`" no-border>
     <template #actions>
       <button 
+        v-if="itemConfig.variations.length === 0"
         class="booth-btn booth-btn-sm booth-btn-ghost" 
         type="button"
         title="从页面导入"
@@ -553,6 +869,7 @@ defineExpose({
         <span v-html="withSize(icons.download, 14)"></span>
       </button>
       <button 
+        v-if="itemConfig.variations.length === 0"
         class="booth-btn booth-btn-sm booth-btn-ghost" 
         type="button"
         title="根据文件自动创建"
@@ -614,6 +931,8 @@ defineExpose({
     <DraggableCardList
       v-else
       :items="itemConfig.variations"
+      :key-extractor="(item: any, index: number) => item.name || `variation-${index}`"
+      :is-item-locked="isVariationLocked"
       @remove="removeVariation"
       @reorder="onVariationReorder"
     >
@@ -633,13 +952,12 @@ defineExpose({
           >
             <input 
               type="checkbox" 
-              :checked="variation.isFullset" 
+              :checked="variation.isFullset"
               @change="toggleFullset(variation, index)"
             />
             <span class="toggle-slider"></span>
           </label>
           <button 
-            v-if="!variation.isFullset"
             class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
             type="button"
             title="选择关联文件"
@@ -660,8 +978,14 @@ defineExpose({
               <span class="be-text-base be-text-primary be-flex-shrink-0">
                 ¥{{ getVariationPrice(variation) }}
               </span>
-              <label class="booth-toggle be-flex-shrink-0" title="自定义此 Variation 的价格">
-                <input type="checkbox" v-model="variation.useCustomPrice" />
+              <label 
+                class="booth-toggle be-flex-shrink-0" 
+                title="自定义此 Variation 的价格"
+              >
+                <input 
+                  type="checkbox" 
+                  v-model="variation.useCustomPrice"
+                />
                 <span class="toggle-slider"></span>
               </label>
               <input 
@@ -671,7 +995,7 @@ defineExpose({
                 class="be-flex-1 be-p-xs be-px-sm be-text-base" 
                 style="height: 28px; min-width: 80px;" 
                 min="0" 
-                placeholder="价格" 
+                placeholder="价格"
               />
               <span class="be-text-sm be-text-secondary be-flex-shrink-0">
                 支持数: {{ getVariationSupportCount(variation) }}
@@ -680,7 +1004,7 @@ defineExpose({
           </div>
           
           <div 
-            v-if="!variation.isFullset && variation.fileIds && variation.fileIds.length > 0" 
+            v-if="variation.fileIds && variation.fileIds.length > 0" 
             class="item-cards-grid"
             :class="{ 'single-item': variation.fileIds.length === 1 }"
           >
@@ -743,7 +1067,7 @@ defineExpose({
 
 .item-cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin-top: 4px;
 }
@@ -834,5 +1158,22 @@ defineExpose({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+</style>
+
+<style>
+/* 锁图标样式（全局样式，影响 Booth 页面） */
+.booth-enhancer-lock-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  cursor: help;
+  z-index: 10;
+}
+
+.booth-enhancer-lock-icon svg {
+  display: block;
 }
 </style>

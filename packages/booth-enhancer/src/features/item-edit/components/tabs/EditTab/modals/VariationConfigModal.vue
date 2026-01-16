@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue';
 import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
 import { getSelectedDiscountTemplate } from '../../../../config-types';
 import { applyDiscount, suggestFullsetPrice } from '../../../../utils/priceCalculator';
-import { calculateTotalSupport, parseTemplate } from '../../../../utils/templateParser';
+import { calculateTotalSupport, formatDateTime, parseTemplate } from '../../../../utils/templateParser';
 import { FileSelector, PreviewBox, SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import Modal from '../../../ui/Modal.vue';
@@ -68,17 +68,6 @@ const fullsetDiscountedPrice = computed((): number =>
   applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount)
 );
 
-// 格式化日期时间
-function formatDateTime(isoString?: string): string {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hour = String(date.getHours()).padStart(2, '0');
-  const minute = String(date.getMinutes()).padStart(2, '0');
-  return `${month}/${day} ${hour}:${minute}`;
-}
-
 // 折扣模板预览
 const discountPreview = computed((): string => {
   if (!props.itemConfig.discount.enabled) return '';
@@ -106,7 +95,6 @@ const discountPreview = computed((): string => {
     title="Variation 配置"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
-    width="500px"
   >
     <div class="be-flex be-flex-column be-gap-sm">
       <!-- 价格配置区 -->

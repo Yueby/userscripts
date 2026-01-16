@@ -6,7 +6,7 @@ import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-ty
 import { getSelectedDescriptionTemplate, getSelectedDiscountTemplate } from '../../../../config-types';
 import { applyDiscount } from '../../../../utils/priceCalculator';
 import type { TemplateVariables } from '../../../../utils/templateParser';
-import { parseTemplate } from '../../../../utils/templateParser';
+import { formatDateTime, parseTemplate } from '../../../../utils/templateParser';
 import { PreviewBox, SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { toast } from '../../../ui/Toast';
@@ -39,41 +39,21 @@ const previewDescription = computed((): string => {
   
   if (props.itemConfig.discount.enabled) {
     const normalOriginalPrice = props.itemConfig.pricing.normalVariationPrice;
-    const normalDiscountedPrice = applyDiscount(
-      normalOriginalPrice,
-      props.itemConfig.discount
-    );
+    const normalDiscountedPrice = applyDiscount(normalOriginalPrice, props.itemConfig.discount);
     const fullsetOriginalPrice = props.itemConfig.pricing.fullsetPrice;
-    const fullsetDiscountedPrice = applyDiscount(
-      fullsetOriginalPrice,
-      props.itemConfig.discount
-    );
-    
-    // 格式化时间
-    const formatDateTime = (isoString?: string): string => {
-      if (!isoString) return '';
-      const date = new Date(isoString);
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hour = String(date.getHours()).padStart(2, '0');
-      const minute = String(date.getMinutes()).padStart(2, '0');
-      return `${month}/${day} ${hour}:${minute}`;
-    };
+    const fullsetDiscountedPrice = applyDiscount(fullsetOriginalPrice, props.itemConfig.discount);
     
     const discountTemplate = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
-    const discountText = parseTemplate(
-      discountTemplate,
-      {
-        ...props.templateVars,
-        originalPrice: normalOriginalPrice,
-        discountedPrice: normalDiscountedPrice,
-        discountPercent: props.itemConfig.discount.discountPercent,
-        fullsetOriginalPrice: fullsetOriginalPrice,
-        fullsetDiscountedPrice: fullsetDiscountedPrice,
-        startDate: formatDateTime(props.itemConfig.discount.startDate),
-        endDate: formatDateTime(props.itemConfig.discount.endDate)
-      }
-    );
+    const discountText = parseTemplate(discountTemplate, {
+      ...props.templateVars,
+      originalPrice: normalOriginalPrice,
+      discountedPrice: normalDiscountedPrice,
+      discountPercent: props.itemConfig.discount.discountPercent,
+      fullsetOriginalPrice,
+      fullsetDiscountedPrice,
+      startDate: formatDateTime(props.itemConfig.discount.startDate),
+      endDate: formatDateTime(props.itemConfig.discount.endDate)
+    });
     parts.push(discountText);
   }
   

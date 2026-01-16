@@ -36,7 +36,6 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
   <Modal
     :show="show"
     title="描述模板配置"
-    width="600px"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
   >

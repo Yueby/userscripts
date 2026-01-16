@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
-import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
+import type { GlobalTemplateConfig, ItemData, ItemEditConfig, NodeTree } from '../../../../config-types';
 import { getSelectedNameTemplate } from '../../../../config-types';
 import type { TemplateVariables } from '../../../../utils/templateParser';
 import { parseTemplate } from '../../../../utils/templateParser';
@@ -16,6 +16,7 @@ const props = defineProps<{
   templateVars: TemplateVariables;
   api: ItemEditAPI;
   totalSupport: number;
+  itemTree: NodeTree<ItemData>;
 }>();
 
 const emit = defineEmits<{
@@ -83,6 +84,7 @@ defineExpose({
     :item-config="itemConfig"
     :global-templates="globalTemplates"
     :total-support="totalSupport"
+    :item-tree="itemTree"
     @close="showNameModal = false"
     @save="showNameModal = false"
   />

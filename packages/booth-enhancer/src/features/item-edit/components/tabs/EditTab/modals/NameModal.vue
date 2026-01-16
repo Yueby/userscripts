@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
-import { getSelectedNameTemplate } from '../../../../config-types';
+import type { GlobalTemplateConfig, ItemData, ItemEditConfig, NodeTree } from '../../../../config-types';
+import { getSelectedDiscountIndicatorTemplate, getSelectedNameTemplate } from '../../../../config-types';
+import { calculateTotalSupport, parseTemplate, pluralize } from '../../../../utils/templateParser';
+import { PreviewBox } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import Modal from '../../../ui/Modal.vue';
 import TemplateSelector from '../../../ui/TemplateSelector.vue';
 import NameTemplateModal from './NameTemplateModal.vue';
-import { BUTTON_CLASSES, TEMPLATE_HINTS } from './template-hints';
+import { BUTTON_CLASSES } from './template-hints';
 
 const props = defineProps<{
   show: boolean;
   itemConfig: ItemEditConfig;
   globalTemplates: GlobalTemplateConfig;
   totalSupport: number;
+  itemTree: NodeTree<ItemData>;
 }>();
 
 const emit = defineEmits<{
@@ -26,7 +29,8 @@ function initializeSelectedTemplates(): void {
     props.itemConfig.selectedTemplates = {
       nameTemplateId: props.globalTemplates.nameTemplates?.[0]?.id || '',
       descriptionTemplateId: props.globalTemplates.descriptionTemplates?.[0]?.id || '',
-      discountTemplateId: props.globalTemplates.discountTemplates?.[0]?.id || ''
+      discountTemplateId: props.globalTemplates.discountTemplates?.[0]?.id || '',
+      discountIndicatorTemplateId: props.globalTemplates.discountIndicatorTemplates?.[0]?.id || ''
     };
   }
 }
@@ -36,25 +40,59 @@ onMounted(initializeSelectedTemplates);
 // 模板配置 Modal 状态
 const showTemplateModal = ref(false);
 
-// 获取选中的模板内容
-const selectedTemplate = computed((): string => 
-  getSelectedNameTemplate(props.globalTemplates, props.itemConfig)
-);
+// 计算模板变量（用于预览）
+const templateVars = computed(() => {
+  const config = props.itemConfig;
+  if (!config) return { itemName: '', supportCount: 0 };
+  
+  const normalVariations = config.variations.filter(v => !v.isFullset);
+  const firstVariation = normalVariations[0];
+  const supportCount = calculateTotalSupport(config.variations);
+  const itemTypeName = config.itemTypeName || 'Item';
+  
+  // 获取首个变体名
+  const firstItemId = firstVariation?.fileItemMap ? Object.values(firstVariation.fileItemMap)[0] : null;
+  const getItemName = (itemId: string) => {
+    const node = props.itemTree.nodes[itemId];
+    if (!node) return '未知商品';
+    const itemData = node.data;
+    if (!itemData) return node.name;
+    return itemData.itemName;
+  };
+  const firstName = firstVariation?.name 
+    || (firstItemId && getItemName(firstItemId))
+    || config.itemName;
+  
+  // 智能标题
+  const smartTitle = (normalVariations.length > 1 || supportCount > 1)
+    ? `${supportCount} ${pluralize(itemTypeName, supportCount)}`
+    : firstName;
+  
+  // 获取折扣标识
+  const discountIndicatorTemplate = config.discount.enabled 
+    ? getSelectedDiscountIndicatorTemplate(props.globalTemplates, config)
+    : '';
+  const discountIndicator = parseTemplate(discountIndicatorTemplate, {
+    discountPercent: config.discount.discountPercent
+  });
+  
+  return {
+    itemName: config.itemName || '',
+    supportCount,
+    itemTypeName,
+    itemTypePlural: pluralize(itemTypeName, supportCount),
+    variationCount: normalVariations.length,
+    firstName,
+    smartTitle,
+    discountIndicator
+  };
+});
 
-// 更新当前选中的模板内容
-function updateCurrentTemplate(event: Event): void {
-  const templates = props.globalTemplates.nameTemplates;
-  const selectedId = props.itemConfig.selectedTemplates?.nameTemplateId;
-  
-  if (!templates || !selectedId) return;
-  
-  const target = event.target as HTMLInputElement;
-  const template = templates.find(t => t.id === selectedId);
-  
-  if (template) {
-    template.template = target.value;
-  }
-}
+// 预览商品名
+const previewName = computed((): string => {
+  const template = getSelectedNameTemplate(props.globalTemplates, props.itemConfig);
+  return parseTemplate(template, templateVars.value);
+});
 
 // 保存并关闭
 function handleSave(): void {
@@ -69,7 +107,6 @@ function handleSave(): void {
     title="编辑商品名"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
-    width="500px"
   >
     <template #header-actions>
       <button 
@@ -108,20 +145,25 @@ function handleSave(): void {
       <TemplateSelector
         v-model="itemConfig.selectedTemplates.nameTemplateId"
         :templates="globalTemplates.nameTemplates"
-        label="选择模板"
+        label="选择商品名模板"
         empty-hint="请先在全局模板配置中添加商品名模板"
       />
 
-      <div v-if="globalTemplates.nameTemplates && globalTemplates.nameTemplates.length > 0" class="form-group">
-        <label>模板内容 <span class="label-hint">(编辑当前选中模板)</span></label>
-        <p class="form-hint" v-html="TEMPLATE_HINTS.full.replace('\n', '<br>')"></p>
-        <input 
-          :value="selectedTemplate" 
-          @input="updateCurrentTemplate($event)"
-          type="text" 
-          placeholder="如: {智能标题}" 
+      <div class="form-group">
+        <TemplateSelector
+          v-model="itemConfig.selectedTemplates.discountIndicatorTemplateId"
+          :templates="globalTemplates.discountIndicatorTemplates"
+          label="折扣标识模板"
+          empty-hint="请先在商品名模板配置中添加折扣标识模板"
         />
+        <p class="form-hint be-text-xs be-text-secondary be-mt-xs">
+          折扣标识会在启用打折时自动显示（在 Variation 配置中启用）
+        </p>
       </div>
+
+      <PreviewBox v-if="previewName" label="商品名预览:" type="text">
+        <span class="be-text-primary be-text-lg be-font-semibold">{{ previewName }}</span>
+      </PreviewBox>
     </div>
 
     <template #footer>
@@ -138,6 +180,8 @@ function handleSave(): void {
   <NameTemplateModal
     :show="showTemplateModal"
     :global-templates="globalTemplates"
+    :item-config="itemConfig"
+    :item-tree="itemTree"
     @close="showTemplateModal = false"
   />
 </template>

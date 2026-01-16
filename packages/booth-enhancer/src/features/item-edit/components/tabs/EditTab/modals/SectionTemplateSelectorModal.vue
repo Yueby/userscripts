@@ -49,7 +49,6 @@ function handleCreateEmpty(): void {
   <Modal
     :show="show"
     title="选择 Section 模板"
-    width="500px"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
   >

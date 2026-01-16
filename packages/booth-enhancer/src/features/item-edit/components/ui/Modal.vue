@@ -11,7 +11,6 @@ export interface ModalButton {
 const props = withDefaults(defineProps<{
   show: boolean;
   title?: string;
-  width?: string;
   buttons?: ModalButton[];
   closeOnClickOutside?: boolean;
   closeOnEsc?: boolean;
@@ -65,7 +64,7 @@ onUnmounted(() => {
         :class="{ 'modal-in-sidebar': teleportTo !== 'body' }"
         @click="handleOverlayClick"
       >
-        <div class="modal-container" :style="{ width: width || '400px' }">
+        <div class="modal-container">
           <!-- Header -->
           <div class="modal-header">
             <div class="modal-title">{{ title || '提示' }}</div>
@@ -127,7 +126,6 @@ onUnmounted(() => {
   border-radius: 16px 16px 0 0;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 500px;
   max-height: 70vh;
   display: flex;
   flex-direction: column;

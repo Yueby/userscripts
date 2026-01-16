@@ -51,18 +51,26 @@ const TEMPLATE_VAR_MAP: Record<string, string> = {
   '商品链接': 'itemUrl'
 };
 
+// 预编译的正则表达式映射（性能优化）
+const TEMPLATE_REGEX_MAP: Record<string, RegExp> = Object.keys(TEMPLATE_VAR_MAP).reduce(
+  (acc, chineseName) => {
+    acc[chineseName] = new RegExp(`\\{${chineseName}\\}`, 'g');
+    return acc;
+  },
+  {} as Record<string, RegExp>
+);
+
 export function parseTemplate(
   template: string,
   variables: TemplateVariables
 ): string {
   let result = template;
 
-  // 处理中文占位符，映射到英文变量名
+  // 处理中文占位符，使用预编译的正则表达式
   Object.entries(TEMPLATE_VAR_MAP).forEach(([chineseName, englishName]) => {
     const value = variables[englishName];
     if (value !== undefined && value !== null) {
-      const regex = new RegExp(`\\{${chineseName}\\}`, 'g');
-      result = result.replace(regex, String(value));
+      result = result.replace(TEMPLATE_REGEX_MAP[chineseName], String(value));
     }
   });
 
@@ -75,6 +83,21 @@ export function formatDate(timestamp: number): string {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   return `${year}/${month}/${day}`;
+}
+
+/**
+ * 格式化日期时间为 MM/DD HH:mm 格式
+ * @param isoString - ISO 格式的日期字符串
+ * @returns 格式化后的日期时间字符串，如果输入为空则返回空字符串
+ */
+export function formatDateTime(isoString?: string): string {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  return `${month}/${day} ${hour}:${minute}`;
 }
 
 export function calculateTotalSupport(variations: VariationData[]): number {

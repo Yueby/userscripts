@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useTemplateManager } from '../../../../composables';
-import type { DiscountTemplate, GlobalTemplateConfig } from '../../../../config-types';
+import type { DiscountIndicatorTemplate, GlobalTemplateConfig } from '../../../../config-types';
 import { SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
 import Modal from '../../../ui/Modal.vue';
-import { BUTTON_CLASSES, TEMPLATE_HINTS } from './template-hints';
+import { BUTTON_CLASSES } from './template-hints';
 
 const props = defineProps<{
   show: boolean;
@@ -18,24 +18,24 @@ const emit = defineEmits<{
 }>();
 
 const templates = computed({
-  get(): DiscountTemplate[] {
-    return props.globalTemplates.discountTemplates ||= [];
+  get(): DiscountIndicatorTemplate[] {
+    return props.globalTemplates.discountIndicatorTemplates ||= [];
   },
-  set(value: DiscountTemplate[]): void {
-    props.globalTemplates.discountTemplates = value;
+  set(value: DiscountIndicatorTemplate[]): void {
+    props.globalTemplates.discountIndicatorTemplates = value;
   }
 });
 
 const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
   templates,
-  defaultTemplate: { template: '' }
+  defaultTemplate: { template: '[SALE] ' }
 });
 </script>
 
 <template>
   <Modal
     :show="show"
-    title="折扣模板配置"
+    title="折扣标识模板配置"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
   >
@@ -51,21 +51,30 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
     </template>
 
     <SectionHeader>
-      <p class="form-hint" v-html="TEMPLATE_HINTS.discount.replace('\n', '<br>')"></p>
+      <p class="form-hint be-text-xs be-text-secondary">
+        配置折扣标识的显示样式，可用变量: {折扣百分比}
+      </p>
       <DraggableCardList
-        v-if="globalTemplates.discountTemplates && globalTemplates.discountTemplates.length > 0"
-        :items="globalTemplates.discountTemplates"
-        :key-extractor="(item: DiscountTemplate) => item.id"
+        v-if="globalTemplates.discountIndicatorTemplates && globalTemplates.discountIndicatorTemplates.length > 0"
+        :items="globalTemplates.discountIndicatorTemplates"
+        :key-extractor="(item: DiscountIndicatorTemplate) => item.id"
         @remove="removeTemplate"
         @reorder="onReorder"
       >
-        <template #actions="{ item }">
-          <input v-model="item.name" type="text" placeholder="输入模板名称" style="flex: 1; min-width: 0;" />
+        <template #actions="{ item: template }">
+          <input 
+            v-model="template.name" 
+            type="text" 
+            placeholder="输入模板名称" 
+            style="flex: 1; min-width: 0;" 
+          />
         </template>
         <template #content="{ item }">
-          <div class="form-group">
-            <label>模板内容</label>
-            <textarea v-model="item.template" rows="3" placeholder="输入模板内容"></textarea>
+          <div class="be-flex be-flex-column be-gap-sm">
+            <div class="form-group">
+              <label>模板内容</label>
+              <input v-model="item.template" type="text" placeholder="如: [SALE] 或 🔥 或 [-{折扣百分比}%]" />
+            </div>
           </div>
         </template>
       </DraggableCardList>

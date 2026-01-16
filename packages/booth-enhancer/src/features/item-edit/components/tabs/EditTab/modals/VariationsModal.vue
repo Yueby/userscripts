@@ -164,7 +164,6 @@ function handleSave(): void {
     title="Variation 配置"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="emit('close')"
-    width="700px"
   >
     <template #header-actions>
       <button 
@@ -187,6 +186,7 @@ function handleSave(): void {
         <DraggableCardList
           v-else
           :items="itemConfig.variations"
+          :key-extractor="(item: any, index: number) => item.name || `variation-${index}`"
           @remove="removeVariation"
           @reorder="onVariationReorder"
         >
@@ -297,7 +297,6 @@ function handleSave(): void {
     title="创建 Fullset"
     :teleport-to="'.booth-enhancer-sidebar'"
     @close="showFullsetConfirm = false"
-    width="400px"
   >
     <div class="be-flex be-flex-column be-gap-sm">
       <p class="be-m-0 be-text-base">

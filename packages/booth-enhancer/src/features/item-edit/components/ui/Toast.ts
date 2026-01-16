@@ -61,22 +61,25 @@ class ToastManager {
         z-index: 1000;
       }
 
-      /* Toast 容器在 body 中时 - 固定在右上角 */
+      /* Toast 容器在 body 中时 - 固定在顶部居中 */
       .booth-toast-container[data-position="fixed"] {
         position: fixed;
         top: 20px;
-        right: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         flex-direction: column;
         z-index: 10001;
+        align-items: center;
       }
 
-      /* Toast 容器在其他元素中时 - 绝对定位在底部 */
+      /* Toast 容器在其他元素中时 - 绝对定位在底部居中 */
       .booth-toast-container[data-position="relative"] {
         position: absolute;
         bottom: 20px;
-        left: 20px;
-        right: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         flex-direction: column-reverse;
+        align-items: center;
       }
 
       .booth-toast {
@@ -117,14 +120,14 @@ class ToastManager {
         color: #333;
       }
 
-      /* Toast 在固定容器中时从右侧滑入 */
+      /* Toast 从上方滑入 */
       .booth-toast-container[data-position="fixed"] .booth-toast {
-        transform: translateX(20px);
+        transform: translateY(-20px);
       }
 
       .booth-toast-container[data-position="fixed"] .booth-toast.show {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
       }
 
       /* Toast 在相对容器中时从下往上滑入 */
@@ -178,6 +181,7 @@ class ToastManager {
           top: 10px;
           left: 10px;
           right: 10px;
+          transform: none;
         }
 
         .booth-toast {
