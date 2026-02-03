@@ -66,13 +66,15 @@ async function importVariations(): Promise<void> {
   });
   
   // 步骤2：为每个 variation 的文件自动匹配商品
+  const files = props.api.files;  // 实时获取文件列表
+  
   tempVariations.forEach((variation: any) => {
     if (variation.fileIds && variation.fileIds.length > 0) {
       // 创建临时 fileItemMap 用于匹配
       variation.fileItemMap = {};
       
       for (const fileId of variation.fileIds) {
-        const file = availableFiles.value.find(f => f.id === fileId);
+        const file = files.find(f => f.id === fileId);
         if (!file) continue;
         
         const matchedItemId = findBestMatchItem(file.name);
@@ -356,7 +358,8 @@ onUnmounted(() => {
 
 // 自动根据文件创建 Variations
 function autoCreateVariationsFromFiles(): void {
-  const files = availableFiles.value;
+  // 实时获取文件列表
+  const files = props.api.files;
   
   if (files.length === 0) {
     toast.info('暂无可用文件');
@@ -508,7 +511,9 @@ function getVariationSupportCount(variation: any): number {
 async function selectFilesForVariation(variationIndex: number): Promise<void> {
   const variation = props.itemConfig.variations[variationIndex];
   
-  if (availableFiles.value.length === 0) {
+  // 实时获取文件列表
+  const files = props.api.files;
+  if (files.length === 0) {
     toast.error('无法获取文件列表，请先上传文件');
     return;
   }
@@ -582,7 +587,9 @@ async function selectItemsForFile(variationIndex: number, fileId: string): Promi
 
 // 辅助函数
 function getFileName(fileId: string): string {
-  const file = availableFiles.value.find(f => f.id === fileId);
+  // 直接从 API 实时获取，避免响应式缓存问题
+  const files = props.api.files;
+  const file = files.find(f => f.id === fileId);
   return file ? file.name : `File #${fileId}`;
 }
 
@@ -627,12 +634,15 @@ function autoMatchItemsForFiles(variationIndex: number, fileIds: string[]): void
   
   let firstMatchedItemId: string | null = null;
   
+  // 实时获取文件列表
+  const files = props.api.files;
+  
   for (const fileId of fileIds) {
     if (variation.fileItemMap[fileId]) {
       continue;
     }
     
-    const file = availableFiles.value.find(f => f.id === fileId);
+    const file = files.find(f => f.id === fileId);
     if (!file) continue;
     
     const matchedItemId = findBestMatchItem(file.name);
