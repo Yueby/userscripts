@@ -670,21 +670,48 @@ function findBestMatchItem(fileName: string): string | null {
   const normalizedFileName = normalizeString(fileName);
   const MIN_SCORE_THRESHOLD = 0.4;
   
-  let bestMatch: { itemId: string; score: number } | null = null;
+  let bestMatch: { itemId: string; itemName: string; score: number } | null = null;
+  const allScores: Array<{ itemName: string; normalizedName: string; score: number }> = [];
   
   for (const [nodeId, node] of Object.entries(props.itemTree.nodes)) {
     const itemName = (node as any).data?.itemName;
     if (!itemName) continue;
     
     const normalizedItemName = normalizeString(itemName);
-    const score = calculateMatchScore(normalizedFileName, normalizedItemName);
+    let score = calculateMatchScore(normalizedFileName, normalizedItemName);
+    
+    // 检查是否为独立词匹配（在原始文件名中有边界）
+    if (score > 0 && isWordBoundaryMatch(fileName, normalizedItemName)) {
+      score += 0.1; // 独立词加分
+    }
     
     if (score > 0 && (!bestMatch || score > bestMatch.score)) {
-      bestMatch = { itemId: nodeId, score };
+      bestMatch = { itemId: nodeId, itemName, score };
     }
   }
   
   return bestMatch && bestMatch.score >= MIN_SCORE_THRESHOLD ? bestMatch.itemId : null;
+}
+
+// 检查是否为词边界匹配
+function isWordBoundaryMatch(originalFileName: string, normalizedItemName: string): boolean {
+  // 将文件名转为小写，但保留分隔符
+  const lowerFileName = originalFileName.toLowerCase();
+  
+  // 查找匹配位置
+  const index = lowerFileName.indexOf(normalizedItemName.toLowerCase());
+  if (index === -1) return false;
+  
+  // 检查前一个字符是否为边界（开头或分隔符）
+  const charBefore = index > 0 ? lowerFileName[index - 1] : '';
+  const isBoundaryBefore = index === 0 || /[\s\-_\.]/.test(charBefore);
+  
+  // 检查后一个字符是否为边界（结尾或分隔符）
+  const endIndex = index + normalizedItemName.length;
+  const charAfter = endIndex < lowerFileName.length ? lowerFileName[endIndex] : '';
+  const isBoundaryAfter = endIndex === lowerFileName.length || /[\s\-_\.]/.test(charAfter);
+  
+  return isBoundaryBefore && isBoundaryAfter;
 }
 
 function normalizeString(str: string): string {
@@ -702,21 +729,23 @@ function calculateMatchScore(fileName: string, itemName: string): number {
   if (fileName === itemName) return 1.0;
   if (fileName.startsWith(itemName)) return 0.95;
   
+  // 提高完整子串匹配的基础分数，确保优先于 LCS
   if (fileName.includes(itemName)) {
     const position = fileName.indexOf(itemName);
     const relativePosition = position / fileName.length;
-    return 0.9 - (relativePosition * 0.2);
+    // 基础分从 0.9 提高到 0.92，确保总是高于 LCS 的最高分 (0.8)
+    return 0.92 - (relativePosition * 0.15);
   }
   
   if (itemName.includes(fileName)) return 0.6;
   
-  // 使用最长公共子串计算相似度
+  // 使用最长公共子串计算相似度（得分上限 0.8，低于 includes 的最低分 0.77）
   const lcs = longestCommonSubstring(fileName, itemName);
   if (lcs.length === 0) return 0;
   
   const lcsRatio = lcs.length / itemName.length;
   if (lcsRatio >= 0.8) {
-    return 0.5 + lcsRatio * 0.3;
+    return 0.5 + lcsRatio * 0.3;  // 最高 0.8
   }
   
   const minLen = Math.min(itemName.length, fileName.length);
