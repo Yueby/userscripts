@@ -113,7 +113,7 @@ watch(() => props.show, (isOpen) => {
           }"
           @click="toggleItemSelection(nodeId)"
         >
-          <div class="be-flex be-flex-column" style="gap: 2px;">
+          <div style="display: flex; flex-direction: column; gap: 2px; width: 100%;">
             <span class="be-text-sm be-font-medium">
               {{ itemTree.nodes[nodeId].data?.itemName || itemTree.nodes[nodeId].name }}
             </span>
