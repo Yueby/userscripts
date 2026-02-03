@@ -83,6 +83,25 @@ const handleTabClick = (tabId: string) => {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
+/* Focus 状态 - 优雅的蓝色光晕 */
+.tab-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.tab-btn.active:focus {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* 只在键盘导航时显示 focus 样式 */
+.tab-btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+.tab-btn.active:focus:not(:focus-visible) {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
 .tab-icon {
   display: flex;
   align-items: center;

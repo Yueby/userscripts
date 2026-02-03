@@ -73,7 +73,7 @@ export interface VariationData {
   useCustomPrice?: boolean; // 是否使用自定义价格
   customPrice?: number; // 自定义价格（覆盖配置的价格）
   fileIds?: string[]; // 关联的文件 ID 列表
-  fileItemMap?: { [fileId: string]: string }; // 文件ID到商品ID的映射关系
+  fileItemMap?: { [fileId: string]: string[] }; // 文件ID到商品ID数组的映射关系
 }
 
 // 打折配置

@@ -51,7 +51,7 @@ const templateVars = computed(() => {
   const itemTypeName = config.itemTypeName || 'Item';
   
   // 获取首个变体名
-  const firstItemId = firstVariation?.fileItemMap ? Object.values(firstVariation.fileItemMap)[0] : null;
+  const firstItemId = firstVariation?.fileItemMap ? Object.values(firstVariation.fileItemMap).flat()[0] : null;
   const getItemName = (itemId: string) => {
     const node = props.itemTree.nodes[itemId];
     if (!node) return '未知商品';

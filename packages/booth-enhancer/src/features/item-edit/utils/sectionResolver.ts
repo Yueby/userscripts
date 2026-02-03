@@ -1,16 +1,16 @@
 import type {
-  GlobalTemplateConfig,
-  ItemData,
-  ItemInfoSectionInstance,
-  ItemInfoTemplate,
-  LogSectionInstance,
-  LogTemplate,
-  NodeTree,
-  NormalSectionInstance,
-  SectionInstance,
-  SectionTemplate,
-  SectionType,
-  VariationData
+    GlobalTemplateConfig,
+    ItemData,
+    ItemInfoSectionInstance,
+    ItemInfoTemplate,
+    LogSectionInstance,
+    LogTemplate,
+    NodeTree,
+    NormalSectionInstance,
+    SectionInstance,
+    SectionTemplate,
+    SectionType,
+    VariationData
 } from '../config-types';
 import { formatDate, parseTemplate } from './templateParser';
 
@@ -238,17 +238,33 @@ function collectItemsFromVariations(
   const items: ItemData[] = [];
   const seen = new Set<string>();
   
+  // 如果存在 fullset variation，返回所有商品
+  const hasFullset = variations.some(v => v.isFullset);
+  if (hasFullset) {
+    Object.values(itemTree.nodes).forEach(node => {
+      if (node?.data && !seen.has(node.id)) {
+        items.push(node.data);
+        seen.add(node.id);
+      }
+    });
+    return items;
+  }
+  
+  // 否则只收集关联的商品
   variations.forEach(variation => {
     // 从 fileItemMap 中收集所有关联的商品
     if (variation.fileItemMap) {
-      Object.values(variation.fileItemMap).forEach(itemId => {
-        if (itemId && !seen.has(itemId)) {
-          const node = itemTree.nodes[itemId];
-          if (node?.data) {
-            items.push(node.data);
-            seen.add(itemId);
+      Object.values(variation.fileItemMap).forEach(itemIds => {
+        const ids = Array.isArray(itemIds) ? itemIds : [itemIds]; // 兼容旧数据
+        ids.forEach(itemId => {
+          if (itemId && !seen.has(itemId)) {
+            const node = itemTree.nodes[itemId];
+            if (node?.data) {
+              items.push(node.data);
+              seen.add(itemId);
+            }
           }
-        }
+        });
       });
     }
   });

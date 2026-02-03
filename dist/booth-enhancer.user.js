@@ -22,12 +22,12 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(` .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-43c71f00]{width:100%}.file-grid[data-v-43c71f00]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-43c71f00]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-43c71f00]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-43c71f00]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-3bf68892]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-3bf68892]{position:absolute;z-index:2000}.modal-container[data-v-3bf68892]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-3bf68892]{max-height:70%}.modal-header[data-v-3bf68892]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-3bf68892]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-3bf68892]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-3bf68892] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-3bf68892]{padding:8px;overflow-y:auto;flex:1;min-height:0;color:#374151}.modal-footer[data-v-3bf68892]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-3bf68892] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-3bf68892]{width:100%}.modal-enter-active[data-v-3bf68892],.modal-leave-active[data-v-3bf68892]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-3bf68892],.modal-leave-active .modal-container[data-v-3bf68892]{transition:transform .3s ease}.modal-enter-from[data-v-3bf68892],.modal-leave-to[data-v-3bf68892]{opacity:0}.modal-enter-from .modal-container[data-v-3bf68892],.modal-leave-to .modal-container[data-v-3bf68892]{transform:translateY(100%)}.modal-body[data-v-3bf68892]::-webkit-scrollbar{width:6px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb:hover{background:#999}.preview-box[data-v-93d09832]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-93d09832]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-5643104c]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-5643104c]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-5643104c]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-5643104c]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-5643104c]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-ee7eccb8]{display:flex;gap:2px}.tab-btn[data-v-ee7eccb8]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-ee7eccb8]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-ee7eccb8]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-icon[data-v-ee7eccb8]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-ee7eccb8] svg{width:13px;height:13px}.tab-label[data-v-ee7eccb8]{white-space:nowrap}.tab-actions[data-v-ee7eccb8]{display:flex;align-items:center;gap:4px}.template-selector[data-v-3d389fdb]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-3d389fdb]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-3d389fdb]{width:100%}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-d653bc39]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-d653bc39]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-d653bc39]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-d653bc39]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-d653bc39]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-d653bc39]::placeholder{color:#9ca3af}.search-results[data-v-d653bc39]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-d653bc39]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-d653bc39]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-d653bc39]{position:relative;z-index:1}.empty-state[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-89529f85]{display:flex;flex-direction:column;gap:6px;padding:var(--be-space-sm);background:#00000005;border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.drag-transition-move[data-v-89529f85]{transition:transform .3s ease}.drag-transition-enter-active[data-v-89529f85],.drag-transition-leave-active[data-v-89529f85]{transition:all .3s ease}.drag-transition-leave-active[data-v-89529f85]{position:absolute}.drag-transition-enter-from[data-v-89529f85],.drag-transition-leave-to[data-v-89529f85]{opacity:0;transform:translateY(-10px)}.draggable-card-list .draggable-card-list[data-v-89529f85]{background:transparent;border:none;padding:0}.draggable-card[data-v-89529f85]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:default;transition:var(--be-transition-normal)}.draggable-card[data-v-89529f85]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.draggable-card.is-dragging[data-v-89529f85]{opacity:.5;transform:scale(.95);box-shadow:var(--be-shadow-lg);border-color:var(--be-color-primary)}.draggable-card.is-drag-over[data-v-89529f85]{opacity:.7}.card-actions[data-v-89529f85]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-89529f85]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center;padding:4px;margin:-4px;touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.drag-handle[data-v-89529f85]:active{cursor:grabbing}.drag-handle.is-locked[data-v-89529f85]{cursor:not-allowed!important;pointer-events:none}@media (max-width: 768px){.drag-handle[data-v-89529f85]{padding:8px;margin:-8px}}.card-number[data-v-89529f85]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-89529f85]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-89529f85]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f61a}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-19213a99]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-19213a99]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-19213a99]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-19213a99]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-19213a99]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-19213a99]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-19213a99],.tab-slide-leave-from[data-v-19213a99]{opacity:1;transform:translate(0)}.sidebar-content[data-v-19213a99]>*{width:100%;height:100%}.tag-preset-tab[data-v-81455dc4]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-81455dc4]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-81455dc4]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-81455dc4]::-webkit-scrollbar{width:6px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-81455dc4]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-81455dc4]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-81455dc4]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-81455dc4]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-81455dc4]{width:100%}.tag-badges-wrapper[data-v-81455dc4]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-81455dc4]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-81455dc4]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-81455dc4]{flex-shrink:0}.tag-delete-btn[data-v-81455dc4]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-81455dc4]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-81455dc4]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-6c6b3856]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-6c6b3856]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-6c6b3856]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-6c6b3856]{flex-shrink:0}.modal-message[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-6c6b3856]{font-family:Consolas,Monaco,monospace;line-height:1.5}.template-grid[data-v-70ec8f42]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-70ec8f42]{padding:8px;transition:all .15s ease}.template-item[data-v-70ec8f42]:hover{transform:translateY(-1px)}.empty-hint[data-v-cc57d61c]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.tag-badges-wrapper[data-v-55e6e409]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-55e6e409]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-55e6e409]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-55e6e409]{flex-shrink:0}.tag-delete-btn[data-v-55e6e409]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-55e6e409]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.discount-config[data-v-5862736f]{display:flex;flex-direction:column;gap:var(--be-space-sm);margin-top:var(--be-space-sm)}.empty-hint[data-v-cc98f3f8]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-cc98f3f8]{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-cc98f3f8]{grid-template-columns:1fr}.item-card[data-v-cc98f3f8]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-cc98f3f8]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-cc98f3f8]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-delete-btn[data-v-cc98f3f8]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-cc98f3f8]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-content[data-v-cc98f3f8]{padding:6px 8px}.item-select-btn[data-v-cc98f3f8]{width:100%;display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:var(--be-radius-sm);font-size:10px;color:var(--be-color-text-secondary);cursor:pointer}.item-select-btn[data-v-cc98f3f8]:hover,.item-select-btn.has-item[data-v-cc98f3f8]{border-style:solid}.item-select-text[data-v-cc98f3f8]{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.booth-enhancer-lock-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#999;cursor:help;z-index:10}.booth-enhancer-lock-icon svg{display:block}.empty-state[data-v-a3af0ecb]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-a3af0ecb]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-a3af0ecb]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.empty-hint[data-v-a3af0ecb]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.edit-tab[data-v-a3af0ecb]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-a3af0ecb]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-a3af0ecb]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-a3af0ecb]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-a3af0ecb]:hover{background:var(--be-color-bg-hover)} `);
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(` .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-43c71f00]{width:100%}.file-grid[data-v-43c71f00]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-43c71f00]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-43c71f00]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-43c71f00]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-3bf68892]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-3bf68892]{position:absolute;z-index:2000}.modal-container[data-v-3bf68892]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-3bf68892]{max-height:70%}.modal-header[data-v-3bf68892]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-3bf68892]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-3bf68892]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-3bf68892] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-3bf68892]{padding:8px;overflow-y:auto;flex:1;min-height:0;color:#374151}.modal-footer[data-v-3bf68892]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-3bf68892] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-3bf68892]{width:100%}.modal-enter-active[data-v-3bf68892],.modal-leave-active[data-v-3bf68892]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-3bf68892],.modal-leave-active .modal-container[data-v-3bf68892]{transition:transform .3s ease}.modal-enter-from[data-v-3bf68892],.modal-leave-to[data-v-3bf68892]{opacity:0}.modal-enter-from .modal-container[data-v-3bf68892],.modal-leave-to .modal-container[data-v-3bf68892]{transform:translateY(100%)}.modal-body[data-v-3bf68892]::-webkit-scrollbar{width:6px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb:hover{background:#999}.preview-box[data-v-93d09832]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-93d09832]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-5643104c]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-5643104c]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-5643104c]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-5643104c]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-5643104c]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-8faa559a]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-8faa559a]{display:flex;gap:2px}.tab-btn[data-v-8faa559a]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-8faa559a]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-8faa559a]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-btn[data-v-8faa559a]:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.tab-btn.active[data-v-8faa559a]:focus{box-shadow:0 1px 2px #00000014,0 0 0 3px #3b82f633}.tab-btn[data-v-8faa559a]:focus:not(:focus-visible){box-shadow:none}.tab-btn.active[data-v-8faa559a]:focus:not(:focus-visible){box-shadow:0 1px 2px #00000014}.tab-icon[data-v-8faa559a]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-8faa559a] svg{width:13px;height:13px}.tab-label[data-v-8faa559a]{white-space:nowrap}.tab-actions[data-v-8faa559a]{display:flex;align-items:center;gap:4px}.template-selector[data-v-3d389fdb]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-3d389fdb]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-3d389fdb]{width:100%}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-d653bc39]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-d653bc39]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-d653bc39]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-d653bc39]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-d653bc39]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-d653bc39]::placeholder{color:#9ca3af}.search-results[data-v-d653bc39]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-d653bc39]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-d653bc39]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-d653bc39]{position:relative;z-index:1}.empty-state[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-89529f85]{display:flex;flex-direction:column;gap:6px;padding:var(--be-space-sm);background:#00000005;border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.drag-transition-move[data-v-89529f85]{transition:transform .3s ease}.drag-transition-enter-active[data-v-89529f85],.drag-transition-leave-active[data-v-89529f85]{transition:all .3s ease}.drag-transition-leave-active[data-v-89529f85]{position:absolute}.drag-transition-enter-from[data-v-89529f85],.drag-transition-leave-to[data-v-89529f85]{opacity:0;transform:translateY(-10px)}.draggable-card-list .draggable-card-list[data-v-89529f85]{background:transparent;border:none;padding:0}.draggable-card[data-v-89529f85]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:default;transition:var(--be-transition-normal)}.draggable-card[data-v-89529f85]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.draggable-card.is-dragging[data-v-89529f85]{opacity:.5;transform:scale(.95);box-shadow:var(--be-shadow-lg);border-color:var(--be-color-primary)}.draggable-card.is-drag-over[data-v-89529f85]{opacity:.7}.card-actions[data-v-89529f85]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-89529f85]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center;padding:4px;margin:-4px;touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.drag-handle[data-v-89529f85]:active{cursor:grabbing}.drag-handle.is-locked[data-v-89529f85]{cursor:not-allowed!important;pointer-events:none}@media (max-width: 768px){.drag-handle[data-v-89529f85]{padding:8px;margin:-8px}}.card-number[data-v-89529f85]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-89529f85]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-89529f85]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-primary:focus{box-shadow:0 1px 3px #3b82f64d,0 0 0 3px #3b82f633}.booth-btn-success:focus{box-shadow:0 1px 3px #10b9814d,0 0 0 3px #10b98133}.booth-btn-danger:focus{box-shadow:0 1px 3px #ef44444d,0 0 0 3px #ef444433}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle input[type=checkbox]:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f633}.booth-toggle input[type=checkbox]:focus:not(:focus-visible)+.toggle-slider{box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f64d}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-19213a99]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-19213a99]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-19213a99]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-19213a99]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-19213a99]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-19213a99]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-19213a99],.tab-slide-leave-from[data-v-19213a99]{opacity:1;transform:translate(0)}.sidebar-content[data-v-19213a99]>*{width:100%;height:100%}.tag-preset-tab[data-v-81455dc4]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-81455dc4]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-81455dc4]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-81455dc4]::-webkit-scrollbar{width:6px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-81455dc4]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-81455dc4]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-81455dc4]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-81455dc4]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-81455dc4]{width:100%}.tag-badges-wrapper[data-v-81455dc4]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-81455dc4]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-81455dc4]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-81455dc4]{flex-shrink:0}.tag-delete-btn[data-v-81455dc4]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-81455dc4]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-81455dc4]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-6c6b3856]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-6c6b3856]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-6c6b3856]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-6c6b3856]{flex-shrink:0}.modal-message[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-6c6b3856]{font-family:Consolas,Monaco,monospace;line-height:1.5}.template-grid[data-v-70ec8f42]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-70ec8f42]{padding:8px;transition:all .15s ease}.template-item[data-v-70ec8f42]:hover{transform:translateY(-1px)}.empty-hint[data-v-ee0e1d13]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.tag-badges-wrapper[data-v-4d9e8fb3]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-4d9e8fb3]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-4d9e8fb3]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-4d9e8fb3]{flex-shrink:0}.tag-delete-btn[data-v-4d9e8fb3]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-4d9e8fb3]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.discount-config[data-v-5862736f]{display:flex;flex-direction:column;gap:var(--be-space-sm);margin-top:var(--be-space-sm)}.empty-hint[data-v-89049173]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-89049173]{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-89049173]{grid-template-columns:1fr}.item-card[data-v-89049173]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-89049173]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-89049173]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-delete-btn[data-v-89049173]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-89049173]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-delete-btn[data-v-89049173]:focus{outline:none;box-shadow:0 0 0 3px #6b728033}.item-card-delete-btn[data-v-89049173]:focus:not(:focus-visible){box-shadow:none}.item-card-content[data-v-89049173]{padding:6px 8px}.item-list-container[data-v-89049173]{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.item-tag[data-v-89049173]{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;background:#3b82f61a;border:1px solid rgba(59,130,246,.3);border-radius:4px;font-size:10px;color:#3b82f6}.item-tag-text[data-v-89049173]{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-tag-remove[data-v-89049173]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;opacity:.7}.item-tag-remove[data-v-89049173]:hover{opacity:1;background:#3b82f6;color:#fff}.item-tag-remove[data-v-89049173]:focus{outline:none;box-shadow:0 0 0 2px #3b82f64d}.item-tag-remove[data-v-89049173]:focus:not(:focus-visible){box-shadow:none}.item-add-btn[data-v-89049173]{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:4px;font-size:10px;color:var(--be-color-text-secondary);cursor:pointer}.item-add-btn[data-v-89049173]:hover{border-style:solid;border-color:#3b82f6;color:#3b82f6}.item-add-btn[data-v-89049173]:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.item-add-btn[data-v-89049173]:focus:not(:focus-visible){box-shadow:none}.item-add-text[data-v-89049173]{white-space:nowrap}.booth-enhancer-lock-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#999;cursor:help;z-index:10}.booth-enhancer-lock-icon svg{display:block}.empty-state[data-v-a842ebdf]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-a842ebdf]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-a842ebdf]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.empty-hint[data-v-a842ebdf]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.edit-tab[data-v-a842ebdf]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-a842ebdf]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-a842ebdf]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-a842ebdf]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-a842ebdf]:hover{background:var(--be-color-bg-hover)} `);
 
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-CNjZeeHM.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-DEZBPWGs.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,7 +39,7 @@ System.register("./__entry.js", ['./__monkey.entry-CNjZeeHM.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-CNjZeeHM.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-DEZBPWGs.js", ['vue'], (function (exports, module) {
   'use strict';
   var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
@@ -1829,6 +1829,10 @@ System.register("./__monkey.entry-CNjZeeHM.js", ['vue'], (function (exports, mod
         lock: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+  </svg>`,
+        arrowRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+    <polyline points="12 5 19 12 12 19"></polyline>
   </svg>`
       });
       const _hoisted_1$2 = { class: "modal-container" };
@@ -1978,7 +1982,7 @@ System.register("./__monkey.entry-CNjZeeHM.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ee7eccb8"]]);
+      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8faa559a"]]);
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -2185,6 +2189,18 @@ System.register("./__monkey.entry-CNjZeeHM.js", ['vue'], (function (exports, mod
             const stored = _GM_getValue(STORAGE_KEY, null);
             if (stored) {
               const data = JSON.parse(stored);
+              Object.values(data.itemConfigs).forEach((config) => {
+                config.variations.forEach((variation) => {
+                  if (variation.fileItemMap) {
+                    Object.keys(variation.fileItemMap).forEach((fileId) => {
+                      const value = variation.fileItemMap[fileId];
+                      if (typeof value === "string") {
+                        variation.fileItemMap[fileId] = [value];
+                      }
+                    });
+                  }
+                });
+              });
               if (data.ui) {
                 data.ui.sidebarOpen = false;
               }
@@ -2800,9 +2816,9 @@ System.register("./__monkey.entry-CNjZeeHM.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-B08_OccJ-C0hC7lug.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-kS9ODuyb-DSijyaZm.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-BdJemFYU-u7Tc2tmU.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-5XmkTkuJ-BqIcq6j6.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-BcjG_Sly-DA309PKi.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-C14gGohw-BButu_Vk.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -5705,7 +5721,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-B08_OccJ-C0hC7lug.js", ['vue', './useTreeTab-DjEliPpp-Ci_pUV8Q.js', './__monkey.entry-CNjZeeHM.js'], (function (exports, module) {
+System.register("./TagTab-5XmkTkuJ-BqIcq6j6.js", ['vue', './useTreeTab-O1Gq4B_0-DGni1qL5.js', './__monkey.entry-DEZBPWGs.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -6138,7 +6154,7 @@ System.register("./TagTab-B08_OccJ-C0hC7lug.js", ['vue', './useTreeTab-DjEliPpp-
   };
 }));
 
-System.register("./ItemTab-kS9ODuyb-DSijyaZm.js", ['vue', './useTreeTab-DjEliPpp-Ci_pUV8Q.js', './__monkey.entry-CNjZeeHM.js'], (function (exports, module) {
+System.register("./ItemTab-BcjG_Sly-DA309PKi.js", ['vue', './useTreeTab-O1Gq4B_0-DGni1qL5.js', './__monkey.entry-DEZBPWGs.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -6419,7 +6435,7 @@ System.register("./ItemTab-kS9ODuyb-DSijyaZm.js", ['vue', './useTreeTab-DjEliPpp
   };
 }));
 
-System.register("./useTreeTab-DjEliPpp-Ci_pUV8Q.js", ['vue', './__monkey.entry-CNjZeeHM.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-O1Gq4B_0-DGni1qL5.js", ['vue', './__monkey.entry-DEZBPWGs.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -7377,7 +7393,7 @@ System.register("./useTreeTab-DjEliPpp-Ci_pUV8Q.js", ['vue', './__monkey.entry-C
   };
 }));
 
-System.register("./EditTab-BdJemFYU-u7Tc2tmU.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-CNjZeeHM.js'], (function (exports, module) {
+System.register("./EditTab-C14gGohw-BButu_Vk.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-DEZBPWGs.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, renderList, normalizeStyle, normalizeClass, renderSlot, withModifiers, onUnmounted, vModelCheckbox, useSlots, TransitionGroup, useModal, _export_sfc, useStorage, getSelectedDiscountIndicatorTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate;
   return {
@@ -8011,7 +8027,9 @@ System.register("./EditTab-BdJemFYU-u7Tc2tmU.js", ['vue', './useModal-Cv530RMh-D
       function calculateTotalSupport(variations) {
         return variations.filter((v) => !v.isFullset).reduce((sum, v) => {
           if (!v.fileItemMap) return sum;
-          const count = Object.keys(v.fileItemMap).filter((fileId) => v.fileItemMap[fileId]).length;
+          const count = Object.values(v.fileItemMap).reduce((total, itemIds) => {
+            return total + (Array.isArray(itemIds) ? itemIds.length : 0);
+          }, 0);
           return sum + count;
         }, 0);
       }
@@ -8147,16 +8165,29 @@ System.register("./EditTab-BdJemFYU-u7Tc2tmU.js", ['vue', './useModal-Cv530RMh-D
       function collectItemsFromVariations(variations, itemTree) {
         const items = [];
         const seen = /* @__PURE__ */ new Set();
+        const hasFullset = variations.some((v) => v.isFullset);
+        if (hasFullset) {
+          Object.values(itemTree.nodes).forEach((node) => {
+            if ((node == null ? void 0 : node.data) && !seen.has(node.id)) {
+              items.push(node.data);
+              seen.add(node.id);
+            }
+          });
+          return items;
+        }
         variations.forEach((variation) => {
           if (variation.fileItemMap) {
-            Object.values(variation.fileItemMap).forEach((itemId) => {
-              if (itemId && !seen.has(itemId)) {
-                const node = itemTree.nodes[itemId];
-                if (node == null ? void 0 : node.data) {
-                  items.push(node.data);
-                  seen.add(itemId);
+            Object.values(variation.fileItemMap).forEach((itemIds) => {
+              const ids = Array.isArray(itemIds) ? itemIds : [itemIds];
+              ids.forEach((itemId) => {
+                if (itemId && !seen.has(itemId)) {
+                  const node = itemTree.nodes[itemId];
+                  if (node == null ? void 0 : node.data) {
+                    items.push(node.data);
+                    seen.add(itemId);
+                  }
                 }
-              }
+              });
             });
           }
         });
@@ -8562,7 +8593,7 @@ ${this.smart}`;
             const firstVariation = normalVariations[0];
             const supportCount = calculateTotalSupport(config.variations);
             const itemTypeName = config.itemTypeName || "Item";
-            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap)[0] : null;
+            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap).flat()[0] : null;
             const getItemName = (itemId) => {
               const node = props.itemTree.nodes[itemId];
               if (!node) return "未知商品";
@@ -8766,7 +8797,7 @@ ${this.smart}`;
             const firstVariation = normalVariations[0];
             const supportCount = calculateTotalSupport(config.variations);
             const itemTypeName = config.itemTypeName || "Item";
-            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap)[0] : null;
+            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap).flat()[0] : null;
             const getItemName = (itemId) => {
               const node = props.itemTree.nodes[itemId];
               if (!node) return "未知商品";
@@ -9502,10 +9533,13 @@ ${this.smart}`;
         key: 0,
         class: "empty-hint"
       };
-      const _hoisted_18$3 = ["onUpdate:modelValue", "placeholder"];
-      const _hoisted_19$3 = { class: "form-group" };
-      const _hoisted_20$3 = ["onUpdate:modelValue"];
-      const _hoisted_21$2 = {
+      const _hoisted_18$3 = ["onUpdate:modelValue", "onKeyup"];
+      const _hoisted_19$3 = ["onClick"];
+      const _hoisted_20$3 = ["innerHTML"];
+      const _hoisted_21$2 = ["onUpdate:modelValue", "placeholder"];
+      const _hoisted_22$2 = { class: "form-group" };
+      const _hoisted_23$2 = ["onUpdate:modelValue"];
+      const _hoisted_24$2 = {
         key: 2,
         class: "be-flex be-flex-column be-gap-sm"
       };
@@ -9643,6 +9677,32 @@ ${this.smart}`;
           }
           function openLogTemplateModal() {
             showLogTemplateModal.value = true;
+          }
+          const dateInputs = ref({});
+          function convertDateToTimestamp(entryId) {
+            const dateStr = dateInputs.value[entryId];
+            if (!dateStr) {
+              toast.error("请输入日期（如 2025/10/15）");
+              return;
+            }
+            const normalizedStr = dateStr.replace(/[.\-]/g, "/");
+            const date = new Date(normalizedStr);
+            if (isNaN(date.getTime())) {
+              toast.error("日期格式错误，请使用如 2025/10/15 的格式");
+              return;
+            }
+            for (const section of props.itemConfig.sections) {
+              if (section.type === "log") {
+                const entry = section.logEntries.find((e) => e.id === entryId);
+                if (entry) {
+                  const timestamp = date.getTime();
+                  entry.date = timestamp;
+                  dateInputs.value[entryId] = "";
+                  toast.success(`已转换: ${dateStr} → ${timestamp}`);
+                  return;
+                }
+              }
+            }
           }
           __expose({
             applySections
@@ -9803,12 +9863,35 @@ ${this.smart}`;
                             }, {
                               actions: withCtx(({ item: entry }) => [
                                 withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => dateInputs.value[entry.id] = $event,
+                                  type: "text",
+                                  class: "be-p-xs be-px-sm be-text-base",
+                                  style: { "height": "28px", "width": "110px", "flex-shrink": "0" },
+                                  placeholder: "yyyy/mm/dd",
+                                  title: "输入日期（支持 2025/10/15、2025-10-15 等格式）",
+                                  onKeyup: withKeys(($event) => convertDateToTimestamp(entry.id), ["enter"])
+                                }, null, 40, _hoisted_18$3), [
+                                  [vModelText, dateInputs.value[entry.id]]
+                                ]),
+                                createElementVNode("button", {
+                                  class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                                  style: { "flex-shrink": "0" },
+                                  type: "button",
+                                  title: "转换为 Timestamp",
+                                  onClick: withModifiers(($event) => convertDateToTimestamp(entry.id), ["stop", "prevent"])
+                                }, [
+                                  createElementVNode("span", {
+                                    innerHTML: unref(withSize)(unref(icons).arrowRight, 14)
+                                  }, null, 8, _hoisted_20$3)
+                                ], 8, _hoisted_19$3),
+                                withDirectives(createElementVNode("input", {
                                   "onUpdate:modelValue": ($event) => entry.date = $event,
                                   type: "number",
-                                  class: "be-flex-1 be-p-xs be-px-sm be-text-base",
-                                  style: { "height": "28px", "min-width": "120px" },
-                                  placeholder: unref(formatDate)(Date.now())
-                                }, null, 8, _hoisted_18$3), [
+                                  class: "be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0",
+                                  style: { "height": "28px" },
+                                  placeholder: unref(formatDate)(Date.now()),
+                                  title: "Timestamp（自动转换后会填入这里）"
+                                }, null, 8, _hoisted_21$2), [
                                   [
                                     vModelText,
                                     entry.date,
@@ -9818,12 +9901,12 @@ ${this.smart}`;
                                 ])
                               ]),
                               content: withCtx(({ item: entry }) => [
-                                createElementVNode("div", _hoisted_19$3, [
+                                createElementVNode("div", _hoisted_22$2, [
                                   withDirectives(createElementVNode("textarea", {
                                     "onUpdate:modelValue": ($event) => entry.content = $event,
                                     rows: "1",
                                     placeholder: "输入日志内容"
-                                  }, null, 8, _hoisted_20$3), [
+                                  }, null, 8, _hoisted_23$2), [
                                     [vModelText, entry.content]
                                   ])
                                 ])
@@ -9833,7 +9916,7 @@ ${this.smart}`;
                           ]),
                           _: 2
                         }, 1024)
-                      ])) : section.type === "iteminfo" ? (openBlock(), createElementBlock("div", _hoisted_21$2, [
+                      ])) : section.type === "iteminfo" ? (openBlock(), createElementBlock("div", _hoisted_24$2, [
                         createVNode(unref(SectionHeader), null, {
                           default: withCtx(() => [
                             createVNode(TemplateSelector, {
@@ -9879,7 +9962,7 @@ ${this.smart}`;
           };
         }
       });
-      const SectionsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-cc57d61c"]]);
+      const SectionsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-ee0e1d13"]]);
       const _hoisted_1$4 = ["innerHTML"];
       const _hoisted_2$4 = { class: "tag-badges-wrapper" };
       const _hoisted_3$4 = { class: "tag-text" };
@@ -9914,7 +9997,7 @@ ${this.smart}`;
             const matchedNodeIds = /* @__PURE__ */ new Set();
             for (const variation of props.itemConfig.variations) {
               if (variation.isFullset || !variation.fileItemMap) continue;
-              const itemIds = Object.values(variation.fileItemMap).filter(Boolean);
+              const itemIds = Object.values(variation.fileItemMap).flat().filter(Boolean);
               for (const itemId of itemIds) {
                 const itemNode = props.itemTree.nodes[itemId];
                 if (!(itemNode == null ? void 0 : itemNode.data)) continue;
@@ -10005,7 +10088,7 @@ ${this.smart}`;
           };
         }
       });
-      const TagsSection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-55e6e409"]]);
+      const TagsSection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-4d9e8fb3"]]);
       const _hoisted_1$3 = ["innerHTML"];
       const _hoisted_2$3 = ["innerHTML"];
       const _hoisted_3$3 = ["onUpdate:modelValue"];
@@ -10449,9 +10532,13 @@ ${this.smart}`;
       const _hoisted_25$1 = ["onClick"];
       const _hoisted_26$1 = ["innerHTML"];
       const _hoisted_27$1 = { class: "item-card-content" };
-      const _hoisted_28$1 = ["onClick"];
-      const _hoisted_29$1 = ["innerHTML"];
-      const _hoisted_30$1 = { class: "item-select-text" };
+      const _hoisted_28$1 = { class: "item-list-container" };
+      const _hoisted_29$1 = { class: "item-tag-text" };
+      const _hoisted_30$1 = ["onClick"];
+      const _hoisted_31$1 = ["innerHTML"];
+      const _hoisted_32$1 = ["onClick"];
+      const _hoisted_33$1 = ["innerHTML"];
+      const _hoisted_34$1 = { class: "item-add-text" };
       const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         __name: "VariationsListSection",
         props: {
@@ -10479,7 +10566,7 @@ ${this.smart}`;
               toast.info("页面没有 Variations");
               return;
             }
-            props.itemConfig.variations = pageVariations.map((variation, index) => {
+            const tempVariations = pageVariations.map((variation, index) => {
               var _a, _b;
               const name = ((_a = variation.nameInput) == null ? void 0 : _a.value) || "";
               const isFullset = name.toLowerCase().includes("fullset");
@@ -10491,28 +10578,45 @@ ${this.smart}`;
                 price,
                 isFullset,
                 fileIds,
-                // 导入已关联的文件
+                // 临时包含所有文件
                 fileItemMap: {}
                 // 初始化为空对象，待自动匹配
               };
             });
-            props.itemConfig.variations.forEach((variation, index) => {
+            tempVariations.forEach((variation) => {
               if (variation.fileIds && variation.fileIds.length > 0) {
-                autoMatchItemsForFiles(index, variation.fileIds);
+                variation.fileItemMap = {};
+                for (const fileId of variation.fileIds) {
+                  const file = availableFiles.value.find((f) => f.id === fileId);
+                  if (!file) continue;
+                  const matchedItemId = findBestMatchItem(file.name);
+                  if (matchedItemId) {
+                    variation.fileItemMap[fileId] = [matchedItemId];
+                  }
+                }
               }
             });
             const allFiles = /* @__PURE__ */ new Set();
             const mappedFiles = /* @__PURE__ */ new Set();
-            props.itemConfig.variations.forEach((variation) => {
+            tempVariations.forEach((variation) => {
               var _a;
               (_a = variation.fileIds) == null ? void 0 : _a.forEach((fileId) => allFiles.add(fileId));
               if (variation.fileItemMap) {
-                Object.entries(variation.fileItemMap).forEach(([fileId, itemId]) => {
-                  if (itemId) mappedFiles.add(fileId);
+                Object.keys(variation.fileItemMap).forEach((fileId) => {
+                  if (variation.fileItemMap[fileId] && variation.fileItemMap[fileId].length > 0) {
+                    mappedFiles.add(fileId);
+                  }
                 });
               }
             });
             const commonFiles = Array.from(allFiles).filter((fileId) => !mappedFiles.has(fileId));
+            const commonFileSet = new Set(commonFiles);
+            tempVariations.forEach((variation) => {
+              if (variation.fileIds) {
+                variation.fileIds = variation.fileIds.filter((fileId) => !commonFileSet.has(fileId));
+              }
+            });
+            props.itemConfig.variations = tempVariations;
             props.itemConfig.commonFiles = commonFiles;
             const messages = [`已导入 ${pageVariations.length} 个 Variations`];
             if (commonFiles.length > 0) {
@@ -10704,7 +10808,7 @@ ${this.smart}`;
                   price: 0,
                   isFullset: false,
                   fileIds: [file.id],
-                  fileItemMap: { [file.id]: matchedItemId }
+                  fileItemMap: { [file.id]: [matchedItemId] }
                 });
                 existingNames.add(itemName);
                 createdCount++;
@@ -10775,7 +10879,9 @@ ${this.smart}`;
           function getVariationSupportCount(variation) {
             if (variation.isFullset) return 1;
             if (!variation.fileItemMap) return 0;
-            return Object.keys(variation.fileItemMap).filter((fileId) => variation.fileItemMap[fileId]).length;
+            return Object.values(variation.fileItemMap).reduce((sum, itemIds) => {
+              return sum + (Array.isArray(itemIds) ? itemIds.length : 0);
+            }, 0);
           }
           async function selectFilesForVariation(variationIndex) {
             const variation = props.itemConfig.variations[variationIndex];
@@ -10801,16 +10907,16 @@ ${this.smart}`;
               autoMatchItemsForFiles(variationIndex, newFileIds);
             }
           }
-          async function selectItemForFile(variationIndex, fileId) {
+          async function selectItemsForFile(variationIndex, fileId) {
             var _a;
             const variation = props.itemConfig.variations[variationIndex];
-            const currentItemId = (_a = variation.fileItemMap) == null ? void 0 : _a[fileId];
+            const currentItemIds = ((_a = variation.fileItemMap) == null ? void 0 : _a[fileId]) || [];
             selectingItemForFile.value = { variationIndex, fileId };
             const result = await props.modal.openModal({
               type: "selectItem",
-              title: `为 ${getFileName(fileId)} 选择商品（单选）`,
+              title: `为 ${getFileName(fileId)} 选择商品（可多选）`,
               formData: {
-                itemIds: currentItemId ? [currentItemId] : []
+                itemIds: currentItemIds
               }
             });
             selectingItemForFile.value = null;
@@ -10822,25 +10928,30 @@ ${this.smart}`;
             if (selectedItemIds.length === 0) {
               delete variation.fileItemMap[fileId];
             } else {
-              variation.fileItemMap[fileId] = selectedItemIds[0];
+              variation.fileItemMap[fileId] = selectedItemIds;
             }
           }
           function getFileName(fileId) {
             const file = availableFiles.value.find((f) => f.id === fileId);
             return file ? file.name : `File #${fileId}`;
           }
-          function getFileItemId(variationIndex, fileId) {
+          function getFileItemIds(variationIndex, fileId) {
             var _a;
             const variation = props.itemConfig.variations[variationIndex];
-            return (_a = variation.fileItemMap) == null ? void 0 : _a[fileId];
+            return ((_a = variation.fileItemMap) == null ? void 0 : _a[fileId]) || [];
           }
-          function getFileItemName(variationIndex, fileId) {
+          function removeItemFromFile(variationIndex, fileId, itemId) {
             var _a;
-            const itemId = getFileItemId(variationIndex, fileId);
-            if (!itemId) return "";
-            const node = props.itemTree.nodes[itemId];
-            if (!node) return "未知商品";
-            return ((_a = node.data) == null ? void 0 : _a.itemName) || node.name;
+            const variation = props.itemConfig.variations[variationIndex];
+            if (!((_a = variation.fileItemMap) == null ? void 0 : _a[fileId])) return;
+            const itemIds = variation.fileItemMap[fileId];
+            const index = itemIds.indexOf(itemId);
+            if (index > -1) {
+              itemIds.splice(index, 1);
+            }
+            if (itemIds.length === 0) {
+              delete variation.fileItemMap[fileId];
+            }
           }
           function removeFileFromVariation(variationIndex, fileId) {
             const variation = props.itemConfig.variations[variationIndex];
@@ -10864,7 +10975,7 @@ ${this.smart}`;
               if (!file) continue;
               const matchedItemId = findBestMatchItem(file.name);
               if (matchedItemId) {
-                variation.fileItemMap[fileId] = matchedItemId;
+                variation.fileItemMap[fileId] = [matchedItemId];
               }
             }
           }
@@ -10952,6 +11063,16 @@ ${this.smart}`;
             return configName ? pageVariationNames.value.has(configName) : false;
           }
           function getVariationFileIds(config) {
+            if (config.isFullset) {
+              const allFileIds = /* @__PURE__ */ new Set();
+              props.itemConfig.variations.forEach((v) => {
+                if (!v.isFullset && v.fileIds) {
+                  v.fileIds.forEach((fileId) => allFileIds.add(fileId));
+                }
+              });
+              (props.itemConfig.commonFiles || []).forEach((fileId) => allFileIds.add(fileId));
+              return Array.from(allFileIds);
+            }
             return [
               ...config.fileIds || [],
               ...props.itemConfig.commonFiles || []
@@ -11166,7 +11287,8 @@ ${this.smart}`;
                           }, null, 40, _hoisted_12$1),
                           _cache[3] || (_cache[3] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
                         ])) : createCommentVNode("", true),
-                        createElementVNode("button", {
+                        !variation.isFullset ? (openBlock(), createElementBlock("button", {
+                          key: 1,
                           class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
                           type: "button",
                           title: "选择关联文件",
@@ -11175,7 +11297,7 @@ ${this.smart}`;
                           createElementVNode("span", {
                             innerHTML: unref(withSize)(unref(icons).folder, 14)
                           }, null, 8, _hoisted_14$1)
-                        ], 8, _hoisted_13$1)
+                        ], 8, _hoisted_13$1)) : createCommentVNode("", true)
                       ])
                     ]),
                     content: withCtx(({ item: variation, index }) => [
@@ -11211,7 +11333,7 @@ ${this.smart}`;
                             createElementVNode("span", _hoisted_22$1, " 支持数: " + toDisplayString(getVariationSupportCount(variation)), 1)
                           ], 64))
                         ]),
-                        variation.fileIds && variation.fileIds.length > 0 ? (openBlock(), createElementBlock("div", {
+                        !variation.isFullset && variation.fileIds && variation.fileIds.length > 0 ? (openBlock(), createElementBlock("div", {
                           key: 0,
                           class: normalizeClass(["item-cards-grid", { "single-item": variation.fileIds.length === 1 }])
                         }, [
@@ -11234,16 +11356,37 @@ ${this.smart}`;
                                 ], 8, _hoisted_25$1)
                               ]),
                               createElementVNode("div", _hoisted_27$1, [
-                                createElementVNode("button", {
-                                  class: normalizeClass(["item-select-btn", { "has-item": getFileItemId(index, fileId) }]),
-                                  type: "button",
-                                  onClick: withModifiers(($event) => selectItemForFile(index, fileId), ["stop"])
-                                }, [
-                                  createElementVNode("span", {
-                                    innerHTML: unref(withSize)(unref(icons).file, 12)
-                                  }, null, 8, _hoisted_29$1),
-                                  createElementVNode("span", _hoisted_30$1, toDisplayString(getFileItemId(index, fileId) ? getFileItemName(index, fileId) : "选择商品"), 1)
-                                ], 10, _hoisted_28$1)
+                                createElementVNode("div", _hoisted_28$1, [
+                                  (openBlock(true), createElementBlock(Fragment, null, renderList(getFileItemIds(index, fileId), (itemId) => {
+                                    var _a, _b, _c;
+                                    return openBlock(), createElementBlock("div", {
+                                      key: itemId,
+                                      class: "item-tag"
+                                    }, [
+                                      createElementVNode("span", _hoisted_29$1, toDisplayString(((_b = (_a = props.itemTree.nodes[itemId]) == null ? void 0 : _a.data) == null ? void 0 : _b.itemName) || ((_c = props.itemTree.nodes[itemId]) == null ? void 0 : _c.name) || "未知商品"), 1),
+                                      createElementVNode("button", {
+                                        class: "item-tag-remove",
+                                        type: "button",
+                                        title: "移除此商品",
+                                        onClick: withModifiers(($event) => removeItemFromFile(index, fileId, itemId), ["stop"])
+                                      }, [
+                                        createElementVNode("span", {
+                                          innerHTML: unref(withSize)(unref(icons).close, 10)
+                                        }, null, 8, _hoisted_31$1)
+                                      ], 8, _hoisted_30$1)
+                                    ]);
+                                  }), 128)),
+                                  createElementVNode("button", {
+                                    class: "item-add-btn",
+                                    type: "button",
+                                    onClick: withModifiers(($event) => selectItemsForFile(index, fileId), ["stop"])
+                                  }, [
+                                    createElementVNode("span", {
+                                      innerHTML: unref(withSize)(unref(icons).plus, 12)
+                                    }, null, 8, _hoisted_33$1),
+                                    createElementVNode("span", _hoisted_34$1, toDisplayString(getFileItemIds(index, fileId).length === 0 ? "选择商品" : "添加商品"), 1)
+                                  ], 8, _hoisted_32$1)
+                                ])
                               ])
                             ]);
                           }), 128))
@@ -11266,7 +11409,7 @@ ${this.smart}`;
           };
         }
       });
-      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-cc98f3f8"]]);
+      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-89049173"]]);
       const _hoisted_1 = ["innerHTML"];
       const _hoisted_2 = { key: 0 };
       const _hoisted_3 = { class: "form-group" };
@@ -11300,28 +11443,30 @@ ${this.smart}`;
       const _hoisted_19 = { class: "be-text-secondary" };
       const _hoisted_20 = { class: "be-flex be-flex-column be-gap-sm" };
       const _hoisted_21 = { class: "form-hint be-text-xs be-text-secondary" };
-      const _hoisted_22 = {
+      const _hoisted_22 = { class: "be-flex be-gap-xs be-align-center" };
+      const _hoisted_23 = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
+      const _hoisted_24 = {
         key: 0,
         class: "item-select-list",
-        style: { "display": "grid", "grid-template-columns": "repeat(2, 1fr)", "gap": "8px" }
+        style: { "display": "grid", "grid-template-columns": "repeat(2, 1fr)", "gap": "8px", "max-height": "400px", "overflow-y": "auto" }
       };
-      const _hoisted_23 = ["onClick"];
-      const _hoisted_24 = {
+      const _hoisted_25 = ["onClick"];
+      const _hoisted_26 = {
         class: "be-flex be-flex-column",
         style: { "gap": "2px" }
       };
-      const _hoisted_25 = { class: "be-text-sm be-font-medium" };
-      const _hoisted_26 = { class: "be-text-xs be-text-secondary" };
-      const _hoisted_27 = {
+      const _hoisted_27 = { class: "be-text-sm be-font-medium" };
+      const _hoisted_28 = { class: "be-text-xs be-text-secondary" };
+      const _hoisted_29 = {
         key: 1,
         class: "empty-hint"
       };
-      const _hoisted_28 = ["innerHTML"];
-      const _hoisted_29 = ["innerHTML"];
-      const _hoisted_30 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_31 = { class: "form-hint be-text-xs be-text-secondary" };
-      const _hoisted_32 = ["innerHTML"];
-      const _hoisted_33 = ["innerHTML"];
+      const _hoisted_30 = ["innerHTML"];
+      const _hoisted_31 = ["innerHTML"];
+      const _hoisted_32 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_33 = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_34 = ["innerHTML"];
+      const _hoisted_35 = ["innerHTML"];
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "EditTab",
         props: {
@@ -11367,7 +11512,7 @@ ${this.smart}`;
             const firstVariation = normalVariations[0];
             const supportCount = totalSupport.value;
             const itemTypeName = config.itemTypeName || "Item";
-            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap)[0] : null;
+            const firstItemId = (firstVariation == null ? void 0 : firstVariation.fileItemMap) ? Object.values(firstVariation.fileItemMap).flat()[0] : null;
             const getItemName = (itemId) => {
               const node = data.value.itemTree.nodes[itemId];
               if (!node) return "未知商品";
@@ -11471,6 +11616,7 @@ ${this.smart}`;
           }
           const tempSelectedItems = ref([]);
           const tempSelectedFileIds = ref([]);
+          const itemSearchKeyword = ref("");
           function toggleItemSelection(itemId) {
             const index = tempSelectedItems.value.indexOf(itemId);
             if (index > -1) {
@@ -11482,15 +11628,31 @@ ${this.smart}`;
           function isItemSelected(itemId) {
             return tempSelectedItems.value.includes(itemId);
           }
+          const filteredItemNodes = computed(() => {
+            const keyword = itemSearchKeyword.value.toLowerCase().trim();
+            const allNodeIds = Object.keys(data.value.itemTree.nodes).filter((id) => data.value.itemTree.nodes[id].data);
+            if (!keyword) {
+              return allNodeIds;
+            }
+            return allNodeIds.filter((nodeId) => {
+              var _a, _b;
+              const node = data.value.itemTree.nodes[nodeId];
+              const itemName = (((_a = node.data) == null ? void 0 : _a.itemName) || node.name || "").toLowerCase();
+              const authorName = (((_b = node.data) == null ? void 0 : _b.authorName) || "").toLowerCase();
+              return itemName.includes(keyword) || authorName.includes(keyword);
+            });
+          });
           watch(() => modalState.value.show, (isOpen) => {
             if (!isOpen) {
               tempSelectedItems.value = [];
               tempSelectedFileIds.value = [];
+              itemSearchKeyword.value = "";
               return;
             }
             const { type, formData } = modalState.value;
             if (type === "selectItem" && (formData == null ? void 0 : formData.itemIds)) {
               tempSelectedItems.value = [...formData.itemIds];
+              itemSearchKeyword.value = "";
             }
             if (type === "selectFile" && (formData == null ? void 0 : formData.fileIds)) {
               tempSelectedFileIds.value = [...formData.fileIds];
@@ -11607,9 +11769,9 @@ ${this.smart}`;
                 }),
                 default: withCtx(() => [
                   modalState.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_2, [
-                    _cache[17] || (_cache[17] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
+                    _cache[18] || (_cache[18] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
                     createElementVNode("div", _hoisted_3, [
-                      _cache[14] || (_cache[14] = createElementVNode("label", null, [
+                      _cache[15] || (_cache[15] = createElementVNode("label", null, [
                         createTextVNode("商品名称 "),
                         createElementVNode("span", { class: "required" }, "*")
                       ], -1)),
@@ -11623,10 +11785,10 @@ ${this.smart}`;
                       ])
                     ]),
                     createElementVNode("div", _hoisted_4, [
-                      _cache[16] || (_cache[16] = createElementVNode("label", null, "商品类型", -1)),
+                      _cache[17] || (_cache[17] = createElementVNode("label", null, "商品类型", -1)),
                       withDirectives(createElementVNode("select", {
                         "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => modalState.value.formData.itemType = $event)
-                      }, _cache[15] || (_cache[15] = [
+                      }, _cache[16] || (_cache[16] = [
                         createElementVNode("option", { value: "normal" }, "普通商品", -1),
                         createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
                       ]), 512), [
@@ -11635,7 +11797,7 @@ ${this.smart}`;
                     ])
                   ])) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_5, [
                     createElementVNode("div", _hoisted_6, [
-                      _cache[18] || (_cache[18] = createElementVNode("label", null, "自定义描述 (此商品专属)", -1)),
+                      _cache[19] || (_cache[19] = createElementVNode("label", null, "自定义描述 (此商品专属)", -1)),
                       withDirectives(createElementVNode("textarea", {
                         "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => modalState.value.formData.customDescription = $event),
                         rows: "8",
@@ -11662,15 +11824,15 @@ ${this.smart}`;
                   class: "empty-icon",
                   innerHTML: unref(withSize)(unref(icons).alertCircle, 48)
                 }, null, 8, _hoisted_12),
-                _cache[19] || (_cache[19] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "无法获取商品 ID", -1)),
-                _cache[20] || (_cache[20] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
+                _cache[20] || (_cache[20] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "无法获取商品 ID", -1)),
+                _cache[21] || (_cache[21] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
               ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_13, [
                 createElementVNode("div", {
                   class: "empty-icon",
                   innerHTML: unref(withSize)(unref(icons).file, 64)
                 }, null, 8, _hoisted_14),
-                _cache[22] || (_cache[22] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "未配置此商品", -1)),
-                _cache[23] || (_cache[23] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
+                _cache[23] || (_cache[23] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "未配置此商品", -1)),
+                _cache[24] || (_cache[24] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-lg booth-btn-primary",
                   onClick: handleCreateItem
@@ -11678,7 +11840,7 @@ ${this.smart}`;
                   createElementVNode("span", {
                     innerHTML: unref(withSize)(unref(icons).plus, 16)
                   }, null, 8, _hoisted_15),
-                  _cache[21] || (_cache[21] = createTextVNode(" 创建商品配置 ", -1))
+                  _cache[22] || (_cache[22] = createTextVNode(" 创建商品配置 ", -1))
                 ])
               ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_16, [
                 createElementVNode("div", _hoisted_17, [
@@ -11763,29 +11925,41 @@ ${this.smart}`;
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                       type: "button",
                       title: "取消",
-                      onClick: _cache[8] || (_cache[8] = //@ts-ignore
+                      onClick: _cache[9] || (_cache[9] = //@ts-ignore
                       (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
                     }, [
                       createElementVNode("span", {
                         innerHTML: unref(withSize)(unref(icons).close, 18)
-                      }, null, 8, _hoisted_28)
+                      }, null, 8, _hoisted_30)
                     ]),
                     createElementVNode("button", {
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
                       type: "button",
                       title: "确认",
-                      onClick: _cache[9] || (_cache[9] = ($event) => unref(modal).confirmModal({ itemIds: tempSelectedItems.value }))
+                      onClick: _cache[10] || (_cache[10] = ($event) => unref(modal).confirmModal({ itemIds: tempSelectedItems.value }))
                     }, [
                       createElementVNode("span", {
                         innerHTML: unref(withSize)(unref(icons).check, 18)
-                      }, null, 8, _hoisted_29)
+                      }, null, 8, _hoisted_31)
                     ])
                   ]),
                   default: withCtx(() => [
                     createElementVNode("div", _hoisted_20, [
                       createElementVNode("p", _hoisted_21, " 点击选择/取消商品关联（已选择: " + toDisplayString(tempSelectedItems.value.length) + "） ", 1),
-                      Object.keys(unref(data).itemTree.nodes).filter((id) => unref(data).itemTree.nodes[id].data).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_22, [
-                        (openBlock(true), createElementBlock(Fragment, null, renderList(Object.keys(unref(data).itemTree.nodes).filter((id) => unref(data).itemTree.nodes[id].data), (nodeId) => {
+                      createElementVNode("div", _hoisted_22, [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => itemSearchKeyword.value = $event),
+                          type: "text",
+                          class: "be-flex-1",
+                          placeholder: "搜索商品名或作者名...",
+                          style: { "padding": "6px 10px", "border": "1px solid #e0e0e0", "border-radius": "4px", "font-size": "12px" }
+                        }, null, 512), [
+                          [vModelText, itemSearchKeyword.value]
+                        ]),
+                        createElementVNode("span", _hoisted_23, toDisplayString(filteredItemNodes.value.length) + " 个商品 ", 1)
+                      ]),
+                      filteredItemNodes.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_24, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(filteredItemNodes.value, (nodeId) => {
                           var _a, _b;
                           return openBlock(), createElementBlock("button", {
                             key: nodeId,
@@ -11798,13 +11972,13 @@ ${this.smart}`;
                             }),
                             onClick: ($event) => toggleItemSelection(nodeId)
                           }, [
-                            createElementVNode("div", _hoisted_24, [
-                              createElementVNode("span", _hoisted_25, toDisplayString(((_a = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _a.itemName) || unref(data).itemTree.nodes[nodeId].name), 1),
-                              createElementVNode("span", _hoisted_26, toDisplayString((_b = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _b.authorName), 1)
+                            createElementVNode("div", _hoisted_26, [
+                              createElementVNode("span", _hoisted_27, toDisplayString(((_a = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _a.itemName) || unref(data).itemTree.nodes[nodeId].name), 1),
+                              createElementVNode("span", _hoisted_28, toDisplayString((_b = unref(data).itemTree.nodes[nodeId].data) == null ? void 0 : _b.authorName), 1)
                             ])
-                          ], 12, _hoisted_23);
+                          ], 12, _hoisted_25);
                         }), 128))
-                      ])) : (openBlock(), createElementBlock("div", _hoisted_27, " 暂无商品数据，请先在 ItemTab 中添加 "))
+                      ])) : (openBlock(), createElementBlock("div", _hoisted_29, toDisplayString(itemSearchKeyword.value ? "未找到匹配的商品" : "暂无商品数据，请先在 ItemTab 中添加"), 1))
                     ])
                   ]),
                   _: 1
@@ -11820,31 +11994,31 @@ ${this.smart}`;
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                       type: "button",
                       title: "取消",
-                      onClick: _cache[11] || (_cache[11] = //@ts-ignore
+                      onClick: _cache[12] || (_cache[12] = //@ts-ignore
                       (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
                     }, [
                       createElementVNode("span", {
                         innerHTML: unref(withSize)(unref(icons).close, 18)
-                      }, null, 8, _hoisted_32)
+                      }, null, 8, _hoisted_34)
                     ]),
                     createElementVNode("button", {
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
                       type: "button",
                       title: "确认",
-                      onClick: _cache[12] || (_cache[12] = ($event) => unref(modal).confirmModal({ fileIds: tempSelectedFileIds.value }))
+                      onClick: _cache[13] || (_cache[13] = ($event) => unref(modal).confirmModal({ fileIds: tempSelectedFileIds.value }))
                     }, [
                       createElementVNode("span", {
                         innerHTML: unref(withSize)(unref(icons).check, 18)
-                      }, null, 8, _hoisted_33)
+                      }, null, 8, _hoisted_35)
                     ])
                   ]),
                   default: withCtx(() => [
-                    createElementVNode("div", _hoisted_30, [
-                      createElementVNode("p", _hoisted_31, " 点击选择文件（可多选，已选择: " + toDisplayString(tempSelectedFileIds.value.length) + "） ", 1),
+                    createElementVNode("div", _hoisted_32, [
+                      createElementVNode("p", _hoisted_33, " 点击选择文件（可多选，已选择: " + toDisplayString(tempSelectedFileIds.value.length) + "） ", 1),
                       createVNode(unref(FileSelector), {
                         files: _ctx.api.files,
                         "selected-file-ids": tempSelectedFileIds.value,
-                        "onUpdate:selectedFileIds": _cache[10] || (_cache[10] = ($event) => tempSelectedFileIds.value = $event)
+                        "onUpdate:selectedFileIds": _cache[11] || (_cache[11] = ($event) => tempSelectedFileIds.value = $event)
                       }, null, 8, ["files", "selected-file-ids"])
                     ])
                   ]),
@@ -11853,14 +12027,14 @@ ${this.smart}`;
                 createVNode(_sfc_main$f, {
                   show: showDescTemplateModal.value,
                   "global-templates": globalTemplates.value,
-                  onClose: _cache[13] || (_cache[13] = ($event) => showDescTemplateModal.value = false)
+                  onClose: _cache[14] || (_cache[14] = ($event) => showDescTemplateModal.value = false)
                 }, null, 8, ["show", "global-templates"])
               ])) : createCommentVNode("", true)
             ], 64);
           };
         }
       });
-      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-a3af0ecb"]]));
+      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-a842ebdf"]]));
 
     })
   };

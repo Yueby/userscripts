@@ -195,6 +195,40 @@ function openLogTemplateModal(): void {
   showLogTemplateModal.value = true;
 }
 
+// 日期格式转换为 timestamp
+const dateInputs = ref<{ [key: string]: string }>({});
+
+function convertDateToTimestamp(entryId: string): void {
+  const dateStr = dateInputs.value[entryId];
+  if (!dateStr) {
+    toast.error('请输入日期（如 2025/10/15）');
+    return;
+  }
+  
+  // 支持多种日期格式：2025/10/15, 2025-10-15, 2025.10.15
+  const normalizedStr = dateStr.replace(/[.\-]/g, '/');
+  const date = new Date(normalizedStr);
+  
+  if (isNaN(date.getTime())) {
+    toast.error('日期格式错误，请使用如 2025/10/15 的格式');
+    return;
+  }
+  
+  // 找到对应的 entry 并更新
+  for (const section of props.itemConfig.sections) {
+    if (section.type === 'log') {
+      const entry = section.logEntries.find((e: any) => e.id === entryId);
+      if (entry) {
+        const timestamp = date.getTime();
+        entry.date = timestamp;
+        dateInputs.value[entryId] = ''; // 清空输入
+        toast.success(`已转换: ${dateStr} → ${timestamp}`);
+        return;
+      }
+    }
+  }
+}
+
 defineExpose({
   applySections
 });
@@ -315,20 +349,31 @@ defineExpose({
         
         <!-- Log Section -->
         <div v-else-if="section.type === 'log'" class="be-flex be-flex-column be-gap-sm">
-          <!-- 模板选择 -->
-          <SectionHeader>
-            <TemplateSelector
-              v-model="section.logTemplateId"
-              :templates="globalTemplates.logTemplates"
-              label="选择日志模板"
-              empty-hint="请先添加日志模板"
-            />
-          </SectionHeader>
-          
-          <!-- 日志条目列表 -->
+          <!-- 日志条目列表（含模板选择） -->
           <SectionHeader no-border>
-            <template #title>日志条目 ({{ section.logEntries.length }})</template>
+            <template #title>
+              <div class="be-flex be-align-center be-gap-sm be-flex-1">
+                <span class="be-text-sm be-text-secondary be-flex-shrink-0">选择日志模板:</span>
+                <select 
+                  v-model="section.logTemplateId" 
+                  class="be-flex-1 be-p-xs be-px-sm be-text-base"
+                  style="height: 28px;"
+                >
+                  <option value="">无模板</option>
+                  <option 
+                    v-for="template in globalTemplates.logTemplates" 
+                    :key="template.id" 
+                    :value="template.id"
+                  >
+                    {{ template.name }}
+                  </option>
+                </select>
+              </div>
+            </template>
             <template #actions>
+              <span class="be-text-xs be-text-secondary be-flex-shrink-0">
+                {{ section.logEntries.length }} 条
+              </span>
               <button 
                 class="booth-btn booth-btn-sm booth-btn-secondary"
                 type="button"
@@ -351,12 +396,34 @@ defineExpose({
               @reorder="(from: number, to: number) => onLogEntryReorder(index, from, to)"
             >
               <template #actions="{ item: entry }">
+                <!-- 日期输入（用于转换） -->
+                <input 
+                  v-model="dateInputs[entry.id]" 
+                  type="text" 
+                  class="be-p-xs be-px-sm be-text-base" 
+                  style="height: 28px; width: 110px; flex-shrink: 0;" 
+                  placeholder="yyyy/mm/dd"
+                  title="输入日期（支持 2025/10/15、2025-10-15 等格式）"
+                  @keyup.enter="convertDateToTimestamp(entry.id)"
+                />
+                <button 
+                  class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm"
+                  style="flex-shrink: 0;"
+                  type="button"
+                  title="转换为 Timestamp"
+                  @click.stop.prevent="convertDateToTimestamp(entry.id)"
+                >
+                  <span v-html="withSize(icons.arrowRight, 14)"></span>
+                </button>
+                
+                <!-- Timestamp 显示/编辑 -->
                 <input 
                   v-model.number="entry.date" 
                   type="number" 
-                  class="be-flex-1 be-p-xs be-px-sm be-text-base" 
-                  style="height: 28px; min-width: 120px;" 
+                  class="be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0" 
+                  style="height: 28px;" 
                   :placeholder="formatDate(Date.now())" 
+                  title="Timestamp（自动转换后会填入这里）"
                 />
               </template>
               <template #content="{ item: entry }">
@@ -365,6 +432,7 @@ defineExpose({
                     v-model="entry.content" 
                     rows="1"
                     placeholder="输入日志内容"
+                    style="min-height: 32px; max-height: 80px;"
                   ></textarea>
                 </div>
               </template>

@@ -282,14 +282,27 @@
   min-height: 40px;
 }
 
-/* Focus 状态 */
+/* Focus 状态 - 优雅的蓝色光晕 */
 .booth-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .booth-btn:focus:not(:focus-visible) {
   box-shadow: none;
+}
+
+/* 主要按钮的 focus 需要叠加原有阴影 */
+.booth-btn-primary:focus {
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3), 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.booth-btn-success:focus {
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3), 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.booth-btn-danger:focus {
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3), 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
 
 /* 按钮组样式 */
@@ -418,6 +431,19 @@
 
 .booth-toggle input[type="checkbox"]:checked:active+.toggle-slider:before {
   transform: translateX(16px);
+}
+
+/* Toggle focus 效果 - 优雅的光晕 */
+.booth-toggle input[type="checkbox"]:focus+.toggle-slider {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.booth-toggle input[type="checkbox"]:focus:not(:focus-visible)+.toggle-slider {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.booth-toggle input[type="checkbox"]:checked:focus+.toggle-slider {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
 .booth-toggle-sm .toggle-slider {

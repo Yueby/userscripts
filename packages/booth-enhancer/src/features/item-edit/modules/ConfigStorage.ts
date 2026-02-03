@@ -46,6 +46,22 @@ export class ConfigStorage {
       const stored = GM_getValue(STORAGE_KEY, null);
       if (stored) {
         const data = JSON.parse(stored) as AppData;
+        
+        // 数据迁移：将旧的 string 格式转换为 string[] 格式
+        Object.values(data.itemConfigs).forEach(config => {
+          config.variations.forEach(variation => {
+            if (variation.fileItemMap) {
+              Object.keys(variation.fileItemMap).forEach(fileId => {
+                const value = variation.fileItemMap![fileId];
+                // 如果是字符串，转换为数组
+                if (typeof value === 'string') {
+                  variation.fileItemMap![fileId] = [value] as any;
+                }
+              });
+            }
+          });
+        });
+        
         // 每次打开页面时，侧边栏默认关闭（不保存窗口打开状态）
         if (data.ui) {
           data.ui.sidebarOpen = false;

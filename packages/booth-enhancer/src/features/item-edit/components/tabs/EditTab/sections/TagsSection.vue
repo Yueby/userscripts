@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
 import type { ItemData, ItemEditConfig, NodeTree, TagData } from '../../../../config-types';
 import { PreviewBox, SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { toast } from '../../../ui/Toast';
+import SelectTagModal from '../modals/SelectTagModal.vue';
 
 const props = defineProps<{
   itemConfig: ItemEditConfig;
@@ -16,6 +17,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   applied: [];
 }>();
+
+// 手动选择标签 Modal 状态
+const showSelectTagModal = ref(false);
 
 // 从节点ID列表提取所有唯一标签
 function extractTagsFromNodeIds(nodeIds: string[]): string[] {
@@ -44,8 +48,8 @@ function smartFetchTags(silent = false): void {
   for (const variation of props.itemConfig.variations) {
     if (variation.isFullset || !variation.fileItemMap) continue;
     
-    // 获取关联的商品数据
-    const itemIds = Object.values(variation.fileItemMap).filter(Boolean) as string[];
+    // 获取关联的商品数据（展平数组）
+    const itemIds = Object.values(variation.fileItemMap).flat().filter(Boolean);
     
     for (const itemId of itemIds) {
       const itemNode = props.itemTree.nodes[itemId];
@@ -130,6 +134,14 @@ defineExpose({
   <SectionHeader title="Tags">
     <template #actions>
       <button 
+        class="booth-btn booth-btn-sm booth-btn-secondary" 
+        type="button"
+        title="选择标签预设"
+        @click="showSelectTagModal = true"
+      >
+        <span v-html="withSize(icons.edit, 14)"></span>
+      </button>
+      <button 
         class="booth-btn booth-btn-sm booth-btn-primary" 
         type="button"
         title="应用到页面"
@@ -141,7 +153,7 @@ defineExpose({
     
     <PreviewBox
       :is-empty="allTags.length === 0"
-      empty-text="标签会根据 Variations 中的商品自动匹配"
+      empty-text="标签会根据 Variations 自动匹配，也可以手动选择"
     >
       <div class="tag-badges-wrapper">
         <span 
@@ -154,6 +166,15 @@ defineExpose({
       </div>
     </PreviewBox>
   </SectionHeader>
+
+  <!-- 选择标签预设 Modal -->
+  <SelectTagModal
+    :show="showSelectTagModal"
+    :item-config="itemConfig"
+    :tag-tree="tagTree"
+    @close="showSelectTagModal = false"
+    @save="showSelectTagModal = false"
+  />
 </template>
 
 <style scoped>

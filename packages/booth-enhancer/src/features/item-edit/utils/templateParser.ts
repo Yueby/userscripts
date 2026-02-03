@@ -70,7 +70,12 @@ export function parseTemplate(
   Object.entries(TEMPLATE_VAR_MAP).forEach(([chineseName, englishName]) => {
     const value = variables[englishName];
     if (value !== undefined && value !== null) {
-      result = result.replace(TEMPLATE_REGEX_MAP[chineseName], String(value));
+      // 特殊处理：折扣标识后自动加空格（仅当值非空时）
+      const stringValue = String(value);
+      const replacementValue = (englishName === 'discountIndicator' && stringValue.trim()) 
+        ? stringValue + ' ' 
+        : stringValue;
+      result = result.replace(TEMPLATE_REGEX_MAP[chineseName], replacementValue);
     }
   });
 
@@ -101,14 +106,24 @@ export function formatDateTime(isoString?: string): string {
 }
 
 export function calculateTotalSupport(variations: VariationData[]): number {
-  return variations
+  // 收集所有 variations 中的唯一商品 ID（多个 variation 引用同一商品只算一次）
+  const allUniqueItemIds = new Set<string>();
+  
+  variations
     .filter(v => !v.isFullset)
-    .reduce((sum, v) => {
-      // 统计有多少个文件关联了商品
-      if (!v.fileItemMap) return sum;
-      const count = Object.keys(v.fileItemMap).filter(fileId => v.fileItemMap![fileId]).length;
-      return sum + count;
-    }, 0);
+    .forEach(v => {
+      if (!v.fileItemMap) return;
+      
+      Object.values(v.fileItemMap).forEach((itemIds) => {
+        if (Array.isArray(itemIds)) {
+          itemIds.forEach(id => {
+            if (id) allUniqueItemIds.add(id);
+          });
+        }
+      });
+    });
+  
+  return allUniqueItemIds.size;
 }
 
 /**
@@ -120,6 +135,11 @@ export function calculateTotalSupport(variations: VariationData[]): number {
 export function pluralize(word: string, count?: number): string {
   if (count === 1) return word;
   if (!word) return word;
+
+  // 只对全英文的词才应用复数规则
+  if (!/^[a-zA-Z\s]+$/.test(word)) {
+    return word;
+  }
 
   const lowerWord = word.toLowerCase();
 

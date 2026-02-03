@@ -11,6 +11,7 @@ import { icons, withSize } from '../ui/icons';
 import { toast } from '../ui/Toast';
 
 import DescriptionTemplateModal from './EditTab/modals/DescriptionTemplateModal.vue';
+import SelectItemModal from './EditTab/modals/SelectItemModal.vue';
 import ItemDescriptionSection from './EditTab/sections/ItemDescriptionSection.vue';
 import ItemNameSection from './EditTab/sections/ItemNameSection.vue';
 import SectionsListSection from './EditTab/sections/SectionsListSection.vue';
@@ -80,7 +81,7 @@ const templateVars = computed(() => {
   const itemTypeName = config.itemTypeName || 'Item';
   
   // 获取首个变体名：优先级 variation.name > 关联商品名 > config.itemName
-  const firstItemId = firstVariation?.fileItemMap ? Object.values(firstVariation.fileItemMap)[0] : null;
+  const firstItemId = firstVariation?.fileItemMap ? Object.values(firstVariation.fileItemMap).flat()[0] : null;
   const getItemName = (itemId: string) => {
     const node = data.value.itemTree.nodes[itemId];
     if (!node) return '未知商品';
@@ -216,41 +217,43 @@ function handleDescriptionUpdated(description: string): void {
   }
 }
 
-// 商品选择相关（供所有子组件使用）
-const tempSelectedItems = ref<string[]>([]);
+// 文件选择相关
 const tempSelectedFileIds = ref<string[]>([]);
 
-function toggleItemSelection(itemId: string): void {
-  const index = tempSelectedItems.value.indexOf(itemId);
-  if (index > -1) {
-    tempSelectedItems.value.splice(index, 1);
-  } else {
-    tempSelectedItems.value.push(itemId);
-  }
-}
-
-function isItemSelected(itemId: string): boolean {
-  return tempSelectedItems.value.includes(itemId);
-}
+// 商品选择 modal 状态
+const showSelectItemModal = ref(false);
+const selectItemModalInitialIds = ref<string[]>([]);
 
 // 监听 modal 显示状态，自动初始化或清空选择值
 watch(() => modalState.value.show, (isOpen) => {
   if (!isOpen) {
-    tempSelectedItems.value = [];
     tempSelectedFileIds.value = [];
+    showSelectItemModal.value = false;
     return;
   }
   
   const { type, formData } = modalState.value;
   
   if (type === 'selectItem' && formData?.itemIds) {
-    tempSelectedItems.value = [...formData.itemIds];
+    selectItemModalInitialIds.value = [...formData.itemIds];
+    showSelectItemModal.value = true;
   }
   
   if (type === 'selectFile' && formData?.fileIds) {
     tempSelectedFileIds.value = [...formData.fileIds];
   }
 })
+
+// 处理商品选择完成
+function handleSelectItemSave(itemIds: string[]): void {
+  modal.confirmModal({ itemIds });
+  showSelectItemModal.value = false;
+}
+
+function handleSelectItemClose(): void {
+  modal.closeModal();
+  showSelectItemModal.value = false;
+}
 
 // 监听价格和折扣变化，自动更新 variation 价格
 watch(
@@ -299,7 +302,11 @@ async function applyAll() {
     await itemDescriptionSectionRef.value?.applyDescription();
     await sectionsListSectionRef.value?.applySections();
     await tagsSectionRef.value?.applyTags();
-    await variationsListSectionRef.value?.applyVariations();
+    
+    // 仅适配商品应用 variations
+    if (currentItemConfig.value.itemType === 'adaptation') {
+      await variationsListSectionRef.value?.applyVariations();
+    }
     
     toast.success('所有配置应用完成');
   } catch (error) {
@@ -469,8 +476,9 @@ defineExpose({
         :tag-tree="data.tagTree"
       />
 
-      <!-- 5. Variations 列表区 -->
+      <!-- 5. Variations 列表区（仅适配商品显示）-->
       <VariationsListSection
+        v-if="currentItemConfig.itemType === 'adaptation'"
         ref="variationsListSectionRef"
         :item-config="currentItemConfig"
         :global-templates="globalTemplates"
@@ -494,65 +502,13 @@ defineExpose({
     </Modal>
 
     <!-- 商品选择 Modal -->
-    <Modal
-      :show="modalState.show && modalState.type === 'selectItem'"
-      :title="modalState.title"
-      :teleport-to="'.booth-enhancer-sidebar'"
-      @close="modal.closeModal"
-    >
-      <div class="be-flex be-flex-column be-gap-sm">
-        <p class="form-hint be-text-xs be-text-secondary">
-          点击选择/取消商品关联（已选择: {{ tempSelectedItems.length }}）
-        </p>
-        
-        <div 
-          v-if="Object.keys(data.itemTree.nodes).filter(id => data.itemTree.nodes[id].data).length > 0"
-          class="item-select-list"
-          style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;"
-        >
-          <button
-            v-for="nodeId in Object.keys(data.itemTree.nodes).filter(id => data.itemTree.nodes[id].data)"
-            :key="nodeId"
-            class="item-select-btn booth-btn booth-btn-sm booth-btn-ghost be-text-left"
-            type="button"
-            :style="{
-              padding: '6px 8px',
-              backgroundColor: isItemSelected(nodeId) ? 'rgba(59, 130, 246, 0.1)' : undefined,
-              borderColor: isItemSelected(nodeId) ? 'rgba(59, 130, 246, 0.3)' : undefined
-            }"
-            @click="toggleItemSelection(nodeId)"
-          >
-            <div class="be-flex be-flex-column" style="gap: 2px;">
-              <span class="be-text-sm be-font-medium">{{ data.itemTree.nodes[nodeId].data?.itemName || data.itemTree.nodes[nodeId].name }}</span>
-              <span class="be-text-xs be-text-secondary">{{ data.itemTree.nodes[nodeId].data?.authorName }}</span>
-            </div>
-          </button>
-        </div>
-        
-        <div v-else class="empty-hint">
-          暂无商品数据，请先在 ItemTab 中添加
-        </div>
-      </div>
-      
-      <template #footer>
-        <button 
-          class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary"
-          type="button"
-          title="取消"
-          @click="modal.closeModal"
-        >
-          <span v-html="withSize(icons.close, 18)"></span>
-        </button>
-        <button 
-          class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
-          type="button"
-          title="确认"
-          @click="modal.confirmModal({ itemIds: tempSelectedItems })"
-        >
-          <span v-html="withSize(icons.check, 18)"></span>
-        </button>
-      </template>
-    </Modal>
+    <SelectItemModal
+      :show="showSelectItemModal"
+      :item-tree="data.itemTree"
+      :initial-selected-ids="selectItemModalInitialIds"
+      @close="handleSelectItemClose"
+      @save="handleSelectItemSave"
+    />
 
     <!-- 文件选择 Modal -->
     <Modal
@@ -625,15 +581,6 @@ defineExpose({
   font-size: var(--be-font-size-base);
   color: var(--be-color-text-secondary);
   max-width: 400px;
-}
-
-.empty-hint {
-  padding: var(--be-space-md);
-  text-align: center;
-  color: var(--be-color-text-secondary);
-  font-size: var(--be-font-size-md);
-  background: var(--be-color-bg-secondary);
-  border-radius: var(--be-radius);
 }
 
 /* 编辑区域 */

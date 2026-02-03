@@ -46,8 +46,8 @@ async function importVariations(): Promise<void> {
     return;
   }
   
-  // 导入 variations，包括文件关联
-  props.itemConfig.variations = pageVariations.map((variation: any, index: number) => {
+  // 步骤1：导入 variations，包括文件关联（临时）
+  const tempVariations = pageVariations.map((variation: any, index: number) => {
     const name = variation.nameInput?.value || '';
     const isFullset = name.toLowerCase().includes('fullset');
     const priceStr = variation.priceInput?.value || '0';
@@ -60,36 +60,71 @@ async function importVariations(): Promise<void> {
       name,
       price,
       isFullset,
-      fileIds, // 导入已关联的文件
+      fileIds, // 临时包含所有文件
       fileItemMap: {} // 初始化为空对象，待自动匹配
     };
   });
   
-  // 为导入的文件自动匹配商品
-  props.itemConfig.variations.forEach((variation: any, index: number) => {
+  // 步骤2：为每个 variation 的文件自动匹配商品
+  tempVariations.forEach((variation: any) => {
     if (variation.fileIds && variation.fileIds.length > 0) {
-      autoMatchItemsForFiles(index, variation.fileIds);
+      // 创建临时 fileItemMap 用于匹配
+      variation.fileItemMap = {};
+      
+      for (const fileId of variation.fileIds) {
+        const file = availableFiles.value.find(f => f.id === fileId);
+        if (!file) continue;
+        
+        const matchedItemId = findBestMatchItem(file.name);
+        if (matchedItemId) {
+          variation.fileItemMap[fileId] = [matchedItemId];
+        }
+      }
     }
   });
   
-  // 自动检测通用文件（未映射到商品的文件）
+  // 步骤3：识别通用文件（未能匹配到商品的文件）
   const allFiles = new Set<string>();
   const mappedFiles = new Set<string>();
   
-  props.itemConfig.variations.forEach((variation: any) => {
+  tempVariations.forEach((variation: any) => {
     // 收集所有文件
     variation.fileIds?.forEach((fileId: string) => allFiles.add(fileId));
     
     // 收集已映射的文件
     if (variation.fileItemMap) {
-      Object.entries(variation.fileItemMap).forEach(([fileId, itemId]) => {
-        if (itemId) mappedFiles.add(fileId);
+      Object.keys(variation.fileItemMap).forEach(fileId => {
+        if (variation.fileItemMap[fileId] && variation.fileItemMap[fileId].length > 0) {
+          mappedFiles.add(fileId);
+        }
       });
     }
   });
   
-  // 计算通用文件（所有文件减去已映射文件）
+  // 通用文件 = 所有文件 - 已映射文件
   const commonFiles = Array.from(allFiles).filter(fileId => !mappedFiles.has(fileId));
+  
+  // 步骤4：从每个 variation 的 fileIds 中移除通用文件
+  const commonFileSet = new Set(commonFiles);
+  tempVariations.forEach((variation: any) => {
+    if (variation.fileIds) {
+      variation.fileIds = variation.fileIds.filter((fileId: string) => !commonFileSet.has(fileId));
+    }
+  });
+  
+  // 步骤5：同步价格到 pricing 配置
+  const fullsetVariation = tempVariations.find((v: any) => v.isFullset);
+  const normalVariation = tempVariations.find((v: any) => !v.isFullset);
+  
+  if (fullsetVariation) {
+    props.itemConfig.pricing.fullsetPrice = fullsetVariation.price;
+  }
+  if (normalVariation) {
+    props.itemConfig.pricing.normalVariationPrice = normalVariation.price;
+  }
+  
+  // 步骤6：保存配置
+  props.itemConfig.variations = tempVariations;
   props.itemConfig.commonFiles = commonFiles;
   
   const messages: string[] = [`已导入 ${pageVariations.length} 个 Variations`];
@@ -357,7 +392,7 @@ function autoCreateVariationsFromFiles(): void {
         price: 0,
         isFullset: false,
         fileIds: [file.id],
-        fileItemMap: { [file.id]: matchedItemId }
+        fileItemMap: { [file.id]: [matchedItemId] }
       });
       
       existingNames.add(itemName);
@@ -450,12 +485,23 @@ function getVariationPrice(variation: any): number {
   return applyDiscount(pricing.normalVariationPrice, discount);
 }
 
-// 获取支持数
+// 获取支持数（统计唯一商品数量，多个文件引用同一商品只算一次）
 function getVariationSupportCount(variation: any): number {
   if (variation.isFullset) return 1;
   
   if (!variation.fileItemMap) return 0;
-  return Object.keys(variation.fileItemMap).filter(fileId => variation.fileItemMap[fileId]).length;
+  
+  // 收集所有唯一的商品 ID
+  const uniqueItemIds = new Set<string>();
+  Object.values(variation.fileItemMap).forEach((itemIds) => {
+    if (Array.isArray(itemIds)) {
+      itemIds.forEach(id => {
+        if (id) uniqueItemIds.add(id);
+      });
+    }
+  });
+  
+  return uniqueItemIds.size;
 }
 
 // 文件选择
@@ -492,18 +538,18 @@ async function selectFilesForVariation(variationIndex: number): Promise<void> {
   }
 }
 
-// 商品选择
-async function selectItemForFile(variationIndex: number, fileId: string): Promise<void> {
+// 商品选择（支持多选）
+async function selectItemsForFile(variationIndex: number, fileId: string): Promise<void> {
   const variation = props.itemConfig.variations[variationIndex];
-  const currentItemId = variation.fileItemMap?.[fileId];
+  const currentItemIds = variation.fileItemMap?.[fileId] || [];
   
   selectingItemForFile.value = { variationIndex, fileId };
   
   const result = await props.modal.openModal({
     type: 'selectItem',
-    title: `为 ${getFileName(fileId)} 选择商品（单选）`,
+    title: `为 ${getFileName(fileId)} 选择商品（可多选）`,
     formData: {
-      itemIds: currentItemId ? [currentItemId] : []
+      itemIds: currentItemIds
     }
   });
   
@@ -517,10 +563,20 @@ async function selectItemForFile(variationIndex: number, fileId: string): Promis
     variation.fileItemMap = {};
   }
   
+  // 存储为数组
   if (selectedItemIds.length === 0) {
     delete variation.fileItemMap[fileId];
   } else {
-    variation.fileItemMap[fileId] = selectedItemIds[0];
+    variation.fileItemMap[fileId] = selectedItemIds;
+    
+    // 如果 variation 没有名字，使用第一个选中商品的名字
+    if (!variation.name || variation.name.trim() === '') {
+      const firstItemId = selectedItemIds[0];
+      const firstItemNode = props.itemTree.nodes[firstItemId];
+      if (firstItemNode) {
+        variation.name = firstItemNode.data?.itemName || firstItemNode.name || '';
+      }
+    }
   }
 }
 
@@ -530,19 +586,25 @@ function getFileName(fileId: string): string {
   return file ? file.name : `File #${fileId}`;
 }
 
-function getFileItemId(variationIndex: number, fileId: string): string | undefined {
+function getFileItemIds(variationIndex: number, fileId: string): string[] {
   const variation = props.itemConfig.variations[variationIndex];
-  return variation.fileItemMap?.[fileId];
+  return variation.fileItemMap?.[fileId] || [];
 }
 
-function getFileItemName(variationIndex: number, fileId: string): string {
-  const itemId = getFileItemId(variationIndex, fileId);
-  if (!itemId) return '';
+function removeItemFromFile(variationIndex: number, fileId: string, itemId: string): void {
+  const variation = props.itemConfig.variations[variationIndex];
+  if (!variation.fileItemMap?.[fileId]) return;
   
-  const node = props.itemTree.nodes[itemId];
-  if (!node) return '未知商品';
+  const itemIds = variation.fileItemMap[fileId];
+  const index = itemIds.indexOf(itemId);
+  if (index > -1) {
+    itemIds.splice(index, 1);
+  }
   
-  return node.data?.itemName || node.name;
+  // 如果没有商品了，删除整个映射
+  if (itemIds.length === 0) {
+    delete variation.fileItemMap[fileId];
+  }
 }
 
 function removeFileFromVariation(variationIndex: number, fileId: string): void {
@@ -563,6 +625,8 @@ function autoMatchItemsForFiles(variationIndex: number, fileIds: string[]): void
     variation.fileItemMap = {};
   }
   
+  let firstMatchedItemId: string | null = null;
+  
   for (const fileId of fileIds) {
     if (variation.fileItemMap[fileId]) {
       continue;
@@ -574,7 +638,18 @@ function autoMatchItemsForFiles(variationIndex: number, fileIds: string[]): void
     const matchedItemId = findBestMatchItem(file.name);
     
     if (matchedItemId) {
-      variation.fileItemMap[fileId] = matchedItemId;
+      variation.fileItemMap[fileId] = [matchedItemId]; // 改为数组
+      if (!firstMatchedItemId) {
+        firstMatchedItemId = matchedItemId;
+      }
+    }
+  }
+  
+  // 如果 variation 没有名字且匹配到了商品，使用第一个匹配商品的名字
+  if (firstMatchedItemId && (!variation.name || variation.name.trim() === '')) {
+    const firstItemNode = props.itemTree.nodes[firstMatchedItemId];
+    if (firstItemNode) {
+      variation.name = firstItemNode.data?.itemName || firstItemNode.name || '';
     }
   }
 }
@@ -705,6 +780,24 @@ function isVariationLocked(variation: any): boolean {
  * 获取 variation 的完整文件列表（包含通用文件）
  */
 function getVariationFileIds(config: any): string[] {
+  // Fullset 应该包含所有非 fullset variations 的文件
+  if (config.isFullset) {
+    const allFileIds = new Set<string>();
+    
+    // 收集所有普通 variations 的文件
+    props.itemConfig.variations.forEach(v => {
+      if (!v.isFullset && v.fileIds) {
+        v.fileIds.forEach(fileId => allFileIds.add(fileId));
+      }
+    });
+    
+    // 添加 commonFiles
+    (props.itemConfig.commonFiles || []).forEach(fileId => allFileIds.add(fileId));
+    
+    return Array.from(allFileIds);
+  }
+  
+  // 普通 variation
   return [
     ...(config.fileIds || []),
     ...(props.itemConfig.commonFiles || [])
@@ -958,6 +1051,7 @@ defineExpose({
             <span class="toggle-slider"></span>
           </label>
           <button 
+            v-if="!variation.isFullset"
             class="booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm" 
             type="button"
             title="选择关联文件"
@@ -1003,8 +1097,9 @@ defineExpose({
             </template>
           </div>
           
+          <!-- Fullset 不需要显示文件-商品关联 -->
           <div 
-            v-if="variation.fileIds && variation.fileIds.length > 0" 
+            v-if="!variation.isFullset && variation.fileIds && variation.fileIds.length > 0" 
             class="item-cards-grid"
             :class="{ 'single-item': variation.fileIds.length === 1 }"
           >
@@ -1026,17 +1121,36 @@ defineExpose({
               </div>
               
               <div class="item-card-content">
-                <button
-                  class="item-select-btn"
-                  :class="{ 'has-item': getFileItemId(index, fileId) }"
-                  type="button"
-                  @click.stop="selectItemForFile(index, fileId)"
-                >
-                  <span v-html="withSize(icons.file, 12)"></span>
-                  <span class="item-select-text">
-                    {{ getFileItemId(index, fileId) ? getFileItemName(index, fileId) : '选择商品' }}
-                  </span>
-                </button>
+                <!-- 改为显示多个商品标签 -->
+                <div class="item-list-container">
+                  <div 
+                    v-for="itemId in getFileItemIds(index, fileId)" 
+                    :key="itemId"
+                    class="item-tag"
+                  >
+                    <span class="item-tag-text">
+                      {{ props.itemTree.nodes[itemId]?.data?.itemName || props.itemTree.nodes[itemId]?.name || '未知商品' }}
+                    </span>
+                    <button 
+                      class="item-tag-remove"
+                      type="button"
+                      title="移除此商品"
+                      @click.stop="removeItemFromFile(index, fileId, itemId)"
+                    >
+                      <span v-html="withSize(icons.close, 10)"></span>
+                    </button>
+                  </div>
+                  
+                  <!-- 添加商品按钮 -->
+                  <button
+                    class="item-add-btn"
+                    type="button"
+                    title="添加商品"
+                    @click.stop="selectItemsForFile(index, fileId)"
+                  >
+                    <span v-html="withSize(icons.plus, 12)"></span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1126,37 +1240,109 @@ defineExpose({
   background: var(--be-color-bg-hover);
 }
 
+.item-card-delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.2);
+}
+
+.item-card-delete-btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
 .item-card-content {
   padding: 6px 8px;
 }
 
-.item-select-btn {
-  width: 100%;
+.item-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.item-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--be-space-xs);
+  padding: 4px 8px;
+  background: var(--be-color-bg-secondary);
+  border: 1px solid var(--be-color-border);
+  border-radius: var(--be-radius-sm);
+  font-size: var(--be-font-size-xs);
+  color: var(--be-color-text);
+  font-weight: 500;
+  transition: var(--be-transition-normal);
+}
+
+.item-tag-text {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-tag-remove {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  padding: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--be-color-text-secondary);
+  cursor: pointer;
+  transition: var(--be-transition-normal);
+}
+
+.item-tag-remove:hover {
+  background: var(--be-color-danger);
+  color: white;
+}
+
+.item-tag-remove:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.item-tag-remove:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+.item-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   background: var(--be-color-bg);
   border: 1px dashed var(--be-color-border);
   border-radius: var(--be-radius-sm);
-  font-size: 10px;
   color: var(--be-color-text-secondary);
   cursor: pointer;
+  transition: var(--be-transition-normal);
 }
 
-.item-select-btn:hover {
+.item-add-btn:hover {
   border-style: solid;
+  border-color: var(--be-color-primary);
+  color: var(--be-color-primary);
+  background: var(--be-color-bg-secondary);
 }
 
-.item-select-btn.has-item {
-  border-style: solid;
+.item-add-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-.item-select-text {
-  flex: 1;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.item-add-btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+.item-add-text {
   white-space: nowrap;
 }
 </style>
