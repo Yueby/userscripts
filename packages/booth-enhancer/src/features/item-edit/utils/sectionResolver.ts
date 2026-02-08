@@ -1,16 +1,16 @@
 import type {
-    GlobalTemplateConfig,
-    ItemData,
-    ItemInfoSectionInstance,
-    ItemInfoTemplate,
-    LogSectionInstance,
-    LogTemplate,
-    NodeTree,
-    NormalSectionInstance,
-    SectionInstance,
-    SectionTemplate,
-    SectionType,
-    VariationData
+  GlobalTemplateConfig,
+  ItemData,
+  ItemInfoSectionInstance,
+  ItemInfoTemplate,
+  LogSectionInstance,
+  LogTemplate,
+  NodeTree,
+  NormalSectionInstance,
+  SectionInstance,
+  SectionTemplate,
+  SectionType,
+  VariationData
 } from '../config-types';
 import { formatDate, parseTemplate } from './templateParser';
 
@@ -230,6 +230,8 @@ function resolveItemInfoSection(
 
 /**
  * 从 Variations 收集关联的商品数据
+ * 只收集 variations 通过 fileItemMap 实际关联的商品，
+ * fullset variation 自动包含所有非 fullset variations 关联的商品
  */
 function collectItemsFromVariations(
   variations: VariationData[],
@@ -238,21 +240,10 @@ function collectItemsFromVariations(
   const items: ItemData[] = [];
   const seen = new Set<string>();
   
-  // 如果存在 fullset variation，返回所有商品
-  const hasFullset = variations.some(v => v.isFullset);
-  if (hasFullset) {
-    Object.values(itemTree.nodes).forEach(node => {
-      if (node?.data && !seen.has(node.id)) {
-        items.push(node.data);
-        seen.add(node.id);
-      }
-    });
-    return items;
-  }
-  
-  // 否则只收集关联的商品
+  // 从所有非 fullset variations 的 fileItemMap 中收集关联的商品
   variations.forEach(variation => {
-    // 从 fileItemMap 中收集所有关联的商品
+    if (variation.isFullset) return; // fullset 跳过，它的商品由其他 variations 决定
+    
     if (variation.fileItemMap) {
       Object.values(variation.fileItemMap).forEach(itemIds => {
         const ids = Array.isArray(itemIds) ? itemIds : [itemIds]; // 兼容旧数据

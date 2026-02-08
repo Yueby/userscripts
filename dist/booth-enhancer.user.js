@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.23
+// @version            0.1.24
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -27,7 +27,7 @@
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-CylPG_Mm.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-BrQxY8nl.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,7 +39,7 @@ System.register("./__entry.js", ['./__monkey.entry-CylPG_Mm.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-CylPG_Mm.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-BrQxY8nl.js", ['vue'], (function (exports, module) {
   'use strict';
   var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
@@ -2816,9 +2816,9 @@ System.register("./__monkey.entry-CylPG_Mm.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-CU8bD1_o-CWisjB4S.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-CKLJ0q4T-CG9e4rju.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DDctpNyw-DsKipXRA.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BcqfU8nW-DIinlv9p.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-DtBFZ_o1-DpPnGMys.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-Cw1NFU0D-DMxtui1m.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -5721,7 +5721,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-CU8bD1_o-CWisjB4S.js", ['vue', './useTreeTab-X0uX-MAf-T9Y9s-lX.js', './__monkey.entry-CylPG_Mm.js'], (function (exports, module) {
+System.register("./TagTab-BcqfU8nW-DIinlv9p.js", ['vue', './useTreeTab-DgWagd1k-CGBvYKCR.js', './__monkey.entry-BrQxY8nl.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -6154,7 +6154,7 @@ System.register("./TagTab-CU8bD1_o-CWisjB4S.js", ['vue', './useTreeTab-X0uX-MAf-
   };
 }));
 
-System.register("./ItemTab-CKLJ0q4T-CG9e4rju.js", ['vue', './useTreeTab-X0uX-MAf-T9Y9s-lX.js', './__monkey.entry-CylPG_Mm.js'], (function (exports, module) {
+System.register("./ItemTab-DtBFZ_o1-DpPnGMys.js", ['vue', './useTreeTab-DgWagd1k-CGBvYKCR.js', './__monkey.entry-BrQxY8nl.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -6435,7 +6435,7 @@ System.register("./ItemTab-CKLJ0q4T-CG9e4rju.js", ['vue', './useTreeTab-X0uX-MAf
   };
 }));
 
-System.register("./useTreeTab-X0uX-MAf-T9Y9s-lX.js", ['vue', './__monkey.entry-CylPG_Mm.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-DgWagd1k-CGBvYKCR.js", ['vue', './__monkey.entry-BrQxY8nl.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -7393,7 +7393,7 @@ System.register("./useTreeTab-X0uX-MAf-T9Y9s-lX.js", ['vue', './__monkey.entry-C
   };
 }));
 
-System.register("./EditTab-DDctpNyw-DsKipXRA.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-CylPG_Mm.js'], (function (exports, module) {
+System.register("./EditTab-Cw1NFU0D-DMxtui1m.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-BrQxY8nl.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, normalizeClass, renderSlot, withModifiers, renderList, onUnmounted, vModelCheckbox, normalizeStyle, useSlots, TransitionGroup, useModal, _export_sfc, useStorage, getSelectedDiscountIndicatorTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate;
   return {
@@ -8175,17 +8175,8 @@ System.register("./EditTab-DDctpNyw-DsKipXRA.js", ['vue', './useModal-Cv530RMh-D
       function collectItemsFromVariations(variations, itemTree) {
         const items = [];
         const seen = /* @__PURE__ */ new Set();
-        const hasFullset = variations.some((v) => v.isFullset);
-        if (hasFullset) {
-          Object.values(itemTree.nodes).forEach((node) => {
-            if ((node == null ? void 0 : node.data) && !seen.has(node.id)) {
-              items.push(node.data);
-              seen.add(node.id);
-            }
-          });
-          return items;
-        }
         variations.forEach((variation) => {
+          if (variation.isFullset) return;
           if (variation.fileItemMap) {
             Object.values(variation.fileItemMap).forEach((itemIds) => {
               const ids = Array.isArray(itemIds) ? itemIds : [itemIds];
