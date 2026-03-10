@@ -52,4 +52,14 @@ export class Utils {
             }, Config.animationDelay);
         }
     }
-} 
+}
+
+let _nextStableKeyId = 0;
+const _stableKeyMap = new WeakMap<object, number>();
+
+export function getStableKey(item: object): number {
+    if (!_stableKeyMap.has(item)) {
+        _stableKeyMap.set(item, _nextStableKeyId++);
+    }
+    return _stableKeyMap.get(item)!;
+}

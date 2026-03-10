@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { getStableKey } from '../../../../../../utils/utils';
 import type { ItemEditConfig, VariationData } from '../../../../config-types';
 import { applyDiscount, suggestFullsetPrice } from '../../../../utils/priceCalculator';
 import { calculateTotalSupport } from '../../../../utils/templateParser';
@@ -186,7 +187,7 @@ function handleSave(): void {
         <DraggableCardList
           v-else
           :items="itemConfig.variations"
-          :key-extractor="(item: any, index: number) => item.name || `variation-${index}`"
+          :key-extractor="(item: any) => getStableKey(item)"
           @remove="removeVariation"
           @reorder="onVariationReorder"
         >

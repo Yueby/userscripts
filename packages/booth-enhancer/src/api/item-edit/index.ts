@@ -138,13 +138,17 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   private findAllListContainers(): HTMLElement[] {
     const ulSet = new Set<HTMLElement>();
     
-    // 通过父 section 特征查找
-    document.querySelectorAll("section.bg-white.desktop\\:px-24.desktop\\:pt-24.desktop\\:rounded-t-4 ul")
-      .forEach(ul => ulSet.add(ul as HTMLElement));
-    
-    // 通过 ul.grid.gap-16 查找
-    document.querySelectorAll("ul.grid.gap-16")
-      .forEach(ul => ulSet.add(ul as HTMLElement));
+    // Section ul
+    const sectionUl = document.querySelector<HTMLElement>(
+      '#js-mount-point-manage-item-edit > div.grid.gap-24.desktop\\:contents > section.bg-white.desktop\\:p-40.desktop\\:rounded-t-16 > div > div.px-16.pt-12.pb-32.desktop\\:px-8.desktop\\:py-0.desktop\\:basis-\\[80\\%\\] > div > ul'
+    );
+    if (sectionUl) ulSet.add(sectionUl);
+
+    // Variation ul
+    const variationUl = document.querySelector<HTMLElement>(
+      '#js-mount-point-manage-item-edit > div.grid.gap-24.desktop\\:contents > section.bg-white.desktop\\:p-40.desktop\\:border-t.desktop\\:border-border300.desktop\\:rounded-b-16 > div > div.px-16.pt-12.pb-32.desktop\\:px-8.desktop\\:py-0.desktop\\:basis-\\[80\\%\\] > div > ul'
+    );
+    if (variationUl) ulSet.add(variationUl);
     
     // 过滤出包含 .variation-box-head 的容器
     return Array.from(ulSet).filter(container =>
@@ -219,12 +223,10 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     const section = ul.closest("section");
     if (!section) return false;
 
-    // Section 列表的 section 有这些特定类名
     return (
       section.classList.contains("bg-white") &&
-      section.classList.contains("desktop:px-24") &&
-      section.classList.contains("desktop:pt-24") &&
-      section.classList.contains("desktop:rounded-t-4")
+      section.classList.contains("desktop:p-40") &&
+      section.classList.contains("desktop:rounded-t-16")
     );
   }
 
@@ -234,11 +236,9 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   private loadTagElements(): void {
     const container = document.querySelector("#item_tag") as HTMLElement;
     const input = document.querySelector(
-      ".js-item-tags-array"
+      "#item_tag > div > div.w-full.mt-8.flex.gap-8.flex-col > div > div > input"
     ) as HTMLInputElement;
-    const inputContainer = document.querySelector(
-      "#item_tag .item-search-input__container"
-    ) as HTMLElement;
+    const inputContainer = input?.closest("div.w-full.mt-8.flex.gap-8.flex-col") as HTMLElement;
 
     if (container && input && inputContainer) {
       this._data.tagElements = {
@@ -695,20 +695,12 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
   /**
    * 查找"添加段落"按钮
-   * 该按钮位于 Section 列表底部
+   * 该按钮位于 Section 列表底部的 flex.gap-8 容器中
    */
   private findAddSectionButton(): HTMLElement | null {
-    const buttons = document.querySelectorAll<HTMLElement>('div.cursor-pointer');
-    
-    for (const button of buttons) {
-      const hasIcon = button.querySelector('.icon-plus');
-      const textContent = button.textContent?.trim();
-      if (hasIcon && textContent?.includes('段落')) {
-        return button;
-      }
-    }
-    
-    return null;
+    return document.querySelector<HTMLElement>(
+      '#js-mount-point-manage-item-edit > div.grid.gap-24.desktop\\:contents > section.bg-white.desktop\\:p-40.desktop\\:rounded-t-16 > div > div.px-16.pt-12.pb-32.desktop\\:px-8.desktop\\:py-0.desktop\\:basis-\\[80\\%\\] > div > div.flex.gap-8 > button:nth-child(1)'
+    );
   }
 
   /**

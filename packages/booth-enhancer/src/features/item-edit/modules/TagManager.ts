@@ -58,41 +58,39 @@ export class TagManager extends PageModule<ItemEditAPI> {
     /**
      * 添加标签操作按钮
      */
+    private createCharcoalButton(text: string, onClick: () => void): HTMLButtonElement {
+        const button = document.createElement('button');
+        button.className = 'charcoal-button';
+        button.setAttribute('data-variant', 'Default');
+
+        const inner = document.createElement('div');
+        inner.className = 'flex gap-4 items-center';
+
+        const span = document.createElement('span');
+        span.textContent = text;
+
+        inner.appendChild(span);
+        button.appendChild(inner);
+        button.addEventListener('click', onClick);
+
+        return button;
+    }
+
     private addTagButtons(inputContainer: HTMLElement): void {
-        // 检查是否已经添加过按钮
         if (inputContainer.querySelector('.tag-action-buttons')) return;
 
         const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'flex gap-2 tag-action-buttons';
+        buttonContainer.className = 'tag-action-buttons';
         buttonContainer.style.cssText = `
+            display: flex;
             align-items: center;
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
+            gap: 8px;
+            margin-top: 8px;
         `;
 
-        // 复制按钮
-        const copyBtn = document.createElement('a');
-        copyBtn.className = 'btn calm small';
-        copyBtn.innerHTML = '复制标签';
-        copyBtn.onclick = () => this.copyTags();
-
-        // 粘贴按钮
-        const pasteBtn = document.createElement('a');
-        pasteBtn.className = 'btn calm small';
-        pasteBtn.innerHTML = '粘贴标签';
-        pasteBtn.onclick = () => this.pasteTags();
-
-        // 清空按钮
-        const clearBtn = document.createElement('a');
-        clearBtn.className = 'btn calm small';
-        clearBtn.innerHTML = '清空标签';
-        clearBtn.onclick = () => this.clearTags();
-
-        buttonContainer.appendChild(copyBtn);
-        buttonContainer.appendChild(pasteBtn);
-        buttonContainer.appendChild(clearBtn);
+        buttonContainer.appendChild(this.createCharcoalButton('复制', () => this.copyTags()));
+        buttonContainer.appendChild(this.createCharcoalButton('粘贴', () => this.pasteTags()));
+        buttonContainer.appendChild(this.createCharcoalButton('清空', () => this.clearTags()));
 
         inputContainer.appendChild(buttonContainer);
     }
@@ -110,7 +108,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
             }
 
             navigator.clipboard.writeText(JSON.stringify(tags)).then(() => {
-                const copyBtn = document.querySelector('.tag-action-buttons .btn:first-child');
+                const copyBtn = document.querySelector('.tag-action-buttons button:nth-child(1)');
                 if (copyBtn instanceof HTMLElement) {
                     Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
                 }
@@ -166,7 +164,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
                     `处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`
                 );
 
-                const pasteBtn = document.querySelector('.tag-action-buttons .btn:nth-child(2)');
+                const pasteBtn = document.querySelector('.tag-action-buttons button:nth-child(2)');
                 if (pasteBtn instanceof HTMLElement) {
                     Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
                 }
@@ -212,7 +210,7 @@ export class TagManager extends PageModule<ItemEditAPI> {
 
                 progress.complete(`处理完成！已清空 ${deleteButtons.length} 个标签。`);
 
-                const clearBtn = document.querySelector('.tag-action-buttons .btn:nth-child(3)');
+                const clearBtn = document.querySelector('.tag-action-buttons button:nth-child(3)');
                 if (clearBtn instanceof HTMLElement) {
                     Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
                 }
@@ -267,12 +265,12 @@ export class TagManager extends PageModule<ItemEditAPI> {
         tipContainer.appendChild(textElement);
         tipContainer.appendChild(progressBarContainer);
 
-        // 插入到DOM中
-        const inputContainer = container.querySelector('.item-search-input__container');
-        if (inputContainer?.parentElement) {
-            inputContainer.parentElement.insertBefore(tipContainer, inputContainer);
+        // 插入到输入框区域上方（tag 列表和输入区域之间）
+        const inputWrapper = container.querySelector('div.w-full.mt-8.flex.gap-8.flex-col');
+        if (inputWrapper) {
+            inputWrapper.insertBefore(tipContainer, inputWrapper.firstChild);
         } else {
-            container.insertBefore(tipContainer, container.firstChild);
+            container.appendChild(tipContainer);
         }
 
         // 返回控制对象

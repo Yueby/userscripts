@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
+import { Simulate } from '../../../../../../utils/simulate';
+import { getStableKey } from '../../../../../../utils/utils';
 import { useModal } from '../../../../composables';
 import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
 import { applyDiscount } from '../../../../utils/priceCalculator';
@@ -9,6 +11,8 @@ import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
 import { toast } from '../../../ui/Toast';
 import VariationConfigModal from '../modals/VariationConfigModal.vue';
+
+let _variationPageIndexMap = new WeakMap<object, number>();
 
 const props = defineProps<{
   itemConfig: ItemEditConfig;
@@ -796,14 +800,55 @@ function fileIdsEqual(a: string[], b: string[]): boolean {
 }
 
 /**
- * 更新响应式的页面 variation 名称集合
+ * 更新响应式的页面 variation 名称集合，并刷新 config -> page 映射
  */
 function updatePageVariationNames(): void {
-  const names = props.api.variations
+  const pageVariations = props.api.variations;
+  const names = pageVariations
     .map(v => v.nameInput?.value?.trim())
     .filter(Boolean) as string[];
   
   pageVariationNames.value = new Set(names);
+
+  // 重建 config variation -> page variation index 映射（清除旧映射）
+  const newMap = new WeakMap<object, number>();
+  const pageNameToIndex = new Map<string, number>();
+  pageVariations.forEach((v, idx) => {
+    const name = v.nameInput?.value?.trim() || '';
+    if (name) pageNameToIndex.set(name, idx);
+  });
+
+  for (const configVar of props.itemConfig.variations) {
+    const configName = configVar.name?.trim();
+    if (configName && pageNameToIndex.has(configName)) {
+      newMap.set(configVar, pageNameToIndex.get(configName)!);
+    }
+  }
+  _variationPageIndexMap = newMap;
+}
+
+/**
+ * 处理 variation 名称输入，实时同步到页面
+ */
+function handleVariationNameInput(variation: any, event: Event): void {
+  const newValue = (event.target as HTMLInputElement).value;
+  const oldName = variation.name?.trim();
+  variation.name = newValue;
+
+  const pageIndex = _variationPageIndexMap.get(variation);
+  if (pageIndex === undefined) return;
+
+  const pageVar = props.api.variations[pageIndex];
+  if (pageVar?.nameInput) {
+    Simulate.input(pageVar.nameInput, newValue);
+
+    // 同步更新 pageVariationNames 保持锁定状态（重新赋值触发响应式）
+    const updated = new Set(pageVariationNames.value);
+    if (oldName) updated.delete(oldName);
+    const trimmed = newValue.trim();
+    if (trimmed) updated.add(trimmed);
+    pageVariationNames.value = updated;
+  }
 }
 
 /**
@@ -1063,7 +1108,7 @@ defineExpose({
     <DraggableCardList
       v-else
       :items="itemConfig.variations"
-      :key-extractor="(item: any, index: number) => item.name || `variation-${index}`"
+      :key-extractor="(item: any) => getStableKey(item)"
       :is-item-locked="isVariationLocked"
       @remove="removeVariation"
       @reorder="onVariationReorder"
@@ -1071,11 +1116,12 @@ defineExpose({
       <template #actions="{ item: variation, index }">
         <div class="be-flex be-align-center be-gap-sm" style="flex: 1;">
           <input 
-            v-model="variation.name" 
+            :value="variation.name" 
             type="text" 
             class="be-flex-1 be-p-xs be-px-sm be-text-base"
             style="height: 28px;" 
             placeholder="Variation 名称"
+            @input="handleVariationNameInput(variation, $event)"
           />
           <label 
             v-if="!hasFullset || variation.isFullset" 
