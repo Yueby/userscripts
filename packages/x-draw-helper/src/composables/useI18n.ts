@@ -1,5 +1,7 @@
 import { ref } from 'vue';
+import { STORAGE_KEYS } from '../constants';
 import type { LangKey, TranslationMap } from '../types';
+import { gmStorage } from '../utils/storage';
 
 const LANGUAGES: Record<LangKey, TranslationMap> = {
   en: {
@@ -85,6 +87,7 @@ const LANGUAGES: Record<LangKey, TranslationMap> = {
     dataManagement: 'Data Management',
     clearCache: 'Clear Tweet Cache',
     cacheCleared: 'Cache cleared',
+    historyCleared: 'History cleared',
     save: 'Save',
     saved: 'Saved!',
     reset: 'Reset to Default',
@@ -173,6 +176,7 @@ const LANGUAGES: Record<LangKey, TranslationMap> = {
     dataManagement: '数据管理',
     clearCache: '清除推文缓存',
     cacheCleared: '缓存已清除',
+    historyCleared: '历史记录已清除',
     save: '保存',
     saved: '已保存！',
     reset: '恢复默认',
@@ -261,6 +265,7 @@ const LANGUAGES: Record<LangKey, TranslationMap> = {
     dataManagement: 'データ管理',
     clearCache: 'ツイートキャッシュを削除',
     cacheCleared: 'キャッシュを削除しました',
+    historyCleared: '履歴を削除しました',
     save: '保存',
     saved: '保存しました！',
     reset: 'デフォルトに戻す',
@@ -268,13 +273,11 @@ const LANGUAGES: Record<LangKey, TranslationMap> = {
   },
 };
 
-import { STORAGE_KEYS } from '../constants';
-
 const AVAILABLE_LANGS: LangKey[] = ['en', 'zh', 'ja'];
 
 function getInitialLang(): LangKey {
-  const stored = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
-  return stored && AVAILABLE_LANGS.includes(stored as LangKey) ? (stored as LangKey) : 'en';
+  const stored = gmStorage.get<string>(STORAGE_KEYS.LANGUAGE, '');
+  return AVAILABLE_LANGS.includes(stored as LangKey) ? (stored as LangKey) : 'en';
 }
 
 const currentLang = ref<LangKey>(getInitialLang());
@@ -286,7 +289,7 @@ function t(key: string, params: Record<string, string | number> = {}): string {
 
 function setLang(lang: LangKey) {
   currentLang.value = lang;
-  localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+  gmStorage.set(STORAGE_KEYS.LANGUAGE, lang);
 }
 
 export function useI18n() {

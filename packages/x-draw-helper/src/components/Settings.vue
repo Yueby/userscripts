@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useI18n } from '../composables/useI18n';
-import { useDrawHistory } from '../composables/useDrawHistory';
-import { useToast } from '../composables/useToast';
-import { gmStorage } from '../utils/storage';
-import { STORAGE_KEYS } from '../constants';
 import { DEFAULT_ENDPOINTS, updateEndpoints } from '../api/twitter';
+import { useDrawHistory } from '../composables/useDrawHistory';
+import { useI18n } from '../composables/useI18n';
+import { useToast } from '../composables/useToast';
+import { STORAGE_KEYS, TIMING } from '../constants';
+import { gmStorage } from '../utils/storage';
 import Modal from './Modal.vue';
 
 const emit = defineEmits<{ close: [] }>();
@@ -65,12 +65,12 @@ const confirmingClearHistory = ref(false);
 function handleClearHistory() {
   if (!confirmingClearHistory.value) {
     confirmingClearHistory.value = true;
-    setTimeout(() => { confirmingClearHistory.value = false; }, 3000);
+    setTimeout(() => { confirmingClearHistory.value = false; }, TIMING.CONFIRM_TIMEOUT);
     return;
   }
   confirmingClearHistory.value = false;
   clearHistory();
-  showToast(t('cacheCleared'), 'success');
+  showToast(t('historyCleared'), 'success');
 }
 
 const ENDPOINT_FIELDS: { key: EndpointKeys; label: string }[] = [

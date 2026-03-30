@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import type { DrawUser } from '../types';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from '../composables/useI18n';
+import { TIMING } from '../constants';
+import type { DrawUser } from '../types';
 import Modal from './Modal.vue';
 
 const props = defineProps<{
@@ -25,16 +26,15 @@ function randomUser(): DrawUser {
 }
 
 onMounted(() => {
-  const speed = 80;
+  const { DRAW_ANIMATION_SPEED: speed, DRAW_ANIMATION_DURATION: duration, DRAW_ANIMATION_REVEAL_DELAY: revealDelay } = TIMING;
   let elapsed = 0;
-  const duration = 2000;
 
   function tick() {
     elapsed += speed;
     if (elapsed >= duration) {
       slots.value = [...props.winners];
       if (intervalId) clearInterval(intervalId);
-      timeoutId = setTimeout(() => emit('done'), 600);
+      timeoutId = setTimeout(() => emit('done'), revealDelay);
       return;
     }
     slots.value = props.winners.map((w, i) => {
