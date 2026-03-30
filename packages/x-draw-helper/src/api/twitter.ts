@@ -110,8 +110,48 @@ export function loadCustomEndpoints() {
 
 loadCustomEndpoints();
 
+const DISCOVERY_TARGETS: [string, string][] = [
+  ['retweeters', 'Retweeters'],
+  ['favoriters', 'Favoriters'],
+  ['searchTimeline', 'SearchTimeline'],
+];
+
+async function _discoverEndpoints(): Promise<void> {
+  const pFetch = pageFetch();
+  const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script[src]'))
+    .map((s) => s.src)
+    .filter((src) => src.endsWith('.js'));
+
+  const found = new Set<string>();
+
+  for (const url of scripts) {
+    if (found.size === DISCOVERY_TARGETS.length) break;
+    try {
+      const text = await (await pFetch(url)).text();
+      for (const [key, opName] of DISCOVERY_TARGETS) {
+        if (found.has(key)) continue;
+        const m =
+          text.match(new RegExp(`queryId:"([^"]+)"[^}]{0,80}operationName:"${opName}"`)) ??
+          text.match(new RegExp(`operationName:"${opName}"[^}]{0,80}queryId:"([^"]+)"`));
+        if (m) {
+          (ENDPOINTS as any)[key] = `${m[1]}/${opName}`;
+          found.add(key);
+        }
+      }
+    } catch {
+      continue;
+    }
+  }
+}
+
+let _endpointsPromise: Promise<void> | null = null;
+
 export async function initEndpoints(): Promise<void> {
-  // endpoints loaded from storage on module init
+  if (_endpointsPromise) return _endpointsPromise;
+  _endpointsPromise = _discoverEndpoints().catch(() => {
+    _endpointsPromise = null;
+  });
+  return _endpointsPromise;
 }
 
 // ---------------------------------------------------------------------------
