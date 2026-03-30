@@ -1,3 +1,4 @@
+import { GM_xmlhttpRequest } from '$';
 import { LIMITS, STORAGE_KEYS } from '../constants';
 import type { User } from '../types';
 import { gmStorage } from '../utils/storage';
@@ -54,11 +55,21 @@ loadCustomEndpoints();
 // Endpoint resolution (GitHub API doc → page scripts → hardcoded fallback)
 // ---------------------------------------------------------------------------
 
+function _gmFetch(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url,
+      onload: (res) => (res.status >= 200 && res.status < 300 ? resolve(res.responseText) : reject(new Error(`HTTP ${res.status}`))),
+      onerror: () => reject(new Error('network error')),
+    });
+  });
+}
+
 async function _resolveFromApiDoc(): Promise<boolean> {
   try {
-    const res = await fetch(API_DOC_URL);
-    if (!res.ok) return false;
-    const data = await res.json();
+    const text = await _gmFetch(API_DOC_URL);
+    const data = JSON.parse(text);
     const graphql = data?.graphql;
     if (!graphql || typeof graphql !== 'object') return false;
 
