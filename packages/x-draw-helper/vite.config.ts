@@ -31,7 +31,7 @@ export default defineConfig({
         author: 'Yueby',
         version: '0.1.0',
         grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'GM_listValues', 'GM_deleteValue', 'GM_xmlhttpRequest', 'unsafeWindow'],
-        connect: ['https://raw.githubusercontent.com'],
+        connect: ['raw.githubusercontent.com'],
         'run-at': 'document-start'
       },
       build: {

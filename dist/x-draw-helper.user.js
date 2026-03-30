@@ -11,7 +11,7 @@
 // @match              https://x.com/*
 // @match              https://twitter.com/*
 // @require            https://cdn.jsdelivr.net/npm/vue@3.5.31/dist/vue.global.prod.js
-// @connect            https://raw.githubusercontent.com
+// @connect            raw.githubusercontent.com
 // @grant              GM_addStyle
 // @grant              GM_deleteValue
 // @grant              GM_getValue
