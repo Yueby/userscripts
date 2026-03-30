@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import './style.css';
-import { initTxIdCapture } from './api/twitter';
+import { initTxIdCapture } from './api/transaction';
 
 initTxIdCapture();
 

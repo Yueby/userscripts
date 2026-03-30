@@ -1,9 +1,14 @@
 import type { User } from '../types';
+import { pageFetch, getTxId } from './transaction';
+
+const LOG = '[x-draw]';
 
 const BEARER_TOKEN =
   'AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
 
-// Features exactly as X's frontend sends for SearchTimeline
+// Feature flag objects are kept as complete snapshots (not base+overrides)
+// so they can be directly compared/replaced with values from X's network requests.
+
 const SEARCH_FEATURES = {
   rweb_video_screen_enabled: false,
   profile_label_improvements_pcf_label_in_post_enabled: true,
@@ -77,6 +82,10 @@ const GRAPHQL_FEATURES = {
   responsive_web_enhance_cards_enabled: false,
 };
 
+// ---------------------------------------------------------------------------
+// Endpoint discovery
+// ---------------------------------------------------------------------------
+
 const ENDPOINTS: Record<string, string> = {
   retweeters: 'niCJ2QyTuAgZWv01E7mqJQ/Retweeters',
   favoriters: 'aLZ5wrqDYuDm9c_xNl667w/Favoriters',
@@ -91,7 +100,7 @@ export async function initEndpoints(): Promise<void> {
 }
 
 async function _resolveEndpoints(): Promise<void> {
-
+  const pFetch = pageFetch();
   const targets: [keyof typeof ENDPOINTS, string][] = [
     ['retweeters', 'Retweeters'],
     ['favoriters', 'Favoriters'],
@@ -106,7 +115,7 @@ async function _resolveEndpoints(): Promise<void> {
   for (const url of scripts) {
     if (found.size === targets.length) break;
     try {
-      const text = await (await fetch(url)).text();
+      const text = await (await pFetch(url)).text();
       for (const [key, opName] of targets) {
         if (found.has(key)) continue;
         const m =
@@ -121,7 +130,16 @@ async function _resolveEndpoints(): Promise<void> {
       continue;
     }
   }
+
+  if (found.size < targets.length) {
+    const missing = targets.filter(([k]) => !found.has(k)).map(([, op]) => op);
+    console.warn(LOG, 'endpoints: using hardcoded fallback for', missing.join(', '));
+  }
 }
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function getCsrfToken(): string | null {
   return document.cookie
@@ -136,7 +154,7 @@ function getLoggedInUserId(): string | null {
     .find((row) => row.startsWith('twid='))
     ?.split('=').slice(1).join('=');
   if (!raw) return null;
-  const decoded = decodeURIComponent(raw); // "u=12345678"
+  const decoded = decodeURIComponent(raw);
   return decoded.startsWith('u=') ? decoded.slice(2) : null;
 }
 
@@ -144,6 +162,10 @@ function getTweetIdFromUrl(): string | null {
   const match = window.location.href.match(/\/status\/(\d+)/);
   return match?.[1] ?? null;
 }
+
+// ---------------------------------------------------------------------------
+// Fetchers
+// ---------------------------------------------------------------------------
 
 interface FetchOptions {
   onProgress?: (count: number) => void;
@@ -158,6 +180,7 @@ async function fetchPaginatedUsers(
   options: FetchOptions = {}
 ): Promise<User[]> {
   const { onProgress, signal, maxRetries = 3 } = options;
+  const pFetch = pageFetch();
   const result: User[] = [];
   const seen = new Set<string>();
 
@@ -187,7 +210,7 @@ async function fetchPaginatedUsers(
     for (let retry = 0; retry < maxRetries; retry++) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       try {
-        const response = await fetch(buildUrl(cursor), { headers, signal });
+        const response = await pFetch(buildUrl(cursor), { headers, signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
       } catch (error) {
@@ -248,7 +271,6 @@ async function fetchPaginatedUsers(
     return { users, nextCursor };
   }
 
-  // Pipeline: kick off the first fetch
   let currentCursor: string | null = null;
   let pendingFetch: Promise<any | null> | null = fetchWithRetry(null);
 
@@ -258,7 +280,6 @@ async function fetchPaginatedUsers(
 
     const { users, nextCursor } = parseTimeline(data);
 
-    // Pipeline: start next page fetch BEFORE processing current page users
     if (nextCursor && nextCursor !== currentCursor) {
       currentCursor = nextCursor;
       pendingFetch = fetchWithRetry(currentCursor);
@@ -266,7 +287,6 @@ async function fetchPaginatedUsers(
       pendingFetch = null;
     }
 
-    // Dedup + collect
     for (const u of users) {
       const key = u.id || u.handle;
       if (!seen.has(key)) { seen.add(key); result.push(u); }
@@ -293,240 +313,11 @@ export async function fetchFavoriters(
   return fetchPaginatedUsers(ENDPOINTS.favoriters, tweetId, csrfToken, options);
 }
 
-// --- x-client-transaction-id generation (based on Lqm1/x-client-transaction-id, Apache 2.0) ---
-const _ON_DEMAND_RE =
-  /(\d+):\s*["']ondemand\.s["'][\s\S]*?\}\[e\]\s*\|\|\s*e\)\s*\+\s*["']\.["']\s*\+\s*\{[\s\S]*?\b\1:\s*["']([a-zA-Z0-9_-]+)["']/s;
-const _INDICES_RE = /\(\w\[(\d{1,2})\],\s*16\)/g;
-
-class _ClientTransaction {
-  private keyBytes: number[] = [];
-  private defRowIdx = 0;
-  private defByteIndices: number[] = [];
-  private animKey = '';
-  private ready = false;
-
-  async init(): Promise<boolean> {
-    try {
-      const metaKey = document
-        .querySelector("[name='twitter-site-verification']")
-        ?.getAttribute('content');
-      if (!metaKey) return false;
-      this.keyBytes = Array.from(atob(metaKey), (c) => c.charCodeAt(0));
-
-      // Animation frames are stripped by React after hydration; fetch the raw homepage HTML
-      let animDoc: Document = document;
-      if (!document.querySelector("[id^='loading-x-anim']")) {
-        const html = await (await fetch('/')).text();
-        animDoc = new DOMParser().parseFromString(html, 'text/html');
-      }
-
-      const onDemandUrl = this._getOnDemandUrl();
-      if (!onDemandUrl) return false;
-
-      const text = await (await fetch(onDemandUrl)).text();
-      const indices: number[] = [];
-      _INDICES_RE.lastIndex = 0;
-      let m: RegExpExecArray | null;
-      while ((m = _INDICES_RE.exec(text)) !== null) indices.push(parseInt(m[1], 10));
-      if (!indices.length) return false;
-
-      this.defRowIdx = indices[0];
-      this.defByteIndices = indices.slice(1);
-      this.animKey = this._buildAnimKey(animDoc);
-      this.ready = !!this.animKey;
-      return this.ready;
-    } catch {
-      return false;
-    }
-  }
-
-  private _getOnDemandUrl(): string | null {
-    const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script'));
-    // First: search inline scripts (lightweight)
-    for (const s of scripts) {
-      const t = s.textContent ?? '';
-      if (!t.includes('ondemand.s')) continue;
-      const m = _ON_DEMAND_RE.exec(t);
-      if (m) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m[2]}a.js`;
-    }
-    // Fallback: search full HTML (heavy, lazy)
-    const m = _ON_DEMAND_RE.exec(document.documentElement.outerHTML);
-    if (m) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m[2]}a.js`;
-    return null;
-  }
-
-  private _buildAnimKey(doc: Document = document): string {
-    const frames = Array.from(doc.querySelectorAll<Element>("[id^='loading-x-anim']"));
-    if (!frames.length) return '';
-    const kb = this.keyBytes;
-    const rowIdx = kb[this.defRowIdx] % 16;
-    let frameTime = this.defByteIndices.reduce((a, i) => a * (kb[i] % 16), 1);
-    frameTime = Math.round(frameTime / 10) * 10;
-    const arr = this._get2dArr(frames, kb);
-    if (!arr[rowIdx]?.length) return '';
-    return this._animate(arr[rowIdx], frameTime / 4096);
-  }
-
-  private _get2dArr(frames: Element[], kb: number[]): number[][] {
-    const frame = frames[kb[5] % 4];
-    const d = frame?.children[0]?.children[1]?.getAttribute('d');
-    if (!d) return [[]];
-    return d
-      .substring(9)
-      .split('C')
-      .map((s) => {
-        const c = s.replace(/[^\d]+/g, ' ').trim();
-        return c ? c.split(/\s+/).map(Number) : [];
-      });
-  }
-
-  private _solve(v: number, min: number, max: number, floor: boolean): number {
-    const r = (v * (max - min)) / 255 + min;
-    return floor ? Math.floor(r) : Math.round(r * 100) / 100;
-  }
-
-  private _animate(row: number[], t: number): string {
-    const isOdd = (n: number) => (n % 2 ? -1 : 0);
-    const lerp = (a: number[], b: number[], f: number) =>
-      a.map((v, i) => v * (1 - f) + b[i] * f);
-    const rotMat = (deg: number) => {
-      const r = (deg * Math.PI) / 180;
-      return [Math.cos(r), -Math.sin(r), Math.sin(r), Math.cos(r)];
-    };
-    const floatHex = (x: number): string => {
-      const res: string[] = [];
-      let q = Math.floor(x);
-      let frac = x - q;
-      while (q > 0) {
-        const nq = Math.floor(q / 16);
-        const rem = q - nq * 16;
-        res.unshift(rem > 9 ? String.fromCharCode(rem + 55) : rem.toString());
-        q = nq;
-      }
-      if (!frac) return res.join('');
-      res.push('.');
-      for (let f2 = frac; f2 > 0; ) {
-        f2 *= 16;
-        const int = Math.floor(f2);
-        f2 -= int;
-        res.push(int > 9 ? String.fromCharCode(int + 55) : int.toString());
-      }
-      return res.join('');
-    };
-    const cubicVal = (curves: number[], tv: number): number => {
-      const calc = (a: number, b: number, m: number) =>
-        3 * a * (1 - m) * (1 - m) * m + 3 * b * (1 - m) * m * m + m * m * m;
-      if (tv <= 0)
-        return (
-          (curves[0] > 0
-            ? curves[1] / curves[0]
-            : curves[1] === 0 && curves[2] > 0
-              ? curves[3] / curves[2]
-              : 0) * tv
-        );
-      if (tv >= 1)
-        return (
-          1 +
-          (curves[2] < 1
-            ? (curves[3] - 1) / (curves[2] - 1)
-            : curves[2] === 1 && curves[0] < 1
-              ? (curves[1] - 1) / (curves[0] - 1)
-              : 0) *
-            (tv - 1)
-        );
-      let [s, e, mid] = [0, 1, 0];
-      while (s < e) {
-        mid = (s + e) / 2;
-        const x = calc(curves[0], curves[2], mid);
-        if (Math.abs(tv - x) < 0.00001) return calc(curves[1], curves[3], mid);
-        if (x < tv) s = mid;
-        else e = mid;
-      }
-      return calc(curves[1], curves[3], mid);
-    };
-
-    const from = [...row.slice(0, 3), 1];
-    const to = [...row.slice(3, 6), 1];
-    const fromR = [0];
-    const toR = [this._solve(row[6], 60, 360, true)];
-    const curves = row.slice(7).map((v, i) => this._solve(v, isOdd(i), 1, false));
-    const val = cubicVal(curves, t);
-    const col = lerp(from, to, val).map((v) => (v > 0 ? v : 0));
-    const rot = lerp(fromR, toR, val);
-    const mat = rotMat(rot[0]);
-    const parts = col.slice(0, -1).map((v) => Math.round(v).toString(16));
-    for (const v of mat) {
-      let rv = Math.round(v * 100) / 100;
-      if (rv < 0) rv = -rv;
-      const h = floatHex(rv);
-      parts.push((h.startsWith('.') ? '0' + h : h || '0').toLowerCase());
-    }
-    parts.push('0', '0');
-    return parts.join('').replace(/[.-]/g, '');
-  }
-
-  async generateId(method: string, path: string): Promise<string | null> {
-    if (!this.ready) return null;
-    const now = Math.floor((Date.now() - 1682924400000) / 1000);
-    const tBytes = [now & 0xff, (now >> 8) & 0xff, (now >> 16) & 0xff, (now >> 24) & 0xff];
-    const data = `${method}!${path}!${now}obfiowerehiring${this.animKey}`;
-    const hash = Array.from(
-      new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data))),
-    );
-    const rn = Math.floor(Math.random() * 256);
-    const bytes = [...this.keyBytes, ...tBytes, ...hash.slice(0, 16), 3];
-    const out = new Uint8Array([rn, ...bytes.map((b) => b ^ rn)]);
-    return btoa(String.fromCharCode(...out)).replace(/=/g, '');
-  }
-}
-
-let _capturedTxId: string | null = null;
-
-export function initTxIdCapture(): void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const uw: Window = (typeof unsafeWindow !== 'undefined' ? unsafeWindow : window) as Window;
-  const orig = uw.fetch.bind(uw);
-  (uw as any).fetch = async function (input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as Request).url;
-    if (url.includes('/i/api/graphql/')) {
-      const h = init?.headers ?? (input instanceof Request ? input.headers : undefined);
-      if (h) {
-        const txId = h instanceof Headers
-          ? h.get('x-client-transaction-id')
-          : (h as Record<string, string>)['x-client-transaction-id'];
-        if (txId) _capturedTxId = txId;
-      }
-    }
-    return orig(input as RequestInfo | URL, init);
-  };
-}
-
-async function _initTxn(): Promise<_ClientTransaction | null> {
-  const txn = new _ClientTransaction();
-  return (await txn.init()) ? txn : null;
-}
-
-let _txnInstance: _ClientTransaction | null = null;
-let _txnInitPromise: Promise<_ClientTransaction | null> | null = null;
-
-async function _getTxId(method: string, path: string): Promise<string | null> {
-  // Ensure single init attempt at a time (race-safe)
-  if (!_txnInitPromise || !_txnInstance) {
-    _txnInitPromise = _initTxn();
-    _txnInstance = await _txnInitPromise;
-    if (!_txnInstance) _txnInitPromise = null; // allow retry on failure
-  }
-  if (_txnInstance) {
-    const id = await _txnInstance.generateId(method, path);
-    if (id) return id;
-  }
-  // Fallback: use a txId captured from X's own graphql requests
-  return _capturedTxId;
-}
-// -----------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Quote tweeters (via SearchTimeline — requires x-client-transaction-id)
+// ---------------------------------------------------------------------------
 
 function _parseSearchTimeline(data: any): { users: User[]; nextCursor: string | null } {
-
   const instructions =
     data?.data?.search_by_raw_query?.search_timeline?.timeline?.instructions ?? [];
   if (instructions.some((i: any) => i.type === 'TimelineTerminateTimeline'))
@@ -539,13 +330,11 @@ function _parseSearchTimeline(data: any): { users: User[]; nextCursor: string | 
     .filter((e: any) => String(e.entryId ?? '').startsWith('tweet-'))
     .map((entry: any) => {
       const tweetResult = entry.content?.itemContent?.tweet_results?.result;
-      // Handle TweetWithVisibilityResults wrapper
       const tweet =
         tweetResult?.__typename === 'TweetWithVisibilityResults'
           ? tweetResult.tweet
           : tweetResult;
       const userResult = tweet?.core?.user_results?.result;
-      // X API: name/screen_name in result.core, avatar in result.avatar
       const userCore = userResult?.core ?? {};
       const legacy = userResult?.legacy ?? {};
       const perspectives = userResult?.relationship_perspectives ?? {};
@@ -569,6 +358,7 @@ export async function fetchQuoteTweeters(
   options: FetchOptions = {}
 ): Promise<User[]> {
   const { onProgress, signal, maxRetries = 3 } = options;
+  const pFetch = pageFetch();
   const result: User[] = [];
   const seen = new Set<string>();
   const selfId = getLoggedInUserId();
@@ -603,9 +393,9 @@ export async function fetchQuoteTweeters(
     for (let retry = 0; retry < maxRetries; retry++) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       try {
-        const txId = await _getTxId('GET', path);
+        const txId = await getTxId('GET', path);
         const reqHeaders = txId ? { ...headers, 'x-client-transaction-id': txId } : headers;
-        const response = await fetch(buildUrl(cursor), { headers: reqHeaders, signal });
+        const response = await pFetch(buildUrl(cursor), { headers: reqHeaders, signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
       } catch (error) {
@@ -645,4 +435,3 @@ export async function fetchQuoteTweeters(
 }
 
 export { getCsrfToken, getTweetIdFromUrl };
-

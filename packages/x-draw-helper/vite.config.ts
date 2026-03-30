@@ -1,8 +1,8 @@
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import monkey, { cdn } from 'vite-plugin-monkey';
-import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,7 +29,7 @@ export default defineConfig({
           'ja': 'X(Twitter)の投稿で抽選を行うためのユーザースクリプト'
         },
         author: 'Yueby',
-        version: '0.0.1',
+        version: '0.0.2',
         grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'unsafeWindow'],
         'run-at': 'document-start'
       },
