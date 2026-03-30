@@ -6,6 +6,8 @@ export interface User {
   bio: string;
   following: boolean;
   followed_by: boolean;
+  followersCount: number;
+  followingCount: number;
 }
 
 export interface DrawUser extends User {
@@ -34,6 +36,17 @@ export interface InteractionData {
   retweets: User[];
   likes: User[];
   quotes: User[];
+}
+
+export interface DrawHistoryEntry {
+  id: string;
+  tweetId: string;
+  tweetUrl: string;
+  winners: DrawUser[];
+  filters: Filters;
+  totalParticipants: number;
+  timestamp: number;
+  confirmed: boolean;
 }
 
 export type LangKey = 'en' | 'zh' | 'ja';

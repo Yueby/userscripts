@@ -1,4 +1,5 @@
 import type { InteractionData } from '../types';
+import { formatFileTimestamp } from '../utils/format';
 import { useI18n } from './useI18n';
 
 export function useExport() {
@@ -14,44 +15,26 @@ export function useExport() {
         t('bio'),
         t('following'),
         t('followingYou'),
+        t('followers'),
+        t('followingLabel'),
       ],
     ];
 
-    for (const user of data.retweets) {
-      rows.push([
-        t('retweetType'),
-        user.username,
-        user.handle,
-        user.avatarUrl,
-        user.bio,
-        user.following ? t('yes') : t('no'),
-        user.followed_by ? t('yes') : t('no'),
-      ]);
-    }
+    const userRow = (type: string, user: InteractionData['retweets'][number]) => [
+      type,
+      user.username,
+      user.handle,
+      user.avatarUrl,
+      user.bio,
+      user.following ? t('yes') : t('no'),
+      user.followed_by ? t('yes') : t('no'),
+      String(user.followersCount),
+      String(user.followingCount),
+    ];
 
-    for (const user of data.likes) {
-      rows.push([
-        t('likeType'),
-        user.username,
-        user.handle,
-        user.avatarUrl,
-        user.bio,
-        user.following ? t('yes') : t('no'),
-        user.followed_by ? t('yes') : t('no'),
-      ]);
-    }
-
-    for (const user of data.quotes) {
-      rows.push([
-        t('quoteType'),
-        user.username,
-        user.handle,
-        user.avatarUrl,
-        user.bio,
-        user.following ? t('yes') : t('no'),
-        user.followed_by ? t('yes') : t('no'),
-      ]);
-    }
+    for (const user of data.retweets) rows.push(userRow(t('retweetType'), user));
+    for (const user of data.likes) rows.push(userRow(t('likeType'), user));
+    for (const user of data.quotes) rows.push(userRow(t('quoteType'), user));
 
     const csvContent =
       '\uFEFF' +
@@ -70,10 +53,7 @@ export function useExport() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    link.download = `x_draw_data_${timestamp}.csv`;
+    link.download = `x_draw_data_${formatFileTimestamp()}.csv`;
     link.click();
     URL.revokeObjectURL(link.href);
   }

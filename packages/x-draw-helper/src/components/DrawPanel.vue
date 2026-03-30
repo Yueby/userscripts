@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useDrawData } from '../composables/useDrawData';
+import { useDrawHistory } from '../composables/useDrawHistory';
 import { useExport } from '../composables/useExport';
 import type { DrawUser, LangKey } from '../types';
 import DrawResult from './DrawResult.vue';
 import DrawSettings from './DrawSettings.vue';
+import DrawHistory from './DrawHistory.vue';
+import DrawAnimation from './DrawAnimation.vue';
+import Settings from './Settings.vue';
+import InteractionIcon from './InteractionIcon.vue';
+import InteractionBadge from './InteractionBadge.vue';
 import Modal from './Modal.vue';
+import Toast from './Toast.vue';
+import { useToast } from '../composables/useToast';
+import { LIMITS } from '../constants';
 
 const emit = defineEmits<{
   close: [];
@@ -14,15 +23,29 @@ const emit = defineEmits<{
 
 const { t, currentLang, setLang, availableLangs, getLangName } = useI18n();
 const drawData = useDrawData();
+const { addEntry, getWinCount } = useDrawHistory();
 const { exportCsv } = useExport();
+const { show: showToast } = useToast();
 
 type TabFilter = 'all' | 'retweet' | 'like' | 'quote' | 'followed_by';
-type SortKey = 'username' | 'handle' | 'retweet' | 'like' | 'quote' | 'followed_by';
+type SortKey = 'username' | 'handle' | 'retweet' | 'like' | 'quote' | 'followed_by' | 'followersCount';
 type SortDir = 'asc' | 'desc';
 
+const TAB_CONFIG: { key: TabFilter; labelKey: string; statKey: string }[] = [
+  { key: 'all', labelKey: 'total', statKey: 'total' },
+  { key: 'retweet', labelKey: 'retweets', statKey: 'retweets' },
+  { key: 'like', labelKey: 'likes', statKey: 'likes' },
+  { key: 'quote', labelKey: 'quotes', statKey: 'quotes' },
+  { key: 'followed_by', labelKey: 'followingMe', statKey: 'followers' },
+];
+
 const activeFilter = ref<TabFilter>('all');
+const searchQuery = ref('');
 const showResult = ref(false);
 const showSettings = ref(false);
+const showHistory = ref(false);
+const showAnimation = ref(false);
+const showSettingsPanel = ref(false);
 const winners = ref<DrawUser[]>([]);
 const hoveredUser = ref<DrawUser | null>(null);
 const tooltipPos = ref({ x: 0, y: 0 });
@@ -30,14 +53,13 @@ const sortKey = ref<SortKey | null>(null);
 const sortDir = ref<SortDir>('asc');
 
 // Pagination
-const PAGE_SIZE = 20;
+const PAGE_SIZE = LIMITS.PAGE_SIZE;
 const currentPage = ref(1);
 
 // Always fetch fresh data on mount (stale data remains visible during loading)
 drawData.fetchInteractionData().catch((err) => {
-  if (err.message !== 'Aborted') {
-    alert(t(err.message || 'loginRequired'));
-  }
+  if (err instanceof DOMException && err.name === 'AbortError') return;
+  showToast(t(err.message || 'loginRequired'), 'error', 5000);
 });
 
 const filteredUsers = computed<DrawUser[]>(() => {
@@ -50,8 +72,16 @@ const filteredUsers = computed<DrawUser[]>(() => {
   return users;
 });
 
+const searchedUsers = computed<DrawUser[]>(() => {
+  const q = searchQuery.value.trim().toLowerCase();
+  if (!q) return filteredUsers.value;
+  return filteredUsers.value.filter(
+    (u) => u.username.toLowerCase().includes(q) || u.handle.toLowerCase().includes(q),
+  );
+});
+
 const sortedUsers = computed<DrawUser[]>(() => {
-  const users = [...filteredUsers.value];
+  const users = [...searchedUsers.value];
   if (!sortKey.value) return users;
 
   const key = sortKey.value;
@@ -60,6 +90,7 @@ const sortedUsers = computed<DrawUser[]>(() => {
   return users.sort((a, b) => {
     if (key === 'username') return dir * a.username.localeCompare(b.username);
     if (key === 'handle') return dir * a.handle.localeCompare(b.handle);
+    if (key === 'followersCount') return dir * (a.followersCount - b.followersCount);
     if (key === 'retweet') return dir * (Number(!!b.hasRetweet) - Number(!!a.hasRetweet));
     if (key === 'like') return dir * (Number(!!b.hasLike) - Number(!!a.hasLike));
     if (key === 'quote') return dir * (Number(!!b.hasQuote) - Number(!!a.hasQuote));
@@ -77,7 +108,7 @@ const paginatedUsers = computed(() => {
 const pageOffset = computed(() => (currentPage.value - 1) * PAGE_SIZE);
 
 // Reset page when filter/sort changes
-watch([activeFilter, sortKey, sortDir], () => {
+watch([activeFilter, sortKey, sortDir, searchQuery], () => {
   currentPage.value = 1;
 });
 
@@ -91,10 +122,10 @@ const visiblePages = computed(() => {
   const total = totalPages.value;
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const cur = currentPage.value;
-  const pages: (number | '...')[] = [1];
-  if (cur > 3) pages.push('...');
+  const pages: (number | string)[] = [1];
+  if (cur > 3) pages.push('..L');
   for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i);
-  if (cur < total - 2) pages.push('...');
+  if (cur < total - 2) pages.push('..R');
   pages.push(total);
   return pages;
 });
@@ -121,6 +152,23 @@ const stats = computed(() => ({
   followers: drawData.mergedUsers.value.filter((u) => u.followed_by).length,
 }));
 
+const now = ref(Date.now());
+const cacheAgeTimer = setInterval(() => { now.value = Date.now(); }, 30000);
+onUnmounted(() => clearInterval(cacheAgeTimer));
+
+const cacheAge = computed(() => {
+  if (!drawData.fetchedAt.value) return '';
+  const mins = Math.floor((now.value - drawData.fetchedAt.value) / 60000);
+  return mins < 1 ? t('justNow') : t('minutesAgo', { count: mins });
+});
+
+function handleRefresh() {
+  drawData.fetchInteractionData().catch((err) => {
+    if (err instanceof DOMException && err.name === 'AbortError') return;
+    showToast(t(err.message || 'loginRequired'), 'error', 5000);
+  });
+}
+
 function handleDraw() {
   showSettings.value = true;
 }
@@ -128,7 +176,31 @@ function handleDraw() {
 function onDrawResult(picked: DrawUser[]) {
   winners.value = picked;
   showSettings.value = false;
+
+  if (drawData.mergedUsers.value.length >= 3) {
+    showAnimation.value = true;
+  } else {
+    showResult.value = true;
+    saveDraw(picked);
+  }
+}
+
+function onAnimationDone() {
+  showAnimation.value = false;
   showResult.value = true;
+  saveDraw(winners.value);
+}
+
+function saveDraw(picked: DrawUser[]) {
+  const tweetId = drawData.lastTweetId.value;
+  if (tweetId) {
+    addEntry({
+      tweetId,
+      winners: picked,
+      filters: { ...drawData.filters.value },
+      totalParticipants: drawData.qualifiedUsers.value.length,
+    });
+  }
 }
 
 function handleExport() {
@@ -144,9 +216,9 @@ function handleLangChange(e: Event) {
 }
 
 function onRowEnter(user: DrawUser, e: MouseEvent) {
-  const row = (e.currentTarget as HTMLElement);
-  const rect = row.getBoundingClientRect();
-  tooltipPos.value = { x: rect.left + 60, y: rect.top };
+  const el = e.currentTarget as HTMLElement;
+  const rect = el.getBoundingClientRect();
+  tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
   hoveredUser.value = user;
 }
 
@@ -156,15 +228,18 @@ function openProfile(handle: string) {
 </script>
 
 <template>
-  <Modal :title="t('drawHelper')" width="w-[900px]" height="h-[700px]" @close="emit('close')">
+  <Modal :title="t('drawHelper')" max-width="1080px" max-height="700px" @close="emit('close')">
     <template #header-controls>
       <select class="xd-select text-sm" :value="currentLang" @change="handleLangChange">
         <option v-for="lang in availableLangs" :key="lang" :value="lang">{{ getLangName(lang) }}</option>
       </select>
+      <button class="xd-btn-icon" :title="t('settings')" @click="showSettingsPanel = true">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.59 2.53c-.04.21.04.42.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.11-.25.32-.21.53l.59 2.53-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.57-2.36c-.11-.17-.32-.25-.53-.21l-2.53.59-2.17-2.17.59-2.53c.04-.21-.04-.42-.21-.53L1.75 13.46v-2.92l2.36-1.57c.17-.11.25-.32.21-.53l-.59-2.53 2.17-2.17 2.53.59c.21.04.42-.04.53-.21L10.54 1.75zM12 15.5c1.93 0 3.5-1.57 3.5-3.5S13.93 8.5 12 8.5 8.5 10.07 8.5 12s1.57 3.5 3.5 3.5z"/></svg>
+      </button>
     </template>
 
     <!-- Stats -->
-    <div class="grid grid-cols-5 border-b border-[#38444d] shrink-0">
+    <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', borderBottom: '1px solid #38444d', flexShrink: 0, overflowX: 'auto' }">
       <div class="flex flex-col items-center py-3 border-r border-[#38444d]">
         <span class="text-xs text-[#71767b]">{{ t('total') }}</span>
         <span class="text-xl font-bold text-white">{{ stats.total }}</span>
@@ -199,25 +274,46 @@ function openProfile(handle: string) {
       </div>
     </div>
 
-    <!-- Toolbar: Tabs + Actions -->
-    <div class="flex items-center justify-between px-5 py-3 border-b border-[#38444d] shrink-0">
-      <div class="xd-tab-group">
-        <button
-          v-for="tab in (['all', 'retweet', 'like', 'quote', 'followed_by'] as const)"
-          :key="tab"
-          class="xd-tab"
-          :class="{ active: activeFilter === tab }"
-          @click="activeFilter = tab"
-        >
-          {{ tab === 'all' ? t('total') : tab === 'retweet' ? t('retweets') : tab === 'like' ? t('likes') : tab === 'quote' ? t('quotes') : t('followingMe') }}
-          <span class="ml-1 opacity-60 text-[11px]">
-            {{ tab === 'all' ? stats.total : tab === 'retweet' ? stats.retweets : tab === 'like' ? stats.likes : tab === 'quote' ? stats.quotes : stats.followers }}
-          </span>
-        </button>
+    <!-- Toolbar -->
+    <div class="px-5 py-2.5 border-b border-[#38444d] shrink-0 flex flex-col gap-2">
+      <div class="flex items-center justify-between">
+        <div class="xd-tab-group">
+          <button
+            v-for="tab in TAB_CONFIG"
+            :key="tab.key"
+            class="xd-tab"
+            :class="{ active: activeFilter === tab.key }"
+            @click="activeFilter = tab.key"
+          >
+            {{ t(tab.labelKey) }}
+            <span class="ml-1 opacity-60 text-[11px]">{{ (stats as any)[tab.statKey] }}</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="xd-btn xd-btn-primary text-sm" @click="handleDraw">{{ t('startDraw') }}</button>
+          <button class="xd-btn xd-btn-secondary text-sm" @click="showHistory = true">{{ t('history') }}</button>
+          <button class="xd-btn xd-btn-secondary text-sm" @click="handleExport">{{ t('export') }}</button>
+        </div>
       </div>
       <div class="flex items-center gap-2">
-        <button class="xd-btn xd-btn-primary text-sm" @click="handleDraw">{{ t('startDraw') }}</button>
-        <button class="xd-btn xd-btn-secondary text-sm" @click="handleExport">{{ t('export') }}</button>
+        <div class="flex items-center flex-1" :style="{ background: '#273340', border: '1px solid #38444d', borderRadius: '9999px', padding: '0 12px', gap: '8px' }">
+          <svg class="w-4 h-4 shrink-0" :style="{ color: '#71767b' }" viewBox="0 0 24 24" fill="currentColor"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z" /></svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            :placeholder="t('search')"
+            :style="{ flex: '1', background: 'transparent', border: 'none', color: '#fff', fontSize: '14px', padding: '6px 0', outline: 'none', appearance: 'none' }"
+          />
+        </div>
+        <button
+          class="xd-btn xd-btn-secondary shrink-0"
+          :style="{ fontSize: '11px', padding: '4px 10px' }"
+          :title="t('refresh')"
+          @click="handleRefresh"
+        >
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" :class="{ 'animate-spin': drawData.loading.value }" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+          <span v-if="cacheAge">{{ cacheAge }}</span>
+        </button>
       </div>
     </div>
 
@@ -234,17 +330,21 @@ function openProfile(handle: string) {
               {{ t('handle') }} <span class="text-xs opacity-50">{{ getSortIcon('handle') }}</span>
             </th>
             <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('retweet')">
-              <span class="inline-flex items-center justify-center gap-1"><svg viewBox="0 0 24 24" class="w-4 h-4 text-[#00ba7c]" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg><span class="text-xs opacity-50">{{ getSortIcon('retweet') }}</span></span>
+              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="retweet" /><span class="text-xs opacity-50">{{ getSortIcon('retweet') }}</span></span>
             </th>
             <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('like')">
-              <span class="inline-flex items-center justify-center gap-1"><svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg><span class="text-xs opacity-50">{{ getSortIcon('like') }}</span></span>
+              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="like" /><span class="text-xs opacity-50">{{ getSortIcon('like') }}</span></span>
             </th>
             <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('quote')">
-              <span class="inline-flex items-center justify-center gap-1"><svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L4.41 15.51V19h3.49l11.24-11.242c.2-.195.2-.513 0-.707l-3.38-3.378-.41.595zm-1.42 1.42l3.38 3.378-1.42 1.414-3.38-3.378 1.42-1.414z"/></svg><span class="text-xs opacity-50">{{ getSortIcon('quote') }}</span></span>
+              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="quote" /><span class="text-xs opacity-50">{{ getSortIcon('quote') }}</span></span>
             </th>
             <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('followed_by')">
-              <span class="inline-flex items-center justify-center gap-1"><svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M12 11.816c1.355 0 2.872-.15 3.84-1.256.814-.93 1.078-2.368.806-4.392-.38-2.825-2.117-4.512-4.646-4.512S7.734 3.343 7.354 6.168c-.272 2.024-.008 3.462.806 4.392.968 1.107 2.485 1.256 3.84 1.256zm-3.16-5.448c.162-1.2.787-3.212 3.16-3.212s2.998 2.013 3.16 3.212c.207 1.55.057 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.255-.223-2.71-.743c-.507-.578-.657-1.656-.45-3.205zm11.44 12.868c-.877-3.526-4.282-5.99-8.28-5.99s-7.403 2.464-8.28 5.99c-.172.692-.028 1.4.395 1.94.408.52 1.04.82 1.733.82h12.304c.693 0 1.325-.3 1.733-.82.424-.54.567-1.247.394-1.94zm-1.576 1.016c-.126.16-.316.246-.552.246H5.848c-.235 0-.426-.086-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.114 1.994 6.824 4.85c.06.242.017.48-.12.654z"/></svg><span class="text-xs opacity-50">{{ getSortIcon('followed_by') }}</span></span>
+              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="follow" /><span class="text-xs opacity-50">{{ getSortIcon('followed_by') }}</span></span>
             </th>
+            <th class="xd-th w-24 px-4 py-2.5 text-center" @click="toggleSort('followersCount')">
+              <span class="inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium">{{ t('followers') }} <span class="opacity-50">{{ getSortIcon('followersCount') }}</span></span>
+            </th>
+            <th class="w-16 px-4 py-2.5 text-center text-[#71767b] font-medium text-xs">{{ t('winCount') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -254,32 +354,52 @@ function openProfile(handle: string) {
             class="border-b border-[#38444d]/30 hover:bg-white/[0.03] transition-colors h-12"
           >
             <td class="w-14 px-4 text-[#71767b]">{{ pageOffset + i + 1 }}</td>
-            <td class="px-4" @mouseenter="onRowEnter(user, $event)" @mouseleave="hoveredUser = null">
+            <td class="px-4">
               <div class="flex items-center gap-3">
-                <img :src="user.avatarUrl" :alt="user.username" class="w-8 h-8 rounded-full shrink-0" />
+                <img :src="user.avatarUrl" :alt="user.username" class="w-8 h-8 rounded-full shrink-0 cursor-pointer" @mouseenter="onRowEnter(user, $event)" @mouseleave="hoveredUser = null" />
                 <span class="font-medium text-[#1d9bf0] truncate max-w-[240px] cursor-pointer hover:underline" @click="openProfile(user.handle)">{{ user.username }}</span>
               </div>
             </td>
             <td class="w-40 px-4 text-[#71767b] truncate">@{{ user.handle }}</td>
             <td class="w-20 px-4 text-center">
-              <span v-if="user.hasRetweet" class="xd-badge xd-badge-green"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg></span>
+              <InteractionBadge v-if="user.hasRetweet" type="retweet" />
               <span v-else class="text-[#38444d]">—</span>
             </td>
             <td class="w-20 px-4 text-center">
-              <span v-if="user.hasLike" class="xd-badge xd-badge-pink"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg></span>
+              <InteractionBadge v-if="user.hasLike" type="like" />
               <span v-else class="text-[#38444d]">—</span>
             </td>
             <td class="w-20 px-4 text-center">
-              <span v-if="user.hasQuote" class="xd-badge xd-badge-orange"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L4.41 15.51V19h3.49l11.24-11.242c.2-.195.2-.513 0-.707l-3.38-3.378-.41.595zm-1.42 1.42l3.38 3.378-1.42 1.414-3.38-3.378 1.42-1.414z"/></svg></span>
+              <InteractionBadge v-if="user.hasQuote" type="quote" />
               <span v-else class="text-[#38444d]">—</span>
             </td>
             <td class="w-20 px-4 text-center">
-              <span v-if="user.followed_by" class="xd-badge xd-badge-blue"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M12 11.816c1.355 0 2.872-.15 3.84-1.256.814-.93 1.078-2.368.806-4.392-.38-2.825-2.117-4.512-4.646-4.512S7.734 3.343 7.354 6.168c-.272 2.024-.008 3.462.806 4.392.968 1.107 2.485 1.256 3.84 1.256zm-3.16-5.448c.162-1.2.787-3.212 3.16-3.212s2.998 2.013 3.16 3.212c.207 1.55.057 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.255-.223-2.71-.743c-.507-.578-.657-1.656-.45-3.205zm11.44 12.868c-.877-3.526-4.282-5.99-8.28-5.99s-7.403 2.464-8.28 5.99c-.172.692-.028 1.4.395 1.94.408.52 1.04.82 1.733.82h12.304c.693 0 1.325-.3 1.733-.82.424-.54.567-1.247.394-1.94zm-1.576 1.016c-.126.16-.316.246-.552.246H5.848c-.235 0-.426-.086-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.114 1.994 6.824 4.85c.06.242.017.48-.12.654z"/></svg></span>
+              <InteractionBadge v-if="user.followed_by" type="follow" />
+              <span v-else class="text-[#38444d]">—</span>
+            </td>
+            <td class="w-24 px-4 text-center text-[#71767b] text-xs">
+              {{ user.followersCount.toLocaleString() }}
+            </td>
+            <td class="w-16 px-4 text-center">
+              <span v-if="getWinCount(user.handle)" class="text-[#ffd700] font-bold text-sm">{{ getWinCount(user.handle) }}</span>
               <span v-else class="text-[#38444d]">—</span>
             </td>
           </tr>
-          <tr v-if="sortedUsers.length === 0">
-            <td colspan="7" class="text-center py-12 text-[#71767b]">{{ t('noUsers') }}</td>
+          <template v-if="sortedUsers.length === 0 && drawData.loading.value">
+            <tr v-for="i in 8" :key="'sk-' + i" class="border-b border-[#38444d]/30 h-12">
+              <td class="w-14 px-4"><div class="h-3 w-6 bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="px-4"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-[#38444d]/50 rounded-full animate-pulse" /><div class="h-3 w-24 bg-[#38444d]/50 rounded animate-pulse" /></div></td>
+              <td class="w-40 px-4"><div class="h-3 w-20 bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-24 px-4"><div class="h-3 w-12 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-16 px-4"><div class="h-3 w-6 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+            </tr>
+          </template>
+          <tr v-else-if="sortedUsers.length === 0">
+            <td colspan="9" class="text-center py-12 text-[#71767b]">{{ t('noUsers') }}</td>
           </tr>
         </tbody>
       </table>
@@ -294,7 +414,7 @@ function openProfile(handle: string) {
           @click="currentPage--"
         >«</button>
         <template v-for="p in visiblePages" :key="p">
-          <span v-if="p === '...'" class="px-1 text-[#71767b]">…</span>
+          <span v-if="typeof p === 'string'" class="px-1 text-[#71767b]">…</span>
           <button
             v-else
             class="xd-tab"
@@ -321,8 +441,24 @@ function openProfile(handle: string) {
   <!-- Draw Settings Modal -->
   <DrawSettings v-if="showSettings" @close="showSettings = false" @draw="onDrawResult" />
 
+  <!-- Draw Animation -->
+  <DrawAnimation
+    v-if="showAnimation"
+    :pool="drawData.mergedUsers.value"
+    :winners="winners"
+    @done="onAnimationDone"
+  />
+
   <!-- Draw Result Modal -->
   <DrawResult v-if="showResult" :winners="winners" @close="showResult = false" />
+
+  <!-- Draw History Modal -->
+  <DrawHistory v-if="showHistory" @close="showHistory = false" />
+
+  <!-- Settings Modal -->
+  <Settings v-if="showSettingsPanel" @close="showSettingsPanel = false" />
+
+  <Toast />
 
   <!-- User Tooltip (fixed position to avoid overflow clipping) -->
   <div
@@ -337,13 +473,17 @@ function openProfile(handle: string) {
         <div class="text-[#71767b] text-sm">@{{ hoveredUser.handle }}</div>
       </div>
     </div>
-    <p v-if="hoveredUser.bio" class="text-[#e7e9ea] text-sm leading-relaxed">{{ hoveredUser.bio }}</p>
-    <p v-else class="text-[#71767b] text-sm italic">{{ t('noBio') }}</p>
+    <div class="flex gap-4 text-sm text-[#71767b]">
+      <span><span class="text-white font-bold">{{ hoveredUser.followingCount.toLocaleString() }}</span> {{ t('followingLabel') }}</span>
+      <span><span class="text-white font-bold">{{ hoveredUser.followersCount.toLocaleString() }}</span> {{ t('followers') }}</span>
+    </div>
+    <p v-if="hoveredUser.bio" class="text-[#e7e9ea] text-sm leading-relaxed mt-1">{{ hoveredUser.bio }}</p>
+    <p v-else class="text-[#71767b] text-sm italic mt-1">{{ t('noBio') }}</p>
     <div class="flex gap-2 mt-2 flex-wrap">
-      <span v-if="hoveredUser.hasRetweet" class="xd-badge xd-badge-green"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>{{ t('retweetType') }}</span>
-      <span v-if="hoveredUser.hasLike" class="xd-badge xd-badge-pink"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg>{{ t('likeType') }}</span>
-      <span v-if="hoveredUser.hasQuote" class="xd-badge xd-badge-orange"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L4.41 15.51V19h3.49l11.24-11.242c.2-.195.2-.513 0-.707l-3.38-3.378-.41.595zm-1.42 1.42l3.38 3.378-1.42 1.414-3.38-3.378 1.42-1.414z"/></svg>{{ t('quoteType') }}</span>
-      <span v-if="hoveredUser.followed_by" class="xd-badge xd-badge-blue"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M12 11.816c1.355 0 2.872-.15 3.84-1.256.814-.93 1.078-2.368.806-4.392-.38-2.825-2.117-4.512-4.646-4.512S7.734 3.343 7.354 6.168c-.272 2.024-.008 3.462.806 4.392.968 1.107 2.485 1.256 3.84 1.256zm-3.16-5.448c.162-1.2.787-3.212 3.16-3.212s2.998 2.013 3.16 3.212c.207 1.55.057 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.255-.223-2.71-.743c-.507-.578-.657-1.656-.45-3.205zm11.44 12.868c-.877-3.526-4.282-5.99-8.28-5.99s-7.403 2.464-8.28 5.99c-.172.692-.028 1.4.395 1.94.408.52 1.04.82 1.733.82h12.304c.693 0 1.325-.3 1.733-.82.424-.54.567-1.247.394-1.94zm-1.576 1.016c-.126.16-.316.246-.552.246H5.848c-.235 0-.426-.086-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.114 1.994 6.824 4.85c.06.242.017.48-.12.654z"/></svg>{{ t('followingYou') }}</span>
+      <InteractionBadge v-if="hoveredUser.hasRetweet" type="retweet" :label="t('retweetType')" />
+      <InteractionBadge v-if="hoveredUser.hasLike" type="like" :label="t('likeType')" />
+      <InteractionBadge v-if="hoveredUser.hasQuote" type="quote" :label="t('quoteType')" />
+      <InteractionBadge v-if="hoveredUser.followed_by" type="follow" :label="t('followingYou')" />
     </div>
   </div>
 </template>
