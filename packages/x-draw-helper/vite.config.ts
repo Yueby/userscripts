@@ -29,8 +29,8 @@ export default defineConfig({
           'ja': 'X(Twitter)の投稿で抽選を行うためのユーザースクリプト'
         },
         author: 'Yueby',
-        version: '0.0.2',
-        grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'unsafeWindow'],
+        version: '0.1.0',
+        grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'GM_listValues', 'GM_deleteValue', 'unsafeWindow'],
         'run-at': 'document-start'
       },
       build: {
