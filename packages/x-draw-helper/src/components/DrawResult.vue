@@ -3,10 +3,14 @@ import { ref } from 'vue';
 import { toPng } from 'html-to-image';
 import type { DrawUser } from '../types';
 import { useI18n } from '../composables/useI18n';
+import { useToast } from '../composables/useToast';
 import { getTweetIdFromUrl } from '../api/twitter';
+import { STORAGE_KEYS } from '../constants';
+import { gmStorage } from '../utils/storage';
+import InteractionBadge from './InteractionBadge.vue';
 import Modal from './Modal.vue';
 
-defineProps<{
+const props = defineProps<{
   winners: DrawUser[];
 }>();
 
@@ -15,7 +19,14 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { show: showToast } = useToast();
 const captureRef = ref<HTMLElement | null>(null);
+const showDmTemplate = ref(false);
+const dmTemplate = ref(gmStorage.get(STORAGE_KEYS.DM_TEMPLATE, t('dmPlaceholder')));
+
+function saveDmTemplate() {
+  gmStorage.set(STORAGE_KEYS.DM_TEMPLATE, dmTemplate.value);
+}
 
 function notifyWinners(winners: DrawUser[]) {
   const tweetId = getTweetIdFromUrl();
@@ -27,7 +38,16 @@ function notifyWinners(winners: DrawUser[]) {
   window.open(intentUrl, '_blank');
 }
 
-function openAllChats(winners: DrawUser[]) {
+async function openAllChats(winners: DrawUser[]) {
+  if (dmTemplate.value.trim()) {
+    const firstWinner = winners[0]?.handle ?? '';
+    const text = dmTemplate.value.replace(/\{winner\}/g, firstWinner);
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t('dmCopied'), 'success');
+    } catch { /* clipboard unavailable */ }
+  }
+
   const urls = winners
     .filter((user) => !!user.id)
     .map((user) => `https://x.com/messages/compose?recipient_id=${user.id}`);
@@ -46,7 +66,17 @@ function openAllChats(winners: DrawUser[]) {
   });
 
   if (opened < urls.length) {
-    alert(t('popupBlocked'));
+    showToast(t('popupBlocked'), 'error', 5000);
+  }
+}
+
+async function copyHandles() {
+  const text = props.winners.map((u) => `@${u.handle}`).join(' ');
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(t('copied'), 'success');
+  } catch {
+    showToast(text, 'info', 5000);
   }
 }
 
@@ -65,13 +95,13 @@ async function takeScreenshot() {
 </script>
 
 <template>
-  <Modal :title="t('drawResult')" width="w-[700px]" :z-index="10001" @close="emit('close')">
+  <Modal :title="t('drawResult')" max-width="700px" :z-index="10001" @close="emit('close')">
     <!-- Scrollable content with capturable area inside -->
     <div class="flex-1 overflow-auto min-h-0">
       <div ref="captureRef">
         <div class="p-4 text-center text-[#e7e9ea] text-sm">{{ t('congratulations') }}</div>
         <div class="px-4 pb-4">
-          <div class="grid grid-cols-4 gap-3">
+          <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }">
             <div
               v-for="user in winners"
               :key="user.handle"
@@ -85,12 +115,15 @@ async function takeScreenshot() {
                   target="_blank"
                   class="text-[#71767b] text-xs truncate hover:underline"
                 >@{{ user.handle }}</a>
+                <div class="text-[#71767b] text-xs mt-0.5">
+                  <span class="text-[#e7e9ea] font-medium">{{ user.followersCount.toLocaleString() }}</span> {{ t('followers') }}
+                </div>
               </div>
               <div class="flex gap-1">
-                <span v-if="user.hasRetweet" class="xd-badge xd-badge-green"><svg viewBox="0 0 24 24" class="w-3 h-3" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg></span>
-                <span v-if="user.hasLike" class="xd-badge xd-badge-pink"><svg viewBox="0 0 24 24" class="w-3 h-3" fill="currentColor"><path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg></span>
-                <span v-if="user.hasQuote" class="xd-badge xd-badge-orange"><svg viewBox="0 0 24 24" class="w-3 h-3" fill="currentColor"><path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L4.41 15.51V19h3.49l11.24-11.242c.2-.195.2-.513 0-.707l-3.38-3.378-.41.595zm-1.42 1.42l3.38 3.378-1.42 1.414-3.38-3.378 1.42-1.414z"/></svg></span>
-                <span v-if="user.followed_by" class="xd-badge xd-badge-blue"><svg viewBox="0 0 24 24" class="w-3 h-3" fill="currentColor"><path d="M12 11.816c1.355 0 2.872-.15 3.84-1.256.814-.93 1.078-2.368.806-4.392-.38-2.825-2.117-4.512-4.646-4.512S7.734 3.343 7.354 6.168c-.272 2.024-.008 3.462.806 4.392.968 1.107 2.485 1.256 3.84 1.256zm-3.16-5.448c.162-1.2.787-3.212 3.16-3.212s2.998 2.013 3.16 3.212c.207 1.55.057 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.255-.223-2.71-.743c-.507-.578-.657-1.656-.45-3.205zm11.44 12.868c-.877-3.526-4.282-5.99-8.28-5.99s-7.403 2.464-8.28 5.99c-.172.692-.028 1.4.395 1.94.408.52 1.04.82 1.733.82h12.304c.693 0 1.325-.3 1.733-.82.424-.54.567-1.247.394-1.94zm-1.576 1.016c-.126.16-.316.246-.552.246H5.848c-.235 0-.426-.086-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.114 1.994 6.824 4.85c.06.242.017.48-.12.654z"/></svg></span>
+                <InteractionBadge v-if="user.hasRetweet" type="retweet" icon-size="w-3 h-3" />
+                <InteractionBadge v-if="user.hasLike" type="like" icon-size="w-3 h-3" />
+                <InteractionBadge v-if="user.hasQuote" type="quote" icon-size="w-3 h-3" />
+                <InteractionBadge v-if="user.followed_by" type="follow" icon-size="w-3 h-3" />
               </div>
             </div>
           </div>
@@ -98,8 +131,29 @@ async function takeScreenshot() {
       </div>
     </div>
 
+    <!-- DM Template -->
+    <div class="px-4 pb-3 shrink-0">
+      <button class="text-xs text-[#71767b] hover:text-[#1d9bf0] transition-colors" @click="showDmTemplate = !showDmTemplate">
+        {{ t('dmTemplate') }} {{ showDmTemplate ? '▲' : '▼' }}
+      </button>
+      <div v-if="showDmTemplate" class="mt-2">
+        <textarea
+          v-model="dmTemplate"
+          class="xd-input w-full text-sm resize-none"
+          rows="3"
+          :placeholder="t('dmPlaceholder')"
+          @blur="saveDmTemplate"
+        />
+        <div class="text-[10px] text-[#71767b] mt-1">{winner} → @handle</div>
+      </div>
+    </div>
+
     <template #footer>
       <div class="p-4 flex justify-center gap-4">
+        <button class="xd-btn xd-btn-secondary" @click="copyHandles">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          {{ t('copyHandles') }}
+        </button>
         <button class="xd-btn xd-btn-secondary" @click="takeScreenshot">
           <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           {{ t('screenshot') }}

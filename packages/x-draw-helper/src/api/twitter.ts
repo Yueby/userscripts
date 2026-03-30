@@ -1,7 +1,7 @@
 import type { User } from '../types';
 import { pageFetch, getTxId } from './transaction';
-
-const LOG = '[x-draw]';
+import { gmStorage } from '../utils/storage';
+import { STORAGE_KEYS } from '../constants';
 
 const BEARER_TOKEN =
   'AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
@@ -83,58 +83,35 @@ const GRAPHQL_FEATURES = {
 };
 
 // ---------------------------------------------------------------------------
-// Endpoint discovery
+// Endpoints
 // ---------------------------------------------------------------------------
 
-const ENDPOINTS: Record<string, string> = {
+export const DEFAULT_ENDPOINTS = {
   retweeters: 'niCJ2QyTuAgZWv01E7mqJQ/Retweeters',
   favoriters: 'aLZ5wrqDYuDm9c_xNl667w/Favoriters',
   searchTimeline: 'GcXk9vN_d1jUfHNqLacXQA/SearchTimeline',
-};
+} as const;
 
-let _endpointsPromise: Promise<void> | null = null;
-export async function initEndpoints(): Promise<void> {
-  if (_endpointsPromise) return _endpointsPromise;
-  _endpointsPromise = _resolveEndpoints().catch(() => { _endpointsPromise = null; });
-  return _endpointsPromise;
-}
+const ENDPOINTS = { ...DEFAULT_ENDPOINTS };
 
-async function _resolveEndpoints(): Promise<void> {
-  const pFetch = pageFetch();
-  const targets: [keyof typeof ENDPOINTS, string][] = [
-    ['retweeters', 'Retweeters'],
-    ['favoriters', 'Favoriters'],
-    ['searchTimeline', 'SearchTimeline'],
-  ];
-  const found = new Set<string>();
-
-  const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script[src]'))
-    .map((s) => s.src)
-    .filter((src) => src.endsWith('.js'));
-
-  for (const url of scripts) {
-    if (found.size === targets.length) break;
-    try {
-      const text = await (await pFetch(url)).text();
-      for (const [key, opName] of targets) {
-        if (found.has(key)) continue;
-        const m =
-          text.match(new RegExp(`queryId:"([^"]+)"[^}]{0,80}operationName:"${opName}"`)) ||
-          text.match(new RegExp(`operationName:"${opName}"[^}]{0,80}queryId:"([^"]+)"`));
-        if (m) {
-          ENDPOINTS[key] = `${m[1]}/${opName}`;
-          found.add(key);
-        }
-      }
-    } catch {
-      continue;
+export function updateEndpoints(custom: Partial<typeof DEFAULT_ENDPOINTS>) {
+  for (const [k, v] of Object.entries(custom)) {
+    if (v && k in ENDPOINTS) {
+      const opName = v.includes('/') ? v.split('/').pop()! : k === 'retweeters' ? 'Retweeters' : k === 'favoriters' ? 'Favoriters' : 'SearchTimeline';
+      (ENDPOINTS as any)[k] = v.includes('/') ? v : `${v}/${opName}`;
     }
   }
+}
 
-  if (found.size < targets.length) {
-    const missing = targets.filter(([k]) => !found.has(k)).map(([, op]) => op);
-    console.warn(LOG, 'endpoints: using hardcoded fallback for', missing.join(', '));
-  }
+export function loadCustomEndpoints() {
+  const saved = gmStorage.get<Record<string, string>>(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
+  if (saved && typeof saved === 'object') updateEndpoints(saved);
+}
+
+loadCustomEndpoints();
+
+export async function initEndpoints(): Promise<void> {
+  // endpoints loaded from storage on module init
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +241,8 @@ async function fetchPaginatedUsers(
           bio: legacy.description || r?.profile_bio?.description || '',
           following: Boolean(perspectives.following ?? legacy.following),
           followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
+          followersCount: Number(legacy.followers_count ?? 0),
+          followingCount: Number(legacy.friends_count ?? 0),
         };
       })
       .filter((u: User) => u.handle !== '');
@@ -346,6 +325,8 @@ function _parseSearchTimeline(data: any): { users: User[]; nextCursor: string | 
         bio: userResult?.profile_bio?.description || legacy.description || '',
         following: Boolean(perspectives.following ?? legacy.following),
         followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
+        followersCount: Number(legacy.followers_count ?? 0),
+        followingCount: Number(legacy.friends_count ?? 0),
       } as User;
     })
     .filter((u: User) => u.handle !== '');

@@ -1,30 +1,22 @@
 import { ref, computed } from 'vue';
-import { GM_getValue, GM_setValue } from '$';
 import type { User, DrawUser, Filters, FilterKey, DrawResult, InteractionData } from '../types';
+import { STORAGE_KEYS } from '../constants';
+import { gmStorage } from '../utils/storage';
 import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, getCsrfToken, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
-
-const CACHE_KEY_PREFIX = 'x-draw-cache-';
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
 interface CachedData {
   retweets: User[];
   likes: User[];
   quotes: User[];
-  timestamp: number;
+  fetchedAt: number;
 }
 
 function loadCache(tweetId: string): CachedData | null {
-  try {
-    const data = GM_getValue(`${CACHE_KEY_PREFIX}${tweetId}`, null) as CachedData | null;
-    if (data && Date.now() - data.timestamp < CACHE_TTL) return data;
-  } catch { /* ignore */ }
-  return null;
+  return gmStorage.get<CachedData | null>(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
 }
 
 function saveCache(tweetId: string, retweets: User[], likes: User[], quotes: User[]) {
-  try {
-    GM_setValue(`${CACHE_KEY_PREFIX}${tweetId}`, { retweets, likes, quotes, timestamp: Date.now() } as CachedData);
-  } catch { /* ignore */ }
+  gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets, likes, quotes, fetchedAt: Date.now() } as CachedData);
 }
 
 const retweets = ref<User[]>([]);
@@ -38,11 +30,11 @@ const filters = ref<Filters>({
 });
 const drawCount = ref(1);
 const loading = ref(false);
-const loadingStatus = ref('');
 const retweetProgress = ref(0);
 const likeProgress = ref(0);
 const quoteProgress = ref(0);
 const lastTweetId = ref<string | null>(null);
+const fetchedAt = ref<number | null>(null);
 
 let abortController: AbortController | null = null;
 
@@ -94,18 +86,24 @@ export function useDrawData() {
     filters.value[key] = !filters.value[key];
   }
 
-  function performDraw(): DrawResult {
-    const users = qualifiedUsers.value;
+  function performDraw(options?: { excludeHandles?: Set<string> }): DrawResult {
+    const count = Math.max(1, Math.floor(drawCount.value) || 1);
+    drawCount.value = count;
+
+    let users = qualifiedUsers.value;
+    if (options?.excludeHandles?.size) {
+      users = users.filter((u) => !options.excludeHandles!.has(u.handle));
+    }
     if (users.length === 0) {
       return { success: false, message: 'noQualifiedUsers' };
     }
-    if (drawCount.value > users.length) {
+    if (count > users.length) {
       return { success: false, message: 'notEnoughUsers', count: users.length };
     }
 
     const temp = [...users];
     const winners: DrawUser[] = [];
-    for (let i = 0; i < drawCount.value; i++) {
+    for (let i = 0; i < count; i++) {
       const idx = Math.floor(Math.random() * temp.length);
       winners.push(temp[idx]);
       temp.splice(idx, 1);
@@ -134,12 +132,12 @@ export function useDrawData() {
       lastTweetId.value = tweetId;
     }
 
-    // Try loading from cache first (instant display)
     const cached = loadCache(tweetId);
     if (cached) {
       retweets.value = cached.retweets;
       likes.value = cached.likes;
       quotes.value = cached.quotes || [];
+      fetchedAt.value = cached.fetchedAt;
     }
 
     loading.value = true;
@@ -150,30 +148,32 @@ export function useDrawData() {
     try {
       await initEndpoints();
 
-      const [retweetData, likeData, quoteData] = await Promise.all([
+      const results = await Promise.allSettled([
         fetchRetweeters(tweetId, csrfToken, {
           signal: abortController.signal,
-          onProgress: (count) => {
-            retweetProgress.value = count;
-          },
+          onProgress: (count) => { retweetProgress.value = count; },
         }),
         fetchFavoriters(tweetId, csrfToken, {
           signal: abortController.signal,
-          onProgress: (count) => {
-            likeProgress.value = count;
-          },
+          onProgress: (count) => { likeProgress.value = count; },
         }),
         fetchQuoteTweeters(tweetId, csrfToken, {
           signal: abortController.signal,
-          onProgress: (count) => {
-            quoteProgress.value = count;
-          },
+          onProgress: (count) => { quoteProgress.value = count; },
         }),
       ]);
+
+      const settled = <T>(r: PromiseSettledResult<T>, fallback: T): T =>
+        r.status === 'fulfilled' ? r.value : fallback;
+
+      const retweetData = settled(results[0], retweets.value);
+      const likeData = settled(results[1], likes.value);
+      const quoteData = settled(results[2], quotes.value);
 
       retweets.value = retweetData;
       likes.value = likeData;
       quotes.value = quoteData;
+      fetchedAt.value = Date.now();
       saveCache(tweetId, retweetData, likeData, quoteData);
 
       return { retweets: retweetData, likes: likeData, quotes: quoteData };
@@ -197,6 +197,7 @@ export function useDrawData() {
     likeProgress.value = 0;
     quoteProgress.value = 0;
     lastTweetId.value = null;
+    fetchedAt.value = null;
   }
 
   return {
@@ -206,11 +207,11 @@ export function useDrawData() {
     filters,
     drawCount,
     loading,
-    loadingStatus,
     retweetProgress,
     likeProgress,
     quoteProgress,
     lastTweetId,
+    fetchedAt,
     mergedUsers,
     qualifiedUsers,
     toggleFilter,
