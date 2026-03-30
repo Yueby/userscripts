@@ -5,7 +5,8 @@ import { useDrawHistory } from '../composables/useDrawHistory';
 import { useExport } from '../composables/useExport';
 import { useI18n } from '../composables/useI18n';
 import { useToast } from '../composables/useToast';
-import { LIMITS, TIMING } from '../constants';
+import { useVersionCheck } from '../composables/useVersionCheck';
+import { LIMITS, TIMING, UI } from '../constants';
 import type { DrawUser, LangKey } from '../types';
 import DrawAnimation from './DrawAnimation.vue';
 import DrawHistory from './DrawHistory.vue';
@@ -16,6 +17,7 @@ import InteractionIcon from './InteractionIcon.vue';
 import Modal from './Modal.vue';
 import Settings from './Settings.vue';
 import Toast from './Toast.vue';
+import UserTooltip from './UserTooltip.vue';
 
 const emit = defineEmits<{
   close: [];
@@ -26,6 +28,8 @@ const drawData = useDrawData();
 const { addEntry, getWinCount } = useDrawHistory();
 const { exportCsv } = useExport();
 const { show: showToast } = useToast();
+const versionCheck = useVersionCheck();
+versionCheck.checkUpdate();
 
 type TabFilter = 'all' | 'retweet' | 'like' | 'quote' | 'followed_by';
 type SortKey = 'username' | 'handle' | 'retweet' | 'like' | 'quote' | 'followed_by' | 'followersCount';
@@ -383,7 +387,7 @@ function openProfile(handle: string) {
             </td>
           </tr>
           <template v-if="sortedUsers.length === 0 && drawData.loading.value">
-            <tr v-for="i in 8" :key="'sk-' + i" class="border-b border-[#38444d]/30 h-12">
+            <tr v-for="i in UI.SKELETON_ROWS" :key="'sk-' + i" class="border-b border-[#38444d]/30 h-12">
               <td class="w-14 px-4"><div class="h-3 w-6 bg-[#38444d]/50 rounded animate-pulse" /></td>
               <td class="px-4"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-[#38444d]/50 rounded-full animate-pulse" /><div class="h-3 w-24 bg-[#38444d]/50 rounded animate-pulse" /></div></td>
               <td class="w-40 px-4"><div class="h-3 w-20 bg-[#38444d]/50 rounded animate-pulse" /></td>
@@ -428,9 +432,33 @@ function openProfile(handle: string) {
     </div>
 
     <template #footer>
-      <div class="px-5 py-2 text-center text-xs text-[#71767b]">
-        {{ t('madeWith') }}
-        <a href="https://github.com/yueby" target="_blank" class="text-[#1d9bf0] hover:underline">Yueby</a>
+      <div class="px-5 py-2 flex items-center justify-between text-xs text-[#71767b]">
+        <span>
+          {{ t('madeWith') }}
+          <a href="https://github.com/yueby" target="_blank" class="text-[#1d9bf0] hover:underline">Yueby</a>
+        </span>
+        <span class="flex items-center gap-2">
+          <span class="opacity-60">{{ t('version', { version: versionCheck.currentVersion.value }) }}</span>
+          <button
+            v-if="versionCheck.checking.value"
+            class="text-[#71767b] cursor-default"
+            disabled
+          >{{ t('checking') }}</button>
+          <button
+            v-else-if="versionCheck.hasUpdate.value"
+            class="text-[#1d9bf0] hover:underline cursor-pointer"
+            @click="versionCheck.openInstallPage()"
+          >{{ t('updateAvailable', { version: versionCheck.latestVersion.value! }) }}</button>
+          <button
+            v-else-if="versionCheck.latestVersion.value"
+            class="text-[#00ba7c] cursor-default"
+          >{{ t('latestVersion') }}</button>
+          <button
+            v-else
+            class="hover:text-[#1d9bf0] cursor-pointer transition-colors"
+            @click="versionCheck.checkUpdate()"
+          >{{ t('checkUpdate') }}</button>
+        </span>
       </div>
     </template>
   </Modal>
@@ -457,30 +485,5 @@ function openProfile(handle: string) {
 
   <Toast />
 
-  <!-- User Tooltip (fixed position to avoid overflow clipping) -->
-  <div
-    v-if="hoveredUser"
-    class="fixed z-[10000] w-72 bg-[#1e2d3d] border border-[#38444d] rounded-xl shadow-xl p-4 pointer-events-none"
-    :style="{ left: tooltipPos.x + 'px', top: (tooltipPos.y - 8) + 'px', transform: 'translateY(-100%)' }"
-  >
-    <div class="flex items-start gap-3 mb-2">
-      <img :src="hoveredUser.avatarUrl" :alt="hoveredUser.username" class="w-12 h-12 rounded-full shrink-0" />
-      <div class="min-w-0">
-        <div class="text-white font-bold truncate">{{ hoveredUser.username }}</div>
-        <div class="text-[#71767b] text-sm">@{{ hoveredUser.handle }}</div>
-      </div>
-    </div>
-    <div class="flex gap-4 text-sm text-[#71767b]">
-      <span><span class="text-white font-bold">{{ hoveredUser.followingCount.toLocaleString() }}</span> {{ t('followingLabel') }}</span>
-      <span><span class="text-white font-bold">{{ hoveredUser.followersCount.toLocaleString() }}</span> {{ t('followers') }}</span>
-    </div>
-    <p v-if="hoveredUser.bio" class="text-[#e7e9ea] text-sm leading-relaxed mt-1">{{ hoveredUser.bio }}</p>
-    <p v-else class="text-[#71767b] text-sm italic mt-1">{{ t('noBio') }}</p>
-    <div class="flex gap-2 mt-2 flex-wrap">
-      <InteractionBadge v-if="hoveredUser.hasRetweet" type="retweet" :label="t('retweetType')" />
-      <InteractionBadge v-if="hoveredUser.hasLike" type="like" :label="t('likeType')" />
-      <InteractionBadge v-if="hoveredUser.hasQuote" type="quote" :label="t('quoteType')" />
-      <InteractionBadge v-if="hoveredUser.followed_by" type="follow" :label="t('followingYou')" />
-    </div>
-  </div>
+  <UserTooltip v-if="hoveredUser" :user="hoveredUser" :x="tooltipPos.x" :y="tooltipPos.y" />
 </template>

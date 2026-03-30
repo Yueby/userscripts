@@ -40,18 +40,20 @@ function handleSave() {
 function handleReset() {
   endpoints.value = { retweeters: '', favoriters: '', searchTimeline: '' };
   gmStorage.set(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
+  updateEndpoints({});
   showToast(t('saved'), 'success');
 }
 
 function handleClearCache() {
-  const keys = GM_listValues?.() ?? [];
+  const allKeys = gmStorage.list();
   let count = 0;
-  for (const key of keys) {
-    if (typeof key === 'string' && key.startsWith(STORAGE_KEYS.TWEET_CACHE_PREFIX)) {
-      GM_deleteValue?.(key);
+  for (const key of allKeys) {
+    if (key.startsWith(STORAGE_KEYS.TWEET_CACHE_PREFIX)) {
+      gmStorage.remove(key);
       count++;
     }
   }
+  gmStorage.remove(STORAGE_KEYS.CACHE_INDEX);
   showToast(`${t('cacheCleared')} (${count})`, 'success');
 }
 
