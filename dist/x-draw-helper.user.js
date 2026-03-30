@@ -11,12 +11,14 @@
 // @match              https://x.com/*
 // @match              https://twitter.com/*
 // @require            https://cdn.jsdelivr.net/npm/vue@3.5.31/dist/vue.global.prod.js
+// @connect            https://raw.githubusercontent.com
 // @grant              GM_addStyle
 // @grant              GM_deleteValue
 // @grant              GM_getValue
 // @grant              GM_listValues
 // @grant              GM_openInTab
 // @grant              GM_setValue
+// @grant              GM_xmlhttpRequest
 // @grant              unsafeWindow
 // @run-at             document-start
 // ==/UserScript==
@@ -75,6 +77,7 @@
   };
   var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
   var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   const gmStorage = {
     get(key, fallback) {
       try {
@@ -323,11 +326,20 @@
     if (saved && typeof saved === "object") updateEndpoints(saved);
   }
   loadCustomEndpoints();
+  function _gmFetch(url) {
+    return new Promise((resolve, reject) => {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url,
+        onload: (res) => res.status >= 200 && res.status < 300 ? resolve(res.responseText) : reject(new Error(`HTTP ${res.status}`)),
+        onerror: () => reject(new Error("network error"))
+      });
+    });
+  }
   async function _resolveFromApiDoc() {
     try {
-      const res = await fetch(API_DOC_URL);
-      if (!res.ok) return false;
-      const data = await res.json();
+      const text = await _gmFetch(API_DOC_URL);
+      const data = JSON.parse(text);
       const graphql = data?.graphql;
       if (!graphql || typeof graphql !== "object") return false;
       let featuresSet = false;
