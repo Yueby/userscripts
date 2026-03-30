@@ -29,7 +29,7 @@ export default defineConfig({
           'ja': 'X(Twitter)の投稿で抽選を行うためのユーザースクリプト'
         },
         author: 'Yueby',
-        version: '0.1.0',
+        version: '0.2.0',
         grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'GM_listValues', 'GM_deleteValue', 'GM_xmlhttpRequest', 'unsafeWindow'],
         connect: ['raw.githubusercontent.com'],
         'run-at': 'document-start'

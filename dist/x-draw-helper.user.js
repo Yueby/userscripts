@@ -3,7 +3,7 @@
 // @name:zh-CN         X(推特) 抽奖助手
 // @name:ja            X 抽選ツール
 // @namespace          yueby.x-draw-helper
-// @version            0.1.0
+// @version            0.2.0
 // @author             Yueby
 // @description        A userscript for conducting draws on X (Twitter) posts
 // @description:zh-CN  X(推特) 推文抽奖助手，支持转发/点赞用户筛选、随机抽奖、结果通知
@@ -15,6 +15,7 @@
 // @grant              GM_addStyle
 // @grant              GM_deleteValue
 // @grant              GM_getValue
+// @grant              GM_info
 // @grant              GM_listValues
 // @grant              GM_openInTab
 // @grant              GM_setValue
@@ -30,7 +31,7 @@
 
   importCSS(" .toast-enter-active[data-v-82edf3f7],.toast-leave-active[data-v-82edf3f7]{transition:all .3s ease}.toast-enter-from[data-v-82edf3f7],.toast-leave-to[data-v-82edf3f7]{opacity:0;transform:translateY(-12px)} ");
 
-  const _sfc_main$b = vue.defineComponent({
+  const _sfc_main$c = vue.defineComponent({
     __name: "TriggerButton",
     emits: ["click"],
     setup(__props) {
@@ -57,14 +58,22 @@
     }
   });
   const STORAGE_KEYS = {
-    TWEET_CACHE_PREFIX: "x-draw-tweet-",
-    DRAW_HISTORY: "x-draw-history",
-    LANGUAGE: "x-draw-helper-lang",
-    DM_TEMPLATE: "x-draw-dm-template",
-    CUSTOM_ENDPOINTS: "x-draw-endpoints"
+    TWEET_CACHE_PREFIX: "xd:cache:",
+    CACHE_INDEX: "xd:cache-index",
+    DRAW_HISTORY: "xd:history",
+    LANGUAGE: "xd:lang",
+    DM_TEMPLATE: "xd:dm-template",
+    CUSTOM_ENDPOINTS: "xd:endpoints"
+  };
+  const LEGACY_KEY_MAP = {
+    "x-draw-history": STORAGE_KEYS.DRAW_HISTORY,
+    "x-draw-helper-lang": STORAGE_KEYS.LANGUAGE,
+    "x-draw-dm-template": STORAGE_KEYS.DM_TEMPLATE,
+    "x-draw-endpoints": STORAGE_KEYS.CUSTOM_ENDPOINTS
   };
   const LIMITS = {
     MAX_HISTORY_ENTRIES: 100,
+    MAX_CACHE_ENTRIES: 50,
     PAGE_SIZE: 20
   };
   const TIMING = {
@@ -75,7 +84,13 @@
     DRAW_ANIMATION_DURATION: 2e3,
     DRAW_ANIMATION_REVEAL_DELAY: 600
   };
+  const UI = {
+    SKELETON_ROWS: 8
+  };
+  var _GM_deleteValue = (() => typeof GM_deleteValue != "undefined" ? GM_deleteValue : void 0)();
   var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+  var _GM_info = (() => typeof GM_info != "undefined" ? GM_info : void 0)();
+  var _GM_listValues = (() => typeof GM_listValues != "undefined" ? GM_listValues : void 0)();
   var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   const gmStorage = {
@@ -91,8 +106,39 @@
         _GM_setValue(key, value);
       } catch {
       }
+    },
+    remove(key) {
+      try {
+        _GM_deleteValue(key);
+      } catch {
+      }
+    },
+    list() {
+      try {
+        return _GM_listValues() ?? [];
+      } catch {
+        return [];
+      }
     }
   };
+  function migrateStorageKeys() {
+    const allKeys = gmStorage.list();
+    for (const key of allKeys) {
+      const newKey = LEGACY_KEY_MAP[key];
+      if (newKey && !allKeys.includes(newKey)) {
+        gmStorage.set(newKey, gmStorage.get(key, null));
+        gmStorage.remove(key);
+      }
+      if (key.startsWith("x-draw-tweet-")) {
+        const tweetId = key.slice("x-draw-tweet-".length);
+        const migratedKey = `${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`;
+        if (!allKeys.includes(migratedKey)) {
+          gmStorage.set(migratedKey, gmStorage.get(key, null));
+        }
+        gmStorage.remove(key);
+      }
+    }
+  }
   const LOG = "[x-draw]";
   let _origPageFetch = null;
   function pageFetch() {
@@ -597,11 +643,29 @@
       }
     }, options.onProgress, selfId ? (u) => u.id !== selfId : void 0);
   }
+  function getCacheIndex() {
+    return gmStorage.get(STORAGE_KEYS.CACHE_INDEX, []);
+  }
+  function setCacheIndex(index) {
+    gmStorage.set(STORAGE_KEYS.CACHE_INDEX, index);
+  }
+  function touchCacheIndex(tweetId) {
+    let index = getCacheIndex().filter((id) => id !== tweetId);
+    index.unshift(tweetId);
+    if (index.length > LIMITS.MAX_CACHE_ENTRIES) {
+      const evicted = index.splice(LIMITS.MAX_CACHE_ENTRIES);
+      for (const id of evicted) {
+        gmStorage.remove(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${id}`);
+      }
+    }
+    setCacheIndex(index);
+  }
   function loadCache(tweetId) {
     return gmStorage.get(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
   }
   function saveCache(tweetId, retweets2, likes2, quotes2) {
     gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets: retweets2, likes: likes2, quotes: quotes2, fetchedAt: Date.now() });
+    touchCacheIndex(tweetId);
   }
   const retweets = vue.ref([]);
   const likes = vue.ref([]);
@@ -871,20 +935,13 @@
     en: {
       drawHelper: "Draw Helper",
       total: "Total",
-      loading: "Loading...",
-      loadingRetweets: "Loading retweets...",
-      loadingLikes: "Loading likes...",
-      loadingQuotes: "Loading quotes...",
       loginRequired: "Failed to get data. Please make sure you are logged in and refresh the page!",
-      useOnTweet: "Please use Draw Helper on a tweet page!",
       retweets: "Retweets",
       likes: "Likes",
       quotes: "Quotes",
       draw: "Draw",
       export: "Export",
-      close: "Close",
       notify: "Notify",
-      filters: "Filters",
       followingMe: "Following me",
       hasRetweeted: "Has retweeted",
       hasLiked: "Has liked",
@@ -897,7 +954,6 @@
       noUsers: "No users found",
       notEnoughUsers: "Only ${count} qualified users!",
       drawResult: "Draw Result",
-      congratulations: "Congratulations to the following users:",
       following: "Following",
       followingYou: "Follows you",
       interactionType: "Interaction Type",
@@ -911,13 +967,10 @@
       likeType: "Like",
       quoteType: "Quote",
       madeWith: "Made with ❤️ by",
-      winnerNotice: "Congratulations to the following winners:\n",
       noBio: "No bio",
       followers: "Followers",
       followingLabel: "Following",
       screenshot: "Screenshot",
-      openChats: "Open Chats",
-      popupBlocked: "Some chat tabs were blocked. Please allow pop-ups for x.com and try again.",
       history: "History",
       drawHistory: "Draw History",
       noHistory: "No draw history yet",
@@ -926,7 +979,6 @@
       participants: "Participants",
       winnersLabel: "Winners",
       viewTweet: "View Tweet",
-      lastFetched: "Last fetched",
       lastResult: "Last Result",
       confirmed: "Confirmed",
       testDraw: "Test",
@@ -934,13 +986,17 @@
       search: "Search users...",
       excludePastWinners: "Exclude past winners",
       copied: "Copied!",
-      copyHandles: "Copy @",
       minutesAgo: "${count} min ago",
       justNow: "Just now",
       refresh: "Refresh",
       dmTemplate: "DM Template",
-      dmPlaceholder: "Hi @{winner}, congratulations on winning! 🎉",
-      dmCopied: "DM text copied, opening chats...",
+      preview: "Preview",
+      notifyTemplate: "Notify Template",
+      newTemplate: "New Template",
+      addTemplate: "Add template",
+      deleteTemplate: "Delete template",
+      editTemplate: "Edit Templates",
+      rename: "Rename",
       drawing: "Drawing...",
       settings: "Settings",
       apiEndpoints: "API Endpoints",
@@ -956,25 +1012,23 @@
       save: "Save",
       saved: "Saved!",
       reset: "Reset to Default",
+      version: "v${version}",
+      checkUpdate: "Check for updates",
+      updateAvailable: "v${version} available",
+      latestVersion: "Latest version",
+      checking: "Checking...",
       langName: "English"
     },
     zh: {
       drawHelper: "抽奖助手",
       total: "总计",
-      loading: "加载中...",
-      loadingRetweets: "正在获取转发数据...",
-      loadingLikes: "正在获取点赞数据...",
-      loadingQuotes: "正在获取引用数据...",
       loginRequired: "获取数据失败，请登录后刷新页面！",
-      useOnTweet: "请在推文页面使用抽奖助手！",
       retweets: "转发",
       likes: "点赞",
       quotes: "引用",
       draw: "抽奖",
       export: "导出",
-      close: "关闭",
       notify: "通知",
-      filters: "筛选条件",
       followingMe: "已关注我",
       hasRetweeted: "已转发",
       hasLiked: "已点赞",
@@ -987,7 +1041,6 @@
       noUsers: "暂无用户数据",
       notEnoughUsers: "仅有 ${count} 位符合条件的用户",
       drawResult: "抽奖结果",
-      congratulations: "恭喜以下用户中奖：",
       following: "已关注",
       followingYou: "关注了你",
       interactionType: "互动类型",
@@ -1001,13 +1054,10 @@
       likeType: "点赞",
       quoteType: "引用",
       madeWith: "开发者：❤️",
-      winnerNotice: "恭喜以下用户获奖：\n",
       noBio: "暂无简介",
       followers: "粉丝",
       followingLabel: "正在关注",
       screenshot: "截图",
-      openChats: "打开聊天",
-      popupBlocked: "部分聊天标签页被浏览器拦截，请允许 x.com 弹窗后重试。",
       history: "历史记录",
       drawHistory: "抽奖历史",
       noHistory: "暂无抽奖记录",
@@ -1016,7 +1066,6 @@
       participants: "参与者",
       winnersLabel: "中奖者",
       viewTweet: "查看推文",
-      lastFetched: "上次获取",
       lastResult: "上次结果",
       confirmed: "已确认",
       testDraw: "测试",
@@ -1024,13 +1073,17 @@
       search: "搜索用户...",
       excludePastWinners: "排除往期中奖者",
       copied: "已复制！",
-      copyHandles: "复制 @",
       minutesAgo: "${count} 分钟前",
       justNow: "刚刚",
       refresh: "刷新",
       dmTemplate: "私信模板",
-      dmPlaceholder: "你好 @{winner}，恭喜中奖！🎉",
-      dmCopied: "私信内容已复制，正在打开聊天...",
+      preview: "预览",
+      notifyTemplate: "通知模板",
+      newTemplate: "新模板",
+      addTemplate: "添加模板",
+      deleteTemplate: "删除模板",
+      editTemplate: "编辑模板",
+      rename: "重命名",
       drawing: "抽奖中...",
       settings: "设置",
       apiEndpoints: "API 端点",
@@ -1046,25 +1099,23 @@
       save: "保存",
       saved: "已保存！",
       reset: "恢复默认",
+      version: "v${version}",
+      checkUpdate: "检查更新",
+      updateAvailable: "v${version} 可更新",
+      latestVersion: "已是最新版",
+      checking: "检查中...",
       langName: "中文"
     },
     ja: {
       drawHelper: "抽選ツール",
       total: "合計",
-      loading: "読み込み中...",
-      loadingRetweets: "リツイートデータを取得中...",
-      loadingLikes: "いいねデータを取得中...",
-      loadingQuotes: "引用ツイートを取得中...",
       loginRequired: "データの取得に失敗しました。ログインして再度お試しください。",
-      useOnTweet: "ツイート画面で使用してください。",
       retweets: "リツイート",
       likes: "いいね",
       quotes: "引用",
       draw: "抽選",
       export: "エクスポート",
-      close: "閉じる",
       notify: "通知",
-      filters: "フィルター",
       followingMe: "フォロワー",
       hasRetweeted: "リツイート済",
       hasLiked: "いいね済",
@@ -1077,7 +1128,6 @@
       noUsers: "ユーザーがいません",
       notEnoughUsers: "対象ユーザーは${count}名のみです",
       drawResult: "抽選結果",
-      congratulations: "当選者は以下の通りです：",
       following: "フォロー中",
       followingYou: "フォローされています",
       interactionType: "アクション",
@@ -1091,13 +1141,10 @@
       likeType: "いいね",
       quoteType: "引用",
       madeWith: "開発者：❤️",
-      winnerNotice: "当選者は以下の通りです：\n",
       noBio: "プロフィールなし",
       followers: "フォロワー",
       followingLabel: "フォロー中",
       screenshot: "スクリーンショット",
-      openChats: "チャットを開く",
-      popupBlocked: "一部のチャットタブがブロックされました。x.com のポップアップを許可して再試行してください。",
       history: "履歴",
       drawHistory: "抽選履歴",
       noHistory: "抽選履歴はまだありません",
@@ -1106,7 +1153,6 @@
       participants: "参加者",
       winnersLabel: "当選者",
       viewTweet: "ツイートを見る",
-      lastFetched: "最終取得",
       lastResult: "前回の結果",
       confirmed: "確定済み",
       testDraw: "テスト",
@@ -1114,13 +1160,17 @@
       search: "ユーザー検索...",
       excludePastWinners: "過去の当選者を除外",
       copied: "コピーしました！",
-      copyHandles: "@ コピー",
       minutesAgo: "${count} 分前",
       justNow: "たった今",
       refresh: "更新",
       dmTemplate: "DMテンプレート",
-      dmPlaceholder: "こんにちは @{winner}さん、当選おめでとうございます！🎉",
-      dmCopied: "DMテキストをコピーしました。チャットを開いています...",
+      preview: "プレビュー",
+      notifyTemplate: "通知テンプレート",
+      newTemplate: "新しいテンプレート",
+      addTemplate: "テンプレートを追加",
+      deleteTemplate: "テンプレートを削除",
+      editTemplate: "テンプレートを編集",
+      rename: "名前の変更",
       drawing: "抽選中...",
       settings: "設定",
       apiEndpoints: "APIエンドポイント",
@@ -1136,6 +1186,11 @@
       save: "保存",
       saved: "保存しました！",
       reset: "デフォルトに戻す",
+      version: "v${version}",
+      checkUpdate: "更新を確認",
+      updateAvailable: "v${version} が利用可能",
+      latestVersion: "最新バージョン",
+      checking: "確認中...",
       langName: "日本語"
     }
   };
@@ -1218,11 +1273,76 @@
     }
     return { toasts, show };
   }
-  const _hoisted_1$8 = { style: { "display": "flex", "align-items": "center", "justify-content": "space-between", "padding": "16px 24px", "border-bottom": "1px solid #38444d", "flex-shrink": "0" } };
-  const _hoisted_2$6 = { style: { "font-size": "18px", "font-weight": "700", "color": "#fff", "overflow": "hidden", "text-overflow": "ellipsis", "white-space": "nowrap", "margin": "0" } };
-  const _hoisted_3$6 = { style: { "display": "flex", "align-items": "center", "gap": "12px", "flex-shrink": "0" } };
-  const _hoisted_4$6 = { style: { "flex": "1", "min-height": "0", "display": "flex", "flex-direction": "column" } };
-  const _hoisted_5$6 = {
+  const REMOTE_URL = "https://raw.githubusercontent.com/Yueby/userscripts/main/dist/x-draw-helper.user.js";
+  const INSTALL_URL = "https://github.com/Yueby/userscripts/raw/main/dist/x-draw-helper.user.js";
+  function getCurrentVersion() {
+    try {
+      return _GM_info.script.version;
+    } catch {
+      return "0.0.0";
+    }
+  }
+  function parseVersion(v) {
+    return v.replace(/[^0-9.]/g, "").split(".").map(Number);
+  }
+  function isNewer(remote, local) {
+    const r = parseVersion(remote);
+    const l = parseVersion(local);
+    for (let i = 0; i < Math.max(r.length, l.length); i++) {
+      const rv = r[i] ?? 0;
+      const lv = l[i] ?? 0;
+      if (rv > lv) return true;
+      if (rv < lv) return false;
+    }
+    return false;
+  }
+  function fetchRemoteVersion() {
+    return new Promise((resolve) => {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: REMOTE_URL,
+        headers: { Range: "bytes=0-1024" },
+        onload: (res) => {
+          const m = res.responseText.match(/@version\s+(\S+)/);
+          resolve(m?.[1] ?? null);
+        },
+        onerror: () => resolve(null)
+      });
+    });
+  }
+  const currentVersion = vue.ref(getCurrentVersion());
+  const latestVersion = vue.ref(null);
+  const hasUpdate = vue.ref(false);
+  const checking = vue.ref(false);
+  async function checkUpdate() {
+    if (checking.value) return;
+    checking.value = true;
+    try {
+      const remote = await fetchRemoteVersion();
+      latestVersion.value = remote;
+      hasUpdate.value = remote ? isNewer(remote, currentVersion.value) : false;
+    } finally {
+      checking.value = false;
+    }
+  }
+  function openInstallPage() {
+    window.open(INSTALL_URL, "_blank");
+  }
+  function useVersionCheck() {
+    return {
+      currentVersion,
+      latestVersion,
+      hasUpdate,
+      checking,
+      checkUpdate,
+      openInstallPage
+    };
+  }
+  const _hoisted_1$9 = { style: { "display": "flex", "align-items": "center", "justify-content": "space-between", "padding": "16px 24px", "border-bottom": "1px solid #38444d", "flex-shrink": "0" } };
+  const _hoisted_2$7 = { style: { "font-size": "18px", "font-weight": "700", "color": "#fff", "overflow": "hidden", "text-overflow": "ellipsis", "white-space": "nowrap", "margin": "0" } };
+  const _hoisted_3$7 = { style: { "display": "flex", "align-items": "center", "gap": "12px", "flex-shrink": "0" } };
+  const _hoisted_4$7 = { style: { "flex": "1", "min-height": "0", "display": "flex", "flex-direction": "column" } };
+  const _hoisted_5$7 = {
     key: 0,
     style: { "border-top": "1px solid #38444d", "flex-shrink": "0" }
   };
@@ -1235,7 +1355,7 @@
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", globalKeydown);
   }
-  const _sfc_main$a = vue.defineComponent({
+  const _sfc_main$b = vue.defineComponent({
     __name: "Modal",
     props: {
       title: {},
@@ -1268,9 +1388,9 @@
           vue.createElementVNode("div", {
             style: vue.normalizeStyle([panelStyle.value, { "background": "#15202b", "border-radius": "16px", "border": "1px solid #38444d", "display": "flex", "flex-direction": "column", "overflow": "hidden", "box-shadow": "0 25px 50px -12px rgba(0,0,0,0.5)" }])
           }, [
-            vue.createElementVNode("div", _hoisted_1$8, [
-              vue.createElementVNode("h2", _hoisted_2$6, vue.toDisplayString(__props.title), 1),
-              vue.createElementVNode("div", _hoisted_3$6, [
+            vue.createElementVNode("div", _hoisted_1$9, [
+              vue.createElementVNode("h2", _hoisted_2$7, vue.toDisplayString(__props.title), 1),
+              vue.createElementVNode("div", _hoisted_3$7, [
                 vue.renderSlot(_ctx.$slots, "header-controls"),
                 vue.createElementVNode("button", {
                   class: "xd-btn-icon",
@@ -1278,10 +1398,10 @@
                 }, "×")
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_4$6, [
+            vue.createElementVNode("div", _hoisted_4$7, [
               vue.renderSlot(_ctx.$slots, "default")
             ]),
-            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$6, [
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$7, [
               vue.renderSlot(_ctx.$slots, "footer")
             ])) : vue.createCommentVNode("", true)
           ], 4)
@@ -1289,14 +1409,14 @@
       };
     }
   });
-  const _hoisted_1$7 = { class: "p-8 flex flex-col items-center gap-6" };
-  const _hoisted_2$5 = { class: "flex gap-4 justify-center flex-wrap" };
-  const _hoisted_3$5 = ["src", "alt"];
-  const _hoisted_4$5 = { class: "text-xs text-white truncate w-full text-center font-medium" };
-  const _hoisted_5$5 = { class: "text-[10px] text-[#71767b] truncate w-full text-center" };
-  const _hoisted_6$5 = { class: "flex items-center gap-2" };
-  const _hoisted_7$5 = { class: "text-[#71767b] text-sm" };
-  const _sfc_main$9 = vue.defineComponent({
+  const _hoisted_1$8 = { class: "p-8 flex flex-col items-center gap-6" };
+  const _hoisted_2$6 = { class: "flex gap-4 justify-center flex-wrap" };
+  const _hoisted_3$6 = ["src", "alt"];
+  const _hoisted_4$6 = { class: "text-xs text-white truncate w-full text-center font-medium" };
+  const _hoisted_5$6 = { class: "text-[10px] text-[#71767b] truncate w-full text-center" };
+  const _hoisted_6$6 = { class: "flex items-center gap-2" };
+  const _hoisted_7$6 = { class: "text-[#71767b] text-sm" };
+  const _sfc_main$a = vue.defineComponent({
     __name: "DrawAnimation",
     props: {
       pool: {},
@@ -1338,15 +1458,15 @@
         if (timeoutId) clearTimeout(timeoutId);
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$a, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
           title: vue.unref(t2)("drawing"),
           "max-width": "500px",
           "z-index": 10002,
           onClose: _cache[0] || (_cache[0] = ($event) => emit("done"))
         }, {
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$7, [
-              vue.createElementVNode("div", _hoisted_2$5, [
+            vue.createElementVNode("div", _hoisted_1$8, [
+              vue.createElementVNode("div", _hoisted_2$6, [
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(slots.value, (slot, i) => {
                   return vue.openBlock(), vue.createElementBlock("div", {
                     key: i,
@@ -1356,13 +1476,13 @@
                       src: slot.avatarUrl,
                       alt: slot.username,
                       class: "w-14 h-14 rounded-full"
-                    }, null, 8, _hoisted_3$5),
-                    vue.createElementVNode("div", _hoisted_4$5, vue.toDisplayString(slot.username), 1),
-                    vue.createElementVNode("div", _hoisted_5$5, "@" + vue.toDisplayString(slot.handle), 1)
+                    }, null, 8, _hoisted_3$6),
+                    vue.createElementVNode("div", _hoisted_4$6, vue.toDisplayString(slot.username), 1),
+                    vue.createElementVNode("div", _hoisted_5$6, "@" + vue.toDisplayString(slot.handle), 1)
                   ]);
                 }), 128))
               ]),
-              vue.createElementVNode("div", _hoisted_6$5, [
+              vue.createElementVNode("div", _hoisted_6$6, [
                 _cache[1] || (_cache[1] = vue.createElementVNode("svg", {
                   class: "animate-spin h-5 w-5 text-[#1d9bf0]",
                   viewBox: "0 0 24 24",
@@ -1382,7 +1502,7 @@
                     d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   })
                 ], -1)),
-                vue.createElementVNode("span", _hoisted_7$5, vue.toDisplayString(vue.unref(t2)("drawing")), 1)
+                vue.createElementVNode("span", _hoisted_7$6, vue.toDisplayString(vue.unref(t2)("drawing")), 1)
               ])
             ])
           ]),
@@ -1391,23 +1511,23 @@
       };
     }
   });
-  const _hoisted_1$6 = { class: "flex-1 overflow-auto min-h-0 p-4" };
-  const _hoisted_2$4 = {
+  const _hoisted_1$7 = { class: "flex-1 overflow-auto min-h-0 p-4" };
+  const _hoisted_2$5 = {
     key: 0,
     class: "flex items-center justify-center h-full text-[#71767b]"
   };
-  const _hoisted_3$4 = {
+  const _hoisted_3$5 = {
     key: 1,
     class: "flex flex-col gap-3"
   };
-  const _hoisted_4$4 = { class: "flex items-center justify-between mb-3" };
-  const _hoisted_5$4 = { class: "flex items-center gap-3 text-sm" };
-  const _hoisted_6$4 = ["onClick"];
-  const _hoisted_7$4 = { class: "text-[#71767b]" };
-  const _hoisted_8$4 = { class: "text-[#71767b]" };
-  const _hoisted_9$4 = { class: "flex items-center gap-2" };
-  const _hoisted_10$3 = ["href"];
-  const _hoisted_11$3 = ["onClick"];
+  const _hoisted_4$5 = { class: "flex items-center justify-between mb-3" };
+  const _hoisted_5$5 = { class: "flex items-center gap-3 text-sm" };
+  const _hoisted_6$5 = ["onClick"];
+  const _hoisted_7$5 = { class: "text-[#71767b]" };
+  const _hoisted_8$5 = { class: "text-[#71767b]" };
+  const _hoisted_9$5 = { class: "flex items-center gap-2" };
+  const _hoisted_10$4 = ["href"];
+  const _hoisted_11$4 = ["onClick"];
   const _hoisted_12$3 = { class: "flex gap-1.5 mb-3 flex-wrap" };
   const _hoisted_13$3 = {
     key: 0,
@@ -1421,16 +1541,16 @@
     key: 2,
     class: "xd-badge xd-badge-orange"
   };
-  const _hoisted_16$1 = {
+  const _hoisted_16$2 = {
     key: 3,
     class: "xd-badge xd-badge-blue"
   };
-  const _hoisted_17$1 = { class: "text-xs text-[#71767b] mb-2" };
-  const _hoisted_18$1 = { class: "flex flex-wrap gap-2" };
-  const _hoisted_19$1 = ["href"];
-  const _hoisted_20$1 = ["src", "alt"];
-  const _hoisted_21$1 = { class: "text-sm text-[#e7e9ea]" };
-  const _sfc_main$8 = vue.defineComponent({
+  const _hoisted_17$2 = { class: "text-xs text-[#71767b] mb-2" };
+  const _hoisted_18$2 = { class: "flex flex-wrap gap-2" };
+  const _hoisted_19$2 = ["href"];
+  const _hoisted_20$2 = ["src", "alt"];
+  const _hoisted_21$2 = { class: "text-sm text-[#e7e9ea]" };
+  const _sfc_main$9 = vue.defineComponent({
     __name: "DrawHistory",
     emits: ["close"],
     setup(__props, { emit: __emit }) {
@@ -1441,7 +1561,7 @@
         if (confirm(t2("confirmClear"))) clearHistory();
       }
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$a, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
           title: vue.unref(t2)("drawHistory"),
           "max-width": "700px",
           "max-height": "600px",
@@ -1456,43 +1576,43 @@
             }, vue.toDisplayString(vue.unref(t2)("clearHistory")), 1)) : vue.createCommentVNode("", true)
           ]),
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$6, [
-              vue.unref(history2).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$4, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$4, [
+            vue.createElementVNode("div", _hoisted_1$7, [
+              vue.unref(history2).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$5, [
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(history2), (entry) => {
                   return vue.openBlock(), vue.createElementBlock("div", {
                     key: entry.id,
                     class: vue.normalizeClass(["rounded-xl border p-4", entry.confirmed ? "bg-[#1e2d3d] border-[#38444d]" : "bg-[#1e2d3d]/50 border-[#38444d]/50 opacity-70"])
                   }, [
-                    vue.createElementVNode("div", _hoisted_4$4, [
-                      vue.createElementVNode("div", _hoisted_5$4, [
+                    vue.createElementVNode("div", _hoisted_4$5, [
+                      vue.createElementVNode("div", _hoisted_5$5, [
                         vue.createElementVNode("button", {
                           class: vue.normalizeClass(["xd-btn text-xs px-2 py-0.5", entry.confirmed ? "xd-btn-success" : "xd-btn-secondary"]),
                           onClick: ($event) => vue.unref(toggleConfirm)(entry.id)
-                        }, vue.toDisplayString(entry.confirmed ? vue.unref(t2)("confirmed") : vue.unref(t2)("testDraw")), 11, _hoisted_6$4),
-                        vue.createElementVNode("span", _hoisted_7$4, vue.toDisplayString(vue.unref(formatDateTime)(entry.timestamp)), 1),
+                        }, vue.toDisplayString(entry.confirmed ? vue.unref(t2)("confirmed") : vue.unref(t2)("testDraw")), 11, _hoisted_6$5),
+                        vue.createElementVNode("span", _hoisted_7$5, vue.toDisplayString(vue.unref(formatDateTime)(entry.timestamp)), 1),
                         _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "text-[#71767b]" }, "·", -1)),
-                        vue.createElementVNode("span", _hoisted_8$4, vue.toDisplayString(vue.unref(t2)("participants")) + ": " + vue.toDisplayString(entry.totalParticipants), 1)
+                        vue.createElementVNode("span", _hoisted_8$5, vue.toDisplayString(vue.unref(t2)("participants")) + ": " + vue.toDisplayString(entry.totalParticipants), 1)
                       ]),
-                      vue.createElementVNode("div", _hoisted_9$4, [
+                      vue.createElementVNode("div", _hoisted_9$5, [
                         vue.createElementVNode("a", {
                           href: entry.tweetUrl,
                           target: "_blank",
                           class: "text-[#1d9bf0] text-sm hover:underline"
-                        }, vue.toDisplayString(vue.unref(t2)("viewTweet")), 9, _hoisted_10$3),
+                        }, vue.toDisplayString(vue.unref(t2)("viewTweet")), 9, _hoisted_10$4),
                         vue.createElementVNode("button", {
                           class: "xd-btn-icon text-sm",
                           onClick: ($event) => vue.unref(removeEntry)(entry.id)
-                        }, "×", 8, _hoisted_11$3)
+                        }, "×", 8, _hoisted_11$4)
                       ])
                     ]),
                     vue.createElementVNode("div", _hoisted_12$3, [
                       entry.filters.retweet ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_13$3, vue.toDisplayString(vue.unref(t2)("hasRetweeted")), 1)) : vue.createCommentVNode("", true),
                       entry.filters.like ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_14$3, vue.toDisplayString(vue.unref(t2)("hasLiked")), 1)) : vue.createCommentVNode("", true),
                       entry.filters.quote ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15$2, vue.toDisplayString(vue.unref(t2)("hasQuoted")), 1)) : vue.createCommentVNode("", true),
-                      entry.filters.followed_by ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16$1, vue.toDisplayString(vue.unref(t2)("followingMe")), 1)) : vue.createCommentVNode("", true)
+                      entry.filters.followed_by ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16$2, vue.toDisplayString(vue.unref(t2)("followingMe")), 1)) : vue.createCommentVNode("", true)
                     ]),
-                    vue.createElementVNode("div", _hoisted_17$1, vue.toDisplayString(vue.unref(t2)("winnersLabel")) + " (" + vue.toDisplayString(entry.winners.length) + ")", 1),
-                    vue.createElementVNode("div", _hoisted_18$1, [
+                    vue.createElementVNode("div", _hoisted_17$2, vue.toDisplayString(vue.unref(t2)("winnersLabel")) + " (" + vue.toDisplayString(entry.winners.length) + ")", 1),
+                    vue.createElementVNode("div", _hoisted_18$2, [
                       (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(entry.winners, (winner) => {
                         return vue.openBlock(), vue.createElementBlock("a", {
                           key: winner.handle,
@@ -1504,9 +1624,9 @@
                             src: winner.avatarUrl,
                             alt: winner.username,
                             class: "w-6 h-6 rounded-full"
-                          }, null, 8, _hoisted_20$1),
-                          vue.createElementVNode("span", _hoisted_21$1, "@" + vue.toDisplayString(winner.handle), 1)
-                        ], 8, _hoisted_19$1);
+                          }, null, 8, _hoisted_20$2),
+                          vue.createElementVNode("span", _hoisted_21$2, "@" + vue.toDisplayString(winner.handle), 1)
+                        ], 8, _hoisted_19$2);
                       }), 128))
                     ])
                   ], 2);
@@ -2290,8 +2410,77 @@
     const canvas = await toCanvas(node, options);
     return canvas.toDataURL();
   }
-  const _hoisted_1$5 = ["d"];
-  const _sfc_main$7 = vue.defineComponent({
+  const DEFAULT_TEMPLATES = [
+    {
+      id: "en",
+      name: "English",
+      dm: "Hi {winner}, congratulations on winning! 🎉\n{tweet}",
+      notify: "Congratulations to the winners:\n{winners}"
+    },
+    {
+      id: "zh",
+      name: "中文",
+      dm: "你好 {winner}，恭喜中奖！🎉\n{tweet}",
+      notify: "恭喜以下用户获奖：\n{winners}"
+    },
+    {
+      id: "ja",
+      name: "日本語",
+      dm: "こんにちは {winner}さん、当選おめでとうございます！🎉\n{tweet}",
+      notify: "当選者は以下の通りです：\n{winners}"
+    }
+  ];
+  function loadStore() {
+    const saved = gmStorage.get(STORAGE_KEYS.DM_TEMPLATE, null);
+    if (saved?.templates?.length) return saved;
+    return { templates: [...DEFAULT_TEMPLATES], activeId: DEFAULT_TEMPLATES[0].id };
+  }
+  function persist(store2) {
+    gmStorage.set(STORAGE_KEYS.DM_TEMPLATE, store2);
+  }
+  const store = vue.ref(loadStore());
+  function genId() {
+    return `tpl-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+  }
+  function useTemplates() {
+    const templates = vue.computed(() => store.value.templates);
+    const activeId = vue.computed(() => store.value.activeId);
+    const active = vue.computed(
+      () => store.value.templates.find((t2) => t2.id === store.value.activeId) ?? store.value.templates[0]
+    );
+    function setActive(id) {
+      store.value = { ...store.value, activeId: id };
+      persist(store.value);
+    }
+    function add(name) {
+      const tpl = { id: genId(), name, dm: "", notify: "" };
+      store.value = {
+        templates: [...store.value.templates, tpl],
+        activeId: tpl.id
+      };
+      persist(store.value);
+      return tpl;
+    }
+    function remove(id) {
+      const remaining = store.value.templates.filter((t2) => t2.id !== id);
+      if (!remaining.length) return;
+      const newActiveId = store.value.activeId === id ? remaining[0].id : store.value.activeId;
+      store.value = { templates: remaining, activeId: newActiveId };
+      persist(store.value);
+    }
+    function update(id, patch) {
+      store.value = {
+        ...store.value,
+        templates: store.value.templates.map(
+          (t2) => t2.id === id ? { ...t2, ...patch } : t2
+        )
+      };
+      persist(store.value);
+    }
+    return { templates, activeId, active, setActive, add, remove, update };
+  }
+  const _hoisted_1$6 = ["d"];
+  const _sfc_main$8 = vue.defineComponent({
     __name: "InteractionIcon",
     props: {
       type: {},
@@ -2318,12 +2507,12 @@
         }, [
           vue.createElementVNode("path", {
             d: PATHS[__props.type]
-          }, null, 8, _hoisted_1$5)
+          }, null, 8, _hoisted_1$6)
         ], 2);
       };
     }
   });
-  const _sfc_main$6 = vue.defineComponent({
+  const _sfc_main$7 = vue.defineComponent({
     __name: "InteractionBadge",
     props: {
       type: {},
@@ -2341,7 +2530,7 @@
         return vue.openBlock(), vue.createElementBlock("span", {
           class: vue.normalizeClass(["xd-badge", BADGE_VARIANTS[__props.type]])
         }, [
-          vue.createVNode(_sfc_main$7, {
+          vue.createVNode(_sfc_main$8, {
             type: __props.type,
             size: __props.iconSize ?? "w-3.5 h-3.5"
           }, null, 8, ["type", "size"]),
@@ -2352,24 +2541,120 @@
       };
     }
   });
-  const _hoisted_1$4 = { class: "flex-1 overflow-auto min-h-0" };
-  const _hoisted_2$3 = { class: "p-4 text-center text-[#e7e9ea] text-sm" };
-  const _hoisted_3$3 = { class: "px-4 pb-4" };
-  const _hoisted_4$3 = { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "12px" } };
-  const _hoisted_5$3 = ["src", "alt"];
-  const _hoisted_6$3 = { class: "text-center min-w-0 w-full" };
-  const _hoisted_7$3 = { class: "text-white font-medium text-sm truncate" };
-  const _hoisted_8$3 = ["href"];
-  const _hoisted_9$3 = { class: "text-[#71767b] text-xs mt-0.5" };
-  const _hoisted_10$2 = { class: "text-[#e7e9ea] font-medium" };
-  const _hoisted_11$2 = { class: "flex gap-1" };
-  const _hoisted_12$2 = { class: "px-4 pb-3 shrink-0" };
-  const _hoisted_13$2 = {
+  const _hoisted_1$5 = { class: "flex items-start gap-3 mb-2" };
+  const _hoisted_2$4 = ["src", "alt"];
+  const _hoisted_3$4 = { class: "min-w-0" };
+  const _hoisted_4$4 = { class: "text-white font-bold truncate" };
+  const _hoisted_5$4 = { class: "text-[#71767b] text-sm" };
+  const _hoisted_6$4 = { class: "flex gap-4 text-sm text-[#71767b]" };
+  const _hoisted_7$4 = { class: "text-white font-bold" };
+  const _hoisted_8$4 = { class: "text-white font-bold" };
+  const _hoisted_9$4 = {
     key: 0,
-    class: "mt-2"
+    class: "text-[#e7e9ea] text-sm leading-relaxed mt-1"
   };
-  const _hoisted_14$2 = ["placeholder"];
-  const _hoisted_15$1 = { class: "p-4 flex justify-center gap-4" };
+  const _hoisted_10$3 = {
+    key: 1,
+    class: "text-[#71767b] text-sm italic mt-1"
+  };
+  const _hoisted_11$3 = { class: "flex gap-2 mt-2 flex-wrap" };
+  const _sfc_main$6 = vue.defineComponent({
+    __name: "UserTooltip",
+    props: {
+      user: {},
+      x: {},
+      y: {}
+    },
+    setup(__props) {
+      const { t: t2 } = useI18n();
+      return (_ctx, _cache) => {
+        return vue.openBlock(), vue.createElementBlock("div", {
+          class: "fixed z-[10003] w-72 bg-[#1e2d3d] border border-[#38444d] rounded-xl shadow-xl p-4 pointer-events-none",
+          style: vue.normalizeStyle({ left: __props.x + "px", top: __props.y - 8 + "px", transform: "translate(-50%, -100%)" })
+        }, [
+          vue.createElementVNode("div", _hoisted_1$5, [
+            vue.createElementVNode("img", {
+              src: __props.user.avatarUrl,
+              alt: __props.user.username,
+              class: "w-12 h-12 rounded-full shrink-0"
+            }, null, 8, _hoisted_2$4),
+            vue.createElementVNode("div", _hoisted_3$4, [
+              vue.createElementVNode("div", _hoisted_4$4, vue.toDisplayString(__props.user.username), 1),
+              vue.createElementVNode("div", _hoisted_5$4, "@" + vue.toDisplayString(__props.user.handle), 1)
+            ])
+          ]),
+          vue.createElementVNode("div", _hoisted_6$4, [
+            vue.createElementVNode("span", null, [
+              vue.createElementVNode("span", _hoisted_7$4, vue.toDisplayString(__props.user.followingCount.toLocaleString()), 1),
+              vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followingLabel")), 1)
+            ]),
+            vue.createElementVNode("span", null, [
+              vue.createElementVNode("span", _hoisted_8$4, vue.toDisplayString(__props.user.followersCount.toLocaleString()), 1),
+              vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
+            ])
+          ]),
+          __props.user.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_9$4, vue.toDisplayString(__props.user.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_10$3, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
+          vue.createElementVNode("div", _hoisted_11$3, [
+            __props.user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+              key: 0,
+              type: "retweet",
+              label: vue.unref(t2)("retweetType")
+            }, null, 8, ["label"])) : vue.createCommentVNode("", true),
+            __props.user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+              key: 1,
+              type: "like",
+              label: vue.unref(t2)("likeType")
+            }, null, 8, ["label"])) : vue.createCommentVNode("", true),
+            __props.user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+              key: 2,
+              type: "quote",
+              label: vue.unref(t2)("quoteType")
+            }, null, 8, ["label"])) : vue.createCommentVNode("", true),
+            __props.user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+              key: 3,
+              type: "follow",
+              label: vue.unref(t2)("followingYou")
+            }, null, 8, ["label"])) : vue.createCommentVNode("", true)
+          ])
+        ], 4);
+      };
+    }
+  });
+  const _hoisted_1$4 = { class: "flex-1 overflow-auto min-h-0" };
+  const _hoisted_2$3 = { class: "px-4 py-4" };
+  const _hoisted_3$3 = { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "12px" } };
+  const _hoisted_4$3 = ["src", "alt", "onMouseenter", "onClick"];
+  const _hoisted_5$3 = { class: "text-center min-w-0 w-full" };
+  const _hoisted_6$3 = { class: "text-white font-medium text-sm truncate" };
+  const _hoisted_7$3 = { class: "text-[#71767b] text-xs truncate" };
+  const _hoisted_8$3 = { class: "flex gap-1" };
+  const _hoisted_9$3 = { class: "px-4 py-3 flex items-center justify-between border-t border-[#38444d]" };
+  const _hoisted_10$2 = { class: "flex items-center gap-2" };
+  const _hoisted_11$2 = ["value"];
+  const _hoisted_12$2 = ["value"];
+  const _hoisted_13$2 = ["title"];
+  const _hoisted_14$2 = { class: "flex gap-2" };
+  const _hoisted_15$1 = { class: "flex-1 overflow-auto min-h-0 p-4 space-y-4" };
+  const _hoisted_16$1 = { class: "flex items-center gap-2" };
+  const _hoisted_17$1 = ["value"];
+  const _hoisted_18$1 = ["value"];
+  const _hoisted_19$1 = ["title"];
+  const _hoisted_20$1 = ["title"];
+  const _hoisted_21$1 = ["title"];
+  const _hoisted_22$1 = { class: "bg-[#273340] rounded-xl p-3" };
+  const _hoisted_23$1 = { class: "flex items-center justify-between mb-2" };
+  const _hoisted_24$1 = { class: "text-xs text-[#71767b] font-medium" };
+  const _hoisted_25$1 = ["value"];
+  const _hoisted_26$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
+  const _hoisted_27$1 = { class: "opacity-60" };
+  const _hoisted_28$1 = { class: "text-[#e7e9ea] ml-1" };
+  const _hoisted_29$1 = { class: "bg-[#273340] rounded-xl p-3" };
+  const _hoisted_30$1 = { class: "flex items-center justify-between mb-2" };
+  const _hoisted_31$1 = { class: "text-xs text-[#71767b] font-medium" };
+  const _hoisted_32$1 = ["value"];
+  const _hoisted_33$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
+  const _hoisted_34$1 = { class: "opacity-60" };
+  const _hoisted_35$1 = { class: "text-[#e7e9ea] ml-1" };
   const _sfc_main$5 = vue.defineComponent({
     __name: "DrawResult",
     props: {
@@ -2381,54 +2666,52 @@
       const emit = __emit;
       const { t: t2 } = useI18n();
       const { show: showToast } = useToast();
+      const tpl = useTemplates();
       const captureRef = vue.ref(null);
-      const showDmTemplate = vue.ref(false);
-      const dmTemplate = vue.ref(gmStorage.get(STORAGE_KEYS.DM_TEMPLATE, t2("dmPlaceholder")));
-      function saveDmTemplate() {
-        gmStorage.set(STORAGE_KEYS.DM_TEMPLATE, dmTemplate.value);
-      }
-      function notifyWinners(winners) {
+      const showTemplateEditor = vue.ref(false);
+      const editingName = vue.ref(false);
+      const nameInput = vue.ref("");
+      const hoveredUser = vue.ref(null);
+      const tooltipPos = vue.ref({ x: 0, y: 0 });
+      function getTweetUrl() {
         const tweetId = getTweetIdFromUrl();
-        if (!tweetId) return;
-        const winnersText = winners.map((u) => `@${u.handle}`).join(" ");
-        const notifyText = t2("winnerNotice") + winnersText;
-        const intentUrl = `https://x.com/intent/post?in_reply_to=${tweetId}&text=${encodeURIComponent(notifyText)}`;
-        window.open(intentUrl, "_blank");
+        return tweetId ? window.location.href.split("?")[0] : "";
       }
-      async function openAllChats(winners) {
-        if (dmTemplate.value.trim()) {
-          const firstWinner = winners[0]?.handle ?? "";
-          const text = dmTemplate.value.replace(/\{winner\}/g, firstWinner);
-          try {
-            await navigator.clipboard.writeText(text);
-            showToast(t2("dmCopied"), "success");
-          } catch {
-          }
-        }
-        const urls = winners.filter((user) => !!user.id).map((user) => `https://x.com/messages/compose?recipient_id=${user.id}`);
-        if (typeof GM_openInTab === "function") {
-          urls.forEach((url) => {
-            GM_openInTab(url, false);
-          });
-          return;
-        }
-        let opened = 0;
-        urls.forEach((url) => {
-          const tab = window.open(url, "_blank");
-          if (tab) opened++;
-        });
-        if (opened < urls.length) {
-          showToast(t2("popupBlocked"), "error", 5e3);
-        }
+      function render(template, vars) {
+        return Object.entries(vars).reduce(
+          (s, [k, v]) => s.replace(new RegExp(`\\{${k}\\}`, "g"), v),
+          template
+        );
       }
-      async function copyHandles() {
-        const text = props.winners.map((u) => `@${u.handle}`).join(" ");
+      function renderDm(handle) {
+        return render(tpl.active.value.dm, { winner: `@${handle}`, tweet: getTweetUrl() });
+      }
+      const dmPreview = vue.computed(() => renderDm(props.winners[0]?.handle ?? "user"));
+      const notifyPreview = vue.computed(() => {
+        const handles = props.winners.map((u) => `@${u.handle}`).join(" ");
+        return render(tpl.active.value.notify, { winners: handles, tweet: getTweetUrl() });
+      });
+      async function onAvatarClick(user) {
+        const text = renderDm(user.handle);
         try {
           await navigator.clipboard.writeText(text);
           showToast(t2("copied"), "success");
         } catch {
-          showToast(text, "info", 5e3);
         }
+        const url = user.id ? `https://x.com/messages/compose?recipient_id=${user.id}` : `https://x.com/${user.handle}`;
+        if (typeof GM_openInTab === "function") {
+          GM_openInTab(url, false);
+        } else {
+          window.open(url, "_blank");
+        }
+      }
+      function notifyWinners() {
+        const tweetId = getTweetIdFromUrl();
+        if (!tweetId) return;
+        const handles = props.winners.map((u) => `@${u.handle}`).join(" ");
+        const text = render(tpl.active.value.notify, { winners: handles, tweet: getTweetUrl() });
+        const intentUrl = `https://x.com/intent/post?in_reply_to=${tweetId}&text=${encodeURIComponent(text)}`;
+        window.open(intentUrl, "_blank");
       }
       async function takeScreenshot() {
         if (!captureRef.value) return;
@@ -2441,161 +2724,298 @@
         } catch {
         }
       }
+      function handleAdd() {
+        const newTpl = tpl.add(t2("newTemplate"));
+        nameInput.value = newTpl.name;
+        editingName.value = true;
+      }
+      function handleDelete() {
+        if (tpl.templates.value.length <= 1) return;
+        tpl.remove(tpl.activeId.value);
+      }
+      function startRename() {
+        nameInput.value = tpl.active.value.name;
+        editingName.value = true;
+      }
+      function finishRename() {
+        if (nameInput.value.trim()) {
+          tpl.update(tpl.activeId.value, { name: nameInput.value.trim() });
+        }
+        editingName.value = false;
+      }
+      function onAvatarEnter(user, e) {
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
+        hoveredUser.value = user;
+      }
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$a, {
-          title: vue.unref(t2)("drawResult"),
-          "max-width": "700px",
-          "z-index": 10001,
-          onClose: _cache[4] || (_cache[4] = ($event) => emit("close"))
-        }, {
-          footer: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_15$1, [
-              vue.createElementVNode("button", {
-                class: "xd-btn xd-btn-secondary",
-                onClick: copyHandles
-              }, [
-                _cache[6] || (_cache[6] = vue.createElementVNode("svg", {
-                  viewBox: "0 0 24 24",
-                  class: "w-4 h-4",
-                  fill: "none",
-                  stroke: "currentColor",
-                  "stroke-width": "2",
-                  "stroke-linecap": "round",
-                  "stroke-linejoin": "round"
-                }, [
-                  vue.createElementVNode("rect", {
-                    x: "9",
-                    y: "9",
-                    width: "13",
-                    height: "13",
-                    rx: "2",
-                    ry: "2"
-                  }),
-                  vue.createElementVNode("path", { d: "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" })
-                ], -1)),
-                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("copyHandles")), 1)
-              ]),
-              vue.createElementVNode("button", {
-                class: "xd-btn xd-btn-secondary",
-                onClick: takeScreenshot
-              }, [
-                _cache[7] || (_cache[7] = vue.createElementVNode("svg", {
-                  viewBox: "0 0 24 24",
-                  class: "w-4 h-4",
-                  fill: "none",
-                  stroke: "currentColor",
-                  "stroke-width": "2",
-                  "stroke-linecap": "round",
-                  "stroke-linejoin": "round"
-                }, [
-                  vue.createElementVNode("path", { d: "M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" }),
-                  vue.createElementVNode("circle", {
-                    cx: "12",
-                    cy: "13",
-                    r: "4"
-                  })
-                ], -1)),
-                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("screenshot")), 1)
-              ]),
-              vue.createElementVNode("button", {
-                class: "xd-btn xd-btn-primary",
-                onClick: _cache[2] || (_cache[2] = ($event) => openAllChats(__props.winners))
-              }, [
-                _cache[8] || (_cache[8] = vue.createElementVNode("svg", {
-                  viewBox: "0 0 24 24",
-                  class: "w-4 h-4",
-                  fill: "currentColor"
-                }, [
-                  vue.createElementVNode("path", { d: "M1.998 5.5a2.5 2.5 0 0 1 2.5-2.5h15a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-6l-3 3-3-3h-3a2.5 2.5 0 0 1-2.5-2.5v-9z" })
-                ], -1)),
-                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("openChats")), 1)
-              ]),
-              vue.createElementVNode("button", {
-                class: "xd-btn xd-btn-success",
-                onClick: _cache[3] || (_cache[3] = ($event) => notifyWinners(__props.winners))
-              }, vue.toDisplayString(vue.unref(t2)("notify")), 1)
-            ])
-          ]),
-          default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$4, [
-              vue.createElementVNode("div", {
-                ref_key: "captureRef",
-                ref: captureRef
-              }, [
-                vue.createElementVNode("div", _hoisted_2$3, vue.toDisplayString(vue.unref(t2)("congratulations")), 1),
-                vue.createElementVNode("div", _hoisted_3$3, [
-                  vue.createElementVNode("div", _hoisted_4$3, [
-                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(__props.winners, (user) => {
-                      return vue.openBlock(), vue.createElementBlock("div", {
-                        key: user.handle,
-                        class: "flex flex-col items-center gap-2 p-3 bg-[#273340] rounded-xl"
-                      }, [
-                        vue.createElementVNode("img", {
-                          src: user.avatarUrl,
-                          alt: user.username,
-                          class: "w-12 h-12 rounded-full shrink-0"
-                        }, null, 8, _hoisted_5$3),
-                        vue.createElementVNode("div", _hoisted_6$3, [
-                          vue.createElementVNode("div", _hoisted_7$3, vue.toDisplayString(user.username), 1),
-                          vue.createElementVNode("a", {
-                            href: user.id ? `https://x.com/messages/compose?recipient_id=${user.id}` : `https://x.com/${user.handle}`,
-                            target: "_blank",
-                            class: "text-[#71767b] text-xs truncate hover:underline"
-                          }, "@" + vue.toDisplayString(user.handle), 9, _hoisted_8$3),
-                          vue.createElementVNode("div", _hoisted_9$3, [
-                            vue.createElementVNode("span", _hoisted_10$2, vue.toDisplayString(user.followersCount.toLocaleString()), 1),
-                            vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
-                          ])
-                        ]),
-                        vue.createElementVNode("div", _hoisted_11$2, [
-                          user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                            key: 0,
-                            type: "retweet",
-                            "icon-size": "w-3 h-3"
-                          })) : vue.createCommentVNode("", true),
-                          user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                            key: 1,
-                            type: "like",
-                            "icon-size": "w-3 h-3"
-                          })) : vue.createCommentVNode("", true),
-                          user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                            key: 2,
-                            type: "quote",
-                            "icon-size": "w-3 h-3"
-                          })) : vue.createCommentVNode("", true),
-                          user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                            key: 3,
-                            type: "follow",
-                            "icon-size": "w-3 h-3"
-                          })) : vue.createCommentVNode("", true)
-                        ])
-                      ]);
+        return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
+          vue.createVNode(_sfc_main$b, {
+            title: vue.unref(t2)("drawResult"),
+            "max-width": "700px",
+            "z-index": 10001,
+            onClose: _cache[3] || (_cache[3] = ($event) => emit("close"))
+          }, {
+            footer: vue.withCtx(() => [
+              vue.createElementVNode("div", _hoisted_9$3, [
+                vue.createElementVNode("div", _hoisted_10$2, [
+                  vue.createElementVNode("select", {
+                    class: "xd-select text-xs",
+                    value: vue.unref(tpl).activeId.value,
+                    onChange: _cache[1] || (_cache[1] = ($event) => vue.unref(tpl).setActive($event.target.value))
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(tpl).templates.value, (item) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: item.id,
+                        value: item.id
+                      }, vue.toDisplayString(item.name), 9, _hoisted_12$2);
                     }), 128))
+                  ], 40, _hoisted_11$2),
+                  vue.createElementVNode("button", {
+                    class: "xd-btn-icon text-[#71767b] hover:text-[#1d9bf0]",
+                    title: vue.unref(t2)("editTemplate"),
+                    onClick: _cache[2] || (_cache[2] = ($event) => showTemplateEditor.value = true)
+                  }, [..._cache[9] || (_cache[9] = [
+                    vue.createElementVNode("svg", {
+                      viewBox: "0 0 24 24",
+                      class: "w-3.5 h-3.5",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2"
+                    }, [
+                      vue.createElementVNode("path", { d: "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" }),
+                      vue.createElementVNode("path", { d: "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" })
+                    ], -1)
+                  ])], 8, _hoisted_13$2)
+                ]),
+                vue.createElementVNode("div", _hoisted_14$2, [
+                  vue.createElementVNode("button", {
+                    class: "xd-btn xd-btn-secondary text-sm",
+                    onClick: takeScreenshot
+                  }, [
+                    _cache[10] || (_cache[10] = vue.createElementVNode("svg", {
+                      viewBox: "0 0 24 24",
+                      class: "w-4 h-4",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2",
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round"
+                    }, [
+                      vue.createElementVNode("path", { d: "M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" }),
+                      vue.createElementVNode("circle", {
+                        cx: "12",
+                        cy: "13",
+                        r: "4"
+                      })
+                    ], -1)),
+                    vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("screenshot")), 1)
+                  ]),
+                  vue.createElementVNode("button", {
+                    class: "xd-btn xd-btn-success text-sm",
+                    onClick: notifyWinners
+                  }, vue.toDisplayString(vue.unref(t2)("notify")), 1)
+                ])
+              ])
+            ]),
+            default: vue.withCtx(() => [
+              vue.createElementVNode("div", _hoisted_1$4, [
+                vue.createElementVNode("div", {
+                  ref_key: "captureRef",
+                  ref: captureRef
+                }, [
+                  vue.createElementVNode("div", _hoisted_2$3, [
+                    vue.createElementVNode("div", _hoisted_3$3, [
+                      (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(__props.winners, (user) => {
+                        return vue.openBlock(), vue.createElementBlock("div", {
+                          key: user.handle,
+                          class: "flex flex-col items-center gap-2 p-3 bg-[#273340] rounded-xl"
+                        }, [
+                          vue.createElementVNode("img", {
+                            src: user.avatarUrl,
+                            alt: user.username,
+                            class: "w-12 h-12 rounded-full shrink-0 cursor-pointer hover:ring-2 hover:ring-[#1d9bf0] transition-shadow",
+                            onMouseenter: ($event) => onAvatarEnter(user, $event),
+                            onMouseleave: _cache[0] || (_cache[0] = ($event) => hoveredUser.value = null),
+                            onClick: ($event) => onAvatarClick(user)
+                          }, null, 40, _hoisted_4$3),
+                          vue.createElementVNode("div", _hoisted_5$3, [
+                            vue.createElementVNode("div", _hoisted_6$3, vue.toDisplayString(user.username), 1),
+                            vue.createElementVNode("div", _hoisted_7$3, "@" + vue.toDisplayString(user.handle), 1)
+                          ]),
+                          vue.createElementVNode("div", _hoisted_8$3, [
+                            user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                              key: 0,
+                              type: "retweet",
+                              "icon-size": "w-3 h-3"
+                            })) : vue.createCommentVNode("", true),
+                            user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                              key: 1,
+                              type: "like",
+                              "icon-size": "w-3 h-3"
+                            })) : vue.createCommentVNode("", true),
+                            user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                              key: 2,
+                              type: "quote",
+                              "icon-size": "w-3 h-3"
+                            })) : vue.createCommentVNode("", true),
+                            user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                              key: 3,
+                              type: "follow",
+                              "icon-size": "w-3 h-3"
+                            })) : vue.createCommentVNode("", true)
+                          ])
+                        ]);
+                      }), 128))
+                    ])
+                  ])
+                ], 512)
+              ])
+            ]),
+            _: 1
+          }, 8, ["title"]),
+          showTemplateEditor.value ? (vue.openBlock(), vue.createBlock(_sfc_main$b, {
+            key: 0,
+            title: vue.unref(t2)("editTemplate"),
+            "max-width": "520px",
+            "z-index": 10002,
+            onClose: _cache[8] || (_cache[8] = ($event) => showTemplateEditor.value = false)
+          }, {
+            default: vue.withCtx(() => [
+              vue.createElementVNode("div", _hoisted_15$1, [
+                vue.createElementVNode("div", _hoisted_16$1, [
+                  vue.createElementVNode("select", {
+                    class: "xd-select text-sm flex-1",
+                    value: vue.unref(tpl).activeId.value,
+                    onChange: _cache[4] || (_cache[4] = ($event) => vue.unref(tpl).setActive($event.target.value))
+                  }, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(tpl).templates.value, (item) => {
+                      return vue.openBlock(), vue.createElementBlock("option", {
+                        key: item.id,
+                        value: item.id
+                      }, vue.toDisplayString(item.name), 9, _hoisted_18$1);
+                    }), 128))
+                  ], 40, _hoisted_17$1),
+                  editingName.value ? vue.withDirectives((vue.openBlock(), vue.createElementBlock("input", {
+                    key: 0,
+                    "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => nameInput.value = $event),
+                    class: "xd-input text-sm",
+                    style: { width: "120px" },
+                    onKeydown: vue.withKeys(finishRename, ["enter"]),
+                    onBlur: finishRename
+                  }, null, 544)), [
+                    [vue.vModelText, nameInput.value]
+                  ]) : (vue.openBlock(), vue.createElementBlock("button", {
+                    key: 1,
+                    class: "xd-btn-icon text-[#71767b] hover:text-[#1d9bf0]",
+                    title: vue.unref(t2)("rename"),
+                    onClick: startRename
+                  }, [..._cache[11] || (_cache[11] = [
+                    vue.createElementVNode("svg", {
+                      viewBox: "0 0 24 24",
+                      class: "w-3.5 h-3.5",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2"
+                    }, [
+                      vue.createElementVNode("path", { d: "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" }),
+                      vue.createElementVNode("path", { d: "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" })
+                    ], -1)
+                  ])], 8, _hoisted_19$1)),
+                  vue.createElementVNode("button", {
+                    class: "xd-btn-icon text-[#71767b] hover:text-[#00ba7c]",
+                    title: vue.unref(t2)("addTemplate"),
+                    onClick: handleAdd
+                  }, [..._cache[12] || (_cache[12] = [
+                    vue.createElementVNode("svg", {
+                      viewBox: "0 0 24 24",
+                      class: "w-3.5 h-3.5",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2"
+                    }, [
+                      vue.createElementVNode("line", {
+                        x1: "12",
+                        y1: "5",
+                        x2: "12",
+                        y2: "19"
+                      }),
+                      vue.createElementVNode("line", {
+                        x1: "5",
+                        y1: "12",
+                        x2: "19",
+                        y2: "12"
+                      })
+                    ], -1)
+                  ])], 8, _hoisted_20$1),
+                  vue.createElementVNode("button", {
+                    class: "xd-btn-icon text-[#71767b] hover:text-[#f4212e]",
+                    title: vue.unref(t2)("deleteTemplate"),
+                    style: vue.normalizeStyle({ opacity: vue.unref(tpl).templates.value.length <= 1 ? 0.3 : 1 }),
+                    onClick: handleDelete
+                  }, [..._cache[13] || (_cache[13] = [
+                    vue.createElementVNode("svg", {
+                      viewBox: "0 0 24 24",
+                      class: "w-3.5 h-3.5",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2"
+                    }, [
+                      vue.createElementVNode("polyline", { points: "3 6 5 6 21 6" }),
+                      vue.createElementVNode("path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })
+                    ], -1)
+                  ])], 12, _hoisted_21$1)
+                ]),
+                vue.createElementVNode("div", _hoisted_22$1, [
+                  vue.createElementVNode("div", _hoisted_23$1, [
+                    vue.createElementVNode("span", _hoisted_24$1, vue.toDisplayString(vue.unref(t2)("dmTemplate")), 1),
+                    _cache[14] || (_cache[14] = vue.createElementVNode("span", { class: "text-[10px] text-[#71767b] opacity-60 flex gap-2" }, [
+                      vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{winner}"),
+                      vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{tweet}")
+                    ], -1))
+                  ]),
+                  vue.createElementVNode("textarea", {
+                    value: vue.unref(tpl).active.value.dm,
+                    class: "xd-input w-full text-sm resize-none",
+                    rows: "3",
+                    onInput: _cache[6] || (_cache[6] = ($event) => vue.unref(tpl).update(vue.unref(tpl).activeId.value, { dm: $event.target.value }))
+                  }, null, 40, _hoisted_25$1),
+                  vue.createElementVNode("div", _hoisted_26$1, [
+                    vue.createElementVNode("span", _hoisted_27$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
+                    vue.createElementVNode("span", _hoisted_28$1, vue.toDisplayString(dmPreview.value), 1)
+                  ])
+                ]),
+                vue.createElementVNode("div", _hoisted_29$1, [
+                  vue.createElementVNode("div", _hoisted_30$1, [
+                    vue.createElementVNode("span", _hoisted_31$1, vue.toDisplayString(vue.unref(t2)("notifyTemplate")), 1),
+                    _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "text-[10px] text-[#71767b] opacity-60 flex gap-2" }, [
+                      vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{winners}"),
+                      vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{tweet}")
+                    ], -1))
+                  ]),
+                  vue.createElementVNode("textarea", {
+                    value: vue.unref(tpl).active.value.notify,
+                    class: "xd-input w-full text-sm resize-none",
+                    rows: "3",
+                    onInput: _cache[7] || (_cache[7] = ($event) => vue.unref(tpl).update(vue.unref(tpl).activeId.value, { notify: $event.target.value }))
+                  }, null, 40, _hoisted_32$1),
+                  vue.createElementVNode("div", _hoisted_33$1, [
+                    vue.createElementVNode("span", _hoisted_34$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
+                    vue.createElementVNode("span", _hoisted_35$1, vue.toDisplayString(notifyPreview.value), 1)
                   ])
                 ])
-              ], 512)
+              ])
             ]),
-            vue.createElementVNode("div", _hoisted_12$2, [
-              vue.createElementVNode("button", {
-                class: "text-xs text-[#71767b] hover:text-[#1d9bf0] transition-colors",
-                onClick: _cache[0] || (_cache[0] = ($event) => showDmTemplate.value = !showDmTemplate.value)
-              }, vue.toDisplayString(vue.unref(t2)("dmTemplate")) + " " + vue.toDisplayString(showDmTemplate.value ? "▲" : "▼"), 1),
-              showDmTemplate.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_13$2, [
-                vue.withDirectives(vue.createElementVNode("textarea", {
-                  "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => dmTemplate.value = $event),
-                  class: "xd-input w-full text-sm resize-none",
-                  rows: "3",
-                  placeholder: vue.unref(t2)("dmPlaceholder"),
-                  onBlur: saveDmTemplate
-                }, null, 40, _hoisted_14$2), [
-                  [vue.vModelText, dmTemplate.value]
-                ]),
-                _cache[5] || (_cache[5] = vue.createElementVNode("div", { class: "text-[10px] text-[#71767b] mt-1" }, "{winner} → @handle", -1))
-              ])) : vue.createCommentVNode("", true)
-            ])
-          ]),
-          _: 1
-        }, 8, ["title"]);
+            _: 1
+          }, 8, ["title"])) : vue.createCommentVNode("", true),
+          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+            key: 1,
+            user: hoveredUser.value,
+            x: tooltipPos.value.x,
+            y: tooltipPos.value.y
+          }, null, 8, ["user", "x", "y"])) : vue.createCommentVNode("", true)
+        ], 64);
       };
     }
   });
@@ -2658,7 +3078,7 @@
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(_sfc_main$a, {
+          vue.createVNode(_sfc_main$b, {
             title: vue.unref(t2)("startDraw"),
             "max-width": "400px",
             "z-index": 10001,
@@ -2692,7 +3112,7 @@
                       class: "xd-checkbox",
                       onChange: ($event) => vue.unref(drawData).toggleFilter(opt.key)
                     }, null, 40, _hoisted_3$2),
-                    vue.createVNode(_sfc_main$7, {
+                    vue.createVNode(_sfc_main$8, {
                       type: opt.icon
                     }, null, 8, ["type"]),
                     vue.createElementVNode("span", _hoisted_4$2, vue.toDisplayString(getFilterLabel(opt.key)), 1)
@@ -2794,17 +3214,19 @@
       function handleReset() {
         endpoints.value = { retweeters: "", favoriters: "", searchTimeline: "" };
         gmStorage.set(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
+        updateEndpoints({});
         showToast(t2("saved"), "success");
       }
       function handleClearCache() {
-        const keys = GM_listValues?.() ?? [];
+        const allKeys = gmStorage.list();
         let count = 0;
-        for (const key of keys) {
-          if (typeof key === "string" && key.startsWith(STORAGE_KEYS.TWEET_CACHE_PREFIX)) {
-            GM_deleteValue?.(key);
+        for (const key of allKeys) {
+          if (key.startsWith(STORAGE_KEYS.TWEET_CACHE_PREFIX)) {
+            gmStorage.remove(key);
             count++;
           }
         }
+        gmStorage.remove(STORAGE_KEYS.CACHE_INDEX);
         showToast(`${t2("cacheCleared")} (${count})`, "success");
       }
       const confirmingClearHistory = vue.ref(false);
@@ -2826,7 +3248,7 @@
         { key: "searchTimeline", label: "searchEndpoint" }
       ];
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$a, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
           title: vue.unref(t2)("settings"),
           "max-width": "480px",
           "z-index": 10001,
@@ -3042,24 +3464,18 @@
     class: "px-1 text-[#71767b]"
   };
   const _hoisted_75 = ["onClick"];
-  const _hoisted_76 = { class: "px-5 py-2 text-center text-xs text-[#71767b]" };
-  const _hoisted_77 = { class: "flex items-start gap-3 mb-2" };
-  const _hoisted_78 = ["src", "alt"];
-  const _hoisted_79 = { class: "min-w-0" };
-  const _hoisted_80 = { class: "text-white font-bold truncate" };
-  const _hoisted_81 = { class: "text-[#71767b] text-sm" };
-  const _hoisted_82 = { class: "flex gap-4 text-sm text-[#71767b]" };
-  const _hoisted_83 = { class: "text-white font-bold" };
-  const _hoisted_84 = { class: "text-white font-bold" };
-  const _hoisted_85 = {
+  const _hoisted_76 = { class: "px-5 py-2 flex items-center justify-between text-xs text-[#71767b]" };
+  const _hoisted_77 = { class: "flex items-center gap-2" };
+  const _hoisted_78 = { class: "opacity-60" };
+  const _hoisted_79 = {
     key: 0,
-    class: "text-[#e7e9ea] text-sm leading-relaxed mt-1"
+    class: "text-[#71767b] cursor-default",
+    disabled: ""
   };
-  const _hoisted_86 = {
-    key: 1,
-    class: "text-[#71767b] text-sm italic mt-1"
+  const _hoisted_80 = {
+    key: 2,
+    class: "text-[#00ba7c] cursor-default"
   };
-  const _hoisted_87 = { class: "flex gap-2 mt-2 flex-wrap" };
   const _sfc_main$1 = vue.defineComponent({
     __name: "DrawPanel",
     emits: ["close"],
@@ -3070,6 +3486,8 @@
       const { addEntry, getWinCount } = useDrawHistory();
       const { exportCsv } = useExport();
       const { show: showToast } = useToast();
+      const versionCheck = useVersionCheck();
+      versionCheck.checkUpdate();
       const TAB_CONFIG = [
         { key: "all", labelKey: "total", statKey: "total" },
         { key: "retweet", labelKey: "retweets", statKey: "retweets" },
@@ -3232,11 +3650,11 @@
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(_sfc_main$a, {
+          vue.createVNode(_sfc_main$b, {
             title: vue.unref(t2)("drawHelper"),
             "max-width": "1080px",
             "max-height": "700px",
-            onClose: _cache[13] || (_cache[13] = ($event) => emit("close"))
+            onClose: _cache[15] || (_cache[15] = ($event) => emit("close"))
           }, {
             "header-controls": vue.withCtx(() => [
               vue.createElementVNode("select", {
@@ -3255,7 +3673,7 @@
                 class: "xd-btn-icon",
                 title: vue.unref(t2)("settings"),
                 onClick: _cache[0] || (_cache[0] = ($event) => showSettingsPanel.value = true)
-              }, [..._cache[18] || (_cache[18] = [
+              }, [..._cache[20] || (_cache[20] = [
                 vue.createElementVNode("svg", {
                   viewBox: "0 0 24 24",
                   class: "w-4 h-4",
@@ -3267,12 +3685,26 @@
             ]),
             footer: vue.withCtx(() => [
               vue.createElementVNode("div", _hoisted_76, [
-                vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("madeWith")) + " ", 1),
-                _cache[26] || (_cache[26] = vue.createElementVNode("a", {
-                  href: "https://github.com/yueby",
-                  target: "_blank",
-                  class: "text-[#1d9bf0] hover:underline"
-                }, "Yueby", -1))
+                vue.createElementVNode("span", null, [
+                  vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("madeWith")) + " ", 1),
+                  _cache[28] || (_cache[28] = vue.createElementVNode("a", {
+                    href: "https://github.com/yueby",
+                    target: "_blank",
+                    class: "text-[#1d9bf0] hover:underline"
+                  }, "Yueby", -1))
+                ]),
+                vue.createElementVNode("span", _hoisted_77, [
+                  vue.createElementVNode("span", _hoisted_78, vue.toDisplayString(vue.unref(t2)("version", { version: vue.unref(versionCheck).currentVersion.value })), 1),
+                  vue.unref(versionCheck).checking.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_79, vue.toDisplayString(vue.unref(t2)("checking")), 1)) : vue.unref(versionCheck).hasUpdate.value ? (vue.openBlock(), vue.createElementBlock("button", {
+                    key: 1,
+                    class: "text-[#1d9bf0] hover:underline cursor-pointer",
+                    onClick: _cache[13] || (_cache[13] = ($event) => vue.unref(versionCheck).openInstallPage())
+                  }, vue.toDisplayString(vue.unref(t2)("updateAvailable", { version: vue.unref(versionCheck).latestVersion.value })), 1)) : vue.unref(versionCheck).latestVersion.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_80, vue.toDisplayString(vue.unref(t2)("latestVersion")), 1)) : (vue.openBlock(), vue.createElementBlock("button", {
+                    key: 3,
+                    class: "hover:text-[#1d9bf0] cursor-pointer transition-colors",
+                    onClick: _cache[14] || (_cache[14] = ($event) => vue.unref(versionCheck).checkUpdate())
+                  }, vue.toDisplayString(vue.unref(t2)("checkUpdate")), 1))
+                ])
               ])
             ]),
             default: vue.withCtx(() => [
@@ -3285,7 +3717,7 @@
                   vue.createElementVNode("span", _hoisted_9, vue.toDisplayString(vue.unref(t2)("retweets")), 1),
                   vue.createElementVNode("span", _hoisted_10, vue.toDisplayString(stats.value.retweets), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_11, [
-                    _cache[19] || (_cache[19] = vue.createElementVNode("svg", {
+                    _cache[21] || (_cache[21] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#00ba7c]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -3311,7 +3743,7 @@
                   vue.createElementVNode("span", _hoisted_13, vue.toDisplayString(vue.unref(t2)("likes")), 1),
                   vue.createElementVNode("span", _hoisted_14, vue.toDisplayString(stats.value.likes), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15, [
-                    _cache[20] || (_cache[20] = vue.createElementVNode("svg", {
+                    _cache[22] || (_cache[22] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#f91880]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -3337,7 +3769,7 @@
                   vue.createElementVNode("span", _hoisted_17, vue.toDisplayString(vue.unref(t2)("quotes")), 1),
                   vue.createElementVNode("span", _hoisted_18, vue.toDisplayString(stats.value.quotes), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_19, [
-                    _cache[21] || (_cache[21] = vue.createElementVNode("svg", {
+                    _cache[23] || (_cache[23] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#ff7a00]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -3395,7 +3827,7 @@
                 ]),
                 vue.createElementVNode("div", _hoisted_29, [
                   vue.createElementVNode("div", _hoisted_30, [
-                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_31, [..._cache[22] || (_cache[22] = [
+                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_31, [..._cache[24] || (_cache[24] = [
                       vue.createElementVNode("path", { d: "M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z" }, null, -1)
                     ])])),
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -3417,7 +3849,7 @@
                       viewBox: "0 0 24 24",
                       class: vue.normalizeClass(["w-3.5 h-3.5", { "animate-spin": vue.unref(drawData).loading.value }]),
                       fill: "currentColor"
-                    }, [..._cache[23] || (_cache[23] = [
+                    }, [..._cache[25] || (_cache[25] = [
                       vue.createElementVNode("path", { d: "M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" }, null, -1)
                     ])], 2)),
                     cacheAge.value ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_34, vue.toDisplayString(cacheAge.value), 1)) : vue.createCommentVNode("", true)
@@ -3428,7 +3860,7 @@
                 vue.createElementVNode("table", _hoisted_36, [
                   vue.createElementVNode("thead", _hoisted_37, [
                     vue.createElementVNode("tr", _hoisted_38, [
-                      _cache[24] || (_cache[24] = vue.createElementVNode("th", { class: "w-14 px-4 py-2.5 text-[#71767b] font-medium" }, "#", -1)),
+                      _cache[26] || (_cache[26] = vue.createElementVNode("th", { class: "w-14 px-4 py-2.5 text-[#71767b] font-medium" }, "#", -1)),
                       vue.createElementVNode("th", {
                         class: "xd-th px-4 py-2.5",
                         onClick: _cache[3] || (_cache[3] = ($event) => toggleSort("username"))
@@ -3448,7 +3880,7 @@
                         onClick: _cache[5] || (_cache[5] = ($event) => toggleSort("retweet"))
                       }, [
                         vue.createElementVNode("span", _hoisted_41, [
-                          vue.createVNode(_sfc_main$7, { type: "retweet" }),
+                          vue.createVNode(_sfc_main$8, { type: "retweet" }),
                           vue.createElementVNode("span", _hoisted_42, vue.toDisplayString(getSortIcon("retweet")), 1)
                         ])
                       ]),
@@ -3457,7 +3889,7 @@
                         onClick: _cache[6] || (_cache[6] = ($event) => toggleSort("like"))
                       }, [
                         vue.createElementVNode("span", _hoisted_43, [
-                          vue.createVNode(_sfc_main$7, { type: "like" }),
+                          vue.createVNode(_sfc_main$8, { type: "like" }),
                           vue.createElementVNode("span", _hoisted_44, vue.toDisplayString(getSortIcon("like")), 1)
                         ])
                       ]),
@@ -3466,7 +3898,7 @@
                         onClick: _cache[7] || (_cache[7] = ($event) => toggleSort("quote"))
                       }, [
                         vue.createElementVNode("span", _hoisted_45, [
-                          vue.createVNode(_sfc_main$7, { type: "quote" }),
+                          vue.createVNode(_sfc_main$8, { type: "quote" }),
                           vue.createElementVNode("span", _hoisted_46, vue.toDisplayString(getSortIcon("quote")), 1)
                         ])
                       ]),
@@ -3475,7 +3907,7 @@
                         onClick: _cache[8] || (_cache[8] = ($event) => toggleSort("followed_by"))
                       }, [
                         vue.createElementVNode("span", _hoisted_47, [
-                          vue.createVNode(_sfc_main$7, { type: "follow" }),
+                          vue.createVNode(_sfc_main$8, { type: "follow" }),
                           vue.createElementVNode("span", _hoisted_48, vue.toDisplayString(getSortIcon("followed_by")), 1)
                         ])
                       ]),
@@ -3515,25 +3947,25 @@
                         ]),
                         vue.createElementVNode("td", _hoisted_57, "@" + vue.toDisplayString(user.handle), 1),
                         vue.createElementVNode("td", _hoisted_58, [
-                          user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+                          user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "retweet"
                           })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_59, "—"))
                         ]),
                         vue.createElementVNode("td", _hoisted_60, [
-                          user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+                          user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "like"
                           })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_61, "—"))
                         ]),
                         vue.createElementVNode("td", _hoisted_62, [
-                          user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+                          user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "quote"
                           })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_63, "—"))
                         ]),
                         vue.createElementVNode("td", _hoisted_64, [
-                          user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+                          user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "follow"
                           })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_65, "—"))
@@ -3544,11 +3976,11 @@
                         ])
                       ]);
                     }), 128)),
-                    sortedUsers.value.length === 0 && vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 0 }, vue.renderList(8, (i) => {
-                      return vue.createElementVNode("tr", {
+                    sortedUsers.value.length === 0 && vue.unref(drawData).loading.value ? (vue.openBlock(true), vue.createElementBlock(vue.Fragment, { key: 0 }, vue.renderList(vue.unref(UI).SKELETON_ROWS, (i) => {
+                      return vue.openBlock(), vue.createElementBlock("tr", {
                         key: "sk-" + i,
                         class: "border-b border-[#38444d]/30 h-12"
-                      }, [..._cache[25] || (_cache[25] = [
+                      }, [..._cache[27] || (_cache[27] = [
                         vue.createElementVNode("td", { class: "w-14 px-4" }, [
                           vue.createElementVNode("div", { class: "h-3 w-6 bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1),
@@ -3580,7 +4012,7 @@
                           vue.createElementVNode("div", { class: "h-3 w-6 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1)
                       ])]);
-                    }), 64)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_70, [
+                    }), 128)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_70, [
                       vue.createElementVNode("td", _hoisted_71, vue.toDisplayString(vue.unref(t2)("noUsers")), 1)
                     ])) : vue.createCommentVNode("", true)
                   ])
@@ -3614,10 +4046,10 @@
           }, 8, ["title"]),
           showSettings.value ? (vue.openBlock(), vue.createBlock(_sfc_main$4, {
             key: 0,
-            onClose: _cache[14] || (_cache[14] = ($event) => showSettings.value = false),
+            onClose: _cache[16] || (_cache[16] = ($event) => showSettings.value = false),
             onDraw: onDrawResult
           })) : vue.createCommentVNode("", true),
-          showAnimation.value ? (vue.openBlock(), vue.createBlock(_sfc_main$9, {
+          showAnimation.value ? (vue.openBlock(), vue.createBlock(_sfc_main$a, {
             key: 1,
             pool: vue.unref(drawData).mergedUsers.value,
             winners: winners.value,
@@ -3626,67 +4058,23 @@
           showResult.value ? (vue.openBlock(), vue.createBlock(_sfc_main$5, {
             key: 2,
             winners: winners.value,
-            onClose: _cache[15] || (_cache[15] = ($event) => showResult.value = false)
+            onClose: _cache[17] || (_cache[17] = ($event) => showResult.value = false)
           }, null, 8, ["winners"])) : vue.createCommentVNode("", true),
-          showHistory.value ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
+          showHistory.value ? (vue.openBlock(), vue.createBlock(_sfc_main$9, {
             key: 3,
-            onClose: _cache[16] || (_cache[16] = ($event) => showHistory.value = false)
+            onClose: _cache[18] || (_cache[18] = ($event) => showHistory.value = false)
           })) : vue.createCommentVNode("", true),
           showSettingsPanel.value ? (vue.openBlock(), vue.createBlock(_sfc_main$3, {
             key: 4,
-            onClose: _cache[17] || (_cache[17] = ($event) => showSettingsPanel.value = false)
+            onClose: _cache[19] || (_cache[19] = ($event) => showSettingsPanel.value = false)
           })) : vue.createCommentVNode("", true),
           vue.createVNode(Toast),
-          hoveredUser.value ? (vue.openBlock(), vue.createElementBlock("div", {
+          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
             key: 5,
-            class: "fixed z-[10000] w-72 bg-[#1e2d3d] border border-[#38444d] rounded-xl shadow-xl p-4 pointer-events-none",
-            style: vue.normalizeStyle({ left: tooltipPos.value.x + "px", top: tooltipPos.value.y - 8 + "px", transform: "translateY(-100%)" })
-          }, [
-            vue.createElementVNode("div", _hoisted_77, [
-              vue.createElementVNode("img", {
-                src: hoveredUser.value.avatarUrl,
-                alt: hoveredUser.value.username,
-                class: "w-12 h-12 rounded-full shrink-0"
-              }, null, 8, _hoisted_78),
-              vue.createElementVNode("div", _hoisted_79, [
-                vue.createElementVNode("div", _hoisted_80, vue.toDisplayString(hoveredUser.value.username), 1),
-                vue.createElementVNode("div", _hoisted_81, "@" + vue.toDisplayString(hoveredUser.value.handle), 1)
-              ])
-            ]),
-            vue.createElementVNode("div", _hoisted_82, [
-              vue.createElementVNode("span", null, [
-                vue.createElementVNode("span", _hoisted_83, vue.toDisplayString(hoveredUser.value.followingCount.toLocaleString()), 1),
-                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followingLabel")), 1)
-              ]),
-              vue.createElementVNode("span", null, [
-                vue.createElementVNode("span", _hoisted_84, vue.toDisplayString(hoveredUser.value.followersCount.toLocaleString()), 1),
-                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
-              ])
-            ]),
-            hoveredUser.value.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_85, vue.toDisplayString(hoveredUser.value.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_86, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
-            vue.createElementVNode("div", _hoisted_87, [
-              hoveredUser.value.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                key: 0,
-                type: "retweet",
-                label: vue.unref(t2)("retweetType")
-              }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-              hoveredUser.value.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                key: 1,
-                type: "like",
-                label: vue.unref(t2)("likeType")
-              }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-              hoveredUser.value.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                key: 2,
-                type: "quote",
-                label: vue.unref(t2)("quoteType")
-              }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-              hoveredUser.value.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
-                key: 3,
-                type: "follow",
-                label: vue.unref(t2)("followingYou")
-              }, null, 8, ["label"])) : vue.createCommentVNode("", true)
-            ])
-          ], 4)) : vue.createCommentVNode("", true)
+            user: hoveredUser.value,
+            x: tooltipPos.value.x,
+            y: tooltipPos.value.y
+          }, null, 8, ["user", "x", "y"])) : vue.createCommentVNode("", true)
         ], 64);
       };
     }
@@ -3713,7 +4101,7 @@
         triggerContainer.style.alignItems = "center";
         actionBar.appendChild(triggerContainer);
         triggerApp = vue.createApp({
-          render: () => vue.h(_sfc_main$b, {
+          render: () => vue.h(_sfc_main$c, {
             onClick: () => {
               showPanel.value = true;
             }
@@ -3771,8 +4159,9 @@
       };
     }
   });
-  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10000\\]{z-index:10000}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-0\\.5{margin-top:calc(var(--spacing) * .5)}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-8{height:calc(var(--spacing) * 8)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[240px\\]{max-width:240px}.min-w-0{min-width:calc(var(--spacing) * 0)}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.whitespace-nowrap{white-space:nowrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:underline:hover{text-decoration-line:underline}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
+  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10003\\]{z-index:10003}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-8{height:calc(var(--spacing) * 8)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[240px\\]{max-width:240px}.min-w-0{min-width:calc(var(--spacing) * 0)}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.p-2{padding:calc(var(--spacing) * 2)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.break-words{overflow-wrap:break-word}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#00ba7c\\]:hover{color:#00ba7c}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:text-\\[\\#f4212e\\]:hover{color:#f4212e}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:ring-2:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.hover\\:ring-\\[\\#1d9bf0\\]:hover{--tw-ring-color:#1d9bf0}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
   importCSS(styleCss);
+  migrateStorageKeys();
   initTxIdCapture();
   function initApp() {
     vue.createApp(_sfc_main).mount(

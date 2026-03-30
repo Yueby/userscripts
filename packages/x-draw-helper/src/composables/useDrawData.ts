@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import type { User, DrawUser, Filters, FilterKey, DrawResult, InteractionData } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { LIMITS, STORAGE_KEYS } from '../constants';
 import { gmStorage } from '../utils/storage';
 import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, getCsrfToken, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
 
@@ -11,12 +11,33 @@ interface CachedData {
   fetchedAt: number;
 }
 
+function getCacheIndex(): string[] {
+  return gmStorage.get<string[]>(STORAGE_KEYS.CACHE_INDEX, []);
+}
+
+function setCacheIndex(index: string[]) {
+  gmStorage.set(STORAGE_KEYS.CACHE_INDEX, index);
+}
+
+function touchCacheIndex(tweetId: string) {
+  let index = getCacheIndex().filter((id) => id !== tweetId);
+  index.unshift(tweetId);
+  if (index.length > LIMITS.MAX_CACHE_ENTRIES) {
+    const evicted = index.splice(LIMITS.MAX_CACHE_ENTRIES);
+    for (const id of evicted) {
+      gmStorage.remove(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${id}`);
+    }
+  }
+  setCacheIndex(index);
+}
+
 function loadCache(tweetId: string): CachedData | null {
   return gmStorage.get<CachedData | null>(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
 }
 
 function saveCache(tweetId: string, retweets: User[], likes: User[], quotes: User[]) {
   gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets, likes, quotes, fetchedAt: Date.now() } as CachedData);
+  touchCacheIndex(tweetId);
 }
 
 const retweets = ref<User[]>([]);
