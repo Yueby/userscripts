@@ -20,24 +20,16 @@ const ENDPOINT_MAP: Record<string, string> = {
 };
 
 export const DEFAULT_ENDPOINTS = {
-  retweeters: 'uhTjAvG7nm0lyrfujroWUw/Retweeters',
-  favoriters: 'SoWvHOdzCsomAQdY-bFNDA/Favoriters',
-  searchTimeline: 'rkp6b4vtR9u7v3naGoOzUQ/SearchTimeline',
+  retweeters: '',
+  favoriters: '',
+  searchTimeline: '',
 } as const;
 
 type EndpointKey = keyof typeof DEFAULT_ENDPOINTS;
 
 const ENDPOINTS: Record<EndpointKey, string> = { ...DEFAULT_ENDPOINTS };
 
-let GRAPHQL_FEATURES: Record<string, boolean> = {
-  rweb_video_screen_enabled: false,
-  profile_label_improvements_pcf_label_in_post_enabled: true,
-  rweb_tipjar_consumption_enabled: false,
-  verified_phone_label_enabled: false,
-  responsive_web_graphql_timeline_navigation_enabled: true,
-  responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
-  responsive_web_enhance_cards_enabled: false,
-};
+let GRAPHQL_FEATURES: Record<string, boolean> = {};
 
 function setEndpoint(key: EndpointKey, value: string) {
   ENDPOINTS[key] = value;
@@ -160,13 +152,15 @@ function getTweetIdFromUrl(): string | null {
 // Shared user extraction from GraphQL results
 // ---------------------------------------------------------------------------
 
-function userFromLegacy(legacy: Record<string, unknown>, core: Record<string, unknown>, restId: string, perspectives: Record<string, unknown>): User {
+function userFromResult(result: Record<string, unknown>, legacy: Record<string, unknown>, core: Record<string, unknown>, perspectives: Record<string, unknown>, fallbackId = ''): User {
+  const avatar = result.avatar as Record<string, unknown> | undefined;
+  const profileBio = result.profile_bio as Record<string, unknown> | undefined;
   return {
-    id: restId,
+    id: (result.rest_id as string) || fallbackId,
     username: (legacy.name || core.name || '') as string,
-    handle: (legacy.screen_name || core.screen_name || restId || '') as string,
-    avatarUrl: (legacy.profile_image_url_https || '') as string,
-    bio: (legacy.description || '') as string,
+    handle: (legacy.screen_name || core.screen_name || (result.rest_id as string) || '') as string,
+    avatarUrl: (legacy.profile_image_url_https || avatar?.image_url || '') as string,
+    bio: (legacy.description || profileBio?.description || '') as string,
     following: Boolean(perspectives.following ?? legacy.following),
     followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
     followersCount: Number(legacy.followers_count ?? 0),
@@ -312,7 +306,7 @@ function parseUserTimeline(instructions: unknown[]): TimelinePage {
       const perspectives = (result.relationship_perspectives ?? {}) as Record<string, unknown>;
       const entryId = String(e.entryId ?? '');
       const fallbackId = entryId.startsWith('user-') ? entryId.slice(5) : '';
-      return userFromLegacy(legacy, core, (result.rest_id as string) || fallbackId, perspectives);
+      return userFromResult(result, legacy, core, perspectives, fallbackId);
     })
     .filter((u): u is User => u !== null && u.handle !== '');
 
@@ -341,7 +335,7 @@ function parseSearchTimeline(data: unknown): TimelinePage {
       const legacy = (userResults.legacy ?? {}) as Record<string, unknown>;
       const core = (userResults.core ?? {}) as Record<string, unknown>;
       const perspectives = (userResults.relationship_perspectives ?? {}) as Record<string, unknown>;
-      return userFromLegacy(legacy, core, (userResults.rest_id as string) ?? '', perspectives);
+      return userFromResult(userResults, legacy, core, perspectives);
     })
     .filter((u): u is User => u !== null && u.handle !== '');
 
@@ -428,7 +422,7 @@ export async function fetchQuoteTweeters(
     signal: options.signal,
     extraHeaders: async () => {
       const txId = await getTxId('GET', path);
-      return txId ? { 'x-client-transaction-id': txId } : {};
+      return txId ? { 'x-client-transaction-id': txId } : ({} as Record<string, string>);
     },
   }, options.onProgress, selfId ? (u) => u.id !== selfId : undefined);
 }

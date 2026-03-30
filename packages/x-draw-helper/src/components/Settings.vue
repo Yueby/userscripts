@@ -18,9 +18,9 @@ type EndpointKeys = keyof typeof DEFAULT_ENDPOINTS;
 
 const saved = gmStorage.get<Record<string, string>>(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
 const endpoints = ref({
-  retweeters: extractQueryId(saved.retweeters || DEFAULT_ENDPOINTS.retweeters),
-  favoriters: extractQueryId(saved.favoriters || DEFAULT_ENDPOINTS.favoriters),
-  searchTimeline: extractQueryId(saved.searchTimeline || DEFAULT_ENDPOINTS.searchTimeline),
+  retweeters: extractQueryId(saved.retweeters ?? ''),
+  favoriters: extractQueryId(saved.favoriters ?? ''),
+  searchTimeline: extractQueryId(saved.searchTimeline ?? ''),
 });
 
 function extractQueryId(endpoint: string): string {
@@ -38,13 +38,8 @@ function handleSave() {
 }
 
 function handleReset() {
-  endpoints.value = {
-    retweeters: extractQueryId(DEFAULT_ENDPOINTS.retweeters),
-    favoriters: extractQueryId(DEFAULT_ENDPOINTS.favoriters),
-    searchTimeline: extractQueryId(DEFAULT_ENDPOINTS.searchTimeline),
-  };
+  endpoints.value = { retweeters: '', favoriters: '', searchTimeline: '' };
   gmStorage.set(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
-  updateEndpoints(DEFAULT_ENDPOINTS);
   showToast(t('saved'), 'success');
 }
 
@@ -94,7 +89,7 @@ const ENDPOINT_FIELDS: { key: EndpointKeys; label: string }[] = [
               v-model="endpoints[field.key]"
               type="text"
               class="xd-input w-full text-sm"
-              :placeholder="extractQueryId(DEFAULT_ENDPOINTS[field.key])"
+              :placeholder="t('autoDetected')"
             />
           </div>
         </div>

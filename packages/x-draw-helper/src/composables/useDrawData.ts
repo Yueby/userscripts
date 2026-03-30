@@ -182,6 +182,19 @@ export function useDrawData() {
     }
   }
 
+  function restoreFromCache(): boolean {
+    const tweetId = getTweetIdFromUrl();
+    if (!tweetId) return false;
+    lastTweetId.value = tweetId;
+    const cached = loadCache(tweetId);
+    if (!cached) return false;
+    retweets.value = cached.retweets;
+    likes.value = cached.likes;
+    quotes.value = cached.quotes || [];
+    fetchedAt.value = cached.fetchedAt;
+    return true;
+  }
+
   function cancelFetch() {
     abortController?.abort();
     loading.value = false;
@@ -217,6 +230,7 @@ export function useDrawData() {
     toggleFilter,
     performDraw,
     fetchInteractionData,
+    restoreFromCache,
     cancelFetch,
     reset,
   };

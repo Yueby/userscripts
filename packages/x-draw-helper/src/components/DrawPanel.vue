@@ -56,11 +56,8 @@ const sortDir = ref<SortDir>('asc');
 const PAGE_SIZE = LIMITS.PAGE_SIZE;
 const currentPage = ref(1);
 
-// Always fetch fresh data on mount (stale data remains visible during loading)
-drawData.fetchInteractionData().catch((err) => {
-  if (err instanceof DOMException && err.name === 'AbortError') return;
-  showToast(t(err.message || 'loginRequired'), 'error', TIMING.TOAST_DURATION * 2);
-});
+// Load cached data on mount; user triggers fresh fetch manually
+drawData.restoreFromCache();
 
 const filteredUsers = computed<DrawUser[]>(() => {
   const users = drawData.mergedUsers.value;
