@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue';
-import { useI18n } from '../composables/useI18n';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { useDrawData } from '../composables/useDrawData';
 import { useDrawHistory } from '../composables/useDrawHistory';
 import { useExport } from '../composables/useExport';
+import { useI18n } from '../composables/useI18n';
+import { useToast } from '../composables/useToast';
+import { LIMITS, TIMING } from '../constants';
 import type { DrawUser, LangKey } from '../types';
+import DrawAnimation from './DrawAnimation.vue';
+import DrawHistory from './DrawHistory.vue';
 import DrawResult from './DrawResult.vue';
 import DrawSettings from './DrawSettings.vue';
-import DrawHistory from './DrawHistory.vue';
-import DrawAnimation from './DrawAnimation.vue';
-import Settings from './Settings.vue';
-import InteractionIcon from './InteractionIcon.vue';
 import InteractionBadge from './InteractionBadge.vue';
+import InteractionIcon from './InteractionIcon.vue';
 import Modal from './Modal.vue';
+import Settings from './Settings.vue';
 import Toast from './Toast.vue';
-import { useToast } from '../composables/useToast';
-import { LIMITS } from '../constants';
 
 const emit = defineEmits<{
   close: [];
@@ -59,7 +59,7 @@ const currentPage = ref(1);
 // Always fetch fresh data on mount (stale data remains visible during loading)
 drawData.fetchInteractionData().catch((err) => {
   if (err instanceof DOMException && err.name === 'AbortError') return;
-  showToast(t(err.message || 'loginRequired'), 'error', 5000);
+  showToast(t(err.message || 'loginRequired'), 'error', TIMING.TOAST_DURATION * 2);
 });
 
 const filteredUsers = computed<DrawUser[]>(() => {
@@ -153,7 +153,7 @@ const stats = computed(() => ({
 }));
 
 const now = ref(Date.now());
-const cacheAgeTimer = setInterval(() => { now.value = Date.now(); }, 30000);
+const cacheAgeTimer = setInterval(() => { now.value = Date.now(); }, TIMING.CACHE_AGE_INTERVAL);
 onUnmounted(() => clearInterval(cacheAgeTimer));
 
 const cacheAge = computed(() => {
@@ -165,7 +165,7 @@ const cacheAge = computed(() => {
 function handleRefresh() {
   drawData.fetchInteractionData().catch((err) => {
     if (err instanceof DOMException && err.name === 'AbortError') return;
-    showToast(t(err.message || 'loginRequired'), 'error', 5000);
+    showToast(t(err.message || 'loginRequired'), 'error', TIMING.TOAST_DURATION * 2);
   });
 }
 
