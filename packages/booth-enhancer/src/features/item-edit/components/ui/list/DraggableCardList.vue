@@ -326,10 +326,6 @@ function handleRemove(index: number): void {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: var(--be-space-sm);
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid var(--be-color-border);
-  border-radius: var(--be-radius);
 }
 
 /* 拖拽过渡动画 */
@@ -353,20 +349,21 @@ function handleRemove(index: number): void {
   transform: translateY(-10px);
 }
 
-/* 嵌套的 DraggableCardList 不显示背景 */
+/* 嵌套的 DraggableCardList（父类 card 中再嵌套列表时更紧凑） */
 .draggable-card-list .draggable-card-list {
-  background: transparent;
-  border: none;
-  padding: 0;
+  gap: 4px;
 }
 
 .draggable-card {
-  padding: 4px;
-  background: var(--be-color-bg-secondary);
+  padding: 6px 8px;
+  background: var(--be-color-bg);
   border: 1px solid var(--be-color-border);
   border-radius: var(--be-radius);
   cursor: default;
-  transition: var(--be-transition-normal);
+  transition: background var(--be-transition-normal),
+              border-color var(--be-transition-normal),
+              box-shadow var(--be-transition-normal),
+              transform var(--be-transition-normal);
 }
 
 .draggable-card:hover {
@@ -374,67 +371,91 @@ function handleRemove(index: number): void {
   box-shadow: var(--be-shadow-sm);
 }
 
-/* 拖拽状态 */
+/* 拖拽中的源卡片：轻微透明 + 阴影，而不是缩小变淡 */
 .draggable-card.is-dragging {
-  opacity: 0.5;
-  transform: scale(0.95);
-  box-shadow: var(--be-shadow-lg);
+  opacity: 0.55;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12),
+              0 0 0 1px var(--be-color-primary);
   border-color: var(--be-color-primary);
 }
 
+/* 其它卡片在拖拽中时淡出 */
 .draggable-card.is-drag-over {
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .card-actions {
   display: flex;
   align-items: center;
   gap: var(--be-space-xs);
-  padding: 4px 0;
-  border-bottom: 1px solid var(--be-color-border);
-  margin-bottom: 4px;
+  padding: 2px 0 6px;
+  border-bottom: 1px solid var(--be-color-border-light);
+  margin-bottom: 6px;
   min-height: 28px;
   flex-wrap: nowrap;
   overflow: hidden;
 }
 
+/* ====== 拖拽手柄：更明显、更"可拎" ====== */
 .drag-handle {
   cursor: grab;
-  color: var(--be-color-text-muted);
+  color: var(--be-color-gray-400);
   flex-shrink: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  padding: 4px;
-  margin: -4px;
+  justify-content: center;
+  width: 20px;
+  height: 24px;
+  border-radius: var(--be-radius-sm);
+  transition: color var(--be-transition-normal),
+              background var(--be-transition-normal);
   touch-action: none;
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
-.drag-handle:active {
-  cursor: grabbing;
+.draggable-card:hover .drag-handle {
+  color: var(--be-color-gray-600);
+  background: var(--be-color-bg-tertiary);
 }
 
-/* 锁定状态样式（只影响拖拽句柄） */
+.drag-handle:active {
+  cursor: grabbing;
+  color: var(--be-color-primary);
+  background: rgba(59, 130, 246, 0.12);
+}
+
+/* 锁定状态 */
 .drag-handle.is-locked {
   cursor: not-allowed !important;
   pointer-events: none;
+  color: var(--be-color-gray-300);
 }
 
-/* 移动端优化 */
+.drag-handle.is-locked :deep(svg) {
+  opacity: 0.7;
+}
+
+/* 移动端 */
 @media (max-width: 768px) {
   .drag-handle {
-    padding: 8px;
-    margin: -8px;
+    width: 28px;
+    height: 32px;
   }
 }
 
 .card-number {
-  font-size: var(--be-font-size-sm);
+  font-size: var(--be-font-size-xs);
   font-weight: 600;
-  color: var(--be-color-text-secondary);
+  color: var(--be-color-text-muted);
   flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: var(--be-radius-sm);
+  background: var(--be-color-bg-tertiary);
+  line-height: 1.2;
+  min-width: 24px;
+  text-align: center;
 }
 
 .actions-content {

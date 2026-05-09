@@ -367,7 +367,7 @@ const treeTab = useTreeTab({
           @click="treeTab.modal.closeModal"
           title="取消"
         >
-          <span v-html="withSize(icons.close, 18)"></span>
+          <span v-html="withSize(icons.close, 16)"></span>
         </button>
         <button 
           v-if="treeTab.modal.state.value.type === 'createTag'"
@@ -375,7 +375,7 @@ const treeTab = useTreeTab({
           @click="treeTab.modal.confirmModal(treeTab.modal.state.value.formData)"
           title="确定"
         >
-          <span v-html="withSize(icons.check, 18)"></span>
+          <span v-html="withSize(icons.check, 16)"></span>
         </button>
         <button 
           v-else-if="treeTab.modal.state.value.type === 'delete'"
@@ -383,7 +383,7 @@ const treeTab = useTreeTab({
           @click="treeTab.modal.confirmModal(true)"
           title="删除"
         >
-          <span v-html="withSize(icons.trash, 18)"></span>
+          <span v-html="withSize(icons.trash, 16)"></span>
         </button>
         <button 
           v-else-if="treeTab.modal.state.value.type === 'alert'"
@@ -391,7 +391,7 @@ const treeTab = useTreeTab({
           @click="treeTab.modal.confirmModal()"
           title="确定"
         >
-          <span v-html="withSize(icons.check, 18)"></span>
+          <span v-html="withSize(icons.check, 16)"></span>
         </button>
         <button 
           v-else
@@ -399,7 +399,7 @@ const treeTab = useTreeTab({
           @click="treeTab.modal.confirmModal()"
           title="确定"
         >
-          <span v-html="withSize(icons.check, 18)"></span>
+          <span v-html="withSize(icons.check, 16)"></span>
         </button>
       </template>
     </Modal>

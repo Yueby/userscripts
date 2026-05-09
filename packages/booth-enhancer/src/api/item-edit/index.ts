@@ -27,11 +27,17 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   private _sectionRemovedCallback?: (element: HTMLElement) => void;
   private _variationRemovedCallback?: (element: HTMLElement) => void;
   
-  // 临时一次性回调（用于 addSection/removeSection 等待方法）
-  private _tempSectionAddedCallback?: () => void;
-  private _tempVariationAddedCallback?: () => void;
-  private _tempSectionRemovedCallback?: () => void;
-  private _tempVariationRemovedCallback?: () => void;
+  // 临时一次性回调队列（支持并发的 addSection/removeSection 等待方法）
+  private _tempSectionAddedCallbacks: Array<() => void> = [];
+  private _tempVariationAddedCallbacks: Array<() => void> = [];
+  private _tempSectionRemovedCallbacks: Array<() => void> = [];
+  private _tempVariationRemovedCallbacks: Array<() => void> = [];
+  
+  // 文件面板变化监听
+  private _filesChangedCallbacks: Array<() => void> = [];
+  private _filesSignature: string = '';
+  private _filePanelObserver: MutationObserver | null = null;
+  private _globalFilesObserver: MutationObserver | null = null;
 
   constructor() {
     super();
@@ -61,17 +67,26 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
   /**
    * 等待名称输入框出现并填充数据
+   * - /edit 页面：要求名称输入框存在且有值（已发布商品名称不为空）
+   * - /edit_pre 页面：只要求输入框存在（新建商品时名称可能为空）
    */
   private waitForElements(timeout: number = 10000): Promise<void> {
     return new Promise((resolve) => {
-      // 检查名称输入框是否存在且有值
+      const isPreEdit = window.location.pathname.endsWith('/edit_pre');
+      
+      // 检查名称输入框是否存在（edit_pre 模式下允许空值）
       const checkNameInput = (): boolean => {
         const nameInput = document.querySelector(
           "#name input"
         ) as HTMLInputElement;
 
-        // 名称输入框必须存在且有值（商品名称不可能为空）
-        return nameInput && nameInput.value.trim().length > 0;
+        if (!nameInput) return false;
+        
+        // 新建商品页面允许名称为空
+        if (isPreEdit) return true;
+        
+        // 已发布商品要求名称非空
+        return nameInput.value.trim().length > 0;
       };
 
       if (checkNameInput()) {
@@ -112,6 +127,7 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     this.loadDescription();
     this.loadTagElements();
     this.setupListObserver();
+    this.setupFilesObserver();
   }
 
   /**
@@ -268,9 +284,10 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     
     this._newSectionCallback?.(sectionElement);
     
-    if (this._tempSectionAddedCallback) {
-      this._tempSectionAddedCallback();
-      this._tempSectionAddedCallback = undefined;
+    // FIFO：先添加的请求先完成
+    const callback = this._tempSectionAddedCallbacks.shift();
+    if (callback) {
+      callback();
     }
   }
 
@@ -296,9 +313,10 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     
     this._newVariationCallback?.(variationElement);
     
-    if (this._tempVariationAddedCallback) {
-      this._tempVariationAddedCallback();
-      this._tempVariationAddedCallback = undefined;
+    // FIFO：先添加的请求先完成
+    const callback = this._tempVariationAddedCallbacks.shift();
+    if (callback) {
+      callback();
     }
   }
 
@@ -364,16 +382,16 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
           if (isSection) {
             this._sectionRemovedCallback?.(node);
             
-            if (this._tempSectionRemovedCallback) {
-              this._tempSectionRemovedCallback();
-              this._tempSectionRemovedCallback = undefined;
+            const callback = this._tempSectionRemovedCallbacks.shift();
+            if (callback) {
+              callback();
             }
           } else {
             this._variationRemovedCallback?.(node);
             
-            if (this._tempVariationRemovedCallback) {
-              this._tempVariationRemovedCallback();
-              this._tempVariationRemovedCallback = undefined;
+            const callback = this._tempVariationRemovedCallbacks.shift();
+            if (callback) {
+              callback();
             }
           }
         }
@@ -383,6 +401,146 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
     observer.observe(document.body, {
       childList: true,
       subtree: true,
+    });
+  }
+
+  /**
+   * 查找文件管理面板（通过 "Add/Edit Files" 标题定位）
+   */
+  private findFilePanel(): HTMLElement | null {
+    const titleElements = document.querySelectorAll('.font-booth-demi');
+    for (const title of Array.from(titleElements)) {
+      if (title.textContent?.includes('Add/Edit Files')) {
+        return title.closest('.bg-white') as HTMLElement | null;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 计算当前文件列表的签名（用于检测变化）
+   * 包含 id 和 name，任一变化都视为变化
+   */
+  private computeFilesSignature(): string {
+    try {
+      const files = this.getAllFiles();
+      return files.map(f => `${f.id}:${f.name}`).join('|');
+    } catch {
+      return '';
+    }
+  }
+
+  /**
+   * 触发所有文件变化回调
+   */
+  private notifyFilesChanged(): void {
+    const newSignature = this.computeFilesSignature();
+    if (newSignature === this._filesSignature) return;
+    
+    this._filesSignature = newSignature;
+    // 复制一份回调数组，避免回调中修改数组导致迭代问题
+    [...this._filesChangedCallbacks].forEach(callback => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('[ItemEditAPI] onFilesChanged callback error:', error);
+      }
+    });
+  }
+
+  /**
+   * 订阅文件面板变化（新增/删除/重命名）
+   * @returns 取消订阅的函数
+   */
+  onFilesChanged(callback: () => void): () => void {
+    this._filesChangedCallbacks.push(callback);
+    return () => {
+      const idx = this._filesChangedCallbacks.indexOf(callback);
+      if (idx !== -1) this._filesChangedCallbacks.splice(idx, 1);
+    };
+  }
+
+  /**
+   * 设置文件面板观察器
+   * - 保持全局 body observer 持续运行，监听面板出现/消失/重建
+   * - 发现新面板时（或面板被替换时）切换精细 observer 到新元素
+   * - 发现当前绑定的面板脱离 DOM 时自动解绑，等待新面板出现
+   */
+  private setupFilesObserver(): void {
+    // 初始化签名
+    this._filesSignature = this.computeFilesSignature();
+    
+    // 当前绑定的 panel 元素（用于检测是否被 DOM 替换）
+    let currentPanel: HTMLElement | null = null;
+    
+    const attachPanelObserver = (panel: HTMLElement): void => {
+      // 已经绑定过同一个元素就跳过
+      if (currentPanel === panel && this._filePanelObserver) return;
+      
+      // 先拆掉旧的 observer
+      this._filePanelObserver?.disconnect();
+      this._filePanelObserver = null;
+      
+      currentPanel = panel;
+      
+      this._filePanelObserver = new MutationObserver(() => {
+        this.notifyFilesChanged();
+      });
+      
+      this._filePanelObserver.observe(panel, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+      
+      // 面板刚绑定时主动触发一次（以防签名已变）
+      this.notifyFilesChanged();
+    };
+    
+    const detachPanelObserver = (): void => {
+      this._filePanelObserver?.disconnect();
+      this._filePanelObserver = null;
+      currentPanel = null;
+      // 面板消失也要通知一次（文件列表可能已变为空）
+      this.notifyFilesChanged();
+    };
+    
+    // 同步检查一次
+    const syncPanel = (): void => {
+      const panel = this.findFilePanel();
+      
+      if (panel && panel !== currentPanel) {
+        // 新面板或面板被替换
+        attachPanelObserver(panel);
+      } else if (!panel && currentPanel) {
+        // 面板消失
+        detachPanelObserver();
+      } else if (currentPanel && !document.body.contains(currentPanel)) {
+        // 同一位置存在，但当前 panel 已脱离 DOM（可能是 React 用同选择器重建）
+        if (panel) {
+          attachPanelObserver(panel);
+        } else {
+          detachPanelObserver();
+        }
+      }
+    };
+    
+    // 立刻尝试绑定一次（若面板已在页面上）
+    syncPanel();
+    
+    // 全局 body observer 持续监听面板生命周期（用 RAF 防抖）
+    let rafId: number | null = null;
+    this._globalFilesObserver = new MutationObserver(() => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        syncPanel();
+      });
+    });
+    
+    this._globalFilesObserver.observe(document.body, {
+      childList: true,
+      subtree: true
     });
   }
 
@@ -750,23 +908,34 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
   }
 
   /**
-   * 创建一个带超时的等待 Promise
+   * 创建一个带超时的等待 Promise（基于回调队列）
+   * @param queue 回调队列（注册的回调将按 FIFO 顺序执行）
+   * @param timeout 超时时间（毫秒）
    */
-  private createWaitPromise(
-    setCallback: (callback: () => void) => void,
-    clearCallback: () => void,
+  private createQueuedWaitPromise(
+    queue: Array<() => void>,
     timeout: number
   ): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      const timer = setTimeout(() => {
-        clearCallback();
-        resolve(false);
-      }, timeout);
-
-      setCallback(() => {
+      let settled = false;
+      
+      const callback = () => {
+        if (settled) return;
+        settled = true;
         clearTimeout(timer);
         resolve(true);
-      });
+      };
+      
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        // 从队列中移除此回调，避免泄漏
+        const idx = queue.indexOf(callback);
+        if (idx !== -1) queue.splice(idx, 1);
+        resolve(false);
+      }, timeout);
+      
+      queue.push(callback);
     });
   }
 
@@ -776,15 +945,16 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
    * @returns Promise<boolean> 是否成功添加
    */
   async addSection(timeout = 5000): Promise<boolean> {
+    // 先注册回调再点击，避免在点击和注册之间 DOM 变更导致回调丢失
+    const waitPromise = this.createQueuedWaitPromise(this._tempSectionAddedCallbacks, timeout);
+    
     if (!this.clickAddSectionButton()) {
+      // 清理注册的回调
+      this._tempSectionAddedCallbacks.pop();
       return false;
     }
-
-    return this.createWaitPromise(
-      (callback) => { this._tempSectionAddedCallback = callback; },
-      () => { this._tempSectionAddedCallback = undefined; },
-      timeout
-    );
+    
+    return waitPromise;
   }
 
   /**
@@ -793,15 +963,14 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
    * @returns Promise<boolean> 是否成功添加
    */
   async addVariation(timeout = 5000): Promise<boolean> {
+    const waitPromise = this.createQueuedWaitPromise(this._tempVariationAddedCallbacks, timeout);
+    
     if (!this.clickAddVariationButton()) {
+      this._tempVariationAddedCallbacks.pop();
       return false;
     }
-
-    return this.createWaitPromise(
-      (callback) => { this._tempVariationAddedCallback = callback; },
-      () => { this._tempVariationAddedCallback = undefined; },
-      timeout
-    );
+    
+    return waitPromise;
   }
 
   /**
@@ -907,13 +1076,10 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
     if (!section.deleteButton) return false;
 
+    // 先注册回调，避免 click 后 DOM 立即变更使回调丢失
+    const waitPromise = this.createQueuedWaitPromise(this._tempSectionRemovedCallbacks, timeout);
     section.deleteButton.click();
-
-    return this.createWaitPromise(
-      (callback) => { this._tempSectionRemovedCallback = callback; },
-      () => { this._tempSectionRemovedCallback = undefined; },
-      timeout
-    );
+    return waitPromise;
   }
 
   /**
@@ -983,13 +1149,9 @@ export class ItemEditAPI extends BaseAPI<ItemEditAPI> {
 
     if (!variation.deleteButton) return false;
 
+    const waitPromise = this.createQueuedWaitPromise(this._tempVariationRemovedCallbacks, timeout);
     variation.deleteButton.click();
-
-    return this.createWaitPromise(
-      (callback) => { this._tempVariationRemovedCallback = callback; },
-      () => { this._tempVariationRemovedCallback = undefined; },
-      timeout
-    );
+    return waitPromise;
   }
 
   /**

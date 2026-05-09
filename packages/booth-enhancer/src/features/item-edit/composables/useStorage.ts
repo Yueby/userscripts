@@ -1,5 +1,5 @@
 import type { NodeTree } from '../config-types';
-import { ConfigStorage } from '../modules/ConfigStorage';
+import { ConfigStorage, type ImportResult } from '../modules/ConfigStorage';
 
 /**
  * 统一的 Storage 访问 Composable
@@ -27,8 +27,9 @@ export function useStorage() {
     importTemplates: (data: any) => storage.importTemplates(data),
     importSingleItem: (config: any, options?: { replace?: boolean }) => 
       storage.importSingleItem(config, options),
-    importAllFromZip: (files: Record<string, any>) => storage.importAllFromZip(files),
-    importAllFromJSON: (data: any) => storage.importAllFromJSON(data),
+    importAllFromZip: (files: Record<string, any>): ImportResult => 
+      storage.importAllFromZip(files),
+    importAllFromJSON: (data: any): ImportResult => storage.importAllFromJSON(data),
     
     // === 节点操作方法 ===
     createNode: <T>(tree: NodeTree<T>, name: string, data?: T, parentId?: string | null) =>

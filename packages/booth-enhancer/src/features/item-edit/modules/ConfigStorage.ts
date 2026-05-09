@@ -3,8 +3,10 @@ import { ref, watch, type Ref } from 'vue';
 import {
   AppData,
   createDefaultData,
+  createDefaultGlobalTemplates,
   Node,
   NodeTree,
+  type GlobalTemplateConfig,
   type ItemsData,
   type SingleItemConfig,
   type TagsData,
@@ -13,6 +15,17 @@ import {
 
 const STORAGE_KEY = 'booth-enhancer-config-v4';
 const SAVE_DEBOUNCE = 500;
+
+// 当前数据 schema 版本，用于增量迁移
+const CURRENT_SCHEMA_VERSION = 2;
+
+/**
+ * 导入结果
+ */
+export interface ImportResult {
+  success: boolean;
+  failedParts: string[];
+}
 
 export class ConfigStorage {
   private static instance: ConfigStorage;
@@ -41,26 +54,112 @@ export class ConfigStorage {
     return this._data;
   }
 
+  /**
+   * 迁移旧数据：把 fileItemMap 中的 string 值转换为 string[]
+   * 只在 schemaVersion < 1 时执行
+   */
+  private migrateFileItemMap(data: AppData): boolean {
+    let changed = false;
+    Object.values(data.itemConfigs).forEach(config => {
+      config.variations.forEach(variation => {
+        if (!variation.fileItemMap) return;
+        Object.keys(variation.fileItemMap).forEach(fileId => {
+          const value = variation.fileItemMap![fileId];
+          if (typeof value === 'string') {
+            variation.fileItemMap![fileId] = [value] as any;
+            changed = true;
+          }
+        });
+      });
+    });
+    return changed;
+  }
+
+  /**
+   * 确保 globalTemplates 有所有必需的字段
+   * 向后兼容老用户数据（如增加了 discountIndicatorTemplates 之后）
+   * 只补齐缺失的数组字段，不覆盖已有内容
+   */
+  private ensureGlobalTemplatesShape(data: AppData): void {
+    const defaults = createDefaultGlobalTemplates();
+    if (!data.globalTemplates) {
+      data.globalTemplates = defaults;
+      return;
+    }
+    // 对每个字段，若用户数据里缺失或不是数组则用默认值
+    (Object.keys(defaults) as Array<keyof GlobalTemplateConfig>).forEach(key => {
+      if (!Array.isArray(data.globalTemplates[key])) {
+        (data.globalTemplates as any)[key] = defaults[key];
+      }
+    });
+  }
+
+  /**
+   * 迁移旧数据：单时段折扣 → 多时段 periods[]
+   * 旧格式: { enabled, discountPercent, startDate?, endDate? }
+   * 新格式: { enabled, periods: [{ id, discountPercent, startDate?, endDate? }] }
+   * 
+   * 同时迁移旧折扣模板：{ template } → { header, periodTemplate }
+   */
+  private migrateDiscountPeriods(data: AppData): void {
+    // 迁移 itemConfigs 里的 discount 结构
+    Object.values(data.itemConfigs).forEach(config => {
+      const d = config.discount as any;
+      if (d && d.discountPercent !== undefined && !d.periods) {
+        d.periods = [];
+        if (d.discountPercent > 0) {
+          d.periods.push({
+            id: crypto.randomUUID(),
+            discountPercent: d.discountPercent,
+            startDate: d.startDate,
+            endDate: d.endDate
+          });
+        }
+        delete d.discountPercent;
+        delete d.startDate;
+        delete d.endDate;
+      }
+      // 确保 periods 字段存在
+      if (d && !d.periods) {
+        d.periods = [];
+      }
+    });
+    
+    // 迁移折扣模板：旧 { template } → 新 { header, periodTemplate }
+    if (data.globalTemplates?.discountTemplates) {
+      data.globalTemplates.discountTemplates.forEach((tpl: any) => {
+        if (tpl.template !== undefined && tpl.periodTemplate === undefined) {
+          // 把旧的 template 整体作为 periodTemplate，header 留空
+          tpl.periodTemplate = tpl.template;
+          tpl.header = '';
+          delete tpl.template;
+        }
+      });
+    }
+  }
+
   private load(): AppData {
     try {
       const stored = GM_getValue(STORAGE_KEY, null);
       if (stored) {
-        const data = JSON.parse(stored) as AppData;
+        const data = JSON.parse(stored) as AppData & { schemaVersion?: number };
+        const version = data.schemaVersion ?? 0;
         
-        // 数据迁移：将旧的 string 格式转换为 string[] 格式
-        Object.values(data.itemConfigs).forEach(config => {
-          config.variations.forEach(variation => {
-            if (variation.fileItemMap) {
-              Object.keys(variation.fileItemMap).forEach(fileId => {
-                const value = variation.fileItemMap![fileId];
-                // 如果是字符串，转换为数组
-                if (typeof value === 'string') {
-                  variation.fileItemMap![fileId] = [value] as any;
-                }
-              });
-            }
-          });
-        });
+        // 增量迁移：schemaVersion 0 -> 1
+        if (version < 1) {
+          this.migrateFileItemMap(data);
+        }
+        
+        // 增量迁移：schemaVersion 1 -> 2（单时段折扣 → 多时段）
+        if (version < 2) {
+          this.migrateDiscountPeriods(data);
+        }
+        
+        // 每次加载都补齐可能缺失的默认字段（防止老数据结构不完整）
+        this.ensureGlobalTemplatesShape(data);
+        
+        // 标记当前版本
+        (data as any).schemaVersion = CURRENT_SCHEMA_VERSION;
         
         // 每次打开页面时，侧边栏默认关闭（不保存窗口打开状态）
         if (data.ui) {
@@ -72,7 +171,9 @@ export class ConfigStorage {
       console.error('Failed to load config:', e);
     }
     
-    return createDefaultData();
+    const fresh = createDefaultData() as AppData & { schemaVersion?: number };
+    fresh.schemaVersion = CURRENT_SCHEMA_VERSION;
+    return fresh;
   }
 
   private save(): void {
@@ -313,7 +414,7 @@ export class ConfigStorage {
     return true;
   }
 
-  importAllFromZip(files: Record<string, any>): void {
+  importAllFromZip(files: Record<string, any>): ImportResult {
     const errors: string[] = [];
     
     // 导入全局数据
@@ -352,12 +453,10 @@ export class ConfigStorage {
       }
     }
     
-    if (errors.length > 0) {
-      throw new Error(`以下数据导入失败: ${errors.join('、')}`);
-    }
+    return { success: errors.length === 0, failedParts: errors };
   }
 
-  importAllFromJSON(importData: any): void {
+  importAllFromJSON(importData: any): ImportResult {
     const errors: string[] = [];
     
     // 检查数据格式
@@ -403,9 +502,7 @@ export class ConfigStorage {
       }
     }
     
-    if (errors.length > 0) {
-      throw new Error(`以下数据导入失败: ${errors.join('、')}`);
-    }
+    return { success: errors.length === 0, failedParts: errors };
   }
 
   /**

@@ -46,7 +46,7 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
         title="添加模板"
         type="button"
       >
-        <span v-html="withSize(icons.plus, 18)"></span>
+        <span v-html="withSize(icons.plus, 16)"></span>
       </button>
     </template>
 

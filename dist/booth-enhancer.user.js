@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.1.25
+// @version            0.2.0
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -22,12 +22,12 @@
 // @grant              GM_xmlhttpRequest
 // ==/UserScript==
 
-(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const t=document.createElement("style");t.textContent=e,document.head.append(t)})(` .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-43c71f00]{width:100%}.file-grid[data-v-43c71f00]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-43c71f00]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-43c71f00]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-43c71f00]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-996dd7d2]{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#64748b;border-radius:6px;cursor:pointer;transition:all .15s ease;padding:0}.icon-btn[data-v-996dd7d2] svg{width:18px;height:18px;stroke-width:2}.icon-btn[data-v-996dd7d2]:hover{background:#f1f5f9;color:#475569;border-color:#e2e8f0;transform:translateY(-1px)}.icon-btn[data-v-996dd7d2]:active{transform:translateY(1px)}.icon-btn.variant-danger[data-v-996dd7d2]{color:#64748b}.icon-btn.variant-danger[data-v-996dd7d2]:hover{background:#fef2f2;color:#ef4444;border-color:#fee2e2}.modal-overlay[data-v-3bf68892]{position:fixed;top:0;right:0;bottom:0;left:0;background:#00000080;display:flex;align-items:flex-end;justify-content:center;z-index:10000;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.modal-overlay.modal-in-sidebar[data-v-3bf68892]{position:absolute;z-index:2000}.modal-container[data-v-3bf68892]{background:#fff;border-radius:16px 16px 0 0;box-shadow:0 10px 25px #0003;width:100%;max-height:70vh;display:flex;flex-direction:column;overflow:hidden}.modal-overlay.modal-in-sidebar .modal-container[data-v-3bf68892]{max-height:70%}.modal-header[data-v-3bf68892]{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f8fafc}.modal-title[data-v-3bf68892]{margin:0;font-size:14px;font-weight:600;color:#374151}.modal-header-actions[data-v-3bf68892]{display:flex;align-items:center;gap:4px}.modal-header .booth-btn[data-v-3bf68892] svg{width:18px;height:18px;stroke-width:2}.modal-body[data-v-3bf68892]{padding:8px;overflow-y:auto;flex:1;min-height:0;color:#374151}.modal-footer[data-v-3bf68892]{padding:10px 12px;border-top:1px solid #e5e7eb;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;flex-shrink:0;background:#f8fafc}.modal-body[data-v-3bf68892] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-3bf68892]{width:100%}.modal-enter-active[data-v-3bf68892],.modal-leave-active[data-v-3bf68892]{transition:opacity .3s ease}.modal-enter-active .modal-container[data-v-3bf68892],.modal-leave-active .modal-container[data-v-3bf68892]{transition:transform .3s ease}.modal-enter-from[data-v-3bf68892],.modal-leave-to[data-v-3bf68892]{opacity:0}.modal-enter-from .modal-container[data-v-3bf68892],.modal-leave-to .modal-container[data-v-3bf68892]{transform:translateY(100%)}.modal-body[data-v-3bf68892]::-webkit-scrollbar{width:6px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-track{background:#f5f5f5}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}.modal-body[data-v-3bf68892]::-webkit-scrollbar-thumb:hover{background:#999}.preview-box[data-v-93d09832]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-93d09832]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-5643104c]{padding:var(--be-space-sm);padding-bottom:8px;border-bottom:1px solid var(--be-color-border)}.section-header-container.no-header[data-v-5643104c]{padding-bottom:var(--be-space-sm)}.section-header-container.no-border[data-v-5643104c]{border-bottom:none;padding-bottom:var(--be-space-sm)}.section-header[data-v-5643104c]{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.actions[data-v-5643104c]{display:flex;gap:var(--be-space-sm);flex-wrap:nowrap;align-items:center}.tab-bar[data-v-8faa559a]{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb}.tab-list[data-v-8faa559a]{display:flex;gap:2px}.tab-btn[data-v-8faa559a]{padding:6px 12px;border:1px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:#6b7280;border-radius:6px;transition:all .15s ease;display:flex;align-items:center;gap:6px;font-weight:500}.tab-btn[data-v-8faa559a]:hover:not(.active){background:#f3f4f6;color:#374151}.tab-btn.active[data-v-8faa559a]{background:#fff;color:#3b82f6;font-weight:600;box-shadow:0 1px 2px #00000014}.tab-btn[data-v-8faa559a]:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.tab-btn.active[data-v-8faa559a]:focus{box-shadow:0 1px 2px #00000014,0 0 0 3px #3b82f633}.tab-btn[data-v-8faa559a]:focus:not(:focus-visible){box-shadow:none}.tab-btn.active[data-v-8faa559a]:focus:not(:focus-visible){box-shadow:0 1px 2px #00000014}.tab-icon[data-v-8faa559a]{display:flex;align-items:center;justify-content:center}.tab-icon[data-v-8faa559a] svg{width:13px;height:13px}.tab-label[data-v-8faa559a]{white-space:nowrap}.tab-actions[data-v-8faa559a]{display:flex;align-items:center;gap:4px}.template-selector[data-v-3d389fdb]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-3d389fdb]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-3d389fdb]{width:100%}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-d653bc39]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-d653bc39]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-d653bc39]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-d653bc39]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-d653bc39]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-d653bc39]::placeholder{color:#9ca3af}.search-results[data-v-d653bc39]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-d653bc39]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-d653bc39]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-d653bc39]{position:relative;z-index:1}.empty-state[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-89529f85]{display:flex;flex-direction:column;gap:6px;padding:var(--be-space-sm);background:#00000005;border:1px solid var(--be-color-border);border-radius:var(--be-radius)}.drag-transition-move[data-v-89529f85]{transition:transform .3s ease}.drag-transition-enter-active[data-v-89529f85],.drag-transition-leave-active[data-v-89529f85]{transition:all .3s ease}.drag-transition-leave-active[data-v-89529f85]{position:absolute}.drag-transition-enter-from[data-v-89529f85],.drag-transition-leave-to[data-v-89529f85]{opacity:0;transform:translateY(-10px)}.draggable-card-list .draggable-card-list[data-v-89529f85]{background:transparent;border:none;padding:0}.draggable-card[data-v-89529f85]{padding:4px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:default;transition:var(--be-transition-normal)}.draggable-card[data-v-89529f85]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.draggable-card.is-dragging[data-v-89529f85]{opacity:.5;transform:scale(.95);box-shadow:var(--be-shadow-lg);border-color:var(--be-color-primary)}.draggable-card.is-drag-over[data-v-89529f85]{opacity:.7}.card-actions[data-v-89529f85]{display:flex;align-items:center;gap:var(--be-space-xs);padding:4px 0;border-bottom:1px solid var(--be-color-border);margin-bottom:4px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-89529f85]{cursor:grab;color:var(--be-color-text-muted);flex-shrink:0;display:flex;align-items:center;padding:4px;margin:-4px;touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.drag-handle[data-v-89529f85]:active{cursor:grabbing}.drag-handle.is-locked[data-v-89529f85]{cursor:not-allowed!important;pointer-events:none}@media (max-width: 768px){.drag-handle[data-v-89529f85]{padding:8px;margin:-8px}}.card-number[data-v-89529f85]{font-size:var(--be-font-size-sm);font-weight:600;color:var(--be-color-text-secondary);flex-shrink:0}.actions-content[data-v-89529f85]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-89529f85]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-primary:focus{box-shadow:0 1px 3px #3b82f64d,0 0 0 3px #3b82f633}.booth-btn-success:focus{box-shadow:0 1px 3px #10b9814d,0 0 0 3px #10b98133}.booth-btn-danger:focus{box-shadow:0 1px 3px #ef44444d,0 0 0 3px #ef444433}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle input[type=checkbox]:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f633}.booth-toggle input[type=checkbox]:focus:not(:focus-visible)+.toggle-slider{box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f64d}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61a}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-19213a99]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid #e0e0e0;border-radius:12px 0 0 12px;box-shadow:-4px 0 12px #0000001a;font-size:12px;color:#333;overflow:hidden}.sidebar-content[data-v-19213a99]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-19213a99]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-19213a99]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-19213a99]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-19213a99]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-19213a99],.tab-slide-leave-from[data-v-19213a99]{opacity:1;transform:translate(0)}.sidebar-content[data-v-19213a99]>*{width:100%;height:100%}.tag-preset-tab[data-v-81455dc4]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-81455dc4]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-81455dc4]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-81455dc4]::-webkit-scrollbar{width:6px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-81455dc4]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-81455dc4]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-81455dc4]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-81455dc4]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-81455dc4]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-81455dc4]{width:100%}.tag-badges-wrapper[data-v-81455dc4]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-81455dc4]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-81455dc4]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-81455dc4]{flex-shrink:0}.tag-delete-btn[data-v-81455dc4]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-81455dc4]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-81455dc4]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-81455dc4]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-81455dc4]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-6c6b3856]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-6c6b3856]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-6c6b3856]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-6c6b3856]{flex-shrink:0}.modal-message[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-6c6b3856]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-6c6b3856]{font-family:Consolas,Monaco,monospace;line-height:1.5}.empty-hint[data-v-55a17291]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.template-grid[data-v-70ec8f42]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-70ec8f42]{padding:8px;transition:all .15s ease}.template-item[data-v-70ec8f42]:hover{transform:translateY(-1px)}.empty-hint[data-v-bffc3bd1]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.empty-hint[data-v-a0321489]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tag-badge-preview[data-v-a0321489]{display:inline-flex;align-items:center;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badges-wrapper[data-v-acf36643]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-acf36643]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-acf36643]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-acf36643]{flex-shrink:0}.tag-delete-btn[data-v-acf36643]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-acf36643]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.discount-config[data-v-5862736f]{display:flex;flex-direction:column;gap:var(--be-space-sm);margin-top:var(--be-space-sm)}.empty-hint[data-v-1d97034f]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-1d97034f]{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-1d97034f]{grid-template-columns:1fr}.item-card[data-v-1d97034f]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-1d97034f]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-1d97034f]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-delete-btn[data-v-1d97034f]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-1d97034f]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-delete-btn[data-v-1d97034f]:focus{outline:none;box-shadow:0 0 0 3px #6b728033}.item-card-delete-btn[data-v-1d97034f]:focus:not(:focus-visible){box-shadow:none}.item-card-content[data-v-1d97034f]{padding:6px 8px}.item-list-container[data-v-1d97034f]{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.item-tag[data-v-1d97034f]{display:inline-flex;align-items:center;gap:var(--be-space-xs);padding:4px 8px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm);font-size:var(--be-font-size-xs);color:var(--be-color-text);font-weight:500;transition:var(--be-transition-normal)}.item-tag-text[data-v-1d97034f]{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-tag-remove[data-v-1d97034f]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;transition:var(--be-transition-normal)}.item-tag-remove[data-v-1d97034f]:hover{background:var(--be-color-danger);color:#fff}.item-tag-remove[data-v-1d97034f]:focus{outline:none;box-shadow:0 0 0 2px #3b82f64d}.item-tag-remove[data-v-1d97034f]:focus:not(:focus-visible){box-shadow:none}.item-add-btn[data-v-1d97034f]{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:var(--be-radius-sm);color:var(--be-color-text-secondary);cursor:pointer;transition:var(--be-transition-normal)}.item-add-btn[data-v-1d97034f]:hover{border-style:solid;border-color:var(--be-color-primary);color:var(--be-color-primary);background:var(--be-color-bg-secondary)}.item-add-btn[data-v-1d97034f]:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.item-add-btn[data-v-1d97034f]:focus:not(:focus-visible){box-shadow:none}.item-add-text[data-v-1d97034f]{white-space:nowrap}.booth-enhancer-lock-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#999;cursor:help;z-index:10}.booth-enhancer-lock-icon svg{display:block}.empty-state[data-v-af4e9148]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center}.empty-icon[data-v-af4e9148]{color:var(--be-color-text-muted);margin-bottom:var(--be-space-lg);opacity:.5}.empty-state p[data-v-af4e9148]{margin:0 0 var(--be-space-lg);font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);max-width:400px}.edit-tab[data-v-af4e9148]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-scrollable[data-v-af4e9148]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-af4e9148]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-af4e9148]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-af4e9148]:hover{background:var(--be-color-bg-hover)} `);
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const a=document.createElement("style");a.textContent=e,document.head.append(a)})(` .menu-fade-enter-active[data-v-4d60a255]{transition:opacity .15s ease-out,transform .15s ease-out}.menu-fade-leave-active[data-v-4d60a255]{transition:opacity .1s ease-in,transform .1s ease-in}.menu-fade-enter-from[data-v-4d60a255]{opacity:0;transform:scale(.95) translateY(-4px)}.menu-fade-leave-to[data-v-4d60a255]{opacity:0;transform:scale(.95)}.context-menu[data-v-4d60a255]{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px #00000026;z-index:10000;min-width:140px;overflow:hidden;padding:4px 0;transform-origin:top left}.context-menu.no-transition[data-v-4d60a255]{transition:none!important}.menu-item[data-v-4d60a255]{padding:8px 16px;cursor:pointer;transition:all .15s ease;font-size:12px;color:#374151;display:flex;align-items:center;gap:8px}.menu-item[data-v-4d60a255]:hover{background:#f3f4f6}.menu-item-danger[data-v-4d60a255]{color:#ef4444}.menu-item-danger[data-v-4d60a255]:hover{background:#fef2f2}.menu-item-disabled[data-v-4d60a255]{opacity:.5;cursor:not-allowed;pointer-events:none}.menu-icon[data-v-4d60a255]{display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0}.menu-item-danger .menu-icon[data-v-4d60a255]{color:#ef4444}.menu-icon[data-v-4d60a255] svg{width:14px;height:14px}.menu-label[data-v-4d60a255]{flex:1}.menu-separator[data-v-4d60a255]{height:1px;background:#e5e7eb;margin:4px 0}.file-selector[data-v-43c71f00]{width:100%}.file-grid[data-v-43c71f00]{display:grid;gap:8px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.file-item[data-v-43c71f00]{padding:6px 8px;transition:all .15s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-item[data-v-43c71f00]:hover{transform:translateY(-1px)}.file-item.is-selected[data-v-43c71f00]{background-color:#3b82f61a;border-color:#3b82f64d}.icon-btn[data-v-eaa777fd]{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:var(--be-color-text-secondary);border-radius:var(--be-radius);cursor:pointer;transition:background var(--be-transition-normal),color var(--be-transition-normal),border-color var(--be-transition-normal),transform var(--be-transition-fast);padding:0}.icon-btn[data-v-eaa777fd] svg{width:16px;height:16px;stroke-width:2}.icon-btn[data-v-eaa777fd]:hover{background:var(--be-color-bg-tertiary);color:var(--be-color-text);border-color:var(--be-color-border);transform:translateY(-1px)}.icon-btn[data-v-eaa777fd]:active{transform:translateY(0)}.icon-btn[data-v-eaa777fd]:focus{outline:none}.icon-btn[data-v-eaa777fd]:focus-visible{box-shadow:0 0 0 3px #3b82f633}.icon-btn.variant-danger[data-v-eaa777fd]:hover{background:#fef2f2;color:var(--be-color-danger);border-color:#fee2e2}.modal-overlay[data-v-06471afb]{position:fixed;top:0;right:0;bottom:0;left:0;background:#0f172a73;display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}.modal-overlay.modal-in-sidebar[data-v-06471afb]{position:absolute;z-index:2000;padding:12px}.modal-overlay.size-sm .modal-container[data-v-06471afb]{max-width:320px;max-height:70%}.modal-overlay.size-md .modal-container[data-v-06471afb]{max-width:100%;max-height:75%}.modal-overlay.size-lg .modal-container[data-v-06471afb]{max-width:100%;max-height:85%}.modal-overlay.size-full .modal-container[data-v-06471afb]{max-width:100%;max-height:calc(100% - 24px);width:100%}.modal-overlay:not(.modal-in-sidebar).size-sm .modal-container[data-v-06471afb]{max-width:420px}.modal-overlay:not(.modal-in-sidebar).size-md .modal-container[data-v-06471afb]{max-width:560px}.modal-overlay:not(.modal-in-sidebar).size-lg .modal-container[data-v-06471afb]{max-width:720px}.modal-overlay:not(.modal-in-sidebar).size-full .modal-container[data-v-06471afb]{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px)}.modal-container[data-v-06471afb]{background:#fff;border-radius:var(--be-radius-lg);box-shadow:0 20px 40px #0f172a2e,0 4px 10px #0f172a14;width:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--be-color-border-light)}.modal-header[data-v-06471afb]{padding:12px 16px;border-bottom:1px solid var(--be-color-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(180deg,var(--be-color-bg) 0%,var(--be-color-bg-secondary) 100%);gap:8px}.modal-title[data-v-06471afb]{margin:0;font-size:15px;font-weight:600;color:var(--be-color-text);letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.modal-header-actions[data-v-06471afb]{display:inline-flex;align-items:center;gap:4px;flex-shrink:0}.modal-header .booth-btn[data-v-06471afb] svg{width:16px;height:16px;stroke-width:2}.modal-close-btn[data-v-06471afb]{width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:var(--be-color-text-secondary);border-radius:var(--be-radius);cursor:pointer;transition:background var(--be-transition-normal),color var(--be-transition-normal),border-color var(--be-transition-normal)}.modal-close-btn[data-v-06471afb] svg{width:16px;height:16px;stroke-width:2}.modal-close-btn[data-v-06471afb]:hover{background:var(--be-color-bg-tertiary);color:var(--be-color-text);border-color:var(--be-color-border)}.modal-close-btn[data-v-06471afb]:focus{outline:none}.modal-close-btn[data-v-06471afb]:focus-visible{box-shadow:0 0 0 3px #3b82f633}.modal-body[data-v-06471afb]{padding:16px;overflow-y:auto;flex:1;min-height:0;color:var(--be-color-text)}.modal-body[data-v-06471afb]::-webkit-scrollbar{width:6px}.modal-body[data-v-06471afb]::-webkit-scrollbar-track{background:transparent}.modal-body[data-v-06471afb]::-webkit-scrollbar-thumb{background:var(--be-color-border);border-radius:3px}.modal-body[data-v-06471afb]::-webkit-scrollbar-thumb:hover{background:var(--be-color-border-hover)}.modal-footer[data-v-06471afb]{padding:10px 16px;border-top:1px solid var(--be-color-border);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0;background:var(--be-color-bg-secondary)}.modal-body[data-v-06471afb] .section-header-container{padding-left:0!important;padding-right:0!important}.modal-footer .booth-btn[data-v-06471afb]{min-width:72px}.modal-footer .booth-btn.booth-btn-icon[data-v-06471afb]{min-width:32px}.modal-enter-active[data-v-06471afb],.modal-leave-active[data-v-06471afb]{transition:opacity .2s ease}.modal-enter-active .modal-container[data-v-06471afb],.modal-leave-active .modal-container[data-v-06471afb]{transition:transform .22s cubic-bezier(.16,1,.3,1),opacity .22s ease}.modal-enter-from[data-v-06471afb],.modal-leave-to[data-v-06471afb]{opacity:0}.modal-enter-from .modal-container[data-v-06471afb],.modal-leave-to .modal-container[data-v-06471afb]{transform:scale(.96) translateY(10px);opacity:0}.preview-box[data-v-93d09832]{padding:var(--be-space-sm);background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.preview-box pre[data-v-93d09832]{font-family:inherit;font-size:inherit;line-height:inherit}.section-header-container[data-v-2fa32263]{padding:12px 14px;border-bottom:1px solid var(--be-color-border);display:flex;flex-direction:column;gap:8px}.section-header-container.no-header[data-v-2fa32263]{padding-top:12px}.section-header-container.no-border[data-v-2fa32263]{border-bottom:none}.section-header-container.is-collapsed[data-v-2fa32263]{gap:0}.section-header[data-v-2fa32263]{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:28px}.section-header.is-clickable[data-v-2fa32263]{cursor:pointer;-webkit-user-select:none;user-select:none}.section-header.is-clickable:hover .section-header-title[data-v-2fa32263]{color:var(--be-color-primary)}.section-header-title[data-v-2fa32263]{display:flex;align-items:center;gap:4px;flex:1;min-width:0;letter-spacing:-.01em;transition:color .15s ease}.collapse-icon[data-v-2fa32263]{display:inline-flex;align-items:center;justify-content:center;color:var(--be-color-text-muted);transition:transform .2s ease}.collapse-icon.is-collapsed[data-v-2fa32263]{transform:rotate(-90deg)}.actions[data-v-2fa32263]{display:flex;gap:4px;flex-wrap:nowrap;align-items:center;flex-shrink:0}.tab-bar[data-v-a4df4728]{display:flex;align-items:stretch;justify-content:space-between;gap:var(--be-space-sm);padding:var(--be-space-xs) var(--be-space-md);background:linear-gradient(180deg,var(--be-color-bg) 0%,var(--be-color-bg-secondary) 100%);border-bottom:1px solid var(--be-color-border);flex-shrink:0}.tab-list[data-v-a4df4728]{display:flex;gap:var(--be-space-xs);align-items:stretch;min-width:0;flex:1}.tab-btn[data-v-a4df4728]{position:relative;padding:var(--be-space-sm) var(--be-space-md);border:none;background:transparent;cursor:pointer;font-size:var(--be-font-size-base);color:var(--be-color-text-secondary);border-radius:var(--be-radius-sm) var(--be-radius-sm) 0 0;transition:color var(--be-transition-normal),background var(--be-transition-normal);display:inline-flex;align-items:center;gap:var(--be-space-xs);font-weight:500;line-height:1.2;font-family:inherit;white-space:nowrap}.tab-btn[data-v-a4df4728]:after{content:"";position:absolute;left:50%;right:50%;bottom:-1px;height:2px;background:var(--be-color-primary);border-radius:2px 2px 0 0;transition:left var(--be-transition-normal),right var(--be-transition-normal),opacity var(--be-transition-normal);opacity:0}.tab-btn[data-v-a4df4728]:hover:not(.active){color:var(--be-color-text);background:var(--be-color-bg-hover)}.tab-btn[data-v-a4df4728]:hover:not(.active):after{left:30%;right:30%;opacity:.3}.tab-btn.active[data-v-a4df4728]{color:var(--be-color-primary);font-weight:600}.tab-btn.active[data-v-a4df4728]:after{left:var(--be-space-sm);right:var(--be-space-sm);opacity:1}.tab-btn[data-v-a4df4728]:focus{outline:none}.tab-btn[data-v-a4df4728]:focus-visible{box-shadow:0 0 0 3px #3b82f633;border-radius:var(--be-radius-sm)}.tab-icon[data-v-a4df4728]{display:inline-flex;align-items:center;justify-content:center;color:currentColor}.tab-icon[data-v-a4df4728] svg{width:14px;height:14px}.tab-label[data-v-a4df4728]{white-space:nowrap}.tab-actions[data-v-a4df4728]{display:inline-flex;align-items:center;gap:var(--be-space-xs);flex-shrink:0;padding-left:var(--be-space-sm);border-left:1px solid var(--be-color-border-light)}@media (max-width: 480px){.tab-bar[data-v-a4df4728]{padding:var(--be-space-xs) var(--be-space-sm)}.tab-btn[data-v-a4df4728]{padding:var(--be-space-sm)}.tab-actions[data-v-a4df4728]{padding-left:var(--be-space-xs)}}.template-selector[data-v-3d389fdb]{display:flex;flex-direction:column;gap:4px}.template-selector-label[data-v-3d389fdb]{font-size:var(--be-font-size-sm);font-weight:500;color:var(--be-color-text-primary)}.template-selector-select[data-v-3d389fdb]{width:100%}.tree-item[data-v-fbb1ef76]{-webkit-user-select:none;user-select:none}.tree-node-wrapper[data-v-fbb1ef76]{position:relative;transition:all .15s ease}.tree-node-wrapper[draggable=true][data-v-fbb1ef76]{cursor:move}.tree-node-wrapper[data-v-fbb1ef76]:active{cursor:grabbing}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]{background:#eff6ff;border-radius:4px}.tree-node-wrapper.drag-over-inside[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:2px solid #3b82f6;border-radius:4px;pointer-events:none;animation:pulse-fbb1ef76 1s ease-in-out infinite}@keyframes pulse-fbb1ef76{0%,to{opacity:1}50%{opacity:.5}}.drop-indicator[data-v-fbb1ef76]{position:relative;height:2px;margin:2px 0;pointer-events:none}.drop-indicator[data-v-fbb1ef76]:before{content:"";position:absolute;left:0;right:0;height:2px;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.drop-indicator[data-v-fbb1ef76]:after{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 4px #3b82f680}.node-item[data-v-fbb1ef76]{position:relative;border-bottom:1px solid rgba(0,0,0,.06);transition:background .15s ease;cursor:pointer}.node-item.is-editing[data-v-fbb1ef76]{cursor:default}.node-item[data-v-fbb1ef76]:not(.is-editing):after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background-color:transparent;pointer-events:none;transition:background-color .1s ease;z-index:1}.node-item[data-v-fbb1ef76]:not(.is-editing):hover:after{background-color:#0000000a}.node-item.selected[data-v-fbb1ef76]{background:#bfdbfe}.tree-node-content[data-v-fbb1ef76]{display:flex;align-items:center;padding:4px 8px;min-height:28px;cursor:inherit;transition:background .15s ease}.node-item.has-custom-content .tree-node-content[data-v-fbb1ef76]{padding-bottom:2px}.node-item.is-editing .tree-node-content[data-v-fbb1ef76]{cursor:default}.toggle-area[data-v-fbb1ef76]{display:flex;align-items:center;cursor:pointer;position:relative;z-index:2;transition:opacity .15s ease;margin-right:8px}.toggle-area[data-v-fbb1ef76]:hover{opacity:.7}.toggle-area .expand-icon[data-v-fbb1ef76]{margin-right:4px}.toggle-area .icon[data-v-fbb1ef76]{margin-right:0}.expand-icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:4px;color:#6b7280;flex-shrink:0;transition:transform .2s ease,opacity .15s ease;position:relative;z-index:2}.expand-icon.placeholder[data-v-fbb1ef76]{visibility:hidden;cursor:default}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder){cursor:pointer}.node-item.is-editing .expand-icon[data-v-fbb1ef76]:not(.placeholder):hover{opacity:.7}.expand-icon[data-v-fbb1ef76] svg{width:12px;height:12px}.icon[data-v-fbb1ef76]{display:flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:8px;flex-shrink:0;position:relative;z-index:2}.icon[data-v-fbb1ef76] svg{display:block;width:16px;height:16px;stroke-width:2}.node-custom-content[data-v-fbb1ef76]{padding-top:2px;padding-bottom:4px;padding-right:8px}.node-custom-content[data-v-fbb1ef76]:empty{display:none;padding:0}.node-item.is-editing .node-custom-content[data-v-fbb1ef76]{opacity:.6;pointer-events:none}.node-name-input[data-v-fbb1ef76]{flex:1;padding:2px 6px;border-radius:3px;font-size:13px;font-family:inherit;line-height:1.4}.name[data-v-fbb1ef76]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#374151;line-height:1.4}.count[data-v-fbb1ef76]{font-size:11px;color:#9ca3af;margin-left:6px;font-weight:400}.node-header-extra[data-v-fbb1ef76]{margin-left:auto;display:flex;align-items:center;gap:8px}.tree-wrapper[data-v-d653bc39]{display:flex;flex-direction:column;height:100%;overflow:hidden}.tree-search[data-v-d653bc39]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.tree-toolbar[data-v-d653bc39]{padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}.search-input[data-v-d653bc39]{flex:1;border:none;outline:none;background:transparent;font-size:12px;color:#374151}.tree-search-toolbar[data-v-d653bc39]{display:flex;align-items:center;gap:6px;margin-left:auto}.search-input[data-v-d653bc39]::placeholder{color:#9ca3af}.search-results[data-v-d653bc39]{flex:1;overflow-y:auto;min-height:0}.search-empty[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tree-toolbar[data-v-d653bc39]{padding:8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;background:#fff;min-height:40px}.node-tree[data-v-d653bc39]{-webkit-user-select:none;user-select:none;flex:1;overflow-y:auto;min-height:0;position:relative}.tree-content[data-v-d653bc39]{position:relative;z-index:1}.empty-state[data-v-d653bc39]{padding:40px 20px;text-align:center;color:#94a3b8;font-size:13px;border:1px dashed #cbd5e1;border-radius:4px;margin:8px;transition:all .15s ease}.draggable-card-list[data-v-1f5818aa]{display:flex;flex-direction:column;gap:6px}.drag-transition-move[data-v-1f5818aa]{transition:transform .3s ease}.drag-transition-enter-active[data-v-1f5818aa],.drag-transition-leave-active[data-v-1f5818aa]{transition:all .3s ease}.drag-transition-leave-active[data-v-1f5818aa]{position:absolute}.drag-transition-enter-from[data-v-1f5818aa],.drag-transition-leave-to[data-v-1f5818aa]{opacity:0;transform:translateY(-10px)}.draggable-card-list .draggable-card-list[data-v-1f5818aa]{gap:4px}.draggable-card[data-v-1f5818aa]{padding:6px 8px;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:default;transition:background var(--be-transition-normal),border-color var(--be-transition-normal),box-shadow var(--be-transition-normal),transform var(--be-transition-normal)}.draggable-card[data-v-1f5818aa]:hover{border-color:var(--be-color-border-hover);box-shadow:var(--be-shadow-sm)}.draggable-card.is-dragging[data-v-1f5818aa]{opacity:.55;box-shadow:0 8px 20px #0f172a1f,0 0 0 1px var(--be-color-primary);border-color:var(--be-color-primary)}.draggable-card.is-drag-over[data-v-1f5818aa]{opacity:.85}.card-actions[data-v-1f5818aa]{display:flex;align-items:center;gap:var(--be-space-xs);padding:2px 0 6px;border-bottom:1px solid var(--be-color-border-light);margin-bottom:6px;min-height:28px;flex-wrap:nowrap;overflow:hidden}.drag-handle[data-v-1f5818aa]{cursor:grab;color:var(--be-color-gray-400);flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:20px;height:24px;border-radius:var(--be-radius-sm);transition:color var(--be-transition-normal),background var(--be-transition-normal);touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.draggable-card:hover .drag-handle[data-v-1f5818aa]{color:var(--be-color-gray-600);background:var(--be-color-bg-tertiary)}.drag-handle[data-v-1f5818aa]:active{cursor:grabbing;color:var(--be-color-primary);background:#3b82f61f}.drag-handle.is-locked[data-v-1f5818aa]{cursor:not-allowed!important;pointer-events:none;color:var(--be-color-gray-300)}.drag-handle.is-locked[data-v-1f5818aa] svg{opacity:.7}@media (max-width: 768px){.drag-handle[data-v-1f5818aa]{width:28px;height:32px}}.card-number[data-v-1f5818aa]{font-size:var(--be-font-size-xs);font-weight:600;color:var(--be-color-text-muted);flex-shrink:0;padding:2px 6px;border-radius:var(--be-radius-sm);background:var(--be-color-bg-tertiary);line-height:1.2;min-width:24px;text-align:center}.actions-content[data-v-1f5818aa]{flex:1;min-width:0;display:flex;align-items:center;gap:var(--be-space-xs);overflow:hidden}.card-content[data-v-1f5818aa]{display:flex;flex-direction:column;gap:var(--be-space-sm)}:root{--be-color-primary: #3b82f6;--be-color-primary-hover: #2563eb;--be-color-primary-active: #1d4ed8;--be-color-success: #10b981;--be-color-success-hover: #059669;--be-color-danger: #ef4444;--be-color-danger-hover: #dc2626;--be-color-warning: #f59e0b;--be-color-info: #3b82f6;--be-color-gray-50: #f8fafc;--be-color-gray-100: #f3f4f6;--be-color-gray-200: #e5e7eb;--be-color-gray-300: #d1d5db;--be-color-gray-400: #9ca3af;--be-color-gray-500: #6b7280;--be-color-gray-600: #4b5563;--be-color-gray-700: #374151;--be-color-gray-800: #1f2937;--be-color-gray-900: #111827;--be-color-text: #374151;--be-color-text-secondary: #6b7280;--be-color-text-muted: #9ca3af;--be-color-text-inverse: #ffffff;--be-color-bg: #ffffff;--be-color-bg-secondary: #f8fafc;--be-color-bg-tertiary: #f3f4f6;--be-color-bg-hover: #f9fafb;--be-color-bg-active: #f3f4f6;--be-color-border: #e5e7eb;--be-color-border-hover: #d1d5db;--be-color-border-light: #f3f4f6;--be-shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);--be-shadow-md: 0 4px 6px rgba(0, 0, 0, .1);--be-shadow-lg: 0 10px 15px rgba(0, 0, 0, .1);--be-shadow-xl: 0 20px 25px rgba(0, 0, 0, .15);--be-space-xs: 4px;--be-space-sm: 8px;--be-space-md: 16px;--be-space-lg: 24px;--be-space-xl: 32px;--be-radius-sm: 4px;--be-radius: 6px;--be-radius-md: 8px;--be-radius-lg: 12px;--be-radius-xl: 16px;--be-radius-full: 9999px;--be-font-size-xs: 10px;--be-font-size-sm: 11px;--be-font-size-base: 12px;--be-font-size-md: 13px;--be-font-size-lg: 14px;--be-font-size-xl: 16px;--be-font-size-2xl: 18px;--be-transition-fast: .1s ease;--be-transition-normal: .15s ease;--be-transition-slow: .3s ease;--be-z-dropdown: 1000;--be-z-modal: 1500;--be-z-toast: 2000;--be-z-tooltip: 2500}.booth-enhancer-sidebar *{box-sizing:border-box}.booth-enhancer-sidebar input,.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select,.booth-enhancer-sidebar button{font-family:inherit}.booth-btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:6px;font-weight:500;cursor:pointer;transition:all .15s ease;text-decoration:none;white-space:nowrap;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;font-family:inherit;background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af;transform:translateY(-1px)}.booth-btn:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;box-shadow:none;opacity:.6}.booth-btn:disabled:hover{background:#f3f4f6;color:#9ca3af;box-shadow:none;transform:none}.booth-btn-sm{padding:4px 8px;font-size:11px;min-height:24px}.booth-btn-md{padding:6px 12px;font-size:12px;min-height:32px}.booth-btn-lg{padding:8px 16px;font-size:14px;min-height:40px}.booth-btn-primary{background:#3b82f6;color:#fff;box-shadow:0 1px 3px #3b82f64d;border:1px solid transparent}.booth-btn-primary:hover:not(:disabled){background:#2563eb;box-shadow:0 2px 4px #3b82f666}.booth-btn-primary:active:not(:disabled){background:#1d4ed8;transform:translateY(1px)}.booth-btn-secondary{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}.booth-btn-secondary:hover:not(:disabled){background:#e5e7eb;border-color:#9ca3af}.booth-btn-secondary:active:not(:disabled){background:#d1d5db;transform:translateY(1px)}.booth-btn-success{background:#10b981;color:#fff;box-shadow:0 1px 3px #10b9814d;border:1px solid transparent}.booth-btn-success:hover:not(:disabled){background:#059669;box-shadow:0 2px 4px #10b98166}.booth-btn-success:active:not(:disabled){background:#047857;transform:translateY(1px)}.booth-btn-danger{background:#ef4444;color:#fff;box-shadow:0 1px 3px #ef44444d;border:1px solid transparent}.booth-btn-danger:hover:not(:disabled){background:#dc2626;box-shadow:0 2px 4px #ef444466}.booth-btn-danger:active:not(:disabled){background:#b91c1c;transform:translateY(1px)}.booth-btn-ghost{background:transparent;color:#64748b;border:1px solid transparent}.booth-btn-ghost:hover:not(:disabled){background:#f1f5f9;color:#475569;border-color:#e2e8f0}.booth-btn-ghost:active:not(:disabled){background:#e2e8f0;transform:translateY(1px)}.booth-btn-icon{padding:6px;min-width:32px;min-height:32px}.booth-btn-icon.booth-btn-sm{padding:4px;min-width:24px;min-height:24px}.booth-btn-icon.booth-btn-lg{padding:8px;min-width:40px;min-height:40px}.booth-btn:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.booth-btn:focus:not(:focus-visible){box-shadow:none}.booth-btn-primary:focus{box-shadow:0 1px 3px #3b82f64d,0 0 0 3px #3b82f633}.booth-btn-success:focus{box-shadow:0 1px 3px #10b9814d,0 0 0 3px #10b98133}.booth-btn-danger:focus{box-shadow:0 1px 3px #ef44444d,0 0 0 3px #ef444433}.booth-btn-group{display:inline-flex;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px #0000000d}.booth-btn-group .booth-btn{border-radius:0;border-right:1px solid rgba(255,255,255,.2)}.booth-btn-group .booth-btn:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.booth-btn-group .booth-btn:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px;border-right:none}.booth-btn-loading{position:relative;color:transparent}.booth-btn-loading:after{content:"";position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:booth-btn-spin .6s linear infinite}@keyframes booth-btn-spin{to{transform:rotate(360deg)}}.booth-toggle{display:flex;align-items:center;gap:12px;cursor:pointer;position:relative}.booth-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}.booth-toggle .toggle-slider{position:relative;width:36px;height:20px;background:#d1d5db;border-radius:10px;transition:all .15s ease}.booth-toggle .toggle-slider:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked+.toggle-slider{background:#3b82f6}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:14px;color:#374151;font-weight:400}.booth-toggle:hover .toggle-slider{background:#9ca3af;transform:translateY(-1px)}.booth-toggle:hover .toggle-label{color:#1f2937}.booth-toggle input[type=checkbox]:active+.toggle-slider{transform:translateY(1px)}.booth-toggle input[type=checkbox]:active+.toggle-slider:before{transform:translate(2px)}.booth-toggle input[type=checkbox]:checked:active+.toggle-slider:before{transform:translate(16px)}.booth-toggle input[type=checkbox]:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f633}.booth-toggle input[type=checkbox]:focus:not(:focus-visible)+.toggle-slider{box-shadow:0 2px 4px #0003}.booth-toggle input[type=checkbox]:checked:focus+.toggle-slider{box-shadow:0 0 0 3px #3b82f64d}.booth-toggle-sm .toggle-slider{width:36px;height:20px}.booth-toggle-sm .toggle-slider:before{width:16px;height:16px}.booth-toggle-sm input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle-lg .toggle-slider{width:52px;height:28px}.booth-toggle-lg .toggle-slider:before{width:24px;height:24px}.booth-toggle-lg input[type=checkbox]:checked+.toggle-slider:before{transform:translate(24px)}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{width:100%;padding:6px 12px;margin:0;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;transition:all .15s ease;box-sizing:border-box;display:block;line-height:1.5;-webkit-appearance:none;-moz-appearance:none;appearance:none}.booth-enhancer-sidebar select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):hover,.booth-enhancer-sidebar textarea:hover,.booth-enhancer-sidebar select:hover{border-color:#9ca3af}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]):focus,.booth-enhancer-sidebar textarea:focus,.booth-enhancer-sidebar select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f633}.booth-enhancer-sidebar input::placeholder,.booth-enhancer-sidebar textarea::placeholder{color:#9ca3af}.booth-enhancer-sidebar textarea{min-height:1.25em;resize:vertical}.modal-content{display:flex;flex-direction:column;gap:var(--be-space-sm)}.modal-content p{margin:0;line-height:1.6;color:#6b7280}.form-group{margin-bottom:var(--be-space-sm)}.form-group:last-child{margin-bottom:0}.form-group label{display:block;margin-bottom:4px;font-size:12px;font-weight:500;color:#374151}.form-group .required{color:#ef4444;margin-left:4px}.label-hint{font-size:var(--be-font-size-xs);color:var(--be-color-text-muted);font-weight:400;font-style:italic}.form-hint{margin:2px 0 0;font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary)}.empty-hint{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.hint-text{font-size:var(--be-font-size-base);color:var(--be-color-text-secondary)}.tab-nav{display:flex;gap:var(--be-space-xs);border-bottom:1px solid var(--be-color-border);margin-bottom:var(--be-space-sm)}.tab-btn{padding:var(--be-space-xs) var(--be-space-sm);font-size:var(--be-font-size-base);font-weight:500;color:var(--be-color-text-secondary);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--be-transition-normal)}.tab-btn:hover{color:var(--be-color-text);background:var(--be-color-bg-secondary)}.tab-btn.active{color:var(--be-color-primary);border-bottom-color:var(--be-color-primary)}.tab-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:var(--be-space-sm)}.form-group input,.form-group textarea,.form-group select{width:100%;padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;background:#fff;box-shadow:0 1px 2px #0000000d;outline:none;box-sizing:border-box;line-height:1.5;transition:all .15s ease;-webkit-appearance:none;-moz-appearance:none;appearance:none}.form-group select{padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px}.form-group input:hover,.form-group textarea:hover,.form-group select:hover{border-color:#9ca3af}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f633}.form-group textarea{min-height:1.25em;resize:vertical}.booth-enhancer-sidebar ::-webkit-scrollbar{width:6px;height:6px}.booth-enhancer-sidebar ::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.booth-enhancer-sidebar ::-webkit-scrollbar-thumb:hover{background:#94a3b8}.be-m-0{margin:0!important}.be-mt-0{margin-top:0!important}.be-mr-0{margin-right:0!important}.be-mb-0{margin-bottom:0!important}.be-ml-0{margin-left:0!important}.be-m-xs{margin:var(--be-space-xs)!important}.be-m-sm{margin:var(--be-space-sm)!important}.be-m-md{margin:var(--be-space-md)!important}.be-m-lg{margin:var(--be-space-lg)!important}.be-p-0{padding:0!important}.be-pt-0{padding-top:0!important}.be-pr-0{padding-right:0!important}.be-pb-0{padding-bottom:0!important}.be-pl-0{padding-left:0!important}.be-p-xs{padding:var(--be-space-xs)!important}.be-p-sm{padding:var(--be-space-sm)!important}.be-p-md{padding:var(--be-space-md)!important}.be-p-lg{padding:var(--be-space-lg)!important}.be-px-xs{padding-left:var(--be-space-xs)!important;padding-right:var(--be-space-xs)!important}.be-px-sm{padding-left:var(--be-space-sm)!important;padding-right:var(--be-space-sm)!important}.be-px-md{padding-left:var(--be-space-md)!important;padding-right:var(--be-space-md)!important}.be-px-lg{padding-left:var(--be-space-lg)!important;padding-right:var(--be-space-lg)!important}.be-pt-xs{padding-top:var(--be-space-xs)!important}.be-pt-sm{padding-top:var(--be-space-sm)!important}.be-pt-md{padding-top:var(--be-space-md)!important}.be-pt-lg{padding-top:var(--be-space-lg)!important}.be-pb-xs{padding-bottom:var(--be-space-xs)!important}.be-pb-sm{padding-bottom:var(--be-space-sm)!important}.be-pb-md{padding-bottom:var(--be-space-md)!important}.be-pb-lg{padding-bottom:var(--be-space-lg)!important}.be-mb-xs{margin-bottom:var(--be-space-xs)!important}.be-mb-sm{margin-bottom:var(--be-space-sm)!important}.be-mb-md{margin-bottom:var(--be-space-md)!important}.be-mb-lg{margin-bottom:var(--be-space-lg)!important}.be-flex{display:flex!important}.be-flex-column{flex-direction:column!important}.be-flex-row{flex-direction:row!important}.be-justify-start{justify-content:flex-start!important}.be-justify-center{justify-content:center!important}.be-justify-end{justify-content:flex-end!important}.be-justify-between{justify-content:space-between!important}.be-align-start{align-items:flex-start!important}.be-align-center{align-items:center!important}.be-align-end{align-items:flex-end!important}.be-flex-1{flex:1!important}.be-flex-grow{flex-grow:1!important}.be-flex-shrink-0{flex-shrink:0!important}.be-min-w-0{min-width:0!important}.be-gap-xs{gap:var(--be-space-xs)!important}.be-gap-sm{gap:var(--be-space-sm)!important}.be-gap-md{gap:var(--be-space-md)!important}.be-gap-lg{gap:var(--be-space-lg)!important}.be-text-left{text-align:left!important}.be-text-center{text-align:center!important}.be-text-right{text-align:right!important}.be-text-xs{font-size:var(--be-font-size-xs)!important}.be-text-sm{font-size:var(--be-font-size-sm)!important}.be-text-md{font-size:var(--be-font-size-md)!important}.be-text-lg{font-size:var(--be-font-size-lg)!important}.be-font-normal{font-weight:400!important}.be-font-medium{font-weight:500!important}.be-font-bold{font-weight:600!important}.be-text-primary{color:var(--be-color-text)!important}.be-text-secondary{color:var(--be-color-text-secondary)!important}.be-text-muted{color:var(--be-color-text-muted)!important}.be-text-danger{color:var(--be-color-danger)!important}.be-text-success{color:var(--be-color-success)!important}.be-hidden{display:none!important}.be-visible{visibility:visible!important}.be-invisible{visibility:hidden!important}.be-block{display:block!important}.be-inline{display:inline!important}.be-inline-block{display:inline-block!important}.be-w-full{width:100%!important}.be-w-auto{width:auto!important}.be-h-full{height:100%!important}.be-grid{display:grid!important}.be-grid-cols-2{grid-template-columns:repeat(2,1fr)!important}.be-grid-cols-3{grid-template-columns:repeat(3,1fr)!important}.be-grid-cols-4{grid-template-columns:repeat(4,1fr)!important}.be-border{border:1px solid var(--be-color-border)!important}.be-border-0{border:none!important}.be-border-t{border-top:1px solid var(--be-color-border)!important}.be-border-r{border-right:1px solid var(--be-color-border)!important}.be-border-b{border-bottom:1px solid var(--be-color-border)!important}.be-border-l{border-left:1px solid var(--be-color-border)!important}.be-rounded-sm{border-radius:var(--be-radius-sm)!important}.be-rounded-md{border-radius:var(--be-radius-md)!important}.be-rounded-lg{border-radius:var(--be-radius-lg)!important}.be-rounded-full{border-radius:9999px!important}.be-bg{background:var(--be-color-bg)!important}.be-bg-secondary{background:var(--be-color-bg-secondary)!important}.be-bg-tertiary{background:var(--be-color-bg-tertiary)!important}.be-shadow-sm{box-shadow:var(--be-shadow-sm)!important}.be-shadow-md{box-shadow:var(--be-shadow-md)!important}.be-shadow-lg{box-shadow:var(--be-shadow-lg)!important}.be-shadow-none{box-shadow:none!important}.be-cursor-pointer{cursor:pointer!important}.be-cursor-default{cursor:default!important}.be-cursor-not-allowed{cursor:not-allowed!important}.be-overflow-hidden{overflow:hidden!important}.be-overflow-auto{overflow:auto!important}.be-overflow-scroll{overflow:scroll!important}.be-whitespace-nowrap{white-space:nowrap!important}.be-text-ellipsis{text-overflow:ellipsis!important;overflow:hidden!important}.be-relative{position:relative!important}.be-absolute{position:absolute!important}.be-fixed{position:fixed!important}.be-sticky{position:sticky!important}.be-transition{transition:all var(--be-transition-normal)!important}.be-transition-fast{transition:all var(--be-transition-fast)!important}.be-transition-slow{transition:all var(--be-transition-slow)!important}@media (max-width: 768px){.booth-btn-md{padding:5px 10px;font-size:11px;min-height:28px}.booth-btn-lg{padding:7px 14px;font-size:13px;min-height:36px}.booth-toggle .toggle-label{font-size:12px}.form-group label{font-size:11px}.booth-enhancer-sidebar input:not([type=checkbox]):not([type=radio]),.booth-enhancer-sidebar textarea,.booth-enhancer-sidebar select{font-size:11px}}@media (max-width: 480px){:root{--be-space-md: 12px;--be-space-lg: 16px}.booth-btn-sm{padding:3px 6px;font-size:10px;min-height:20px}.booth-btn-md{padding:4px 8px;font-size:10px;min-height:24px}.booth-btn-lg{padding:6px 12px;font-size:12px;min-height:32px}.booth-toggle .toggle-slider{width:36px;height:20px}.booth-toggle .toggle-slider:before{width:16px;height:16px}.booth-toggle input[type=checkbox]:checked+.toggle-slider:before{transform:translate(16px)}.booth-toggle .toggle-label{font-size:11px}}.booth-enhancer-sidebar[data-v-e5e445c1]{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fffffffa;border:1px solid var(--be-color-border);border-radius:var(--be-radius-lg) 0 0 var(--be-radius-lg);box-shadow:-6px 0 24px #0f172a14;font-size:var(--be-font-size-base);color:var(--be-color-text);overflow:hidden}.sidebar-content[data-v-e5e445c1]{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;min-height:0;position:relative}.tab-slide-enter-active[data-v-e5e445c1]{transition:opacity .2s ease-out,transform .2s ease-out}.tab-slide-leave-active[data-v-e5e445c1]{transition:opacity .15s ease-in,transform .15s ease-in}.tab-slide-enter-from[data-v-e5e445c1]{opacity:0;transform:translate(15px)}.tab-slide-leave-to[data-v-e5e445c1]{opacity:0;transform:translate(-10px)}.tab-slide-enter-to[data-v-e5e445c1],.tab-slide-leave-from[data-v-e5e445c1]{opacity:1;transform:translate(0)}.sidebar-content[data-v-e5e445c1]>*{width:100%;height:100%}.tag-preset-tab[data-v-7b073638]{height:100%;display:flex;flex-direction:column;background:#fff}.toolbar[data-v-7b073638]{flex-shrink:0;background:#fff;border-bottom:1px solid #e0e0e0}.tree-container[data-v-7b073638]{flex:1;overflow-y:auto;padding:4px;min-height:0;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f5f5f5}.tree-container[data-v-7b073638]::-webkit-scrollbar{width:6px}.tree-container[data-v-7b073638]::-webkit-scrollbar-track{background:#f5f5f5;border-radius:3px}.tree-container[data-v-7b073638]::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}.tree-container[data-v-7b073638]::-webkit-scrollbar-thumb:hover{background:#94a3b8}.folder-content[data-v-7b073638]{display:flex;align-items:center;width:100%;padding:6px 8px}.folder-content .icon[data-v-7b073638]{color:#fbbf24;display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}.folder-content .name[data-v-7b073638]{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#334155}.folder-content .count[data-v-7b073638]{font-size:12px;color:#94a3b8;margin-left:4px}.tag-custom-content[data-v-7b073638]{width:100%}.tag-badges-wrapper[data-v-7b073638]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-7b073638]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-7b073638]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-7b073638]{flex-shrink:0}.tag-delete-btn[data-v-7b073638]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-7b073638]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.modal-message[data-v-7b073638]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-7b073638]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-7b073638]{font-family:Consolas,Monaco,monospace;line-height:1.5}.modal-textarea-code-small[data-v-7b073638]{font-family:Consolas,Monaco,monospace;line-height:1.5;font-size:11px}.form-hint-small[data-v-7b073638]{display:block;margin-top:6px;color:#6b7280;font-size:11px}.item-data-tab[data-v-c58a9f1e]{height:100%;display:flex;flex-direction:column;background:#fff}.item-custom-content[data-v-c58a9f1e]{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;line-height:1.4}.item-field[data-v-c58a9f1e]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-separator[data-v-c58a9f1e]{flex-shrink:0}.modal-message[data-v-c58a9f1e]{color:#6b7280;font-size:13px;line-height:1.6;margin:0}.modal-message-with-margin[data-v-c58a9f1e]{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 12px}.modal-textarea-code[data-v-c58a9f1e]{font-family:Consolas,Monaco,monospace;line-height:1.5}.period-active-badge[data-v-ced8e7e3]{display:inline-flex;align-items:center;padding:2px 6px;border-radius:8px;background:#10b9811f;color:var(--be-color-success);font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0}.item-select-list[data-v-9c42d516]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:400px;overflow-y:auto;padding:2px}.item-select-card[data-v-9c42d516]{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:8px 10px;min-height:0;text-align:left;background:transparent;border:1px solid var(--be-color-border);border-radius:var(--be-radius);cursor:pointer;font-family:inherit;transition:background var(--be-transition-normal),border-color var(--be-transition-normal);width:100%}.item-select-card[data-v-9c42d516]:hover{background:var(--be-color-bg-hover);border-color:var(--be-color-border-hover)}.item-select-card[data-v-9c42d516]:focus{outline:none}.item-select-card[data-v-9c42d516]:focus-visible{border-color:var(--be-color-primary);box-shadow:0 0 0 3px #3b82f633}.item-select-card.is-selected[data-v-9c42d516]{background:#3b82f614;border-color:#3b82f666}.item-select-card.is-selected[data-v-9c42d516]:hover{background:#3b82f61f}.item-select-card__name[data-v-9c42d516]{font-size:var(--be-font-size-md);font-weight:500;color:var(--be-color-text);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.item-select-card__author[data-v-9c42d516]{font-size:var(--be-font-size-xs);color:var(--be-color-text-secondary);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.empty-hint[data-v-9c42d516]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.template-grid[data-v-70ec8f42]{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:8px;border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm)}.template-item[data-v-70ec8f42]{padding:8px;transition:all .15s ease}.template-item[data-v-70ec8f42]:hover{transform:translateY(-1px)}.empty-hint[data-v-7fce98dc]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.empty-hint[data-v-98423bb6]{padding:40px 20px;text-align:center;color:#9ca3af;font-size:13px}.tag-badge-preview[data-v-98423bb6]{display:inline-flex;align-items:center;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badges-wrapper[data-v-355608ad]{display:flex;flex-wrap:wrap;gap:4px}.tag-badge[data-v-355608ad]{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:10px;color:#2563eb;line-height:1.2;white-space:nowrap;transition:all .15s ease}.tag-badge[data-v-355608ad]:hover{background:#dbeafe;border-color:#93c5fd}.tag-text[data-v-355608ad]{flex-shrink:0}.tag-delete-btn[data-v-355608ad]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:#3b82f6;cursor:pointer;transition:all .15s ease;opacity:.7}.tag-delete-btn[data-v-355608ad]:hover{opacity:1;background:#3b82f6;color:#fff;transform:scale(1.1)}.empty-hint[data-v-c585feee]{padding:var(--be-space-md);text-align:center;color:var(--be-color-text-secondary);font-size:var(--be-font-size-md);background:var(--be-color-bg-secondary);border-radius:var(--be-radius)}.item-cards-grid[data-v-c585feee]{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}.item-cards-grid.single-item[data-v-c585feee]{grid-template-columns:1fr}.item-card[data-v-c585feee]{display:flex;flex-direction:column;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:var(--be-radius-md);overflow:hidden}.item-card-header[data-v-c585feee]{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--be-color-bg-secondary);border-bottom:1px solid var(--be-color-border);gap:4px}.item-card-title[data-v-c585feee]{flex:1;font-size:11px;font-weight:600;color:var(--be-color-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-card-title.is-missing[data-v-c585feee]{color:var(--be-color-danger, #ef4444);font-style:italic;font-weight:500}.item-card-delete-btn[data-v-c585feee]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;opacity:.6}.item-card-delete-btn[data-v-c585feee]:hover{opacity:1;background:var(--be-color-bg-hover)}.item-card-delete-btn[data-v-c585feee]:focus{outline:none;box-shadow:0 0 0 3px #6b728033}.item-card-delete-btn[data-v-c585feee]:focus:not(:focus-visible){box-shadow:none}.item-card-content[data-v-c585feee]{padding:6px 8px}.item-list-container[data-v-c585feee]{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.item-tag[data-v-c585feee]{display:inline-flex;align-items:center;gap:var(--be-space-xs);padding:4px 8px;background:var(--be-color-bg-secondary);border:1px solid var(--be-color-border);border-radius:var(--be-radius-sm);font-size:var(--be-font-size-xs);color:var(--be-color-text);font-weight:500;transition:var(--be-transition-normal)}.item-tag-text[data-v-c585feee]{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-tag-remove[data-v-c585feee]{flex-shrink:0;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:var(--be-color-text-secondary);cursor:pointer;transition:var(--be-transition-normal)}.item-tag-remove[data-v-c585feee]:hover{background:var(--be-color-danger);color:#fff}.item-tag-remove[data-v-c585feee]:focus{outline:none;box-shadow:0 0 0 2px #3b82f64d}.item-tag-remove[data-v-c585feee]:focus:not(:focus-visible){box-shadow:none}.item-add-btn[data-v-c585feee]{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;background:var(--be-color-bg);border:1px dashed var(--be-color-border);border-radius:var(--be-radius-sm);color:var(--be-color-text-secondary);cursor:pointer;transition:var(--be-transition-normal)}.item-add-btn[data-v-c585feee]:hover{border-style:solid;border-color:var(--be-color-primary);color:var(--be-color-primary);background:var(--be-color-bg-secondary)}.item-add-btn[data-v-c585feee]:focus{outline:none;box-shadow:0 0 0 3px #3b82f633}.item-add-btn[data-v-c585feee]:focus:not(:focus-visible){box-shadow:none}.item-add-text[data-v-c585feee]{white-space:nowrap}.common-file-tag[data-v-c585feee]{display:inline-flex;align-items:center;gap:4px;padding:2px 4px 2px 6px;background:var(--be-color-bg);border:1px solid var(--be-color-border);border-radius:4px;font-size:var(--be-font-size-xs);line-height:1.2;transition:var(--be-transition-normal)}.common-file-tag.is-missing[data-v-c585feee]{background:#ef444414;border-color:#ef444459;color:var(--be-color-danger, #ef4444);font-style:italic}.common-file-tag-text[data-v-c585feee]{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.common-file-remove[data-v-c585feee]{flex-shrink:0;width:14px;height:14px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;color:inherit;cursor:pointer;opacity:.6;transition:var(--be-transition-normal)}.common-file-remove[data-v-c585feee]:hover{opacity:1;background:#ef444426}.common-file-remove[data-v-c585feee]:focus{outline:none;box-shadow:0 0 0 2px #3b82f64d}.common-file-remove[data-v-c585feee]:focus:not(:focus-visible){box-shadow:none}.booth-enhancer-lock-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#999;cursor:help;z-index:10}.booth-enhancer-lock-icon svg{display:block}.empty-state[data-v-1be99d97]{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:var(--be-space-xl);text-align:center;gap:var(--be-space-md)}.empty-icon-wrap[data-v-1be99d97]{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;margin-bottom:var(--be-space-xs)}.empty-icon-wrap--primary[data-v-1be99d97]{background:#3b82f614;color:var(--be-color-primary);box-shadow:0 0 0 6px #3b82f60a}.empty-icon-wrap--warning[data-v-1be99d97]{background:#f59e0b1a;color:var(--be-color-warning);box-shadow:0 0 0 6px #f59e0b0d}.empty-title[data-v-1be99d97]{font-size:var(--be-font-size-xl);font-weight:600;color:var(--be-color-text);letter-spacing:-.01em}.empty-subtitle[data-v-1be99d97]{margin:0;font-size:var(--be-font-size-md);line-height:1.55;color:var(--be-color-text-secondary);max-width:360px}.empty-cta[data-v-1be99d97]{margin-top:var(--be-space-xs);gap:6px}.edit-tab[data-v-1be99d97]{display:flex;flex-direction:column;height:100%;position:relative}.edit-tab-toolbar[data-v-1be99d97]{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-shrink:0}.edit-tab-toolbar .booth-btn[data-v-1be99d97]{gap:4px}.toolbar-badge[data-v-1be99d97]{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--be-color-primary);color:#fff;font-size:11px;font-weight:600;line-height:1}.toolbar-badge--sale[data-v-1be99d97]{background:var(--be-color-success)}.edit-tab-scrollable[data-v-1be99d97]{flex:1;overflow-y:auto;display:flex;flex-direction:column}.item-select-list[data-v-1be99d97]{max-height:400px;overflow-y:auto}.item-select-btn[data-v-1be99d97]{width:100%;justify-content:flex-start;padding:var(--be-space-sm)}.item-select-btn[data-v-1be99d97]:hover{background:var(--be-color-bg-hover)}.modal-message[data-v-1be99d97]{color:var(--be-color-text-secondary);font-size:13px;line-height:1.6;margin:0} `);
 
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-BpYn5ijP.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-DvirMHzt.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,9 +39,9 @@ System.register("./__entry.js", ['./__monkey.entry-BpYn5ijP.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, module) {
   'use strict';
-  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createBlock, createCommentVNode, createTextVNode, toDisplayString, resolveDynamicComponent, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
+  var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createTextVNode, toDisplayString, createBlock, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
     setters: [module => {
       createApp = module.createApp;
@@ -58,11 +58,11 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
       createElementVNode = module.createElementVNode;
       unref = module.unref;
       withCtx = module.withCtx;
-      createBlock = module.createBlock;
-      createCommentVNode = module.createCommentVNode;
       createTextVNode = module.createTextVNode;
       toDisplayString = module.toDisplayString;
+      createBlock = module.createBlock;
       resolveDynamicComponent = module.resolveDynamicComponent;
+      createCommentVNode = module.createCommentVNode;
       Fragment = module.Fragment;
       renderList = module.renderList;
       normalizeClass = module.normalizeClass;
@@ -79,8 +79,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
         c: getSelectedDiscountTemplate,
         d: createDefaultItemConfig,
         e: getSelectedNameTemplate,
-        f: getStableKey,
+        f: cleanMissingFileIds,
         g: getSelectedDiscountIndicatorTemplate,
+        h: getStableKey,
         u: useStorage
       });
 
@@ -250,14 +251,15 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           }
         }
         /**
-         * 等待页面完全加载（包括所有资源和脚本）
+         * 等待 DOM 可交互（DOMContentLoaded 之后即可）
+         * 不等待图片、字体等资源加载完成（'complete' 状态）
          */
         waitForDOMReady() {
-          if (document.readyState === "complete") {
+          if (document.readyState !== "loading") {
             return Promise.resolve();
           }
           return new Promise(
-            (resolve) => window.addEventListener("load", () => resolve(), { once: true })
+            (resolve) => document.addEventListener("DOMContentLoaded", () => resolve(), { once: true })
           );
         }
         /**
@@ -311,11 +313,16 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           __publicField(this, "_newVariationCallback");
           __publicField(this, "_sectionRemovedCallback");
           __publicField(this, "_variationRemovedCallback");
-          // 临时一次性回调（用于 addSection/removeSection 等待方法）
-          __publicField(this, "_tempSectionAddedCallback");
-          __publicField(this, "_tempVariationAddedCallback");
-          __publicField(this, "_tempSectionRemovedCallback");
-          __publicField(this, "_tempVariationRemovedCallback");
+          // 临时一次性回调队列（支持并发的 addSection/removeSection 等待方法）
+          __publicField(this, "_tempSectionAddedCallbacks", []);
+          __publicField(this, "_tempVariationAddedCallbacks", []);
+          __publicField(this, "_tempSectionRemovedCallbacks", []);
+          __publicField(this, "_tempVariationRemovedCallbacks", []);
+          // 文件面板变化监听
+          __publicField(this, "_filesChangedCallbacks", []);
+          __publicField(this, "_filesSignature", "");
+          __publicField(this, "_filePanelObserver", null);
+          __publicField(this, "_globalFilesObserver", null);
         }
         /**
          * 实时获取 sections（不缓存）
@@ -338,14 +345,19 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
         }
         /**
          * 等待名称输入框出现并填充数据
+         * - /edit 页面：要求名称输入框存在且有值（已发布商品名称不为空）
+         * - /edit_pre 页面：只要求输入框存在（新建商品时名称可能为空）
          */
         waitForElements(timeout = 1e4) {
           return new Promise((resolve) => {
+            const isPreEdit = window.location.pathname.endsWith("/edit_pre");
             const checkNameInput = () => {
               const nameInput = document.querySelector(
                 "#name input"
               );
-              return nameInput && nameInput.value.trim().length > 0;
+              if (!nameInput) return false;
+              if (isPreEdit) return true;
+              return nameInput.value.trim().length > 0;
             };
             if (checkNameInput()) {
               resolve();
@@ -378,6 +390,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           this.loadDescription();
           this.loadTagElements();
           this.setupListObserver();
+          this.setupFilesObserver();
         }
         /**
          * 加载商品名称
@@ -502,9 +515,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             deleteButton: this.findDeleteButton(item)
           };
           (_a = this._newSectionCallback) == null ? void 0 : _a.call(this, sectionElement);
-          if (this._tempSectionAddedCallback) {
-            this._tempSectionAddedCallback();
-            this._tempSectionAddedCallback = void 0;
+          const callback = this._tempSectionAddedCallbacks.shift();
+          if (callback) {
+            callback();
           }
         }
         /**
@@ -526,9 +539,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             dragHandle: this.findDragHandle(item)
           };
           (_a = this._newVariationCallback) == null ? void 0 : _a.call(this, variationElement);
-          if (this._tempVariationAddedCallback) {
-            this._tempVariationAddedCallback();
-            this._tempVariationAddedCallback = void 0;
+          const callback = this._tempVariationAddedCallbacks.shift();
+          if (callback) {
+            callback();
           }
         }
         /**
@@ -576,21 +589,132 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                 const isSection = this.isSectionList(container);
                 if (isSection) {
                   (_a = this._sectionRemovedCallback) == null ? void 0 : _a.call(this, node);
-                  if (this._tempSectionRemovedCallback) {
-                    this._tempSectionRemovedCallback();
-                    this._tempSectionRemovedCallback = void 0;
+                  const callback = this._tempSectionRemovedCallbacks.shift();
+                  if (callback) {
+                    callback();
                   }
                 } else {
                   (_b = this._variationRemovedCallback) == null ? void 0 : _b.call(this, node);
-                  if (this._tempVariationRemovedCallback) {
-                    this._tempVariationRemovedCallback();
-                    this._tempVariationRemovedCallback = void 0;
+                  const callback = this._tempVariationRemovedCallbacks.shift();
+                  if (callback) {
+                    callback();
                   }
                 }
               }
             }
           });
           observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        }
+        /**
+         * 查找文件管理面板（通过 "Add/Edit Files" 标题定位）
+         */
+        findFilePanel() {
+          var _a;
+          const titleElements = document.querySelectorAll(".font-booth-demi");
+          for (const title of Array.from(titleElements)) {
+            if ((_a = title.textContent) == null ? void 0 : _a.includes("Add/Edit Files")) {
+              return title.closest(".bg-white");
+            }
+          }
+          return null;
+        }
+        /**
+         * 计算当前文件列表的签名（用于检测变化）
+         * 包含 id 和 name，任一变化都视为变化
+         */
+        computeFilesSignature() {
+          try {
+            const files = this.getAllFiles();
+            return files.map((f) => `${f.id}:${f.name}`).join("|");
+          } catch {
+            return "";
+          }
+        }
+        /**
+         * 触发所有文件变化回调
+         */
+        notifyFilesChanged() {
+          const newSignature = this.computeFilesSignature();
+          if (newSignature === this._filesSignature) return;
+          this._filesSignature = newSignature;
+          [...this._filesChangedCallbacks].forEach((callback) => {
+            try {
+              callback();
+            } catch (error) {
+              console.error("[ItemEditAPI] onFilesChanged callback error:", error);
+            }
+          });
+        }
+        /**
+         * 订阅文件面板变化（新增/删除/重命名）
+         * @returns 取消订阅的函数
+         */
+        onFilesChanged(callback) {
+          this._filesChangedCallbacks.push(callback);
+          return () => {
+            const idx = this._filesChangedCallbacks.indexOf(callback);
+            if (idx !== -1) this._filesChangedCallbacks.splice(idx, 1);
+          };
+        }
+        /**
+         * 设置文件面板观察器
+         * - 保持全局 body observer 持续运行，监听面板出现/消失/重建
+         * - 发现新面板时（或面板被替换时）切换精细 observer 到新元素
+         * - 发现当前绑定的面板脱离 DOM 时自动解绑，等待新面板出现
+         */
+        setupFilesObserver() {
+          this._filesSignature = this.computeFilesSignature();
+          let currentPanel = null;
+          const attachPanelObserver = (panel) => {
+            var _a;
+            if (currentPanel === panel && this._filePanelObserver) return;
+            (_a = this._filePanelObserver) == null ? void 0 : _a.disconnect();
+            this._filePanelObserver = null;
+            currentPanel = panel;
+            this._filePanelObserver = new MutationObserver(() => {
+              this.notifyFilesChanged();
+            });
+            this._filePanelObserver.observe(panel, {
+              childList: true,
+              subtree: true,
+              characterData: true
+            });
+            this.notifyFilesChanged();
+          };
+          const detachPanelObserver = () => {
+            var _a;
+            (_a = this._filePanelObserver) == null ? void 0 : _a.disconnect();
+            this._filePanelObserver = null;
+            currentPanel = null;
+            this.notifyFilesChanged();
+          };
+          const syncPanel = () => {
+            const panel = this.findFilePanel();
+            if (panel && panel !== currentPanel) {
+              attachPanelObserver(panel);
+            } else if (!panel && currentPanel) {
+              detachPanelObserver();
+            } else if (currentPanel && !document.body.contains(currentPanel)) {
+              if (panel) {
+                attachPanelObserver(panel);
+              } else {
+                detachPanelObserver();
+              }
+            }
+          };
+          syncPanel();
+          let rafId = null;
+          this._globalFilesObserver = new MutationObserver(() => {
+            if (rafId !== null) return;
+            rafId = requestAnimationFrame(() => {
+              rafId = null;
+              syncPanel();
+            });
+          });
+          this._globalFilesObserver.observe(document.body, {
             childList: true,
             subtree: true
           });
@@ -901,18 +1025,27 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           return false;
         }
         /**
-         * 创建一个带超时的等待 Promise
+         * 创建一个带超时的等待 Promise（基于回调队列）
+         * @param queue 回调队列（注册的回调将按 FIFO 顺序执行）
+         * @param timeout 超时时间（毫秒）
          */
-        createWaitPromise(setCallback, clearCallback, timeout) {
+        createQueuedWaitPromise(queue, timeout) {
           return new Promise((resolve) => {
-            const timer = setTimeout(() => {
-              clearCallback();
-              resolve(false);
-            }, timeout);
-            setCallback(() => {
+            let settled = false;
+            const callback = () => {
+              if (settled) return;
+              settled = true;
               clearTimeout(timer);
               resolve(true);
-            });
+            };
+            const timer = setTimeout(() => {
+              if (settled) return;
+              settled = true;
+              const idx = queue.indexOf(callback);
+              if (idx !== -1) queue.splice(idx, 1);
+              resolve(false);
+            }, timeout);
+            queue.push(callback);
           });
         }
         /**
@@ -921,18 +1054,12 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
          * @returns Promise<boolean> 是否成功添加
          */
         async addSection(timeout = 5e3) {
+          const waitPromise = this.createQueuedWaitPromise(this._tempSectionAddedCallbacks, timeout);
           if (!this.clickAddSectionButton()) {
+            this._tempSectionAddedCallbacks.pop();
             return false;
           }
-          return this.createWaitPromise(
-            (callback) => {
-              this._tempSectionAddedCallback = callback;
-            },
-            () => {
-              this._tempSectionAddedCallback = void 0;
-            },
-            timeout
-          );
+          return waitPromise;
         }
         /**
          * 添加 Variation 并等待完成
@@ -940,18 +1067,12 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
          * @returns Promise<boolean> 是否成功添加
          */
         async addVariation(timeout = 5e3) {
+          const waitPromise = this.createQueuedWaitPromise(this._tempVariationAddedCallbacks, timeout);
           if (!this.clickAddVariationButton()) {
+            this._tempVariationAddedCallbacks.pop();
             return false;
           }
-          return this.createWaitPromise(
-            (callback) => {
-              this._tempVariationAddedCallback = callback;
-            },
-            () => {
-              this._tempVariationAddedCallback = void 0;
-            },
-            timeout
-          );
+          return waitPromise;
         }
         /**
          * 设置"添加段落"按钮的点击监听器
@@ -1039,16 +1160,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             section.deleteButton = this.findDeleteButton(section.element);
           }
           if (!section.deleteButton) return false;
+          const waitPromise = this.createQueuedWaitPromise(this._tempSectionRemovedCallbacks, timeout);
           section.deleteButton.click();
-          return this.createWaitPromise(
-            (callback) => {
-              this._tempSectionRemovedCallback = callback;
-            },
-            () => {
-              this._tempSectionRemovedCallback = void 0;
-            },
-            timeout
-          );
+          return waitPromise;
         }
         /**
          * 删除所有 Sections
@@ -1105,16 +1219,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             variation.deleteButton = this.findDeleteButton(variation.element);
           }
           if (!variation.deleteButton) return false;
+          const waitPromise = this.createQueuedWaitPromise(this._tempVariationRemovedCallbacks, timeout);
           variation.deleteButton.click();
-          return this.createWaitPromise(
-            (callback) => {
-              this._tempVariationRemovedCallback = callback;
-            },
-            () => {
-              this._tempVariationRemovedCallback = void 0;
-            },
-            timeout
-          );
+          return waitPromise;
         }
         /**
          * 删除所有 Variations
@@ -1694,7 +1801,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-996dd7d2"]]);
+      const IconButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-eaa777fd"]]);
       const withSize = exports("w", (svg, size, strokeWidth) => {
         let result = svg.replace("<svg ", `<svg width="${size}" height="${size}" `);
         if (strokeWidth !== void 0) {
@@ -1852,7 +1959,8 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           buttons: {},
           closeOnClickOutside: { type: Boolean, default: true },
           closeOnEsc: { type: Boolean, default: true },
-          teleportTo: { default: "body" }
+          teleportTo: { default: "body" },
+          size: { default: "md" }
         },
         emits: ["close", "action"],
         setup(__props, { emit: __emit }) {
@@ -1889,7 +1997,10 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                 default: withCtx(() => [
                   _ctx.show ? (openBlock(), createElementBlock("div", {
                     key: 0,
-                    class: normalizeClass(["modal-overlay", { "modal-in-sidebar": _ctx.teleportTo !== "body" }]),
+                    class: normalizeClass(["modal-overlay", [
+                      `size-${_ctx.size}`,
+                      { "modal-in-sidebar": _ctx.teleportTo !== "body" }
+                    ]]),
                     onClick: handleOverlayClick
                   }, [
                     createElementVNode("div", _hoisted_1$2, [
@@ -1898,10 +2009,11 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                         createElementVNode("div", _hoisted_4$2, [
                           renderSlot(_ctx.$slots, "header-actions", {}, void 0, true),
                           createElementVNode("button", {
-                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                            class: "modal-close-btn",
                             onClick: handleClose,
                             type: "button",
-                            title: "关闭"
+                            title: "关闭",
+                            "aria-label": "关闭"
                           }, [
                             createElementVNode("span", {
                               innerHTML: unref(icons).close
@@ -1933,54 +2045,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-3bf68892"]]));
-      const _hoisted_1$1 = { class: "tab-bar" };
-      const _hoisted_2$1 = { class: "tab-list" };
-      const _hoisted_3$1 = ["onClick"];
-      const _hoisted_4$1 = ["innerHTML"];
-      const _hoisted_5 = { class: "tab-label" };
-      const _hoisted_6 = {
-        key: 0,
-        class: "tab-actions"
-      };
-      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
-        __name: "TabBar",
-        props: {
-          tabs: {},
-          activeTab: {}
-        },
-        emits: ["update:activeTab"],
-        setup(__props, { emit: __emit }) {
-          const emit = __emit;
-          const handleTabClick = (tabId) => {
-            emit("update:activeTab", tabId);
-          };
-          return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$1, [
-              createElementVNode("div", _hoisted_2$1, [
-                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
-                  return openBlock(), createElementBlock("button", {
-                    key: tab.id,
-                    class: normalizeClass(["tab-btn", { active: _ctx.activeTab === tab.id }]),
-                    onClick: ($event) => handleTabClick(tab.id)
-                  }, [
-                    tab.icon ? (openBlock(), createElementBlock("span", {
-                      key: 0,
-                      class: "tab-icon",
-                      innerHTML: tab.icon
-                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
-                    createElementVNode("span", _hoisted_5, toDisplayString(tab.label), 1)
-                  ], 10, _hoisted_3$1);
-                }), 128))
-              ]),
-              _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
-                renderSlot(_ctx.$slots, "actions", {}, void 0, true)
-              ])) : createCommentVNode("", true)
-            ]);
-          };
-        }
-      });
-      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8faa559a"]]);
+      const Modal = exports("M", /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-06471afb"]]));
       var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
       var _GM_notification = /* @__PURE__ */ (() => typeof GM_notification != "undefined" ? GM_notification : void 0)();
       var _GM_registerMenuCommand = /* @__PURE__ */ (() => typeof GM_registerMenuCommand != "undefined" ? GM_registerMenuCommand : void 0)();
@@ -2027,13 +2092,15 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             {
               id: "default-discount",
               name: "默认打折",
-              template: "【セール中】\n通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)",
+              header: "【セール中】",
+              periodTemplate: "通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)\n⏰ {折扣开始时间} - {折扣结束时间}",
               isDefault: true
             },
             {
               id: "fullset-discount",
               name: "含 Fullset",
-              template: "◆[セール開催中]◆\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY\n⏰ {折扣开始时间} - {折扣结束时间}\n({折扣百分比}% OFF)",
+              header: "◆[セール開催中]◆",
+              periodTemplate: "⏰ {折扣开始时间} - {折扣结束时间} ({折扣百分比}% OFF)\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY",
               isDefault: false
             }
           ],
@@ -2098,7 +2165,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           customDescription: "",
           discount: {
             enabled: false,
-            discountPercent: 0
+            periods: []
           },
           pricing: {
             normalVariationPrice: 0,
@@ -2137,7 +2204,12 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
         return getTemplateByType(config, itemConfig, "descriptionTemplates", "descriptionTemplateId");
       }
       function getSelectedDiscountTemplate(config, itemConfig) {
-        return getTemplateByType(config, itemConfig, "discountTemplates", "discountTemplateId");
+        var _a;
+        const templates = config.discountTemplates;
+        if (!templates || templates.length === 0) return null;
+        const selectedId = (_a = itemConfig.selectedTemplates) == null ? void 0 : _a.discountTemplateId;
+        const found = selectedId ? templates.find((t) => t.id === selectedId) : void 0;
+        return found || templates.find((t) => t.isDefault) || templates[0] || null;
       }
       function getSelectedDiscountIndicatorTemplate(config, itemConfig) {
         return getTemplateByType(config, itemConfig, "discountIndicatorTemplates", "discountIndicatorTemplateId");
@@ -2156,12 +2228,14 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           itemConfigs: {},
           ui: {
             sidebarOpen: false,
-            activeTab: "tags"
+            activeTab: "tags",
+            collapsedSections: []
           }
         };
       };
       const STORAGE_KEY = "booth-enhancer-config-v4";
       const SAVE_DEBOUNCE = 500;
+      const CURRENT_SCHEMA_VERSION = 2;
       const _ConfigStorage = class _ConfigStorage {
         constructor() {
           __publicField(this, "_data");
@@ -2182,23 +2256,96 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
         get data() {
           return this._data;
         }
+        /**
+         * 迁移旧数据：把 fileItemMap 中的 string 值转换为 string[]
+         * 只在 schemaVersion < 1 时执行
+         */
+        migrateFileItemMap(data) {
+          let changed = false;
+          Object.values(data.itemConfigs).forEach((config) => {
+            config.variations.forEach((variation) => {
+              if (!variation.fileItemMap) return;
+              Object.keys(variation.fileItemMap).forEach((fileId) => {
+                const value = variation.fileItemMap[fileId];
+                if (typeof value === "string") {
+                  variation.fileItemMap[fileId] = [value];
+                  changed = true;
+                }
+              });
+            });
+          });
+          return changed;
+        }
+        /**
+         * 确保 globalTemplates 有所有必需的字段
+         * 向后兼容老用户数据（如增加了 discountIndicatorTemplates 之后）
+         * 只补齐缺失的数组字段，不覆盖已有内容
+         */
+        ensureGlobalTemplatesShape(data) {
+          const defaults = createDefaultGlobalTemplates();
+          if (!data.globalTemplates) {
+            data.globalTemplates = defaults;
+            return;
+          }
+          Object.keys(defaults).forEach((key) => {
+            if (!Array.isArray(data.globalTemplates[key])) {
+              data.globalTemplates[key] = defaults[key];
+            }
+          });
+        }
+        /**
+         * 迁移旧数据：单时段折扣 → 多时段 periods[]
+         * 旧格式: { enabled, discountPercent, startDate?, endDate? }
+         * 新格式: { enabled, periods: [{ id, discountPercent, startDate?, endDate? }] }
+         * 
+         * 同时迁移旧折扣模板：{ template } → { header, periodTemplate }
+         */
+        migrateDiscountPeriods(data) {
+          var _a;
+          Object.values(data.itemConfigs).forEach((config) => {
+            const d = config.discount;
+            if (d && d.discountPercent !== void 0 && !d.periods) {
+              d.periods = [];
+              if (d.discountPercent > 0) {
+                d.periods.push({
+                  id: crypto.randomUUID(),
+                  discountPercent: d.discountPercent,
+                  startDate: d.startDate,
+                  endDate: d.endDate
+                });
+              }
+              delete d.discountPercent;
+              delete d.startDate;
+              delete d.endDate;
+            }
+            if (d && !d.periods) {
+              d.periods = [];
+            }
+          });
+          if ((_a = data.globalTemplates) == null ? void 0 : _a.discountTemplates) {
+            data.globalTemplates.discountTemplates.forEach((tpl) => {
+              if (tpl.template !== void 0 && tpl.periodTemplate === void 0) {
+                tpl.periodTemplate = tpl.template;
+                tpl.header = "";
+                delete tpl.template;
+              }
+            });
+          }
+        }
         load() {
           try {
             const stored = _GM_getValue(STORAGE_KEY, null);
             if (stored) {
               const data = JSON.parse(stored);
-              Object.values(data.itemConfigs).forEach((config) => {
-                config.variations.forEach((variation) => {
-                  if (variation.fileItemMap) {
-                    Object.keys(variation.fileItemMap).forEach((fileId) => {
-                      const value = variation.fileItemMap[fileId];
-                      if (typeof value === "string") {
-                        variation.fileItemMap[fileId] = [value];
-                      }
-                    });
-                  }
-                });
-              });
+              const version = data.schemaVersion ?? 0;
+              if (version < 1) {
+                this.migrateFileItemMap(data);
+              }
+              if (version < 2) {
+                this.migrateDiscountPeriods(data);
+              }
+              this.ensureGlobalTemplatesShape(data);
+              data.schemaVersion = CURRENT_SCHEMA_VERSION;
               if (data.ui) {
                 data.ui.sidebarOpen = false;
               }
@@ -2207,7 +2354,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           } catch (e) {
             console.error("Failed to load config:", e);
           }
-          return createDefaultData();
+          const fresh = createDefaultData();
+          fresh.schemaVersion = CURRENT_SCHEMA_VERSION;
+          return fresh;
         }
         save() {
           try {
@@ -2426,9 +2575,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
               }
             }
           }
-          if (errors.length > 0) {
-            throw new Error(`以下数据导入失败: ${errors.join("、")}`);
-          }
+          return { success: errors.length === 0, failedParts: errors };
         }
         importAllFromJSON(importData) {
           const errors = [];
@@ -2466,9 +2613,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
               }
             }
           }
-          if (errors.length > 0) {
-            throw new Error(`以下数据导入失败: ${errors.join("、")}`);
-          }
+          return { success: errors.length === 0, failedParts: errors };
         }
         /**
          * 导出数据为 JSON（保留用于向后兼容）
@@ -2496,6 +2641,53 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
       };
       __publicField(_ConfigStorage, "instance");
       let ConfigStorage = exports("C", _ConfigStorage);
+      const _hoisted_1$1 = { class: "tab-bar" };
+      const _hoisted_2$1 = { class: "tab-list" };
+      const _hoisted_3$1 = ["onClick"];
+      const _hoisted_4$1 = ["innerHTML"];
+      const _hoisted_5 = { class: "tab-label" };
+      const _hoisted_6 = {
+        key: 0,
+        class: "tab-actions"
+      };
+      const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+        __name: "TabBar",
+        props: {
+          tabs: {},
+          activeTab: {}
+        },
+        emits: ["update:activeTab"],
+        setup(__props, { emit: __emit }) {
+          const emit = __emit;
+          const handleTabClick = (tabId) => {
+            emit("update:activeTab", tabId);
+          };
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock("div", _hoisted_1$1, [
+              createElementVNode("div", _hoisted_2$1, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.tabs, (tab) => {
+                  return openBlock(), createElementBlock("button", {
+                    key: tab.id,
+                    class: normalizeClass(["tab-btn", { active: _ctx.activeTab === tab.id }]),
+                    onClick: ($event) => handleTabClick(tab.id)
+                  }, [
+                    tab.icon ? (openBlock(), createElementBlock("span", {
+                      key: 0,
+                      class: "tab-icon",
+                      innerHTML: tab.icon
+                    }, null, 8, _hoisted_4$1)) : createCommentVNode("", true),
+                    createElementVNode("span", _hoisted_5, toDisplayString(tab.label), 1)
+                  ], 10, _hoisted_3$1);
+                }), 128))
+              ]),
+              _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                renderSlot(_ctx.$slots, "actions", {}, void 0, true)
+              ])) : createCommentVNode("", true)
+            ]);
+          };
+        }
+      });
+      const TabBar = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-a4df4728"]]);
       class ToastManager {
         constructor() {
           __publicField(this, "container", null);
@@ -2762,6 +2954,61 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           moveNode: (tree, nodeId, newParentId) => storage.moveNode(tree, nodeId, newParentId)
         };
       }
+      function cleanMissingFileIds(itemConfig, availableFileIds) {
+        let commonRemoved = 0;
+        let variationRemoved = 0;
+        let mapRemoved = 0;
+        const emptyResult = {
+          commonFiles: 0,
+          variationFileIds: 0,
+          fileItemMapEntries: 0,
+          get total() {
+            return this.commonFiles + this.variationFileIds + this.fileItemMapEntries;
+          }
+        };
+        if (availableFileIds.size === 0) {
+          return emptyResult;
+        }
+        if (itemConfig.commonFiles && itemConfig.commonFiles.length > 0) {
+          const before = itemConfig.commonFiles.length;
+          itemConfig.commonFiles = itemConfig.commonFiles.filter(
+            (id) => availableFileIds.has(id)
+          );
+          commonRemoved = before - itemConfig.commonFiles.length;
+        }
+        itemConfig.variations.forEach((variation) => {
+          if (variation.fileIds && variation.fileIds.length > 0) {
+            const before = variation.fileIds.length;
+            variation.fileIds = variation.fileIds.filter(
+              (id) => availableFileIds.has(id)
+            );
+            variationRemoved += before - variation.fileIds.length;
+          }
+          if (variation.fileItemMap) {
+            const cleaned = {};
+            for (const [fileId, itemIds] of Object.entries(variation.fileItemMap)) {
+              if (!availableFileIds.has(fileId)) {
+                mapRemoved++;
+                continue;
+              }
+              const ids = Array.isArray(itemIds) ? itemIds : [itemIds];
+              const valid = ids.filter(Boolean);
+              if (valid.length > 0) {
+                cleaned[fileId] = valid;
+              }
+            }
+            variation.fileItemMap = cleaned;
+          }
+        });
+        return {
+          commonFiles: commonRemoved,
+          variationFileIds: variationRemoved,
+          fileItemMapEntries: mapRemoved,
+          get total() {
+            return this.commonFiles + this.variationFileIds + this.fileItemMapEntries;
+          }
+        };
+      }
       function triggerDownload(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -2814,9 +3061,9 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-O2kZut81-U1yOq8Hi.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-BEZ3nBsb-DJjhCVhv.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DyHkOzZF-BF-r4Dob.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BIairI8h-DA5Ag8o8.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-CQLRRS42-DmNkHjDf.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DJ3oWU94-L6MYeyCu.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -2842,23 +3089,6 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                 return TagTab;
             }
           }
-          const editTabRef = ref(null);
-          function setComponentRef(el) {
-            if (data.value.ui.activeTab === "edit") {
-              editTabRef.value = el;
-            }
-          }
-          async function handleApplyAll() {
-            if (!editTabRef.value) {
-              toast.error("EditTab 未加载");
-              return;
-            }
-            try {
-              await editTabRef.value.applyAll();
-            } catch (error) {
-              console.error("应用所有配置失败:", error);
-            }
-          }
           const sidebarRef = ref(null);
           const showMenu = ref(false);
           const menuPosition = ref({ x: 0, y: 0 });
@@ -2873,14 +3103,14 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             const panelRoot = document.getElementById("booth-enhancer-panel-root");
             const toggleBtn = document.querySelector(".booth-enhancer-toggle");
             if (panelRoot) {
-              if (isOpen) {
-                panelRoot.classList.add("panel-open");
-              } else {
-                panelRoot.classList.remove("panel-open");
-              }
+              panelRoot.classList.toggle("panel-open", isOpen);
             }
             if (toggleBtn) {
-              toggleBtn.innerHTML = isOpen ? icons.chevronRight : icons.chevronLeft;
+              toggleBtn.innerHTML = withSize(
+                isOpen ? icons.chevronRight : icons.chevronLeft,
+                20,
+                2.5
+              );
             }
           });
           const closeSidebar = () => {
@@ -2915,8 +3145,12 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             triggerFileInput(".json,application/json", async (file) => {
               try {
                 const importData = await readJSONFile(file);
-                importAllFromJSON(importData);
-                toast.success("导入成功");
+                const result = importAllFromJSON(importData);
+                if (result.success) {
+                  toast.success("导入成功");
+                } else {
+                  toast.warning(`导入部分完成，失败项: ${result.failedParts.join("、")}`, 5e3);
+                }
               } catch (error) {
                 console.error("导入失败:", error);
                 toast.error("导入失败：" + error.message);
@@ -2998,46 +3232,14 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
               toast.error("导出失败：" + error.message);
             }
           }
-          function cleanInvalidFileIds(config, availableFileIds) {
-            let removedCount = 0;
-            if (config.commonFiles) {
-              const initialLength = config.commonFiles.length;
-              config.commonFiles = config.commonFiles.filter(
-                (fileId) => availableFileIds.has(fileId)
-              );
-              removedCount += initialLength - config.commonFiles.length;
-            }
-            if (config.variations) {
-              config.variations.forEach((variation) => {
-                if (variation.fileIds) {
-                  const initialLength = variation.fileIds.length;
-                  variation.fileIds = variation.fileIds.filter(
-                    (fileId) => availableFileIds.has(fileId)
-                  );
-                  removedCount += initialLength - variation.fileIds.length;
-                }
-                if (variation.fileItemMap) {
-                  const validFileItemMap = {};
-                  for (const [fileId, itemId] of Object.entries(variation.fileItemMap)) {
-                    if (availableFileIds.has(fileId)) {
-                      validFileItemMap[fileId] = itemId;
-                    } else {
-                      removedCount++;
-                    }
-                  }
-                  variation.fileItemMap = validFileItemMap;
-                }
-              });
-            }
-            return removedCount;
-          }
           function handleEditImport() {
             triggerFileInput(".json,application/json", async (file) => {
               try {
                 const config = await readJSONFile(file);
                 config.itemId = props.itemId;
                 const availableFileIds = new Set(props.api.files.map((f) => f.id));
-                const removedCount = cleanInvalidFileIds(config, availableFileIds);
+                const cleanupResult = cleanMissingFileIds(config, availableFileIds);
+                const removedCount = cleanupResult.total;
                 importSingleItem(config, { replace: true });
                 const message = removedCount > 0 ? `当前商品配置已成功替换（已清理 ${removedCount} 个无效文件引用）` : "当前商品配置已成功替换";
                 toast.success(message, 3e3);
@@ -3115,12 +3317,6 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                 "onUpdate:activeTab": handleTabChange
               }, {
                 actions: withCtx(() => [
-                  unref(data).ui.activeTab === "edit" ? (openBlock(), createBlock(unref(IconButton), {
-                    key: 0,
-                    icon: unref(icons).send,
-                    title: "应用所有",
-                    onClick: handleApplyAll
-                  }, null, 8, ["icon"])) : createCommentVNode("", true),
                   createVNode(unref(IconButton), {
                     icon: unref(icons).moreVertical,
                     title: "更多操作",
@@ -3154,7 +3350,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                     title: "取消"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                      innerHTML: unref(withSize)(unref(icons).close, 16)
                     }, null, 8, _hoisted_2)
                   ]),
                   createElementVNode("button", {
@@ -3163,7 +3359,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
                     title: "替换"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_3)
                   ])
                 ]),
@@ -3184,8 +3380,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
               }, 8, ["show"]),
               createElementVNode("div", _hoisted_4, [
                 (openBlock(), createBlock(resolveDynamicComponent(getTabComponent()), {
-                  ref: setComponentRef,
-                  key: unref(data).ui.activeTab + "-" + Date.now(),
+                  key: unref(data).ui.activeTab,
                   api: props.api
                 }, null, 8, ["api"]))
               ])
@@ -3193,7 +3388,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           };
         }
       });
-      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-19213a99"]]);
+      const AppVue = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-e5e445c1"]]);
       class PageModule {
         constructor(api) {
           __publicField(this, "api");
@@ -3272,30 +3467,33 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           this.setAllCheckboxes(false);
         }
         /**
-         * 设置所有复选框状态
+         * 设置所有复选框状态（分批执行，避免一次性触发过多 React 更新）
          */
-        setAllCheckboxes(checked) {
+        async setAllCheckboxes(checked) {
           const fileCheckboxes = document.querySelectorAll(
             'ul.list-none input.charcoal-checkbox-input[type="checkbox"]'
           );
-          Array.from(fileCheckboxes).forEach((checkbox) => {
-            const input = checkbox;
-            if (input.checked !== checked) {
-              Simulate.click(input);
+          const toToggle = Array.from(fileCheckboxes).filter(
+            (cb) => cb.checked !== checked
+          );
+          if (toToggle.length === 0) return;
+          const BATCH_SIZE = 10;
+          const FRAME_DELAY = () => new Promise((resolve) => requestAnimationFrame(resolve));
+          for (let i = 0; i < toToggle.length; i += BATCH_SIZE) {
+            const batch = toToggle.slice(i, i + BATCH_SIZE);
+            batch.forEach((cb) => Simulate.click(cb));
+            if (i + BATCH_SIZE < toToggle.length) {
+              await FRAME_DELAY();
             }
-          });
+          }
         }
       }
       class ItemNumbers extends PageModule {
         constructor(api) {
           super(api);
-          __publicField(this, "_observedContainers");
-        }
-        get observedContainers() {
-          if (!this._observedContainers) {
-            this._observedContainers = /* @__PURE__ */ new WeakMap();
-          }
-          return this._observedContainers;
+          // 用强引用记录 observer 列表，确保 destroy 能清理干净
+          __publicField(this, "observers", []);
+          __publicField(this, "observedContainers", /* @__PURE__ */ new WeakSet());
         }
         initialize() {
           const containers = /* @__PURE__ */ new Set();
@@ -3314,6 +3512,14 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
               this.addNumbersToList(variation.container);
             }
           });
+        }
+        /**
+         * 销毁模块，断开所有 observer
+         * （Booth 是 SPA，用户脚本目前不主动销毁，但保留此方法便于测试或未来需要）
+         */
+        destroy() {
+          this.observers.forEach((observer) => observer.disconnect());
+          this.observers = [];
         }
         /**
          * 为列表添加序号
@@ -3342,13 +3548,10 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           titleContainer.insertBefore(numberSpan, titleContainer.firstChild);
         }
         /**
-         * 设置列表观察器
+         * 设置列表观察器（每个容器只挂载一次）
          */
         setupListObserver(ul) {
-          const existingObserver = this.observedContainers.get(ul);
-          if (existingObserver) {
-            existingObserver.disconnect();
-          }
+          if (this.observedContainers.has(ul)) return;
           const observer = new MutationObserver(() => {
             const items = Array.from(ul.children).filter(
               (child) => child.tagName.toLowerCase() === "li"
@@ -3361,7 +3564,8 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
             childList: true,
             subtree: false
           });
-          this.observedContainers.set(ul, observer);
+          this.observers.push(observer);
+          this.observedContainers.add(ul);
         }
       }
       function handleError(error, fallback) {
@@ -3760,7 +3964,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           document.head.appendChild(style);
         }
         /**
-         * 更新侧边栏状态
+         * 更新侧边栏状态（仅在初始化时使用，运行时由 App.vue 的 watch 维护）
          */
         updateSidebarState(isOpen) {
           if (this.toggleBtn) {
@@ -3780,9 +3984,7 @@ System.register("./__monkey.entry-BpYn5ijP.js", ['vue'], (function (exports, mod
           this.toggleBtn.innerHTML = this.chevronLeftIcon;
           this.toggleBtn.addEventListener("click", () => {
             const storage = ConfigStorage.getInstance();
-            const isOpen = !storage.data.value.ui.sidebarOpen;
-            storage.data.value.ui.sidebarOpen = isOpen;
-            this.updateSidebarState(isOpen);
+            storage.data.value.ui.sidebarOpen = !storage.data.value.ui.sidebarOpen;
           });
           document.body.appendChild(this.toggleBtn);
         }
@@ -5727,7 +5929,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-DSdzhuNt.js', './__monkey.entry-BpYn5ijP.js'], (function (exports, module) {
+System.register("./TagTab-BIairI8h-DA5Ag8o8.js", ['vue', './useTreeTab-Bqmsvh28-Cqlgntmi.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -6033,7 +6235,7 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
                     title: "取消"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                      innerHTML: unref(withSize)(unref(icons).close, 16)
                     }, null, 8, _hoisted_22)
                   ])) : createCommentVNode("", true),
                   unref(treeTab).modal.state.value.type === "createTag" ? (openBlock(), createElementBlock("button", {
@@ -6043,7 +6245,7 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_23)
                   ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
                     key: 2,
@@ -6052,7 +6254,7 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
                     title: "删除"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                      innerHTML: unref(withSize)(unref(icons).trash, 16)
                     }, null, 8, _hoisted_24)
                   ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
                     key: 3,
@@ -6061,7 +6263,7 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_25)
                   ])) : (openBlock(), createElementBlock("button", {
                     key: 4,
@@ -6070,7 +6272,7 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_26)
                   ]))
                 ]),
@@ -6154,13 +6356,13 @@ System.register("./TagTab-O2kZut81-U1yOq8Hi.js", ['vue', './useTreeTab-DVATPEnn-
           };
         }
       });
-      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-81455dc4"]]));
+      const TagTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-7b073638"]]));
 
     })
   };
 }));
 
-System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn-DSdzhuNt.js', './__monkey.entry-BpYn5ijP.js'], (function (exports, module) {
+System.register("./ItemTab-CQLRRS42-DmNkHjDf.js", ['vue', './useTreeTab-Bqmsvh28-Cqlgntmi.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -6309,7 +6511,7 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
                     title: "取消"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
+                      innerHTML: unref(withSize)(unref(icons).close, 16)
                     }, null, 8, _hoisted_21)
                   ])) : createCommentVNode("", true),
                   unref(treeTab).modal.state.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
@@ -6319,7 +6521,7 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_22)
                   ])) : unref(treeTab).modal.state.value.type === "delete" ? (openBlock(), createElementBlock("button", {
                     key: 2,
@@ -6328,7 +6530,7 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
                     title: "删除"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).trash, 18)
+                      innerHTML: unref(withSize)(unref(icons).trash, 16)
                     }, null, 8, _hoisted_23)
                   ])) : unref(treeTab).modal.state.value.type === "alert" ? (openBlock(), createElementBlock("button", {
                     key: 3,
@@ -6337,7 +6539,7 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_24)
                   ])) : (openBlock(), createElementBlock("button", {
                     key: 4,
@@ -6346,7 +6548,7 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
                     title: "确定"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
                     }, null, 8, _hoisted_25)
                   ]))
                 ]),
@@ -6435,13 +6637,13 @@ System.register("./ItemTab-BEZ3nBsb-DJjhCVhv.js", ['vue', './useTreeTab-DVATPEnn
           };
         }
       });
-      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6c6b3856"]]));
+      const ItemTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-c58a9f1e"]]));
 
     })
   };
 }));
 
-System.register("./useTreeTab-DVATPEnn-DSdzhuNt.js", ['vue', './__monkey.entry-BpYn5ijP.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-Bqmsvh28-Cqlgntmi.js", ['vue', './__monkey.entry-DvirMHzt.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -7399,9 +7601,9 @@ System.register("./useTreeTab-DVATPEnn-DSdzhuNt.js", ['vue', './__monkey.entry-B
   };
 }));
 
-System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-BpYn5ijP.js'], (function (exports, module) {
+System.register("./EditTab-DJ3oWU94-L6MYeyCu.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
   'use strict';
-  var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, normalizeClass, renderSlot, withModifiers, renderList, onUnmounted, vModelCheckbox, normalizeStyle, useSlots, TransitionGroup, useModal, _export_sfc, useStorage, getSelectedDiscountIndicatorTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate, getStableKey, Simulate;
+  var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, shallowRef, onUnmounted, normalizeClass, renderSlot, withModifiers, renderList, vModelCheckbox, normalizeStyle, useSlots, vShow, TransitionGroup, useModal, _export_sfc, useStorage, getSelectedDiscountIndicatorTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate, cleanMissingFileIds, getStableKey, ConfigStorage, Simulate;
   return {
     setters: [module => {
       defineComponent = module.defineComponent;
@@ -7424,14 +7626,16 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
       vModelSelect = module.vModelSelect;
       toDisplayString = module.toDisplayString;
       createBlock = module.createBlock;
+      shallowRef = module.shallowRef;
+      onUnmounted = module.onUnmounted;
       normalizeClass = module.normalizeClass;
       renderSlot = module.renderSlot;
       withModifiers = module.withModifiers;
       renderList = module.renderList;
-      onUnmounted = module.onUnmounted;
       vModelCheckbox = module.vModelCheckbox;
       normalizeStyle = module.normalizeStyle;
       useSlots = module.useSlots;
+      vShow = module.vShow;
       TransitionGroup = module.TransitionGroup;
     }, module => {
       useModal = module.u;
@@ -7447,19 +7651,21 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
       icons = module.i;
       createDefaultItemConfig = module.d;
       getSelectedNameTemplate = module.e;
-      getStableKey = module.f;
+      cleanMissingFileIds = module.f;
+      getStableKey = module.h;
+      ConfigStorage = module.C;
       Simulate = module.S;
     }],
     execute: (function () {
 
-      const _hoisted_1$m = { class: "file-selector" };
-      const _hoisted_2$m = ["onClick"];
-      const _hoisted_3$l = { class: "be-text-sm be-font-medium" };
+      const _hoisted_1$n = { class: "file-selector" };
+      const _hoisted_2$n = ["onClick"];
+      const _hoisted_3$m = { class: "be-text-sm be-font-medium" };
       const _hoisted_4$l = {
         key: 1,
         class: "empty-hint be-text-center be-text-secondary be-py-md"
       };
-      const _sfc_main$m = /* @__PURE__ */ defineComponent({
+      const _sfc_main$n = /* @__PURE__ */ defineComponent({
         __name: "FileSelector",
         props: {
           files: {},
@@ -7488,7 +7694,7 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
           const gridColumns = computed(() => props.columns || 2);
           const emptyHint = computed(() => props.emptyText || "暂无文件，请先上传文件");
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$m, [
+            return openBlock(), createElementBlock("div", _hoisted_1$n, [
               _ctx.files.length > 0 ? (openBlock(), createElementBlock("div", {
                 key: 0,
                 class: "file-grid",
@@ -7504,21 +7710,21 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
                     type: "button",
                     onClick: ($event) => toggleFileSelection(file.id)
                   }, [
-                    createElementVNode("span", _hoisted_3$l, toDisplayString(file.name), 1)
-                  ], 10, _hoisted_2$m);
+                    createElementVNode("span", _hoisted_3$m, toDisplayString(file.name), 1)
+                  ], 10, _hoisted_2$n);
                 }), 128))
               ], 4)) : (openBlock(), createElementBlock("div", _hoisted_4$l, toDisplayString(emptyHint.value), 1))
             ]);
           };
         }
       });
-      const FileSelector = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["__scopeId", "data-v-43c71f00"]]);
-      const _hoisted_1$l = { class: "preview-box be-flex be-flex-column be-gap-xs" };
-      const _hoisted_2$l = {
+      const FileSelector = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["__scopeId", "data-v-43c71f00"]]);
+      const _hoisted_1$m = { class: "preview-box be-flex be-flex-column be-gap-xs" };
+      const _hoisted_2$m = {
         key: 0,
         class: "be-text-xs be-text-secondary"
       };
-      const _hoisted_3$k = {
+      const _hoisted_3$l = {
         key: 1,
         class: "be-text-secondary"
       };
@@ -7526,8 +7732,8 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
         key: 2,
         class: "be-whitespace-pre-wrap be-break-words be-m-0"
       };
-      const _hoisted_5$g = { key: 3 };
-      const _sfc_main$l = /* @__PURE__ */ defineComponent({
+      const _hoisted_5$h = { key: 3 };
+      const _sfc_main$m = /* @__PURE__ */ defineComponent({
         __name: "PreviewBox",
         props: {
           label: {},
@@ -7537,76 +7743,130 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
         },
         setup(__props) {
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$l, [
-              _ctx.label ? (openBlock(), createElementBlock("div", _hoisted_2$l, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
-              _ctx.isEmpty ? (openBlock(), createElementBlock("div", _hoisted_3$k, toDisplayString(_ctx.emptyText || "暂无内容"), 1)) : _ctx.type === "pre" ? (openBlock(), createElementBlock("pre", _hoisted_4$k, [
+            return openBlock(), createElementBlock("div", _hoisted_1$m, [
+              _ctx.label ? (openBlock(), createElementBlock("div", _hoisted_2$m, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
+              _ctx.isEmpty ? (openBlock(), createElementBlock("div", _hoisted_3$l, toDisplayString(_ctx.emptyText || "暂无内容"), 1)) : _ctx.type === "pre" ? (openBlock(), createElementBlock("pre", _hoisted_4$k, [
                 _cache[0] || (_cache[0] = createTextVNode("      ", -1)),
                 renderSlot(_ctx.$slots, "default", {}, void 0, true),
                 _cache[1] || (_cache[1] = createTextVNode("\n    ", -1))
-              ])) : (openBlock(), createElementBlock("div", _hoisted_5$g, [
+              ])) : (openBlock(), createElementBlock("div", _hoisted_5$h, [
                 renderSlot(_ctx.$slots, "default", {}, void 0, true)
               ]))
             ]);
           };
         }
       });
-      const PreviewBox = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["__scopeId", "data-v-93d09832"]]);
-      const _hoisted_1$k = {
-        key: 0,
-        class: "section-header"
-      };
-      const _hoisted_2$k = {
-        key: 0,
+      const PreviewBox = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["__scopeId", "data-v-93d09832"]]);
+      const _hoisted_1$l = { class: "section-header-title" };
+      const _hoisted_2$l = {
+        key: 1,
         class: "be-text-base be-font-bold"
       };
-      const _hoisted_3$j = {
-        key: 1,
-        class: "actions"
-      };
-      const _hoisted_4$j = { class: "section-content" };
-      const _sfc_main$k = /* @__PURE__ */ defineComponent({
+      const _hoisted_3$k = { class: "section-content" };
+      const _sfc_main$l = /* @__PURE__ */ defineComponent({
         __name: "SectionHeader",
         props: {
           title: { default: "" },
-          noBorder: { type: Boolean, default: false }
+          noBorder: { type: Boolean, default: false },
+          collapsible: { type: Boolean, default: false },
+          sectionId: { default: "" }
         },
         setup(__props) {
           const props = __props;
           const slots = useSlots();
           const hasHeader = computed(() => props.title || slots.title || slots.actions);
+          const storage = props.sectionId ? ConfigStorage.getInstance() : null;
+          const isCollapsed = computed({
+            get() {
+              var _a;
+              if (!props.collapsible) return false;
+              if (!props.sectionId || !storage) return localCollapsed.value;
+              return ((_a = storage.data.value.ui.collapsedSections) == null ? void 0 : _a.includes(props.sectionId)) ?? false;
+            },
+            set(value) {
+              var _a;
+              if (!props.collapsible) return;
+              if (!props.sectionId || !storage) {
+                localCollapsed.value = value;
+                return;
+              }
+              const sections = (_a = storage.data.value.ui).collapsedSections ?? (_a.collapsedSections = []);
+              const idx = sections.indexOf(props.sectionId);
+              if (value && idx === -1) {
+                sections.push(props.sectionId);
+              } else if (!value && idx !== -1) {
+                sections.splice(idx, 1);
+              }
+            }
+          });
+          const localCollapsed = ref(false);
+          function toggleCollapse() {
+            if (!props.collapsible) return;
+            isCollapsed.value = !isCollapsed.value;
+          }
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock("section", {
-              class: normalizeClass(["section-header-container", { "no-header": !hasHeader.value, "no-border": _ctx.noBorder }])
+              class: normalizeClass(["section-header-container", { "no-header": !hasHeader.value, "no-border": _ctx.noBorder, "is-collapsed": _ctx.collapsible && isCollapsed.value }])
             }, [
-              hasHeader.value ? (openBlock(), createElementBlock("div", _hoisted_1$k, [
-                _ctx.title || _ctx.$slots.title ? (openBlock(), createElementBlock("div", _hoisted_2$k, [
-                  renderSlot(_ctx.$slots, "title", {}, () => [
-                    createTextVNode(toDisplayString(_ctx.title), 1)
-                  ], true)
-                ])) : createCommentVNode("", true),
-                _ctx.$slots.actions ? (openBlock(), createElementBlock("div", _hoisted_3$j, [
+              hasHeader.value ? (openBlock(), createElementBlock("div", {
+                key: 0,
+                class: normalizeClass(["section-header", { "is-clickable": _ctx.collapsible }]),
+                onClick: toggleCollapse
+              }, [
+                createElementVNode("div", _hoisted_1$l, [
+                  _ctx.collapsible ? (openBlock(), createElementBlock("span", {
+                    key: 0,
+                    class: normalizeClass(["collapse-icon", { "is-collapsed": isCollapsed.value }])
+                  }, _cache[1] || (_cache[1] = [
+                    createElementVNode("svg", {
+                      width: "12",
+                      height: "12",
+                      viewBox: "0 0 24 24",
+                      fill: "none",
+                      stroke: "currentColor",
+                      "stroke-width": "2",
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round"
+                    }, [
+                      createElementVNode("polyline", { points: "6 9 12 15 18 9" })
+                    ], -1)
+                  ]), 2)) : createCommentVNode("", true),
+                  _ctx.title || _ctx.$slots.title ? (openBlock(), createElementBlock("span", _hoisted_2$l, [
+                    renderSlot(_ctx.$slots, "title", {}, () => [
+                      createTextVNode(toDisplayString(_ctx.title), 1)
+                    ], true)
+                  ])) : createCommentVNode("", true)
+                ]),
+                _ctx.$slots.actions ? (openBlock(), createElementBlock("div", {
+                  key: 0,
+                  class: "actions",
+                  onClick: _cache[0] || (_cache[0] = withModifiers(() => {
+                  }, ["stop"]))
+                }, [
                   renderSlot(_ctx.$slots, "actions", {}, void 0, true)
                 ])) : createCommentVNode("", true)
-              ])) : createCommentVNode("", true),
-              createElementVNode("div", _hoisted_4$j, [
+              ], 2)) : createCommentVNode("", true),
+              withDirectives(createElementVNode("div", _hoisted_3$k, [
                 renderSlot(_ctx.$slots, "default", {}, void 0, true)
+              ], 512), [
+                [vShow, !isCollapsed.value]
               ])
             ], 2);
           };
         }
       });
-      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["__scopeId", "data-v-5643104c"]]);
-      const _hoisted_1$j = { class: "template-selector" };
-      const _hoisted_2$j = {
+      const SectionHeader = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["__scopeId", "data-v-2fa32263"]]);
+      const _hoisted_1$k = { class: "template-selector" };
+      const _hoisted_2$k = {
         key: 0,
         class: "template-selector-label"
       };
-      const _hoisted_3$i = ["value"];
-      const _hoisted_4$i = {
+      const _hoisted_3$j = ["value"];
+      const _hoisted_4$j = {
         key: 2,
         class: "empty-hint"
       };
-      const _sfc_main$j = /* @__PURE__ */ defineComponent({
+      const _sfc_main$k = /* @__PURE__ */ defineComponent({
         __name: "TemplateSelector",
         props: {
           modelValue: { default: "" },
@@ -7640,8 +7900,8 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
           }
           watch(() => props.templates, ensureValidSelection, { immediate: true });
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock("div", _hoisted_1$j, [
-              _ctx.label ? (openBlock(), createElementBlock("label", _hoisted_2$j, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
+            return openBlock(), createElementBlock("div", _hoisted_1$k, [
+              _ctx.label ? (openBlock(), createElementBlock("label", _hoisted_2$k, toDisplayString(_ctx.label), 1)) : createCommentVNode("", true),
               _ctx.templates && _ctx.templates.length > 0 ? withDirectives((openBlock(), createElementBlock("select", {
                 key: 1,
                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => selectedValue.value = $event),
@@ -7651,27 +7911,27 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
                   return openBlock(), createElementBlock("option", {
                     key: template.id,
                     value: template.id
-                  }, toDisplayString(template.name), 9, _hoisted_3$i);
+                  }, toDisplayString(template.name), 9, _hoisted_3$j);
                 }), 128))
               ], 512)), [
                 [vModelSelect, selectedValue.value]
-              ]) : (openBlock(), createElementBlock("div", _hoisted_4$i, toDisplayString(_ctx.emptyHint), 1))
+              ]) : (openBlock(), createElementBlock("div", _hoisted_4$j, toDisplayString(_ctx.emptyHint), 1))
             ]);
           };
         }
       });
-      const TemplateSelector = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-3d389fdb"]]);
-      const _hoisted_1$i = ["onDragstart", "onDragover"];
-      const _hoisted_2$i = { class: "card-actions" };
-      const _hoisted_3$h = ["innerHTML", "onMousedown", "onTouchstart"];
-      const _hoisted_4$h = { class: "card-number" };
-      const _hoisted_5$f = { class: "actions-content" };
+      const TemplateSelector = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["__scopeId", "data-v-3d389fdb"]]);
+      const _hoisted_1$j = ["onDragstart", "onDragover"];
+      const _hoisted_2$j = { class: "card-actions" };
+      const _hoisted_3$i = ["innerHTML", "onMousedown", "onTouchstart"];
+      const _hoisted_4$i = { class: "card-number" };
+      const _hoisted_5$g = { class: "actions-content" };
       const _hoisted_6$f = ["onClick"];
-      const _hoisted_7$c = ["innerHTML"];
-      const _hoisted_8$a = { class: "card-content" };
+      const _hoisted_7$d = ["innerHTML"];
+      const _hoisted_8$b = { class: "card-content" };
       const DRAG_THRESHOLD = 10;
       const DEAD_ZONE = 5;
-      const _sfc_main$i = /* @__PURE__ */ defineComponent({
+      const _sfc_main$j = /* @__PURE__ */ defineComponent({
         __name: "DraggableCardList",
         props: {
           items: {},
@@ -7881,7 +8141,7 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
                       onDragover: ($event) => onDragOver($event, index),
                       onDrop
                     }, [
-                      createElementVNode("div", _hoisted_2$i, [
+                      createElementVNode("div", _hoisted_2$j, [
                         createElementVNode("span", {
                           class: normalizeClass(["drag-handle", { "is-locked": (_a = props.isItemLocked) == null ? void 0 : _a.call(props, item, getOriginalIndex(item)) }]),
                           innerHTML: ((_b = props.isItemLocked) == null ? void 0 : _b.call(props, item, getOriginalIndex(item))) ? unref(withSize)(unref(icons).lock, 14) : unref(withSize)(unref(icons).moreVertical, 14),
@@ -7890,9 +8150,9 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
                           onTouchstart: ($event) => onTouchStart($event, item, getOriginalIndex(item)),
                           onTouchmove: onTouchMove,
                           onTouchend: onTouchEnd
-                        }, null, 42, _hoisted_3$h),
-                        createElementVNode("span", _hoisted_4$h, "#" + toDisplayString(index + 1), 1),
-                        createElementVNode("div", _hoisted_5$f, [
+                        }, null, 42, _hoisted_3$i),
+                        createElementVNode("span", _hoisted_4$i, "#" + toDisplayString(index + 1), 1),
+                        createElementVNode("div", _hoisted_5$g, [
                           renderSlot(_ctx.$slots, "actions", {
                             item,
                             index: getOriginalIndex(item)
@@ -7906,16 +8166,16 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
                         }, [
                           createElementVNode("span", {
                             innerHTML: unref(withSize)(unref(icons).trash, 14)
-                          }, null, 8, _hoisted_7$c)
+                          }, null, 8, _hoisted_7$d)
                         ], 8, _hoisted_6$f)) : createCommentVNode("", true)
                       ]),
-                      createElementVNode("div", _hoisted_8$a, [
+                      createElementVNode("div", _hoisted_8$b, [
                         renderSlot(_ctx.$slots, "content", {
                           item,
                           index: getOriginalIndex(item)
                         }, void 0, true)
                       ])
-                    ], 42, _hoisted_1$i);
+                    ], 42, _hoisted_1$j);
                   }), 128))
                 ]),
                 _: 3
@@ -7924,7 +8184,19 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
           };
         }
       });
-      const DraggableCardList = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__scopeId", "data-v-89529f85"]]);
+      const DraggableCardList = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__scopeId", "data-v-1f5818aa"]]);
+      function useApiFiles(api) {
+        const files = shallowRef([]);
+        const refresh = () => {
+          files.value = api.files;
+        };
+        refresh();
+        const unsubscribe = api.onFilesChanged(refresh);
+        onUnmounted(() => {
+          unsubscribe();
+        });
+        return { files, refresh };
+      }
       function useTemplateManager(options) {
         const { templates, defaultTemplate, minTemplates = 1 } = options;
         function addTemplate() {
@@ -7962,11 +8234,24 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
           onReorder
         };
       }
+      function getActiveDiscount(config) {
+        if (!config.enabled || config.periods.length === 0) return null;
+        const now = Date.now();
+        const active = config.periods.find((p) => {
+          const start = p.startDate ? new Date(p.startDate).getTime() : 0;
+          const end = p.endDate ? new Date(p.endDate).getTime() : Infinity;
+          return now >= start && now <= end;
+        });
+        return active || config.periods[0];
+      }
+      function applyDiscountPercent(originalPrice, discountPercent) {
+        if (discountPercent === 0) return originalPrice;
+        return Math.round(originalPrice * (1 - discountPercent / 100));
+      }
       function applyDiscount(originalPrice, discount) {
-        if (!discount.enabled || discount.discountPercent === 0) {
-          return originalPrice;
-        }
-        return Math.round(originalPrice * (1 - discount.discountPercent / 100));
+        const period = getActiveDiscount(discount);
+        if (!period) return originalPrice;
+        return applyDiscountPercent(originalPrice, period.discountPercent);
       }
       function calculateVariationPrices(variations, pricing, discount) {
         variations.forEach((variation) => {
@@ -8126,10 +8411,8 @@ System.register("./EditTab-DyHkOzZF-BF-r4Dob.js", ['vue', './useModal-Cv530RMh-D
         }
       }
       function resolveSectionContent(section, globalTemplates, context) {
-        if (!section.type) {
-          section.type = "normal";
-        }
-        switch (section.type) {
+        const type = section.type ?? "normal";
+        switch (type) {
           case "normal":
             return resolveNormalSection(section, globalTemplates.sectionTemplates);
           case "log":
@@ -8247,16 +8530,16 @@ ${this.smart}`;
         closeButton: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
         saveButton: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
       };
-      const _hoisted_1$h = ["innerHTML"];
-      const _hoisted_2$h = ["innerHTML"];
-      const _hoisted_3$g = ["onUpdate:modelValue"];
-      const _hoisted_4$g = { class: "form-group" };
-      const _hoisted_5$e = ["onUpdate:modelValue"];
+      const _hoisted_1$i = ["innerHTML"];
+      const _hoisted_2$i = ["innerHTML"];
+      const _hoisted_3$h = ["onUpdate:modelValue"];
+      const _hoisted_4$h = { class: "form-group" };
+      const _hoisted_5$f = ["onUpdate:modelValue"];
       const _hoisted_6$e = {
         key: 1,
         class: "empty-hint"
       };
-      const _sfc_main$h = /* @__PURE__ */ defineComponent({
+      const _sfc_main$i = /* @__PURE__ */ defineComponent({
         __name: "DescriptionTemplateModal",
         props: {
           show: { type: Boolean },
@@ -8295,8 +8578,8 @@ ${this.smart}`;
                   type: "button"
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$h)
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$i)
                 ], 2)
               ]),
               default: withCtx(() => [
@@ -8305,10 +8588,115 @@ ${this.smart}`;
                     createElementVNode("p", {
                       class: "form-hint",
                       innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
-                    }, null, 8, _hoisted_2$h),
+                    }, null, 8, _hoisted_2$i),
                     _ctx.globalTemplates.descriptionTemplates && _ctx.globalTemplates.descriptionTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
                       key: 0,
                       items: _ctx.globalTemplates.descriptionTemplates,
+                      "key-extractor": (item) => item.id,
+                      onRemove: unref(removeTemplate),
+                      onReorder: unref(onReorder)
+                    }, {
+                      actions: withCtx(({ item }) => [
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": ($event) => item.name = $event,
+                          type: "text",
+                          placeholder: "输入模板名称",
+                          style: { "flex": "1", "min-width": "0" }
+                        }, null, 8, _hoisted_3$h), [
+                          [vModelText, item.name]
+                        ])
+                      ]),
+                      content: withCtx(({ item }) => [
+                        createElementVNode("div", _hoisted_4$h, [
+                          _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
+                          withDirectives(createElementVNode("textarea", {
+                            "onUpdate:modelValue": ($event) => item.template = $event,
+                            rows: "1",
+                            placeholder: "输入模板内容"
+                          }, null, 8, _hoisted_5$f), [
+                            [vModelText, item.template]
+                          ])
+                        ])
+                      ]),
+                      _: 1
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$e, ' 暂无模板，点击"添加模板"创建 '))
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["show"]);
+          };
+        }
+      });
+      const _hoisted_1$h = ["innerHTML"];
+      const _hoisted_2$h = { class: "form-hint" };
+      const _hoisted_3$g = ["onUpdate:modelValue"];
+      const _hoisted_4$g = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$e = { class: "form-group" };
+      const _hoisted_6$d = ["onUpdate:modelValue"];
+      const _hoisted_7$c = { class: "form-group" };
+      const _hoisted_8$a = ["onUpdate:modelValue"];
+      const _hoisted_9$a = {
+        key: 1,
+        class: "empty-hint"
+      };
+      const _sfc_main$h = /* @__PURE__ */ defineComponent({
+        __name: "DiscountTemplateModal",
+        props: {
+          show: { type: Boolean },
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const templates = computed({
+            get() {
+              var _a;
+              return (_a = props.globalTemplates).discountTemplates || (_a.discountTemplates = []);
+            },
+            set(value) {
+              props.globalTemplates.discountTemplates = value;
+            }
+          });
+          const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
+            templates,
+            defaultTemplate: { header: "", periodTemplate: "" }
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "折扣模板配置",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
+            }, {
+              "header-actions": withCtx(() => [
+                createElementVNode("button", {
+                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
+                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
+                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
+                  title: "添加模板",
+                  type: "button"
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$h)
+                ], 2)
+              ]),
+              default: withCtx(() => [
+                createVNode(unref(SectionHeader), null, {
+                  default: withCtx(() => [
+                    createElementVNode("p", _hoisted_2$h, [
+                      _cache[2] || (_cache[2] = createTextVNode(" 头部：只渲染一次（如总标题）", -1)),
+                      _cache[3] || (_cache[3] = createElementVNode("br", null, null, -1)),
+                      _cache[4] || (_cache[4] = createTextVNode(" 时段模板：对每个折扣时段循环渲染", -1)),
+                      _cache[5] || (_cache[5] = createElementVNode("br", null, null, -1)),
+                      createTextVNode(" " + toDisplayString(unref(TEMPLATE_HINTS).discount), 1)
+                    ]),
+                    _ctx.globalTemplates.discountTemplates && _ctx.globalTemplates.discountTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
+                      key: 0,
+                      items: _ctx.globalTemplates.discountTemplates,
                       "key-extractor": (item) => item.id,
                       onRemove: unref(removeTemplate),
                       onReorder: unref(onReorder)
@@ -8325,18 +8713,30 @@ ${this.smart}`;
                       ]),
                       content: withCtx(({ item }) => [
                         createElementVNode("div", _hoisted_4$g, [
-                          _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
-                          withDirectives(createElementVNode("textarea", {
-                            "onUpdate:modelValue": ($event) => item.template = $event,
-                            rows: "1",
-                            placeholder: "输入模板内容"
-                          }, null, 8, _hoisted_5$e), [
-                            [vModelText, item.template]
+                          createElementVNode("div", _hoisted_5$e, [
+                            _cache[6] || (_cache[6] = createElementVNode("label", null, "头部（总标题，只渲染一次）", -1)),
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": ($event) => item.header = $event,
+                              type: "text",
+                              placeholder: "如: ◆[セール開催中]◆"
+                            }, null, 8, _hoisted_6$d), [
+                              [vModelText, item.header]
+                            ])
+                          ]),
+                          createElementVNode("div", _hoisted_7$c, [
+                            _cache[7] || (_cache[7] = createElementVNode("label", null, "时段模板（每个折扣时段循环渲染）", -1)),
+                            withDirectives(createElementVNode("textarea", {
+                              "onUpdate:modelValue": ($event) => item.periodTemplate = $event,
+                              rows: "3",
+                              placeholder: "如: ⏰ {折扣开始时间} - {折扣结束时间} ({折扣百分比}% OFF)\n- 単品: {原价} JPY >> {折扣价} JPY"
+                            }, null, 8, _hoisted_8$a), [
+                              [vModelText, item.periodTemplate]
+                            ])
                           ])
                         ])
                       ]),
                       _: 1
-                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$e, ' 暂无模板，点击"添加模板"创建 '))
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_9$a, ' 暂无模板，点击"添加模板"创建 '))
                   ]),
                   _: 1
                 })
@@ -8347,25 +8747,297 @@ ${this.smart}`;
         }
       });
       const _hoisted_1$g = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_2$g = { class: "form-hint be-text-xs be-text-secondary" };
-      const _hoisted_3$f = { class: "be-flex be-gap-xs be-align-center" };
-      const _hoisted_4$f = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
-      const _hoisted_5$d = {
-        key: 0,
-        class: "item-select-list",
-        style: { "display": "grid", "grid-template-columns": "repeat(2, 1fr)", "gap": "8px", "max-height": "400px", "overflow-y": "auto" }
+      const _hoisted_2$g = { class: "form-group" };
+      const _hoisted_3$f = { class: "form-group" };
+      const _hoisted_4$f = { class: "form-hint" };
+      const _hoisted_5$d = { class: "be-flex be-gap-sm be-flex-wrap" };
+      const _hoisted_6$c = { class: "be-p-xs be-px-sm be-text-sm be-text-secondary" };
+      const _hoisted_7$b = { class: "be-p-xs be-px-sm be-text-sm be-text-secondary" };
+      const _hoisted_8$9 = ["innerHTML"];
+      const _hoisted_9$9 = ["innerHTML"];
+      const _hoisted_10$7 = { class: "be-flex be-align-center be-gap-sm be-mb-sm" };
+      const _hoisted_11$7 = {
+        class: "booth-toggle",
+        title: "启用打折功能"
       };
-      const _hoisted_6$d = ["onClick"];
-      const _hoisted_7$b = { style: { "display": "flex", "flex-direction": "column", "gap": "2px", "width": "100%" } };
-      const _hoisted_8$9 = { class: "be-text-sm be-font-medium" };
-      const _hoisted_9$9 = { class: "be-text-xs be-text-secondary" };
-      const _hoisted_10$7 = {
+      const _hoisted_12$6 = { key: 0 };
+      const _hoisted_13$4 = {
+        key: 0,
+        class: "empty-hint be-mt-sm"
+      };
+      const _hoisted_14$3 = { class: "be-flex be-align-center be-gap-xs be-flex-1" };
+      const _hoisted_15$3 = ["onUpdate:modelValue"];
+      const _hoisted_16$3 = {
+        key: 0,
+        class: "period-active-badge"
+      };
+      const _hoisted_17$3 = { class: "be-flex be-gap-xs" };
+      const _hoisted_18$3 = ["onUpdate:modelValue"];
+      const _hoisted_19$3 = ["onUpdate:modelValue"];
+      const _sfc_main$g = /* @__PURE__ */ defineComponent({
+        __name: "PricingModal",
+        props: {
+          show: { type: Boolean },
+          itemConfig: {},
+          globalTemplates: {}
+        },
+        emits: ["close"],
+        setup(__props, { emit: __emit }) {
+          const props = __props;
+          const emit = __emit;
+          const showDiscountTemplateModal = ref(false);
+          const totalSupport = computed(() => calculateTotalSupport(props.itemConfig.variations));
+          const suggestedPrice = computed(
+            () => suggestFullsetPrice(
+              props.itemConfig.pricing.normalVariationPrice,
+              totalSupport.value,
+              props.itemConfig.discount
+            )
+          );
+          const normalOriginalPrice = computed(() => props.itemConfig.pricing.normalVariationPrice);
+          const fullsetOriginalPrice = computed(() => props.itemConfig.pricing.fullsetPrice);
+          const normalDiscountedPrice = computed(() => applyDiscount(normalOriginalPrice.value, props.itemConfig.discount));
+          const fullsetDiscountedPrice = computed(() => applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount));
+          function isPeriodActive(period) {
+            const now = Date.now();
+            const start = period.startDate ? new Date(period.startDate).getTime() : 0;
+            const end = period.endDate ? new Date(period.endDate).getTime() : Infinity;
+            return now >= start && now <= end;
+          }
+          function addPeriod() {
+            props.itemConfig.discount.periods.push({
+              id: crypto.randomUUID(),
+              discountPercent: 0,
+              startDate: "",
+              endDate: ""
+            });
+          }
+          function removePeriod(index) {
+            props.itemConfig.discount.periods.splice(index, 1);
+          }
+          function onPeriodReorder(from, to) {
+            const [removed] = props.itemConfig.discount.periods.splice(from, 1);
+            props.itemConfig.discount.periods.splice(to, 0, removed);
+          }
+          const discountPreview = computed(() => {
+            if (!props.itemConfig.discount.enabled || props.itemConfig.discount.periods.length === 0) return "";
+            const discountTpl = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
+            if (!discountTpl) return "";
+            const headerText = discountTpl.header || "";
+            const periodTpl = discountTpl.periodTemplate || discountTpl.template || "";
+            const periodTexts = props.itemConfig.discount.periods.map((period) => {
+              return parseTemplate(periodTpl, {
+                originalPrice: normalOriginalPrice.value,
+                discountedPrice: applyDiscountPercent(normalOriginalPrice.value, period.discountPercent),
+                discountPercent: period.discountPercent,
+                fullsetOriginalPrice: fullsetOriginalPrice.value,
+                fullsetDiscountedPrice: applyDiscountPercent(fullsetOriginalPrice.value, period.discountPercent),
+                startDate: formatDateTime(period.startDate),
+                endDate: formatDateTime(period.endDate)
+              });
+            });
+            return [headerText, ...periodTexts].filter(Boolean).join("\n");
+          });
+          return (_ctx, _cache) => {
+            return openBlock(), createElementBlock(Fragment, null, [
+              createVNode(Modal, {
+                show: _ctx.show,
+                title: "价格与折扣配置",
+                "teleport-to": ".booth-enhancer-sidebar",
+                onClose: _cache[5] || (_cache[5] = ($event) => emit("close"))
+              }, {
+                default: withCtx(() => [
+                  createElementVNode("div", _hoisted_1$g, [
+                    createVNode(unref(SectionHeader), { title: "价格配置" }, {
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_2$g, [
+                          _cache[7] || (_cache[7] = createElementVNode("label", null, "普通 Variation 价格 (¥)", -1)),
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.pricing.normalVariationPrice = $event),
+                            type: "number",
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.normalVariationPrice,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_3$f, [
+                          _cache[8] || (_cache[8] = createElementVNode("label", null, "Fullset 价格 (¥)", -1)),
+                          createElementVNode("p", _hoisted_4$f, "建议: ¥" + toDisplayString(suggestedPrice.value), 1),
+                          withDirectives(createElementVNode("input", {
+                            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.pricing.fullsetPrice = $event),
+                            type: "number",
+                            min: "0",
+                            placeholder: "0"
+                          }, null, 512), [
+                            [
+                              vModelText,
+                              _ctx.itemConfig.pricing.fullsetPrice,
+                              void 0,
+                              { number: true }
+                            ]
+                          ])
+                        ]),
+                        createElementVNode("div", _hoisted_5$d, [
+                          createElementVNode("span", _hoisted_6$c, [
+                            _cache[9] || (_cache[9] = createTextVNode(" 总支持数: ", -1)),
+                            createElementVNode("strong", null, toDisplayString(totalSupport.value), 1)
+                          ]),
+                          createElementVNode("span", _hoisted_7$b, " 当前折后: ¥" + toDisplayString(normalDiscountedPrice.value) + " / Fullset ¥" + toDisplayString(fullsetDiscountedPrice.value), 1)
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(unref(SectionHeader), { title: "折扣配置" }, {
+                      actions: withCtx(() => [
+                        _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("button", {
+                          key: 0,
+                          class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
+                          type: "button",
+                          title: "配置折扣模板",
+                          onClick: _cache[2] || (_cache[2] = ($event) => showDiscountTemplateModal.value = true)
+                        }, [
+                          createElementVNode("span", {
+                            innerHTML: unref(withSize)(unref(icons).settings, 14)
+                          }, null, 8, _hoisted_8$9)
+                        ])) : createCommentVNode("", true),
+                        _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("button", {
+                          key: 1,
+                          class: "booth-btn booth-btn-sm booth-btn-secondary",
+                          type: "button",
+                          title: "添加折扣时段",
+                          onClick: addPeriod
+                        }, [
+                          createElementVNode("span", {
+                            innerHTML: unref(withSize)(unref(icons).plus, 14)
+                          }, null, 8, _hoisted_9$9)
+                        ])) : createCommentVNode("", true)
+                      ]),
+                      default: withCtx(() => [
+                        createElementVNode("div", _hoisted_10$7, [
+                          createElementVNode("label", _hoisted_11$7, [
+                            withDirectives(createElementVNode("input", {
+                              "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.itemConfig.discount.enabled = $event),
+                              type: "checkbox"
+                            }, null, 512), [
+                              [vModelCheckbox, _ctx.itemConfig.discount.enabled]
+                            ]),
+                            _cache[10] || (_cache[10] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
+                            _cache[11] || (_cache[11] = createElementVNode("span", { class: "toggle-label" }, "启用打折", -1))
+                          ])
+                        ]),
+                        _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("div", _hoisted_12$6, [
+                          createVNode(TemplateSelector, {
+                            modelValue: _ctx.itemConfig.selectedTemplates.discountTemplateId,
+                            "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.itemConfig.selectedTemplates.discountTemplateId = $event),
+                            templates: _ctx.globalTemplates.discountTemplates,
+                            label: "选择折扣模板",
+                            "empty-hint": "请先在折扣模板配置中添加模板"
+                          }, null, 8, ["modelValue", "templates"]),
+                          _ctx.itemConfig.discount.periods.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_13$4, ' 暂无折扣时段，点击"+"添加 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                            key: 1,
+                            items: _ctx.itemConfig.discount.periods,
+                            "key-extractor": (item) => item.id,
+                            onRemove: removePeriod,
+                            onReorder: onPeriodReorder
+                          }, {
+                            actions: withCtx(({ item: period }) => [
+                              createElementVNode("div", _hoisted_14$3, [
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => period.discountPercent = $event,
+                                  type: "number",
+                                  min: "0",
+                                  max: "100",
+                                  placeholder: "%",
+                                  style: { "width": "60px", "height": "26px" }
+                                }, null, 8, _hoisted_15$3), [
+                                  [
+                                    vModelText,
+                                    period.discountPercent,
+                                    void 0,
+                                    { number: true }
+                                  ]
+                                ]),
+                                _cache[12] || (_cache[12] = createElementVNode("span", { class: "be-text-xs be-text-secondary" }, "% OFF", -1)),
+                                isPeriodActive(period) ? (openBlock(), createElementBlock("span", _hoisted_16$3, "生效中")) : createCommentVNode("", true)
+                              ])
+                            ]),
+                            content: withCtx(({ item: period }) => [
+                              createElementVNode("div", _hoisted_17$3, [
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => period.startDate = $event,
+                                  type: "datetime-local",
+                                  style: { "flex": "1", "height": "26px" }
+                                }, null, 8, _hoisted_18$3), [
+                                  [vModelText, period.startDate]
+                                ]),
+                                _cache[13] || (_cache[13] = createElementVNode("span", {
+                                  class: "be-text-xs be-text-secondary be-flex-shrink-0",
+                                  style: { "line-height": "26px" }
+                                }, "→", -1)),
+                                withDirectives(createElementVNode("input", {
+                                  "onUpdate:modelValue": ($event) => period.endDate = $event,
+                                  type: "datetime-local",
+                                  style: { "flex": "1", "height": "26px" }
+                                }, null, 8, _hoisted_19$3), [
+                                  [vModelText, period.endDate]
+                                ])
+                              ])
+                            ]),
+                            _: 1
+                          }, 8, ["items", "key-extractor"])),
+                          discountPreview.value ? (openBlock(), createBlock(unref(PreviewBox), {
+                            key: 2,
+                            label: "折扣描述预览:",
+                            type: "pre",
+                            class: "be-mt-sm"
+                          }, {
+                            default: withCtx(() => [
+                              createTextVNode(toDisplayString(discountPreview.value), 1)
+                            ]),
+                            _: 1
+                          })) : createCommentVNode("", true)
+                        ])) : createCommentVNode("", true)
+                      ]),
+                      _: 1
+                    })
+                  ])
+                ]),
+                _: 1
+              }, 8, ["show"]),
+              createVNode(_sfc_main$h, {
+                show: showDiscountTemplateModal.value,
+                "global-templates": _ctx.globalTemplates,
+                onClose: _cache[6] || (_cache[6] = ($event) => showDiscountTemplateModal.value = false)
+              }, null, 8, ["show", "global-templates"])
+            ], 64);
+          };
+        }
+      });
+      const PricingModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-ced8e7e3"]]);
+      const _hoisted_1$f = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_2$f = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_3$e = { class: "be-flex be-gap-xs be-align-center" };
+      const _hoisted_4$e = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
+      const _hoisted_5$c = {
+        key: 0,
+        class: "item-select-list"
+      };
+      const _hoisted_6$b = ["onClick"];
+      const _hoisted_7$a = { class: "item-select-card__name" };
+      const _hoisted_8$8 = { class: "item-select-card__author" };
+      const _hoisted_9$8 = {
         key: 1,
         class: "empty-hint"
       };
-      const _hoisted_11$7 = ["innerHTML"];
-      const _hoisted_12$7 = ["innerHTML"];
-      const _sfc_main$g = /* @__PURE__ */ defineComponent({
+      const _hoisted_10$6 = ["innerHTML"];
+      const _hoisted_11$6 = ["innerHTML"];
+      const _sfc_main$f = /* @__PURE__ */ defineComponent({
         __name: "SelectItemModal",
         props: {
           show: { type: Boolean },
@@ -8431,8 +9103,8 @@ ${this.smart}`;
                   onClick: _cache[1] || (_cache[1] = ($event) => emit("close"))
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).close, 18)
-                  }, null, 8, _hoisted_11$7)
+                    innerHTML: unref(withSize)(unref(icons).close, 16)
+                  }, null, 8, _hoisted_10$6)
                 ]),
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
@@ -8441,14 +9113,14 @@ ${this.smart}`;
                   onClick: confirmSelection
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).check, 18)
-                  }, null, 8, _hoisted_12$7)
+                    innerHTML: unref(withSize)(unref(icons).check, 16)
+                  }, null, 8, _hoisted_11$6)
                 ])
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$g, [
-                  createElementVNode("p", _hoisted_2$g, " 点击选择/取消商品关联（已选择: " + toDisplayString(selectedItemIds.value.size) + "） ", 1),
-                  createElementVNode("div", _hoisted_3$f, [
+                createElementVNode("div", _hoisted_1$f, [
+                  createElementVNode("p", _hoisted_2$f, " 点击选择/取消商品关联（已选择: " + toDisplayString(selectedItemIds.value.size) + "） ", 1),
+                  createElementVNode("div", _hoisted_3$e, [
                     withDirectives(createElementVNode("input", {
                       "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => itemSearchKeyword.value = $event),
                       type: "text",
@@ -8458,29 +9130,22 @@ ${this.smart}`;
                     }, null, 512), [
                       [vModelText, itemSearchKeyword.value]
                     ]),
-                    createElementVNode("span", _hoisted_4$f, toDisplayString(filteredItemNodes.value.length) + " 个商品 ", 1)
+                    createElementVNode("span", _hoisted_4$e, toDisplayString(filteredItemNodes.value.length) + " 个商品 ", 1)
                   ]),
-                  filteredItemNodes.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_5$d, [
+                  filteredItemNodes.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_5$c, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(filteredItemNodes.value, (nodeId) => {
                       var _a, _b;
                       return openBlock(), createElementBlock("button", {
                         key: nodeId,
-                        class: "item-select-btn booth-btn booth-btn-sm booth-btn-ghost be-text-left",
+                        class: normalizeClass(["item-select-card", { "is-selected": isItemSelected(nodeId) }]),
                         type: "button",
-                        style: normalizeStyle({
-                          padding: "6px 8px",
-                          backgroundColor: isItemSelected(nodeId) ? "rgba(59, 130, 246, 0.1)" : void 0,
-                          borderColor: isItemSelected(nodeId) ? "rgba(59, 130, 246, 0.3)" : void 0
-                        }),
                         onClick: ($event) => toggleItemSelection(nodeId)
                       }, [
-                        createElementVNode("div", _hoisted_7$b, [
-                          createElementVNode("span", _hoisted_8$9, toDisplayString(((_a = _ctx.itemTree.nodes[nodeId].data) == null ? void 0 : _a.itemName) || _ctx.itemTree.nodes[nodeId].name), 1),
-                          createElementVNode("span", _hoisted_9$9, toDisplayString((_b = _ctx.itemTree.nodes[nodeId].data) == null ? void 0 : _b.authorName), 1)
-                        ])
-                      ], 12, _hoisted_6$d);
+                        createElementVNode("span", _hoisted_7$a, toDisplayString(((_a = _ctx.itemTree.nodes[nodeId].data) == null ? void 0 : _a.itemName) || _ctx.itemTree.nodes[nodeId].name), 1),
+                        createElementVNode("span", _hoisted_8$8, toDisplayString((_b = _ctx.itemTree.nodes[nodeId].data) == null ? void 0 : _b.authorName), 1)
+                      ], 10, _hoisted_6$b);
                     }), 128))
-                  ])) : (openBlock(), createElementBlock("div", _hoisted_10$7, toDisplayString(itemSearchKeyword.value ? "未找到匹配的商品" : "暂无商品数据，请先在 ItemTab 中添加"), 1))
+                  ])) : (openBlock(), createElementBlock("div", _hoisted_9$8, toDisplayString(itemSearchKeyword.value ? "未找到匹配的商品" : "暂无商品数据，请先在 ItemTab 中添加"), 1))
                 ])
               ]),
               _: 1
@@ -8488,10 +9153,10 @@ ${this.smart}`;
           };
         }
       });
-      const SelectItemModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-55a17291"]]);
-      const _hoisted_1$f = ["innerHTML"];
-      const _hoisted_2$f = ["innerHTML"];
-      const _sfc_main$f = /* @__PURE__ */ defineComponent({
+      const SelectItemModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-9c42d516"]]);
+      const _hoisted_1$e = ["innerHTML"];
+      const _hoisted_2$e = ["innerHTML"];
+      const _sfc_main$e = /* @__PURE__ */ defineComponent({
         __name: "ItemDescriptionSection",
         props: {
           itemConfig: {},
@@ -8514,23 +9179,30 @@ ${this.smart}`;
             if (props.itemConfig.customDescription) {
               parts.push(props.itemConfig.customDescription);
             }
-            if (props.itemConfig.discount.enabled) {
+            if (props.itemConfig.discount.enabled && props.itemConfig.discount.periods.length > 0) {
               const normalOriginalPrice = props.itemConfig.pricing.normalVariationPrice;
-              const normalDiscountedPrice = applyDiscount(normalOriginalPrice, props.itemConfig.discount);
               const fullsetOriginalPrice = props.itemConfig.pricing.fullsetPrice;
-              const fullsetDiscountedPrice = applyDiscount(fullsetOriginalPrice, props.itemConfig.discount);
-              const discountTemplate = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
-              const discountText = parseTemplate(discountTemplate, {
-                ...props.templateVars,
-                originalPrice: normalOriginalPrice,
-                discountedPrice: normalDiscountedPrice,
-                discountPercent: props.itemConfig.discount.discountPercent,
-                fullsetOriginalPrice,
-                fullsetDiscountedPrice,
-                startDate: formatDateTime(props.itemConfig.discount.startDate),
-                endDate: formatDateTime(props.itemConfig.discount.endDate)
-              });
-              parts.push(discountText);
+              const discountTpl = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
+              if (discountTpl) {
+                const headerText = discountTpl.header || "";
+                const periodTpl = discountTpl.periodTemplate || discountTpl.template || "";
+                const periodTexts = props.itemConfig.discount.periods.map((period) => {
+                  const normalDiscountedPrice = applyDiscountPercent(normalOriginalPrice, period.discountPercent);
+                  const fullsetDiscountedPrice = applyDiscountPercent(fullsetOriginalPrice, period.discountPercent);
+                  return parseTemplate(periodTpl, {
+                    ...props.templateVars,
+                    originalPrice: normalOriginalPrice,
+                    discountedPrice: normalDiscountedPrice,
+                    discountPercent: period.discountPercent,
+                    fullsetOriginalPrice,
+                    fullsetDiscountedPrice,
+                    startDate: formatDateTime(period.startDate),
+                    endDate: formatDateTime(period.endDate)
+                  });
+                });
+                const discountBlock = [headerText, ...periodTexts].filter(Boolean).join("\n");
+                parts.push(discountBlock);
+              }
             }
             return parts.join("\n\n");
           });
@@ -8555,7 +9227,11 @@ ${this.smart}`;
             applyDescription
           });
           return (_ctx, _cache) => {
-            return openBlock(), createBlock(unref(SectionHeader), { title: "商品描述" }, {
+            return openBlock(), createBlock(unref(SectionHeader), {
+              title: "商品描述",
+              collapsible: "",
+              "section-id": "edit-desc"
+            }, {
               actions: withCtx(() => [
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-sm booth-btn-secondary",
@@ -8565,7 +9241,7 @@ ${this.smart}`;
                 }, [
                   createElementVNode("span", {
                     innerHTML: unref(withSize)(unref(icons).edit, 14)
-                  }, null, 8, _hoisted_1$f)
+                  }, null, 8, _hoisted_1$e)
                 ]),
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-sm booth-btn-primary",
@@ -8575,7 +9251,7 @@ ${this.smart}`;
                 }, [
                   createElementVNode("span", {
                     innerHTML: unref(withSize)(unref(icons).send, 14)
-                  }, null, 8, _hoisted_2$f)
+                  }, null, 8, _hoisted_2$e)
                 ])
               ]),
               default: withCtx(() => [
@@ -8596,16 +9272,16 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$e = ["innerHTML"];
-      const _hoisted_2$e = ["onUpdate:modelValue"];
-      const _hoisted_3$e = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_4$e = { class: "form-group" };
-      const _hoisted_5$c = ["onUpdate:modelValue"];
-      const _hoisted_6$c = {
+      const _hoisted_1$d = ["innerHTML"];
+      const _hoisted_2$d = ["onUpdate:modelValue"];
+      const _hoisted_3$d = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_4$d = { class: "form-group" };
+      const _hoisted_5$b = ["onUpdate:modelValue"];
+      const _hoisted_6$a = {
         key: 1,
         class: "empty-hint"
       };
-      const _sfc_main$e = /* @__PURE__ */ defineComponent({
+      const _sfc_main$d = /* @__PURE__ */ defineComponent({
         __name: "DiscountIndicatorTemplateModal",
         props: {
           show: { type: Boolean },
@@ -8644,8 +9320,8 @@ ${this.smart}`;
                   type: "button"
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$e)
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$d)
                 ], 2)
               ]),
               default: withCtx(() => [
@@ -8665,26 +9341,26 @@ ${this.smart}`;
                           type: "text",
                           placeholder: "输入模板名称",
                           style: { "flex": "1", "min-width": "0" }
-                        }, null, 8, _hoisted_2$e), [
+                        }, null, 8, _hoisted_2$d), [
                           [vModelText, template.name]
                         ])
                       ]),
                       content: withCtx(({ item }) => [
-                        createElementVNode("div", _hoisted_3$e, [
-                          createElementVNode("div", _hoisted_4$e, [
+                        createElementVNode("div", _hoisted_3$d, [
+                          createElementVNode("div", _hoisted_4$d, [
                             _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
                             withDirectives(createElementVNode("input", {
                               "onUpdate:modelValue": ($event) => item.template = $event,
                               type: "text",
                               placeholder: "如: [SALE] 或 🔥 或 [-{折扣百分比}%]"
-                            }, null, 8, _hoisted_5$c), [
+                            }, null, 8, _hoisted_5$b), [
                               [vModelText, item.template]
                             ])
                           ])
                         ])
                       ]),
                       _: 1
-                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$c, ' 暂无模板，点击"添加模板"创建 '))
+                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$a, ' 暂无模板，点击"添加模板"创建 '))
                   ]),
                   _: 1,
                   __: [3]
@@ -8695,22 +9371,22 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$d = ["innerHTML"];
-      const _hoisted_2$d = ["innerHTML"];
-      const _hoisted_3$d = ["innerHTML"];
-      const _hoisted_4$d = ["onUpdate:modelValue"];
-      const _hoisted_5$b = ["onClick"];
-      const _hoisted_6$b = ["innerHTML"];
-      const _hoisted_7$a = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_8$8 = { class: "form-group" };
-      const _hoisted_9$8 = ["onUpdate:modelValue"];
-      const _hoisted_10$6 = {
+      const _hoisted_1$c = ["innerHTML"];
+      const _hoisted_2$c = ["innerHTML"];
+      const _hoisted_3$c = ["innerHTML"];
+      const _hoisted_4$c = ["onUpdate:modelValue"];
+      const _hoisted_5$a = ["onClick"];
+      const _hoisted_6$9 = ["innerHTML"];
+      const _hoisted_7$9 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_8$7 = { class: "form-group" };
+      const _hoisted_9$7 = ["onUpdate:modelValue"];
+      const _hoisted_10$5 = {
         key: 1,
         class: "empty-hint"
       };
-      const _hoisted_11$6 = { class: "be-text-primary be-text-lg be-font-semibold" };
-      const _hoisted_12$6 = ["innerHTML"];
-      const _sfc_main$d = /* @__PURE__ */ defineComponent({
+      const _hoisted_11$5 = { class: "be-text-primary be-text-lg be-font-semibold" };
+      const _hoisted_12$5 = ["innerHTML"];
+      const _sfc_main$c = /* @__PURE__ */ defineComponent({
         __name: "NameTemplateModal",
         props: {
           show: { type: Boolean },
@@ -8735,10 +9411,11 @@ ${this.smart}`;
           });
           const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
             templates,
-            defaultTemplate: { template: "{smartTitle}" }
+            defaultTemplate: { template: "{智能标题}" }
           });
           const showDiscountIndicatorModal = ref(false);
           const templateVars = computed(() => {
+            var _a;
             const config = props.itemConfig;
             if (!config) return { itemName: "", supportCount: 0 };
             const normalVariations = config.variations.filter((v) => !v.isFullset);
@@ -8757,7 +9434,7 @@ ${this.smart}`;
             const smartTitle = normalVariations.length > 1 || supportCount > 1 ? `${supportCount} ${pluralize(itemTypeName, supportCount)}` : firstName;
             const discountIndicatorTemplate = config.discount.enabled ? getSelectedDiscountIndicatorTemplate(props.globalTemplates, config) : "";
             const discountIndicator = parseTemplate(discountIndicatorTemplate, {
-              discountPercent: config.discount.discountPercent
+              discountPercent: ((_a = getActiveDiscount(config.discount)) == null ? void 0 : _a.discountPercent) ?? 0
             });
             return {
               itemName: config.itemName || "",
@@ -8798,8 +9475,8 @@ ${this.smart}`;
                     type: "button"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).plus, 18)
-                    }, null, 8, _hoisted_1$d)
+                      innerHTML: unref(withSize)(unref(icons).plus, 16)
+                    }, null, 8, _hoisted_1$c)
                   ], 2),
                   createElementVNode("button", {
                     class: normalizeClass(unref(BUTTON_CLASSES).addButton),
@@ -8808,8 +9485,8 @@ ${this.smart}`;
                     type: "button"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).settings, 18)
-                    }, null, 8, _hoisted_2$d)
+                      innerHTML: unref(withSize)(unref(icons).settings, 16)
+                    }, null, 8, _hoisted_2$c)
                   ], 2)
                 ]),
                 default: withCtx(() => [
@@ -8818,7 +9495,7 @@ ${this.smart}`;
                       createElementVNode("p", {
                         class: "form-hint",
                         innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
-                      }, null, 8, _hoisted_3$d),
+                      }, null, 8, _hoisted_3$c),
                       _ctx.globalTemplates.nameTemplates && _ctx.globalTemplates.nameTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
                         key: 0,
                         items: _ctx.globalTemplates.nameTemplates,
@@ -8832,7 +9509,7 @@ ${this.smart}`;
                             type: "text",
                             placeholder: "输入模板名称",
                             style: { "flex": "1", "min-width": "0" }
-                          }, null, 8, _hoisted_4$d), [
+                          }, null, 8, _hoisted_4$c), [
                             [vModelText, template.name]
                           ]),
                           createElementVNode("button", {
@@ -8843,32 +9520,32 @@ ${this.smart}`;
                           }, [
                             createElementVNode("span", {
                               innerHTML: unref(withSize)(unref(icons).eye, 14)
-                            }, null, 8, _hoisted_6$b)
-                          ], 8, _hoisted_5$b)
+                            }, null, 8, _hoisted_6$9)
+                          ], 8, _hoisted_5$a)
                         ]),
                         content: withCtx(({ item }) => [
-                          createElementVNode("div", _hoisted_7$a, [
-                            createElementVNode("div", _hoisted_8$8, [
+                          createElementVNode("div", _hoisted_7$9, [
+                            createElementVNode("div", _hoisted_8$7, [
                               _cache[6] || (_cache[6] = createElementVNode("label", null, "模板内容", -1)),
                               withDirectives(createElementVNode("textarea", {
                                 "onUpdate:modelValue": ($event) => item.template = $event,
                                 rows: "1",
                                 placeholder: "输入模板内容"
-                              }, null, 8, _hoisted_9$8), [
+                              }, null, 8, _hoisted_9$7), [
                                 [vModelText, item.template]
                               ])
                             ])
                           ])
                         ]),
                         _: 1
-                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_10$6, ' 暂无模板，点击"添加模板"创建 '))
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_10$5, ' 暂无模板，点击"添加模板"创建 '))
                     ]),
                     _: 1
                   })
                 ]),
                 _: 1
               }, 8, ["show"]),
-              createVNode(_sfc_main$e, {
+              createVNode(_sfc_main$d, {
                 show: showDiscountIndicatorModal.value,
                 "global-templates": _ctx.globalTemplates,
                 onClose: _cache[3] || (_cache[3] = ($event) => showDiscountIndicatorModal.value = false)
@@ -8886,8 +9563,8 @@ ${this.smart}`;
                     title: "关闭"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
-                    }, null, 8, _hoisted_12$6)
+                      innerHTML: unref(withSize)(unref(icons).close, 16)
+                    }, null, 8, _hoisted_12$5)
                   ], 2)
                 ]),
                 default: withCtx(() => [
@@ -8896,7 +9573,7 @@ ${this.smart}`;
                     type: "text"
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("span", _hoisted_11$6, toDisplayString(previewTemplate.value), 1)
+                      createElementVNode("span", _hoisted_11$5, toDisplayString(previewTemplate.value), 1)
                     ]),
                     _: 1
                   })
@@ -8907,16 +9584,16 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$c = ["innerHTML"];
-      const _hoisted_2$c = { class: "modal-content" };
-      const _hoisted_3$c = { class: "form-group" };
-      const _hoisted_4$c = { class: "form-group" };
-      const _hoisted_5$a = { class: "form-group" };
-      const _hoisted_6$a = { class: "form-group" };
-      const _hoisted_7$9 = { class: "be-text-primary be-text-lg be-font-semibold" };
-      const _hoisted_8$7 = ["innerHTML"];
-      const _hoisted_9$7 = ["innerHTML"];
-      const _sfc_main$c = /* @__PURE__ */ defineComponent({
+      const _hoisted_1$b = ["innerHTML"];
+      const _hoisted_2$b = { class: "modal-content" };
+      const _hoisted_3$b = { class: "form-group" };
+      const _hoisted_4$b = { class: "form-group" };
+      const _hoisted_5$9 = { class: "form-group" };
+      const _hoisted_6$8 = { class: "form-group" };
+      const _hoisted_7$8 = { class: "be-text-primary be-text-lg be-font-semibold" };
+      const _hoisted_8$6 = ["innerHTML"];
+      const _hoisted_9$6 = ["innerHTML"];
+      const _sfc_main$b = /* @__PURE__ */ defineComponent({
         __name: "NameModal",
         props: {
           show: { type: Boolean },
@@ -8943,6 +9620,7 @@ ${this.smart}`;
           onMounted(initializeSelectedTemplates);
           const showTemplateModal = ref(false);
           const templateVars = computed(() => {
+            var _a;
             const config = props.itemConfig;
             if (!config) return { itemName: "", supportCount: 0 };
             const normalVariations = config.variations.filter((v) => !v.isFullset);
@@ -8961,7 +9639,7 @@ ${this.smart}`;
             const smartTitle = normalVariations.length > 1 || supportCount > 1 ? `${supportCount} ${pluralize(itemTypeName, supportCount)}` : firstName;
             const discountIndicatorTemplate = config.discount.enabled ? getSelectedDiscountIndicatorTemplate(props.globalTemplates, config) : "";
             const discountIndicator = parseTemplate(discountIndicatorTemplate, {
-              discountPercent: config.discount.discountPercent
+              discountPercent: ((_a = getActiveDiscount(config.discount)) == null ? void 0 : _a.discountPercent) ?? 0
             });
             return {
               itemName: config.itemName || "",
@@ -8998,8 +9676,8 @@ ${this.smart}`;
                     type: "button"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).settings, 18)
-                    }, null, 8, _hoisted_1$c)
+                      innerHTML: unref(withSize)(unref(icons).settings, 16)
+                    }, null, 8, _hoisted_1$b)
                   ], 2)
                 ]),
                 footer: withCtx(() => [
@@ -9009,8 +9687,8 @@ ${this.smart}`;
                     title: "取消"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
-                    }, null, 8, _hoisted_8$7)
+                      innerHTML: unref(withSize)(unref(icons).close, 16)
+                    }, null, 8, _hoisted_8$6)
                   ], 2),
                   createElementVNode("button", {
                     class: normalizeClass(unref(BUTTON_CLASSES).saveButton),
@@ -9018,13 +9696,13 @@ ${this.smart}`;
                     title: "保存"
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
-                    }, null, 8, _hoisted_9$7)
+                      innerHTML: unref(withSize)(unref(icons).check, 16)
+                    }, null, 8, _hoisted_9$6)
                   ], 2)
                 ]),
                 default: withCtx(() => [
-                  createElementVNode("div", _hoisted_2$c, [
-                    createElementVNode("div", _hoisted_3$c, [
+                  createElementVNode("div", _hoisted_2$b, [
+                    createElementVNode("div", _hoisted_3$b, [
                       _cache[9] || (_cache[9] = createElementVNode("label", null, "商品基础名称", -1)),
                       withDirectives(createElementVNode("input", {
                         "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemName = $event),
@@ -9034,7 +9712,7 @@ ${this.smart}`;
                         [vModelText, _ctx.itemConfig.itemName]
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_4$c, [
+                    createElementVNode("div", _hoisted_4$b, [
                       _cache[11] || (_cache[11] = createElementVNode("label", null, "商品类型", -1)),
                       withDirectives(createElementVNode("select", {
                         "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.itemType = $event)
@@ -9045,7 +9723,7 @@ ${this.smart}`;
                         [vModelSelect, _ctx.itemConfig.itemType]
                       ])
                     ]),
-                    createElementVNode("div", _hoisted_5$a, [
+                    createElementVNode("div", _hoisted_5$9, [
                       _cache[12] || (_cache[12] = createElementVNode("label", null, [
                         createTextVNode("商品类型名称 "),
                         createElementVNode("span", { class: "label-hint" }, "(用于生成复数形式，如 Avatar → Avatars)")
@@ -9065,7 +9743,7 @@ ${this.smart}`;
                       label: "选择商品名模板",
                       "empty-hint": "请先在全局模板配置中添加商品名模板"
                     }, null, 8, ["modelValue", "templates"]),
-                    createElementVNode("div", _hoisted_6$a, [
+                    createElementVNode("div", _hoisted_6$8, [
                       createVNode(TemplateSelector, {
                         modelValue: _ctx.itemConfig.selectedTemplates.discountIndicatorTemplateId,
                         "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => _ctx.itemConfig.selectedTemplates.discountIndicatorTemplateId = $event),
@@ -9081,7 +9759,7 @@ ${this.smart}`;
                       type: "text"
                     }, {
                       default: withCtx(() => [
-                        createElementVNode("span", _hoisted_7$9, toDisplayString(previewName.value), 1)
+                        createElementVNode("span", _hoisted_7$8, toDisplayString(previewName.value), 1)
                       ]),
                       _: 1
                     })) : createCommentVNode("", true)
@@ -9089,7 +9767,7 @@ ${this.smart}`;
                 ]),
                 _: 1
               }, 8, ["show"]),
-              createVNode(_sfc_main$d, {
+              createVNode(_sfc_main$c, {
                 show: showTemplateModal.value,
                 "global-templates": _ctx.globalTemplates,
                 "item-config": _ctx.itemConfig,
@@ -9100,11 +9778,11 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$b = ["innerHTML"];
-      const _hoisted_2$b = ["innerHTML"];
-      const _hoisted_3$b = { class: "form-group" };
-      const _hoisted_4$b = { class: "be-text-primary" };
-      const _sfc_main$b = /* @__PURE__ */ defineComponent({
+      const _hoisted_1$a = ["innerHTML"];
+      const _hoisted_2$a = ["innerHTML"];
+      const _hoisted_3$a = { class: "form-group" };
+      const _hoisted_4$a = { class: "be-text-primary" };
+      const _sfc_main$a = /* @__PURE__ */ defineComponent({
         __name: "ItemNameSection",
         props: {
           itemConfig: {},
@@ -9133,7 +9811,11 @@ ${this.smart}`;
           });
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock(Fragment, null, [
-              createVNode(unref(SectionHeader), { title: "商品名称" }, {
+              createVNode(unref(SectionHeader), {
+                title: "商品名称",
+                collapsible: "",
+                "section-id": "edit-name"
+              }, {
                 actions: withCtx(() => [
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
@@ -9143,7 +9825,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).edit, 14)
-                    }, null, 8, _hoisted_1$b)
+                    }, null, 8, _hoisted_1$a)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-primary",
@@ -9153,11 +9835,11 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).send, 14)
-                    }, null, 8, _hoisted_2$b)
+                    }, null, 8, _hoisted_2$a)
                   ])
                 ]),
                 default: withCtx(() => [
-                  createElementVNode("div", _hoisted_3$b, [
+                  createElementVNode("div", _hoisted_3$a, [
                     withDirectives(createElementVNode("input", {
                       "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.itemName = $event),
                       type: "text",
@@ -9172,14 +9854,14 @@ ${this.smart}`;
                     type: "text"
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("span", _hoisted_4$b, toDisplayString(previewName.value), 1)
+                      createElementVNode("span", _hoisted_4$a, toDisplayString(previewName.value), 1)
                     ]),
                     _: 1
                   })) : createCommentVNode("", true)
                 ]),
                 _: 1
               }),
-              createVNode(_sfc_main$c, {
+              createVNode(_sfc_main$b, {
                 show: showNameModal.value,
                 "item-config": _ctx.itemConfig,
                 "global-templates": _ctx.globalTemplates,
@@ -9192,17 +9874,17 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$a = ["innerHTML"];
-      const _hoisted_2$a = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_3$a = ["onUpdate:modelValue"];
-      const _hoisted_4$a = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_5$9 = { class: "form-group" };
-      const _hoisted_6$9 = ["onUpdate:modelValue"];
-      const _hoisted_7$8 = {
+      const _hoisted_1$9 = ["innerHTML"];
+      const _hoisted_2$9 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$9 = ["onUpdate:modelValue"];
+      const _hoisted_4$9 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$8 = { class: "form-group" };
+      const _hoisted_6$7 = ["onUpdate:modelValue"];
+      const _hoisted_7$7 = {
         key: 1,
         class: "empty-hint"
       };
-      const _sfc_main$a = /* @__PURE__ */ defineComponent({
+      const _sfc_main$9 = /* @__PURE__ */ defineComponent({
         __name: "ItemInfoTemplateModal",
         props: {
           show: { type: Boolean },
@@ -9240,12 +9922,12 @@ ${this.smart}`;
                   type: "button"
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$a)
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$9)
                 ], 2)
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_2$a, [
+                createElementVNode("div", _hoisted_2$9, [
                   createVNode(unref(SectionHeader), null, {
                     default: withCtx(() => [
                       _cache[3] || (_cache[3] = createElementVNode("p", { class: "form-hint" }, "可用变量: {作者名}, {商品名}, {商品链接}", -1)),
@@ -9264,26 +9946,26 @@ ${this.smart}`;
                             type: "text",
                             placeholder: "输入模板名称",
                             style: { "flex": "1", "min-width": "0" }
-                          }, null, 8, _hoisted_3$a), [
+                          }, null, 8, _hoisted_3$9), [
                             [vModelText, item.name]
                           ])
                         ]),
                         content: withCtx(({ item }) => [
-                          createElementVNode("div", _hoisted_4$a, [
-                            createElementVNode("div", _hoisted_5$9, [
+                          createElementVNode("div", _hoisted_4$9, [
+                            createElementVNode("div", _hoisted_5$8, [
                               _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
                               withDirectives(createElementVNode("textarea", {
                                 "onUpdate:modelValue": ($event) => item.template = $event,
                                 rows: "3",
                                 placeholder: "输入模板内容"
-                              }, null, 8, _hoisted_6$9), [
+                              }, null, 8, _hoisted_6$7), [
                                 [vModelText, item.template]
                               ])
                             ])
                           ])
                         ]),
                         _: 1
-                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$8, ' 暂无模板，点击"添加模板"创建 '))
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$7, ' 暂无模板，点击"添加模板"创建 '))
                     ]),
                     _: 1,
                     __: [3, 4, 5]
@@ -9295,17 +9977,17 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$9 = ["innerHTML"];
-      const _hoisted_2$9 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_3$9 = ["onUpdate:modelValue"];
-      const _hoisted_4$9 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_5$8 = { class: "form-group" };
-      const _hoisted_6$8 = ["onUpdate:modelValue"];
-      const _hoisted_7$7 = {
+      const _hoisted_1$8 = ["innerHTML"];
+      const _hoisted_2$8 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$8 = ["onUpdate:modelValue"];
+      const _hoisted_4$8 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_5$7 = { class: "form-group" };
+      const _hoisted_6$6 = ["onUpdate:modelValue"];
+      const _hoisted_7$6 = {
         key: 1,
         class: "empty-hint"
       };
-      const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$8 = /* @__PURE__ */ defineComponent({
         __name: "LogTemplateModal",
         props: {
           show: { type: Boolean },
@@ -9343,12 +10025,12 @@ ${this.smart}`;
                   type: "button"
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$9)
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$8)
                 ], 2)
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_2$9, [
+                createElementVNode("div", _hoisted_2$8, [
                   createVNode(unref(SectionHeader), null, {
                     default: withCtx(() => [
                       _cache[3] || (_cache[3] = createElementVNode("p", { class: "form-hint" }, "可用变量: {日期}, {内容}", -1)),
@@ -9366,26 +10048,26 @@ ${this.smart}`;
                             type: "text",
                             placeholder: "输入模板名称",
                             style: { "flex": "1", "min-width": "0" }
-                          }, null, 8, _hoisted_3$9), [
+                          }, null, 8, _hoisted_3$8), [
                             [vModelText, item.name]
                           ])
                         ]),
                         content: withCtx(({ item }) => [
-                          createElementVNode("div", _hoisted_4$9, [
-                            createElementVNode("div", _hoisted_5$8, [
+                          createElementVNode("div", _hoisted_4$8, [
+                            createElementVNode("div", _hoisted_5$7, [
                               _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
                               withDirectives(createElementVNode("textarea", {
                                 "onUpdate:modelValue": ($event) => item.template = $event,
                                 rows: "2",
                                 placeholder: "输入模板内容"
-                              }, null, 8, _hoisted_6$8), [
+                              }, null, 8, _hoisted_6$6), [
                                 [vModelText, item.template]
                               ])
                             ])
                           ])
                         ]),
                         _: 1
-                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$7, ' 暂无模板，点击"添加模板"创建 '))
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_7$6, ' 暂无模板，点击"添加模板"创建 '))
                     ]),
                     _: 1,
                     __: [3, 4]
@@ -9397,32 +10079,32 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$8 = ["innerHTML"];
-      const _hoisted_2$8 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_3$8 = ["innerHTML"];
-      const _hoisted_4$8 = ["onUpdate:modelValue"];
-      const _hoisted_5$7 = ["onUpdate:modelValue"];
-      const _hoisted_6$7 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_7$6 = { class: "form-group" };
-      const _hoisted_8$6 = ["onUpdate:modelValue"];
-      const _hoisted_9$6 = {
+      const _hoisted_1$7 = ["innerHTML"];
+      const _hoisted_2$7 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_3$7 = ["innerHTML"];
+      const _hoisted_4$7 = ["onUpdate:modelValue"];
+      const _hoisted_5$6 = ["onUpdate:modelValue"];
+      const _hoisted_6$5 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_7$5 = { class: "form-group" };
+      const _hoisted_8$5 = ["onUpdate:modelValue"];
+      const _hoisted_9$5 = {
         key: 0,
         class: "form-group"
       };
-      const _hoisted_10$5 = ["onUpdate:modelValue"];
-      const _hoisted_11$5 = {
+      const _hoisted_10$4 = ["onUpdate:modelValue"];
+      const _hoisted_11$4 = {
         key: 1,
         class: "form-hint be-text-xs be-text-secondary"
       };
-      const _hoisted_12$5 = {
+      const _hoisted_12$4 = {
         key: 2,
         class: "form-hint be-text-xs be-text-secondary"
       };
-      const _hoisted_13$4 = {
+      const _hoisted_13$3 = {
         key: 1,
         class: "empty-hint"
       };
-      const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$7 = /* @__PURE__ */ defineComponent({
         __name: "SectionTemplateModal",
         props: {
           show: { type: Boolean },
@@ -9460,18 +10142,18 @@ ${this.smart}`;
                   type: "button"
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$8)
+                    innerHTML: unref(withSize)(unref(icons).plus, 16)
+                  }, null, 8, _hoisted_1$7)
                 ], 2)
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_2$8, [
+                createElementVNode("div", _hoisted_2$7, [
                   createVNode(unref(SectionHeader), null, {
                     default: withCtx(() => [
                       createElementVNode("p", {
                         class: "form-hint",
                         innerHTML: unref(TEMPLATE_HINTS).full.replace("\n", "<br>")
-                      }, null, 8, _hoisted_3$8),
+                      }, null, 8, _hoisted_3$7),
                       _cache[5] || (_cache[5] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, [
                         createElementVNode("strong", null, "模板类型说明："),
                         createElementVNode("br"),
@@ -9503,7 +10185,7 @@ ${this.smart}`;
                             createElementVNode("option", { value: "normal" }, "普通", -1),
                             createElementVNode("option", { value: "log" }, "日志", -1),
                             createElementVNode("option", { value: "iteminfo" }, "商品信息", -1)
-                          ]), 8, _hoisted_4$8), [
+                          ]), 8, _hoisted_4$7), [
                             [vModelSelect, item.type]
                           ]),
                           withDirectives(createElementVNode("input", {
@@ -9511,36 +10193,36 @@ ${this.smart}`;
                             type: "text",
                             placeholder: "输入模板名称",
                             style: { "flex": "1", "min-width": "0" }
-                          }, null, 8, _hoisted_5$7), [
+                          }, null, 8, _hoisted_5$6), [
                             [vModelText, item.name]
                           ])
                         ]),
                         content: withCtx(({ item }) => [
-                          createElementVNode("div", _hoisted_6$7, [
-                            createElementVNode("div", _hoisted_7$6, [
+                          createElementVNode("div", _hoisted_6$5, [
+                            createElementVNode("div", _hoisted_7$5, [
                               _cache[3] || (_cache[3] = createElementVNode("label", null, "Headline", -1)),
                               withDirectives(createElementVNode("input", {
                                 "onUpdate:modelValue": ($event) => item.headline = $event,
                                 type: "text",
                                 placeholder: "输入 Headline"
-                              }, null, 8, _hoisted_8$6), [
+                              }, null, 8, _hoisted_8$5), [
                                 [vModelText, item.headline]
                               ])
                             ]),
-                            item.type === "normal" || !item.type ? (openBlock(), createElementBlock("div", _hoisted_9$6, [
+                            item.type === "normal" || !item.type ? (openBlock(), createElementBlock("div", _hoisted_9$5, [
                               _cache[4] || (_cache[4] = createElementVNode("label", null, "Body", -1)),
                               withDirectives(createElementVNode("textarea", {
                                 "onUpdate:modelValue": ($event) => item.body = $event,
                                 rows: "1",
                                 placeholder: "输入 Body"
-                              }, null, 8, _hoisted_10$5), [
+                              }, null, 8, _hoisted_10$4), [
                                 [vModelText, item.body]
                               ])
-                            ])) : item.type === "log" ? (openBlock(), createElementBlock("p", _hoisted_11$5, " 日志类型的 Section 内容由日志条目动态生成，无需手动填写 Body ")) : item.type === "iteminfo" ? (openBlock(), createElementBlock("p", _hoisted_12$5, " 商品信息类型的 Section 内容将自动从 Variations 关联的商品生成，无需手动填写 Body ")) : createCommentVNode("", true)
+                            ])) : item.type === "log" ? (openBlock(), createElementBlock("p", _hoisted_11$4, " 日志类型的 Section 内容由日志条目动态生成，无需手动填写 Body ")) : item.type === "iteminfo" ? (openBlock(), createElementBlock("p", _hoisted_12$4, " 商品信息类型的 Section 内容将自动从 Variations 关联的商品生成，无需手动填写 Body ")) : createCommentVNode("", true)
                           ])
                         ]),
                         _: 1
-                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_13$4, ' 暂无模板，点击"添加模板"创建 '))
+                      }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_13$3, ' 暂无模板，点击"添加模板"创建 '))
                     ]),
                     _: 1,
                     __: [5]
@@ -9552,22 +10234,22 @@ ${this.smart}`;
           };
         }
       });
-      const _hoisted_1$7 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_2$7 = { class: "template-grid" };
-      const _hoisted_3$7 = { class: "be-flex be-align-center be-gap-xs" };
-      const _hoisted_4$7 = ["innerHTML"];
-      const _hoisted_5$6 = ["onClick"];
-      const _hoisted_6$6 = {
+      const _hoisted_1$6 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_2$6 = { class: "template-grid" };
+      const _hoisted_3$6 = { class: "be-flex be-align-center be-gap-xs" };
+      const _hoisted_4$6 = ["innerHTML"];
+      const _hoisted_5$5 = ["onClick"];
+      const _hoisted_6$4 = {
         class: "be-flex be-flex-column",
         style: { "gap": "4px" }
       };
-      const _hoisted_7$5 = { class: "be-flex be-align-center be-gap-xs" };
-      const _hoisted_8$5 = { class: "be-text-sm be-font-medium" };
-      const _hoisted_9$5 = {
+      const _hoisted_7$4 = { class: "be-flex be-align-center be-gap-xs" };
+      const _hoisted_8$4 = { class: "be-text-sm be-font-medium" };
+      const _hoisted_9$4 = {
         key: 0,
         class: "be-text-xs be-text-secondary be-truncate"
       };
-      const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         __name: "SectionTemplateSelectorModal",
         props: {
           show: { type: Boolean },
@@ -9610,18 +10292,18 @@ ${this.smart}`;
               onClose: _cache[0] || (_cache[0] = ($event) => emit("close"))
             }, {
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$7, [
+                createElementVNode("div", _hoisted_1$6, [
                   _cache[2] || (_cache[2] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, " 点击创建空白 Section 或从模板快速创建 ", -1)),
-                  createElementVNode("div", _hoisted_2$7, [
+                  createElementVNode("div", _hoisted_2$6, [
                     createElementVNode("button", {
                       class: "template-item booth-btn booth-btn-sm booth-btn-ghost be-justify-start",
                       type: "button",
                       onClick: handleCreateEmpty
                     }, [
-                      createElementVNode("div", _hoisted_3$7, [
+                      createElementVNode("div", _hoisted_3$6, [
                         createElementVNode("span", {
                           innerHTML: unref(withSize)(unref(icons).plus, 14)
-                        }, null, 8, _hoisted_4$7),
+                        }, null, 8, _hoisted_4$6),
                         _cache[1] || (_cache[1] = createElementVNode("span", { class: "be-text-sm be-font-medium" }, "创建空 Section", -1))
                       ])
                     ]),
@@ -9632,9 +10314,9 @@ ${this.smart}`;
                         type: "button",
                         onClick: ($event) => handleSelectTemplate(template)
                       }, [
-                        createElementVNode("div", _hoisted_6$6, [
-                          createElementVNode("div", _hoisted_7$5, [
-                            createElementVNode("span", _hoisted_8$5, toDisplayString(template.name || "未命名模板"), 1),
+                        createElementVNode("div", _hoisted_6$4, [
+                          createElementVNode("div", _hoisted_7$4, [
+                            createElementVNode("span", _hoisted_8$4, toDisplayString(template.name || "未命名模板"), 1),
                             createElementVNode("span", {
                               class: "be-text-xs be-px-xs be-py-1 be-rounded",
                               style: normalizeStyle({
@@ -9643,9 +10325,9 @@ ${this.smart}`;
                               })
                             }, toDisplayString(getTypeStyle(template.type).label), 5)
                           ]),
-                          template.headline ? (openBlock(), createElementBlock("div", _hoisted_9$5, toDisplayString(template.headline), 1)) : createCommentVNode("", true)
+                          template.headline ? (openBlock(), createElementBlock("div", _hoisted_9$4, toDisplayString(template.headline), 1)) : createCommentVNode("", true)
                         ])
-                      ], 8, _hoisted_5$6);
+                      ], 8, _hoisted_5$5);
                     }), 128))
                   ])
                 ])
@@ -9655,51 +10337,51 @@ ${this.smart}`;
           };
         }
       });
-      const SectionTemplateSelectorModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-70ec8f42"]]);
-      const _hoisted_1$6 = ["innerHTML"];
-      const _hoisted_2$6 = ["innerHTML"];
-      const _hoisted_3$6 = ["innerHTML"];
-      const _hoisted_4$6 = ["innerHTML"];
-      const _hoisted_5$5 = {
+      const SectionTemplateSelectorModal = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-70ec8f42"]]);
+      const _hoisted_1$5 = ["innerHTML"];
+      const _hoisted_2$5 = ["innerHTML"];
+      const _hoisted_3$5 = ["innerHTML"];
+      const _hoisted_4$5 = ["innerHTML"];
+      const _hoisted_5$4 = {
         key: 0,
         class: "empty-hint"
       };
-      const _hoisted_6$5 = ["value", "onChange"];
-      const _hoisted_7$4 = ["onUpdate:modelValue"];
-      const _hoisted_8$4 = ["innerHTML"];
-      const _hoisted_9$4 = ["innerHTML"];
-      const _hoisted_10$4 = ["onClick"];
-      const _hoisted_11$4 = ["innerHTML"];
-      const _hoisted_12$4 = {
+      const _hoisted_6$3 = ["value", "onChange"];
+      const _hoisted_7$3 = ["onUpdate:modelValue"];
+      const _hoisted_8$3 = ["innerHTML"];
+      const _hoisted_9$3 = ["innerHTML"];
+      const _hoisted_10$3 = ["onClick"];
+      const _hoisted_11$3 = ["innerHTML"];
+      const _hoisted_12$3 = {
         key: 0,
         class: "form-group"
       };
-      const _hoisted_13$3 = ["onUpdate:modelValue"];
-      const _hoisted_14$3 = {
+      const _hoisted_13$2 = ["onUpdate:modelValue"];
+      const _hoisted_14$2 = {
         key: 1,
         class: "be-flex be-flex-column be-gap-sm"
       };
-      const _hoisted_15$3 = { class: "be-flex be-align-center be-gap-sm be-flex-1" };
-      const _hoisted_16$3 = ["onUpdate:modelValue"];
-      const _hoisted_17$3 = ["value"];
-      const _hoisted_18$3 = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
-      const _hoisted_19$3 = ["onClick"];
-      const _hoisted_20$3 = ["innerHTML"];
+      const _hoisted_15$2 = { class: "be-flex be-align-center be-gap-sm be-flex-1" };
+      const _hoisted_16$2 = ["onUpdate:modelValue"];
+      const _hoisted_17$2 = ["value"];
+      const _hoisted_18$2 = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
+      const _hoisted_19$2 = ["onClick"];
+      const _hoisted_20$2 = ["innerHTML"];
       const _hoisted_21$2 = {
         key: 0,
         class: "empty-hint"
       };
       const _hoisted_22$2 = ["onUpdate:modelValue", "onKeyup"];
       const _hoisted_23$2 = ["onClick"];
-      const _hoisted_24$1 = ["innerHTML"];
-      const _hoisted_25$1 = ["onUpdate:modelValue", "placeholder"];
-      const _hoisted_26$1 = { class: "form-group" };
-      const _hoisted_27$1 = ["onUpdate:modelValue"];
-      const _hoisted_28$1 = {
+      const _hoisted_24$2 = ["innerHTML"];
+      const _hoisted_25$2 = ["onUpdate:modelValue", "placeholder"];
+      const _hoisted_26$2 = { class: "form-group" };
+      const _hoisted_27$2 = ["onUpdate:modelValue"];
+      const _hoisted_28$2 = {
         key: 2,
         class: "be-flex be-flex-column be-gap-sm"
       };
-      const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+      const _sfc_main$5 = /* @__PURE__ */ defineComponent({
         __name: "SectionsListSection",
         props: {
           itemConfig: {},
@@ -9866,7 +10548,9 @@ ${this.smart}`;
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock(Fragment, null, [
               createVNode(unref(SectionHeader), {
-                title: `Sections (${_ctx.itemConfig.sections.length})`
+                title: `Sections (${_ctx.itemConfig.sections.length})`,
+                collapsible: "",
+                "section-id": "edit-sections"
               }, {
                 actions: withCtx(() => [
                   createElementVNode("button", {
@@ -9877,7 +10561,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).download, 14)
-                    }, null, 8, _hoisted_1$6)
+                    }, null, 8, _hoisted_1$5)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
@@ -9887,7 +10571,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).plus, 14)
-                    }, null, 8, _hoisted_2$6)
+                    }, null, 8, _hoisted_2$5)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
@@ -9897,7 +10581,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).edit, 14)
-                    }, null, 8, _hoisted_3$6)
+                    }, null, 8, _hoisted_3$5)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-primary",
@@ -9907,11 +10591,11 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).send, 14)
-                    }, null, 8, _hoisted_4$6)
+                    }, null, 8, _hoisted_4$5)
                   ])
                 ]),
                 default: withCtx(() => [
-                  _ctx.itemConfig.sections.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_5$5, ' 暂无 Sections，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                  _ctx.itemConfig.sections.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_5$4, ' 暂无 Sections，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
                     key: 1,
                     items: _ctx.itemConfig.sections,
                     "key-extractor": (item) => item.id,
@@ -9928,14 +10612,14 @@ ${this.smart}`;
                         createElementVNode("option", { value: "normal" }, "普通", -1),
                         createElementVNode("option", { value: "log" }, "日志", -1),
                         createElementVNode("option", { value: "iteminfo" }, "商品信息", -1)
-                      ]), 40, _hoisted_6$5),
+                      ]), 40, _hoisted_6$3),
                       withDirectives(createElementVNode("input", {
                         "onUpdate:modelValue": ($event) => section.headline = $event,
                         type: "text",
                         class: "be-flex-1 be-p-xs be-px-sm be-text-base be-min-w-0",
                         style: { "height": "28px" },
                         placeholder: "输入 Headline"
-                      }, null, 8, _hoisted_7$4), [
+                      }, null, 8, _hoisted_7$3), [
                         [vModelText, section.headline]
                       ]),
                       section.type === "log" ? (openBlock(), createElementBlock("button", {
@@ -9947,7 +10631,7 @@ ${this.smart}`;
                       }, [
                         createElementVNode("span", {
                           innerHTML: unref(withSize)(unref(icons).edit, 14)
-                        }, null, 8, _hoisted_8$4)
+                        }, null, 8, _hoisted_8$3)
                       ])) : createCommentVNode("", true),
                       section.type === "iteminfo" ? (openBlock(), createElementBlock("button", {
                         key: 1,
@@ -9958,7 +10642,7 @@ ${this.smart}`;
                       }, [
                         createElementVNode("span", {
                           innerHTML: unref(withSize)(unref(icons).edit, 14)
-                        }, null, 8, _hoisted_9$4)
+                        }, null, 8, _hoisted_9$3)
                       ])) : createCommentVNode("", true),
                       createElementVNode("button", {
                         class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
@@ -9968,22 +10652,22 @@ ${this.smart}`;
                       }, [
                         createElementVNode("span", {
                           innerHTML: unref(withSize)(unref(icons).eye, 14)
-                        }, null, 8, _hoisted_11$4)
-                      ], 8, _hoisted_10$4)
+                        }, null, 8, _hoisted_11$3)
+                      ], 8, _hoisted_10$3)
                     ]),
                     content: withCtx(({ item: section, index }) => [
-                      section.type === "normal" ? (openBlock(), createElementBlock("div", _hoisted_12$4, [
+                      section.type === "normal" ? (openBlock(), createElementBlock("div", _hoisted_12$3, [
                         withDirectives(createElementVNode("textarea", {
                           "onUpdate:modelValue": ($event) => section.body = $event,
                           rows: "1",
                           placeholder: "输入 Body"
-                        }, null, 8, _hoisted_13$3), [
+                        }, null, 8, _hoisted_13$2), [
                           [vModelText, section.body]
                         ])
-                      ])) : section.type === "log" ? (openBlock(), createElementBlock("div", _hoisted_14$3, [
+                      ])) : section.type === "log" ? (openBlock(), createElementBlock("div", _hoisted_14$2, [
                         createVNode(unref(SectionHeader), { "no-border": "" }, {
                           title: withCtx(() => [
-                            createElementVNode("div", _hoisted_15$3, [
+                            createElementVNode("div", _hoisted_15$2, [
                               _cache[10] || (_cache[10] = createElementVNode("span", { class: "be-text-sm be-text-secondary be-flex-shrink-0" }, "选择日志模板:", -1)),
                               withDirectives(createElementVNode("select", {
                                 "onUpdate:modelValue": ($event) => section.logTemplateId = $event,
@@ -9995,15 +10679,15 @@ ${this.smart}`;
                                   return openBlock(), createElementBlock("option", {
                                     key: template.id,
                                     value: template.id
-                                  }, toDisplayString(template.name), 9, _hoisted_17$3);
+                                  }, toDisplayString(template.name), 9, _hoisted_17$2);
                                 }), 128))
-                              ], 8, _hoisted_16$3), [
+                              ], 8, _hoisted_16$2), [
                                 [vModelSelect, section.logTemplateId]
                               ])
                             ])
                           ]),
                           actions: withCtx(() => [
-                            createElementVNode("span", _hoisted_18$3, toDisplayString(section.logEntries.length) + " 条 ", 1),
+                            createElementVNode("span", _hoisted_18$2, toDisplayString(section.logEntries.length) + " 条 ", 1),
                             createElementVNode("button", {
                               class: "booth-btn booth-btn-sm booth-btn-secondary",
                               type: "button",
@@ -10012,8 +10696,8 @@ ${this.smart}`;
                             }, [
                               createElementVNode("span", {
                                 innerHTML: unref(withSize)(unref(icons).plus, 14)
-                              }, null, 8, _hoisted_20$3)
-                            ], 8, _hoisted_19$3)
+                              }, null, 8, _hoisted_20$2)
+                            ], 8, _hoisted_19$2)
                           ]),
                           default: withCtx(() => [
                             section.logEntries.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_21$2, ' 暂无日志，点击"添加日志"创建 ')) : (openBlock(), createBlock(unref(DraggableCardList), {
@@ -10044,7 +10728,7 @@ ${this.smart}`;
                                 }, [
                                   createElementVNode("span", {
                                     innerHTML: unref(withSize)(unref(icons).arrowRight, 14)
-                                  }, null, 8, _hoisted_24$1)
+                                  }, null, 8, _hoisted_24$2)
                                 ], 8, _hoisted_23$2),
                                 withDirectives(createElementVNode("input", {
                                   "onUpdate:modelValue": ($event) => entry.date = $event,
@@ -10053,7 +10737,7 @@ ${this.smart}`;
                                   style: { "height": "28px" },
                                   placeholder: unref(formatDate)(Date.now()),
                                   title: "Timestamp（自动转换后会填入这里）"
-                                }, null, 8, _hoisted_25$1), [
+                                }, null, 8, _hoisted_25$2), [
                                   [
                                     vModelText,
                                     entry.date,
@@ -10063,13 +10747,13 @@ ${this.smart}`;
                                 ])
                               ]),
                               content: withCtx(({ item: entry }) => [
-                                createElementVNode("div", _hoisted_26$1, [
+                                createElementVNode("div", _hoisted_26$2, [
                                   withDirectives(createElementVNode("textarea", {
                                     "onUpdate:modelValue": ($event) => entry.content = $event,
                                     rows: "1",
                                     placeholder: "输入日志内容",
                                     style: { "min-height": "32px", "max-height": "80px" }
-                                  }, null, 8, _hoisted_27$1), [
+                                  }, null, 8, _hoisted_27$2), [
                                     [vModelText, entry.content]
                                   ])
                                 ])
@@ -10079,7 +10763,7 @@ ${this.smart}`;
                           ]),
                           _: 2
                         }, 1024)
-                      ])) : section.type === "iteminfo" ? (openBlock(), createElementBlock("div", _hoisted_28$1, [
+                      ])) : section.type === "iteminfo" ? (openBlock(), createElementBlock("div", _hoisted_28$2, [
                         createVNode(unref(SectionHeader), null, {
                           default: withCtx(() => [
                             createVNode(TemplateSelector, {
@@ -10106,17 +10790,17 @@ ${this.smart}`;
                 onClose: _cache[4] || (_cache[4] = ($event) => showSectionTemplateSelectorModal.value = false),
                 onSelect: handleTemplateSelect
               }, null, 8, ["show", "global-templates"]),
-              createVNode(_sfc_main$8, {
+              createVNode(_sfc_main$7, {
                 show: showSectionTemplateModal.value,
                 "global-templates": _ctx.globalTemplates,
                 onClose: _cache[5] || (_cache[5] = ($event) => showSectionTemplateModal.value = false)
               }, null, 8, ["show", "global-templates"]),
-              createVNode(_sfc_main$9, {
+              createVNode(_sfc_main$8, {
                 show: showLogTemplateModal.value,
                 "global-templates": _ctx.globalTemplates,
                 onClose: _cache[6] || (_cache[6] = ($event) => showLogTemplateModal.value = false)
               }, null, 8, ["show", "global-templates"]),
-              createVNode(_sfc_main$a, {
+              createVNode(_sfc_main$9, {
                 show: showItemInfoTemplateModal.value,
                 "global-templates": _ctx.globalTemplates,
                 onClose: _cache[7] || (_cache[7] = ($event) => showItemInfoTemplateModal.value = false)
@@ -10125,27 +10809,27 @@ ${this.smart}`;
           };
         }
       });
-      const SectionsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-bffc3bd1"]]);
-      const _hoisted_1$5 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_2$5 = { class: "form-hint be-text-xs be-text-secondary" };
-      const _hoisted_3$5 = { class: "be-flex be-gap-xs be-align-center" };
-      const _hoisted_4$5 = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
-      const _hoisted_5$4 = {
+      const SectionsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-7fce98dc"]]);
+      const _hoisted_1$4 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_2$4 = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_3$4 = { class: "be-flex be-gap-xs be-align-center" };
+      const _hoisted_4$4 = { class: "be-text-xs be-text-secondary be-flex-shrink-0" };
+      const _hoisted_5$3 = {
         key: 0,
         class: "tag-select-list",
         style: { "display": "grid", "grid-template-columns": "repeat(2, 1fr)", "gap": "8px", "max-height": "400px", "overflow-y": "auto" }
       };
-      const _hoisted_6$4 = ["onClick"];
-      const _hoisted_7$3 = { style: { "display": "flex", "flex-direction": "column", "gap": "2px", "width": "100%" } };
-      const _hoisted_8$3 = { class: "be-text-sm be-font-medium" };
-      const _hoisted_9$3 = { style: { "display": "flex", "flex-wrap": "wrap", "gap": "4px" } };
-      const _hoisted_10$3 = {
+      const _hoisted_6$2 = ["onClick"];
+      const _hoisted_7$2 = { style: { "display": "flex", "flex-direction": "column", "gap": "2px", "width": "100%" } };
+      const _hoisted_8$2 = { class: "be-text-sm be-font-medium" };
+      const _hoisted_9$2 = { style: { "display": "flex", "flex-wrap": "wrap", "gap": "4px" } };
+      const _hoisted_10$2 = {
         key: 1,
         class: "empty-hint"
       };
-      const _hoisted_11$3 = ["innerHTML"];
-      const _hoisted_12$3 = ["innerHTML"];
-      const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+      const _hoisted_11$2 = ["innerHTML"];
+      const _hoisted_12$2 = ["innerHTML"];
+      const _sfc_main$4 = /* @__PURE__ */ defineComponent({
         __name: "SelectTagModal",
         props: {
           show: { type: Boolean },
@@ -10228,8 +10912,8 @@ ${this.smart}`;
                   onClick: _cache[1] || (_cache[1] = ($event) => emit("close"))
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).close, 18)
-                  }, null, 8, _hoisted_11$3)
+                    innerHTML: unref(withSize)(unref(icons).close, 16)
+                  }, null, 8, _hoisted_11$2)
                 ]),
                 createElementVNode("button", {
                   class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
@@ -10238,14 +10922,14 @@ ${this.smart}`;
                   onClick: confirmSelectTagNodes
                 }, [
                   createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).check, 18)
-                  }, null, 8, _hoisted_12$3)
+                    innerHTML: unref(withSize)(unref(icons).check, 16)
+                  }, null, 8, _hoisted_12$2)
                 ])
               ]),
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_1$5, [
-                  createElementVNode("p", _hoisted_2$5, " 点击选择/取消标签预设（已选择: " + toDisplayString(selectedTagNodeIds.value.size) + "） ", 1),
-                  createElementVNode("div", _hoisted_3$5, [
+                createElementVNode("div", _hoisted_1$4, [
+                  createElementVNode("p", _hoisted_2$4, " 点击选择/取消标签预设（已选择: " + toDisplayString(selectedTagNodeIds.value.size) + "） ", 1),
+                  createElementVNode("div", _hoisted_3$4, [
                     withDirectives(createElementVNode("input", {
                       "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => tagSearchKeyword.value = $event),
                       type: "text",
@@ -10255,9 +10939,9 @@ ${this.smart}`;
                     }, null, 512), [
                       [vModelText, tagSearchKeyword.value]
                     ]),
-                    createElementVNode("span", _hoisted_4$5, toDisplayString(filteredTagNodes.value.length) + " 个预设 ", 1)
+                    createElementVNode("span", _hoisted_4$4, toDisplayString(filteredTagNodes.value.length) + " 个预设 ", 1)
                   ]),
-                  filteredTagNodes.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_5$4, [
+                  filteredTagNodes.value.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_5$3, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(filteredTagNodes.value, (nodeId) => {
                       var _a;
                       return openBlock(), createElementBlock("button", {
@@ -10271,9 +10955,9 @@ ${this.smart}`;
                         }),
                         onClick: ($event) => toggleTagNode(nodeId)
                       }, [
-                        createElementVNode("div", _hoisted_7$3, [
-                          createElementVNode("span", _hoisted_8$3, toDisplayString(_ctx.tagTree.nodes[nodeId].name), 1),
-                          createElementVNode("div", _hoisted_9$3, [
+                        createElementVNode("div", _hoisted_7$2, [
+                          createElementVNode("span", _hoisted_8$2, toDisplayString(_ctx.tagTree.nodes[nodeId].name), 1),
+                          createElementVNode("div", _hoisted_9$2, [
                             (openBlock(true), createElementBlock(Fragment, null, renderList((_a = _ctx.tagTree.nodes[nodeId].data) == null ? void 0 : _a.tags, (tag, index) => {
                               return openBlock(), createElementBlock("span", {
                                 key: index,
@@ -10282,9 +10966,9 @@ ${this.smart}`;
                             }), 128))
                           ])
                         ])
-                      ], 12, _hoisted_6$4);
+                      ], 12, _hoisted_6$2);
                     }), 128))
-                  ])) : (openBlock(), createElementBlock("div", _hoisted_10$3, toDisplayString(tagSearchKeyword.value ? "未找到匹配的标签预设" : "暂无标签预设，请先在 Tag 标签页创建"), 1))
+                  ])) : (openBlock(), createElementBlock("div", _hoisted_10$2, toDisplayString(tagSearchKeyword.value ? "未找到匹配的标签预设" : "暂无标签预设，请先在 Tag 标签页创建"), 1))
                 ])
               ]),
               _: 1
@@ -10292,12 +10976,13 @@ ${this.smart}`;
           };
         }
       });
-      const SelectTagModal = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-a0321489"]]);
-      const _hoisted_1$4 = ["innerHTML"];
-      const _hoisted_2$4 = ["innerHTML"];
-      const _hoisted_3$4 = { class: "tag-badges-wrapper" };
-      const _hoisted_4$4 = { class: "tag-text" };
-      const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+      const SelectTagModal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-98423bb6"]]);
+      const _hoisted_1$3 = ["innerHTML"];
+      const _hoisted_2$3 = ["innerHTML"];
+      const _hoisted_3$3 = ["innerHTML"];
+      const _hoisted_4$3 = { class: "tag-badges-wrapper" };
+      const _hoisted_5$2 = { class: "tag-text" };
+      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
         __name: "TagsSection",
         props: {
           itemConfig: {},
@@ -10324,7 +11009,7 @@ ${this.smart}`;
           const allTags = computed(() => {
             return extractTagsFromNodeIds(props.itemConfig.tagNodeIds || []);
           });
-          function smartFetchTags(silent = false) {
+          function smartFetchTags(mode = "merge", silent = false) {
             var _a;
             const matchedNodeIds = /* @__PURE__ */ new Set();
             for (const variation of props.itemConfig.variations) {
@@ -10347,22 +11032,53 @@ ${this.smart}`;
                 }
               }
             }
-            const newIds = Array.from(matchedNodeIds);
             if (!props.itemConfig.tagNodeIds) {
               props.itemConfig.tagNodeIds = [];
             }
-            props.itemConfig.tagNodeIds.splice(0, props.itemConfig.tagNodeIds.length, ...newIds);
-            if (!silent && matchedNodeIds.size > 0) {
-              toast.success(`已匹配 ${matchedNodeIds.size} 个标签节点`);
+            const existing = props.itemConfig.tagNodeIds;
+            let finalIds;
+            let addedCount = 0;
+            if (mode === "replace") {
+              finalIds = Array.from(matchedNodeIds);
+              addedCount = matchedNodeIds.size;
+            } else {
+              const existingSet = new Set(existing);
+              const newlyAdded = [];
+              matchedNodeIds.forEach((id) => {
+                if (!existingSet.has(id)) {
+                  newlyAdded.push(id);
+                }
+              });
+              finalIds = [...existing, ...newlyAdded];
+              addedCount = newlyAdded.length;
             }
+            props.itemConfig.tagNodeIds.splice(0, props.itemConfig.tagNodeIds.length, ...finalIds);
+            if (!silent) {
+              if (mode === "replace") {
+                toast.success(`已匹配 ${matchedNodeIds.size} 个标签节点`);
+              } else if (addedCount > 0) {
+                toast.success(`已新增 ${addedCount} 个匹配的标签节点`);
+              } else {
+                toast.info("未发现新的匹配");
+              }
+            }
+          }
+          function handleResync() {
+            smartFetchTags("replace", false);
           }
           watch(
             () => props.itemConfig.variations,
             () => {
-              smartFetchTags(true);
+              smartFetchTags("merge", true);
             },
-            { deep: true, immediate: true }
+            { deep: true }
           );
+          onMounted(() => {
+            var _a;
+            if ((((_a = props.itemConfig.tagNodeIds) == null ? void 0 : _a.length) ?? 0) === 0) {
+              smartFetchTags("merge", true);
+            }
+          });
           async function applyTags() {
             const tagsToApply = extractTagsFromNodeIds(props.itemConfig.tagNodeIds || []);
             if (tagsToApply.length === 0) {
@@ -10383,8 +11099,22 @@ ${this.smart}`;
           });
           return (_ctx, _cache) => {
             return openBlock(), createElementBlock(Fragment, null, [
-              createVNode(unref(SectionHeader), { title: "Tags" }, {
+              createVNode(unref(SectionHeader), {
+                title: "Tags",
+                collapsible: "",
+                "section-id": "edit-tags"
+              }, {
                 actions: withCtx(() => [
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-ghost",
+                    type: "button",
+                    title: "根据 Variations 重新匹配（会清除手动选择）",
+                    onClick: handleResync
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).magic, 14)
+                    }, null, 8, _hoisted_1$3)
+                  ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
                     type: "button",
@@ -10393,7 +11123,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).edit, 14)
-                    }, null, 8, _hoisted_1$4)
+                    }, null, 8, _hoisted_2$3)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-primary",
@@ -10403,7 +11133,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).send, 14)
-                    }, null, 8, _hoisted_2$4)
+                    }, null, 8, _hoisted_3$3)
                   ])
                 ]),
                 default: withCtx(() => [
@@ -10412,13 +11142,13 @@ ${this.smart}`;
                     "empty-text": "标签会根据 Variations 自动匹配，也可以手动选择"
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("div", _hoisted_3$4, [
+                      createElementVNode("div", _hoisted_4$3, [
                         (openBlock(true), createElementBlock(Fragment, null, renderList(allTags.value, (tag, index) => {
                           return openBlock(), createElementBlock("span", {
                             key: index,
                             class: "tag-badge"
                           }, [
-                            createElementVNode("span", _hoisted_4$4, toDisplayString(tag), 1)
+                            createElementVNode("span", _hoisted_5$2, toDisplayString(tag), 1)
                           ]);
                         }), 128))
                       ])
@@ -10439,138 +11169,95 @@ ${this.smart}`;
           };
         }
       });
-      const TagsSection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-acf36643"]]);
-      const _hoisted_1$3 = ["innerHTML"];
-      const _hoisted_2$3 = ["innerHTML"];
-      const _hoisted_3$3 = ["onUpdate:modelValue"];
-      const _hoisted_4$3 = { class: "form-group" };
-      const _hoisted_5$3 = ["onUpdate:modelValue"];
-      const _hoisted_6$3 = {
-        key: 1,
-        class: "empty-hint"
-      };
-      const _sfc_main$3 = /* @__PURE__ */ defineComponent({
-        __name: "DiscountTemplateModal",
-        props: {
-          show: { type: Boolean },
-          globalTemplates: {}
-        },
-        emits: ["close"],
-        setup(__props, { emit: __emit }) {
-          const props = __props;
-          const emit = __emit;
-          const templates = computed({
-            get() {
-              var _a;
-              return (_a = props.globalTemplates).discountTemplates || (_a.discountTemplates = []);
-            },
-            set(value) {
-              props.globalTemplates.discountTemplates = value;
+      const TagsSection = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-355608ad"]]);
+      const MIN_MATCH_SCORE_THRESHOLD = 0.4;
+      const WORD_BOUNDARY_BONUS = 0.1;
+      function normalizeString(str) {
+        return str.toLowerCase().replace(/\.(zip|rar|7z|unitypackage)$/i, "").replace(/[_\-\s]?v?\d+[\._]\d+[\._]?\d*/gi, "").replace(/[(\[（【][^)\]）】]*[)\]）】]/g, "").replace(/[\s\-_\.]/g, "").trim();
+      }
+      function longestCommonSubstring(str1, str2) {
+        if (!str1 || !str2) return "";
+        const m = str1.length;
+        const n = str2.length;
+        let maxLength = 0;
+        let endIndex = 0;
+        const dp = new Array(n + 1).fill(0);
+        for (let i = 1; i <= m; i++) {
+          let prev = 0;
+          for (let j = 1; j <= n; j++) {
+            const temp = dp[j];
+            if (str1[i - 1] === str2[j - 1]) {
+              dp[j] = prev + 1;
+              if (dp[j] > maxLength) {
+                maxLength = dp[j];
+                endIndex = i;
+              }
+            } else {
+              dp[j] = 0;
             }
-          });
-          const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
-            templates,
-            defaultTemplate: { template: "" }
-          });
-          return (_ctx, _cache) => {
-            return openBlock(), createBlock(Modal, {
-              show: _ctx.show,
-              title: "折扣模板配置",
-              "teleport-to": ".booth-enhancer-sidebar",
-              onClose: _cache[1] || (_cache[1] = ($event) => emit("close"))
-            }, {
-              "header-actions": withCtx(() => [
-                createElementVNode("button", {
-                  class: normalizeClass(unref(BUTTON_CLASSES).addButton),
-                  onClick: _cache[0] || (_cache[0] = //@ts-ignore
-                  (...args) => unref(addTemplate) && unref(addTemplate)(...args)),
-                  title: "添加模板",
-                  type: "button"
-                }, [
-                  createElementVNode("span", {
-                    innerHTML: unref(withSize)(unref(icons).plus, 18)
-                  }, null, 8, _hoisted_1$3)
-                ], 2)
-              ]),
-              default: withCtx(() => [
-                createVNode(unref(SectionHeader), null, {
-                  default: withCtx(() => [
-                    createElementVNode("p", {
-                      class: "form-hint",
-                      innerHTML: unref(TEMPLATE_HINTS).discount.replace("\n", "<br>")
-                    }, null, 8, _hoisted_2$3),
-                    _ctx.globalTemplates.discountTemplates && _ctx.globalTemplates.discountTemplates.length > 0 ? (openBlock(), createBlock(unref(DraggableCardList), {
-                      key: 0,
-                      items: _ctx.globalTemplates.discountTemplates,
-                      "key-extractor": (item) => item.id,
-                      onRemove: unref(removeTemplate),
-                      onReorder: unref(onReorder)
-                    }, {
-                      actions: withCtx(({ item }) => [
-                        withDirectives(createElementVNode("input", {
-                          "onUpdate:modelValue": ($event) => item.name = $event,
-                          type: "text",
-                          placeholder: "输入模板名称",
-                          style: { "flex": "1", "min-width": "0" }
-                        }, null, 8, _hoisted_3$3), [
-                          [vModelText, item.name]
-                        ])
-                      ]),
-                      content: withCtx(({ item }) => [
-                        createElementVNode("div", _hoisted_4$3, [
-                          _cache[2] || (_cache[2] = createElementVNode("label", null, "模板内容", -1)),
-                          withDirectives(createElementVNode("textarea", {
-                            "onUpdate:modelValue": ($event) => item.template = $event,
-                            rows: "3",
-                            placeholder: "输入模板内容"
-                          }, null, 8, _hoisted_5$3), [
-                            [vModelText, item.template]
-                          ])
-                        ])
-                      ]),
-                      _: 1
-                    }, 8, ["items", "key-extractor", "onRemove", "onReorder"])) : (openBlock(), createElementBlock("div", _hoisted_6$3, ' 暂无模板，点击"添加模板"创建 '))
-                  ]),
-                  _: 1
-                })
-              ]),
-              _: 1
-            }, 8, ["show"]);
-          };
+            prev = temp;
+          }
         }
-      });
+        return maxLength > 0 ? str1.substring(endIndex - maxLength, endIndex) : "";
+      }
+      function calculateMatchScore(fileName, itemName) {
+        if (!itemName || !fileName) return 0;
+        if (fileName === itemName) return 1;
+        if (fileName.startsWith(itemName)) return 0.95;
+        if (fileName.includes(itemName)) {
+          const position = fileName.indexOf(itemName);
+          const relativePosition = position / fileName.length;
+          return 0.92 - relativePosition * 0.15;
+        }
+        if (itemName.includes(fileName)) return 0.6;
+        const lcs = longestCommonSubstring(fileName, itemName);
+        if (lcs.length === 0) return 0;
+        const lcsRatio = lcs.length / itemName.length;
+        if (lcsRatio >= 0.8) {
+          return 0.5 + lcsRatio * 0.3;
+        }
+        const minLen = Math.min(itemName.length, fileName.length);
+        return lcs.length / minLen * 0.5;
+      }
+      function isWordBoundaryMatch(originalFileName, normalizedItemName) {
+        const lowerFileName = originalFileName.toLowerCase();
+        const index = lowerFileName.indexOf(normalizedItemName.toLowerCase());
+        if (index === -1) return false;
+        const charBefore = index > 0 ? lowerFileName[index - 1] : "";
+        const isBoundaryBefore = index === 0 || /[\s\-_\.]/.test(charBefore);
+        const endIndex = index + normalizedItemName.length;
+        const charAfter = endIndex < lowerFileName.length ? lowerFileName[endIndex] : "";
+        const isBoundaryAfter = endIndex === lowerFileName.length || /[\s\-_\.]/.test(charAfter);
+        return isBoundaryBefore && isBoundaryAfter;
+      }
+      function findBestMatchItem(fileName, itemTree) {
+        var _a;
+        if (!fileName || !itemTree) return null;
+        const normalizedFileName = normalizeString(fileName);
+        let bestMatch = null;
+        for (const [nodeId, node] of Object.entries(itemTree.nodes)) {
+          const itemName = (_a = node.data) == null ? void 0 : _a.itemName;
+          if (!itemName) continue;
+          const normalizedItemName = normalizeString(itemName);
+          let score = calculateMatchScore(normalizedFileName, normalizedItemName);
+          if (score > 0 && isWordBoundaryMatch(fileName, normalizedItemName)) {
+            score += WORD_BOUNDARY_BONUS;
+          }
+          if (score > 0 && (!bestMatch || score > bestMatch.score)) {
+            bestMatch = { itemId: nodeId, score };
+          }
+        }
+        return bestMatch && bestMatch.score >= MIN_MATCH_SCORE_THRESHOLD ? bestMatch.itemId : null;
+      }
       const _hoisted_1$2 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_2$2 = { class: "form-group" };
-      const _hoisted_3$2 = { class: "form-group" };
-      const _hoisted_4$2 = { class: "form-hint" };
-      const _hoisted_5$2 = { class: "be-flex be-gap-sm be-flex-wrap" };
-      const _hoisted_6$2 = { class: "be-p-xs be-px-sm be-text-sm be-text-secondary" };
-      const _hoisted_7$2 = { class: "be-flex be-align-center be-gap-sm" };
-      const _hoisted_8$2 = {
-        class: "booth-toggle",
-        title: "启用打折功能"
-      };
-      const _hoisted_9$2 = ["innerHTML"];
-      const _hoisted_10$2 = {
-        key: 0,
-        class: "discount-config"
-      };
-      const _hoisted_11$2 = { class: "form-group" };
-      const _hoisted_12$2 = { class: "be-flex be-gap-sm" };
-      const _hoisted_13$2 = { class: "form-group be-flex-1" };
-      const _hoisted_14$2 = { class: "form-group be-flex-1" };
-      const _hoisted_15$2 = { class: "be-flex be-flex-column be-gap-xs" };
-      const _hoisted_16$2 = { class: "be-flex be-justify-between" };
-      const _hoisted_17$2 = { class: "be-flex be-justify-between" };
-      const _hoisted_18$2 = { class: "be-text-xs be-text-secondary be-mb-xs" };
-      const _hoisted_19$2 = ["innerHTML"];
-      const _hoisted_20$2 = ["innerHTML"];
+      const _hoisted_2$2 = { class: "be-text-xs be-text-secondary" };
+      const _hoisted_3$2 = ["innerHTML"];
+      const _hoisted_4$2 = ["innerHTML"];
       const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         __name: "VariationConfigModal",
         props: {
           show: { type: Boolean },
           itemConfig: {},
-          globalTemplates: {},
           availableFiles: {}
         },
         emits: ["close"],
@@ -10578,7 +11265,6 @@ ${this.smart}`;
           const props = __props;
           const emit = __emit;
           const tempCommonFiles = ref([]);
-          const showDiscountTemplateModal = ref(false);
           watch(() => props.show, (show) => {
             if (show) {
               tempCommonFiles.value = [...props.itemConfig.commonFiles || []];
@@ -10588,402 +11274,279 @@ ${this.smart}`;
             props.itemConfig.commonFiles = tempCommonFiles.value;
             emit("close");
           }
-          const totalSupport = computed(
-            () => calculateTotalSupport(props.itemConfig.variations)
-          );
-          const suggestedPrice = computed(
-            () => suggestFullsetPrice(
-              props.itemConfig.pricing.normalVariationPrice,
-              totalSupport.value,
-              props.itemConfig.discount
-            )
-          );
-          const normalOriginalPrice = computed(
-            () => props.itemConfig.pricing.normalVariationPrice
-          );
-          const normalDiscountedPrice = computed(
-            () => applyDiscount(normalOriginalPrice.value, props.itemConfig.discount)
-          );
-          const fullsetOriginalPrice = computed(
-            () => props.itemConfig.pricing.fullsetPrice
-          );
-          const fullsetDiscountedPrice = computed(
-            () => applyDiscount(fullsetOriginalPrice.value, props.itemConfig.discount)
-          );
-          const discountPreview = computed(() => {
-            if (!props.itemConfig.discount.enabled) return "";
-            const discountTemplate = getSelectedDiscountTemplate(
-              props.globalTemplates,
-              props.itemConfig
-            );
-            return parseTemplate(discountTemplate, {
-              originalPrice: normalOriginalPrice.value,
-              discountedPrice: normalDiscountedPrice.value,
-              discountPercent: props.itemConfig.discount.discountPercent,
-              fullsetOriginalPrice: fullsetOriginalPrice.value,
-              fullsetDiscountedPrice: fullsetDiscountedPrice.value,
-              startDate: formatDateTime(props.itemConfig.discount.startDate),
-              endDate: formatDateTime(props.itemConfig.discount.endDate)
-            });
-          });
           return (_ctx, _cache) => {
-            return openBlock(), createElementBlock(Fragment, null, [
-              createVNode(Modal, {
-                show: _ctx.show,
-                title: "Variation 配置",
-                "teleport-to": ".booth-enhancer-sidebar",
-                onClose: _cache[10] || (_cache[10] = ($event) => emit("close"))
-              }, {
-                footer: withCtx(() => [
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
-                    type: "button",
-                    title: "取消",
-                    onClick: _cache[9] || (_cache[9] = ($event) => emit("close"))
-                  }, [
-                    createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).close, 18)
-                    }, null, 8, _hoisted_19$2)
+            return openBlock(), createBlock(Modal, {
+              show: _ctx.show,
+              title: "通用文件配置",
+              "teleport-to": ".booth-enhancer-sidebar",
+              onClose: _cache[2] || (_cache[2] = ($event) => emit("close"))
+            }, {
+              footer: withCtx(() => [
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
+                  type: "button",
+                  title: "取消",
+                  onClick: _cache[1] || (_cache[1] = ($event) => emit("close"))
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).close, 16)
+                  }, null, 8, _hoisted_3$2)
+                ]),
+                createElementVNode("button", {
+                  class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
+                  type: "button",
+                  title: "保存",
+                  onClick: handleSave
+                }, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).check, 16)
+                  }, null, 8, _hoisted_4$2)
+                ])
+              ]),
+              default: withCtx(() => [
+                createElementVNode("div", _hoisted_1$2, [
+                  _cache[5] || (_cache[5] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary" }, " 选择所有 variation 共享的通用文件（如材质、配饰等），这些文件会在应用时自动添加到每个 variation。 ", -1)),
+                  createElementVNode("div", _hoisted_2$2, [
+                    _cache[3] || (_cache[3] = createTextVNode(" 已选择: ", -1)),
+                    createElementVNode("strong", null, toDisplayString(tempCommonFiles.value.length), 1),
+                    _cache[4] || (_cache[4] = createTextVNode(" 个文件 ", -1))
                   ]),
-                  createElementVNode("button", {
-                    class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
-                    type: "button",
-                    title: "保存",
-                    onClick: handleSave
-                  }, [
-                    createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).check, 18)
-                    }, null, 8, _hoisted_20$2)
-                  ])
-                ]),
-                default: withCtx(() => [
-                  createElementVNode("div", _hoisted_1$2, [
-                    createVNode(unref(SectionHeader), { title: "价格配置" }, {
-                      default: withCtx(() => [
-                        createElementVNode("div", _hoisted_2$2, [
-                          _cache[12] || (_cache[12] = createElementVNode("label", null, "普通 Variation 价格 (¥)", -1)),
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.itemConfig.pricing.normalVariationPrice = $event),
-                            type: "number",
-                            min: "0",
-                            placeholder: "0"
-                          }, null, 512), [
-                            [
-                              vModelText,
-                              _ctx.itemConfig.pricing.normalVariationPrice,
-                              void 0,
-                              { number: true }
-                            ]
-                          ])
-                        ]),
-                        createElementVNode("div", _hoisted_3$2, [
-                          _cache[13] || (_cache[13] = createElementVNode("label", null, "Fullset 价格 (¥)", -1)),
-                          createElementVNode("p", _hoisted_4$2, "建议: ¥" + toDisplayString(suggestedPrice.value), 1),
-                          withDirectives(createElementVNode("input", {
-                            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.itemConfig.pricing.fullsetPrice = $event),
-                            type: "number",
-                            min: "0",
-                            placeholder: "0"
-                          }, null, 512), [
-                            [
-                              vModelText,
-                              _ctx.itemConfig.pricing.fullsetPrice,
-                              void 0,
-                              { number: true }
-                            ]
-                          ])
-                        ]),
-                        createElementVNode("div", _hoisted_5$2, [
-                          createElementVNode("span", _hoisted_6$2, [
-                            _cache[14] || (_cache[14] = createTextVNode(" 总支持数: ", -1)),
-                            createElementVNode("strong", null, toDisplayString(totalSupport.value), 1)
-                          ])
-                        ])
-                      ]),
-                      _: 1
-                    }),
-                    createVNode(unref(SectionHeader), { title: "折扣配置" }, {
-                      default: withCtx(() => [
-                        createElementVNode("div", _hoisted_7$2, [
-                          createElementVNode("label", _hoisted_8$2, [
-                            withDirectives(createElementVNode("input", {
-                              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.itemConfig.discount.enabled = $event),
-                              type: "checkbox"
-                            }, null, 512), [
-                              [vModelCheckbox, _ctx.itemConfig.discount.enabled]
-                            ]),
-                            _cache[15] || (_cache[15] = createElementVNode("span", { class: "toggle-slider" }, null, -1)),
-                            _cache[16] || (_cache[16] = createElementVNode("span", { class: "toggle-label" }, "启用打折", -1))
-                          ]),
-                          _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("button", {
-                            key: 0,
-                            class: "booth-btn booth-btn-ghost booth-btn-icon booth-btn-sm",
-                            type: "button",
-                            title: "配置折扣模板",
-                            onClick: _cache[3] || (_cache[3] = ($event) => showDiscountTemplateModal.value = true)
-                          }, [
-                            createElementVNode("span", {
-                              innerHTML: unref(withSize)(unref(icons).settings, 14)
-                            }, null, 8, _hoisted_9$2)
-                          ])) : createCommentVNode("", true)
-                        ]),
-                        _ctx.itemConfig.discount.enabled ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
-                          createVNode(TemplateSelector, {
-                            modelValue: _ctx.itemConfig.selectedTemplates.discountTemplateId,
-                            "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.itemConfig.selectedTemplates.discountTemplateId = $event),
-                            templates: _ctx.globalTemplates.discountTemplates,
-                            label: "选择折扣模板",
-                            "empty-hint": "请先在折扣模板配置中添加模板"
-                          }, null, 8, ["modelValue", "templates"]),
-                          createElementVNode("div", _hoisted_11$2, [
-                            _cache[17] || (_cache[17] = createElementVNode("label", null, "折扣百分比 (%)", -1)),
-                            withDirectives(createElementVNode("input", {
-                              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => _ctx.itemConfig.discount.discountPercent = $event),
-                              type: "number",
-                              min: "0",
-                              max: "100",
-                              placeholder: "0"
-                            }, null, 512), [
-                              [
-                                vModelText,
-                                _ctx.itemConfig.discount.discountPercent,
-                                void 0,
-                                { number: true }
-                              ]
-                            ])
-                          ]),
-                          createElementVNode("div", _hoisted_12$2, [
-                            createElementVNode("div", _hoisted_13$2, [
-                              _cache[18] || (_cache[18] = createElementVNode("label", null, "折扣开始时间", -1)),
-                              withDirectives(createElementVNode("input", {
-                                "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => _ctx.itemConfig.discount.startDate = $event),
-                                type: "datetime-local"
-                              }, null, 512), [
-                                [vModelText, _ctx.itemConfig.discount.startDate]
-                              ])
-                            ]),
-                            createElementVNode("div", _hoisted_14$2, [
-                              _cache[19] || (_cache[19] = createElementVNode("label", null, "折扣结束时间", -1)),
-                              withDirectives(createElementVNode("input", {
-                                "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => _ctx.itemConfig.discount.endDate = $event),
-                                type: "datetime-local"
-                              }, null, 512), [
-                                [vModelText, _ctx.itemConfig.discount.endDate]
-                              ])
-                            ])
-                          ]),
-                          createVNode(unref(PreviewBox), {
-                            label: "折扣描述预览:",
-                            type: "pre"
-                          }, {
-                            default: withCtx(() => [
-                              createTextVNode(toDisplayString(discountPreview.value), 1)
-                            ]),
-                            _: 1
-                          }),
-                          createVNode(unref(PreviewBox), {
-                            label: "价格预览:",
-                            type: "text"
-                          }, {
-                            default: withCtx(() => [
-                              createElementVNode("div", _hoisted_15$2, [
-                                createElementVNode("div", _hoisted_16$2, [
-                                  _cache[20] || (_cache[20] = createElementVNode("span", null, "普通 Variation:", -1)),
-                                  createElementVNode("span", null, "¥" + toDisplayString(normalOriginalPrice.value) + " → ¥" + toDisplayString(normalDiscountedPrice.value), 1)
-                                ]),
-                                createElementVNode("div", _hoisted_17$2, [
-                                  _cache[21] || (_cache[21] = createElementVNode("span", null, "Fullset:", -1)),
-                                  createElementVNode("span", null, "¥" + toDisplayString(fullsetOriginalPrice.value) + " → ¥" + toDisplayString(fullsetDiscountedPrice.value), 1)
-                                ])
-                              ])
-                            ]),
-                            _: 1
-                          })
-                        ])) : createCommentVNode("", true)
-                      ]),
-                      _: 1
-                    }),
-                    createVNode(unref(SectionHeader), { title: "通用文件配置" }, {
-                      default: withCtx(() => [
-                        _cache[24] || (_cache[24] = createElementVNode("p", { class: "form-hint be-text-xs be-text-secondary be-mb-sm" }, " 选择所有 variation 共享的通用文件（如材质、配饰等），这些文件会在应用时自动添加到每个 variation ", -1)),
-                        createElementVNode("div", _hoisted_18$2, [
-                          _cache[22] || (_cache[22] = createTextVNode(" 已选择: ", -1)),
-                          createElementVNode("strong", null, toDisplayString(tempCommonFiles.value.length), 1),
-                          _cache[23] || (_cache[23] = createTextVNode(" 个文件 ", -1))
-                        ]),
-                        createVNode(unref(FileSelector), {
-                          files: _ctx.availableFiles,
-                          "selected-file-ids": tempCommonFiles.value,
-                          "onUpdate:selectedFileIds": _cache[8] || (_cache[8] = ($event) => tempCommonFiles.value = $event)
-                        }, null, 8, ["files", "selected-file-ids"])
-                      ]),
-                      _: 1,
-                      __: [24]
-                    })
-                  ])
-                ]),
-                _: 1
-              }, 8, ["show"]),
-              createVNode(_sfc_main$3, {
-                show: showDiscountTemplateModal.value,
-                "global-templates": _ctx.globalTemplates,
-                onClose: _cache[11] || (_cache[11] = ($event) => showDiscountTemplateModal.value = false)
-              }, null, 8, ["show", "global-templates"])
-            ], 64);
+                  createVNode(unref(FileSelector), {
+                    files: _ctx.availableFiles,
+                    "selected-file-ids": tempCommonFiles.value,
+                    "onUpdate:selectedFileIds": _cache[0] || (_cache[0] = ($event) => tempCommonFiles.value = $event)
+                  }, null, 8, ["files", "selected-file-ids"])
+                ])
+              ]),
+              _: 1
+            }, 8, ["show"]);
           };
         }
       });
-      const VariationConfigModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-5862736f"]]);
-      const _hoisted_1$1 = ["innerHTML"];
+      const _hoisted_1$1 = ["title"];
       const _hoisted_2$1 = ["innerHTML"];
       const _hoisted_3$1 = ["innerHTML"];
       const _hoisted_4$1 = ["innerHTML"];
       const _hoisted_5$1 = ["innerHTML"];
-      const _hoisted_6$1 = {
+      const _hoisted_6$1 = ["innerHTML"];
+      const _hoisted_7$1 = {
         key: 0,
         class: "common-files-preview be-mb-sm"
       };
-      const _hoisted_7$1 = {
+      const _hoisted_8$1 = {
         class: "be-flex be-align-center be-gap-xs be-flex-wrap be-p-xs be-px-sm",
         style: { "background": "var(--be-color-bg-secondary)", "border-radius": "var(--be-radius-sm)", "border": "1px solid var(--be-color-border)" }
       };
-      const _hoisted_8$1 = {
+      const _hoisted_9$1 = ["title"];
+      const _hoisted_10$1 = { class: "common-file-tag-text" };
+      const _hoisted_11$1 = ["onClick"];
+      const _hoisted_12$1 = ["innerHTML"];
+      const _hoisted_13$1 = {
         key: 1,
         class: "empty-hint"
       };
-      const _hoisted_9$1 = {
+      const _hoisted_14$1 = {
         class: "be-flex be-align-center be-gap-sm",
         style: { "flex": "1" }
       };
-      const _hoisted_10$1 = ["value", "onInput"];
-      const _hoisted_11$1 = {
+      const _hoisted_15$1 = ["value", "onInput"];
+      const _hoisted_16$1 = {
         key: 0,
         class: "booth-toggle",
         title: "将此 Variation 设为 Fullset（合集包）"
       };
-      const _hoisted_12$1 = ["checked", "onChange"];
-      const _hoisted_13$1 = ["onClick"];
-      const _hoisted_14$1 = ["innerHTML"];
-      const _hoisted_15$1 = { class: "be-flex be-flex-column be-gap-xs" };
-      const _hoisted_16$1 = { class: "be-flex be-align-center be-gap-sm" };
-      const _hoisted_17$1 = {
+      const _hoisted_17$1 = ["checked", "onChange"];
+      const _hoisted_18$1 = ["onClick"];
+      const _hoisted_19$1 = ["innerHTML"];
+      const _hoisted_20$1 = { class: "be-flex be-flex-column be-gap-xs" };
+      const _hoisted_21$1 = { class: "be-flex be-align-center be-gap-sm" };
+      const _hoisted_22$1 = {
         key: 0,
         class: "be-text-base be-text-primary"
       };
-      const _hoisted_18$1 = { class: "be-text-base be-text-primary be-flex-shrink-0" };
-      const _hoisted_19$1 = {
+      const _hoisted_23$1 = { class: "be-text-base be-text-primary be-flex-shrink-0" };
+      const _hoisted_24$1 = {
         class: "booth-toggle be-flex-shrink-0",
         title: "自定义此 Variation 的价格"
       };
-      const _hoisted_20$1 = ["onUpdate:modelValue"];
-      const _hoisted_21$1 = ["onUpdate:modelValue"];
-      const _hoisted_22$1 = { class: "be-text-sm be-text-secondary be-flex-shrink-0" };
-      const _hoisted_23$1 = { class: "item-card-header" };
-      const _hoisted_24 = { class: "item-card-title" };
-      const _hoisted_25 = ["onClick"];
-      const _hoisted_26 = ["innerHTML"];
-      const _hoisted_27 = { class: "item-card-content" };
-      const _hoisted_28 = { class: "item-list-container" };
-      const _hoisted_29 = { class: "item-tag-text" };
-      const _hoisted_30 = ["onClick"];
-      const _hoisted_31 = ["innerHTML"];
-      const _hoisted_32 = ["onClick"];
-      const _hoisted_33 = ["innerHTML"];
+      const _hoisted_25$1 = ["onUpdate:modelValue"];
+      const _hoisted_26$1 = ["onUpdate:modelValue"];
+      const _hoisted_27$1 = { class: "be-text-sm be-text-secondary be-flex-shrink-0" };
+      const _hoisted_28$1 = { class: "item-card-header" };
+      const _hoisted_29$1 = ["title"];
+      const _hoisted_30$1 = ["onClick"];
+      const _hoisted_31$1 = ["innerHTML"];
+      const _hoisted_32$1 = { class: "item-card-content" };
+      const _hoisted_33$1 = { class: "item-list-container" };
+      const _hoisted_34$1 = { class: "item-tag-text" };
+      const _hoisted_35 = ["onClick"];
+      const _hoisted_36 = ["innerHTML"];
+      const _hoisted_37 = ["onClick"];
+      const _hoisted_38 = ["innerHTML"];
       const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         __name: "VariationsListSection",
         props: {
           itemConfig: {},
-          globalTemplates: {},
           api: {},
           modal: {},
           itemTree: {}
         },
         emits: ["applied"],
         setup(__props, { expose: __expose, emit: __emit }) {
-          let _variationPageIndexMap = /* @__PURE__ */ new WeakMap();
           const props = __props;
           const emit = __emit;
-          const showPriceModal = ref(false);
+          const _variationPageIndexMap = /* @__PURE__ */ new Map();
+          function normalizeVariationName(name) {
+            return (name ?? "").trim().toLowerCase();
+          }
+          const showCommonFilesModal = ref(false);
           const selectedVariationIndex = ref(null);
           const selectingItemForFile = ref(null);
           const pageVariationNames = ref(/* @__PURE__ */ new Set());
+          const { files: reactiveFiles, refresh: refreshFiles } = useApiFiles(props.api);
           const hasFullset = computed(
             () => props.itemConfig.variations.some((v) => v.isFullset)
           );
-          const availableFiles = computed(() => props.api.files);
-          async function importVariations() {
+          const availableFiles = computed(() => reactiveFiles.value);
+          function parseVariationsFromPage() {
             const pageVariations = props.api.variations;
             if (pageVariations.length === 0) {
+              return { variations: [], commonFiles: [] };
+            }
+            const files = reactiveFiles.value;
+            const parsed = pageVariations.map((variation, index) => {
+              var _a, _b, _c;
+              const name = ((_b = (_a = variation.nameInput) == null ? void 0 : _a.value) == null ? void 0 : _b.trim()) || "";
+              const isFullset = name.toLowerCase().includes("fullset");
+              const priceStr = ((_c = variation.priceInput) == null ? void 0 : _c.value) || "0";
+              const price = parseInt(priceStr.replace(/\D/g, "")) || 0;
+              const fileIds = props.api.getVariationFiles(index);
+              const fileItemMap = {};
+              for (const fileId of fileIds) {
+                const file = files.find((f) => f.id === fileId);
+                if (!file) continue;
+                const matchedItemId = findBestMatchItem(file.name, props.itemTree);
+                if (matchedItemId) {
+                  fileItemMap[fileId] = [matchedItemId];
+                }
+              }
+              return { name, isFullset, price, fileIds: [...fileIds], fileItemMap };
+            });
+            const occurCount = /* @__PURE__ */ new Map();
+            parsed.forEach((pv) => {
+              if (pv.isFullset) return;
+              pv.fileIds.forEach((id) => {
+                occurCount.set(id, (occurCount.get(id) || 0) + 1);
+              });
+            });
+            const commonFiles = Array.from(occurCount.entries()).filter(([, count]) => count > 1).map(([id]) => id);
+            const commonSet = new Set(commonFiles);
+            parsed.forEach((pv) => {
+              pv.fileIds = pv.fileIds.filter((id) => !commonSet.has(id));
+            });
+            return { variations: parsed, commonFiles };
+          }
+          async function importVariations() {
+            const { variations: parsed, commonFiles } = parseVariationsFromPage();
+            if (parsed.length === 0) {
               toast.info("页面没有 Variations");
               return;
             }
-            const tempVariations = pageVariations.map((variation, index) => {
-              var _a, _b;
-              const name = ((_a = variation.nameInput) == null ? void 0 : _a.value) || "";
-              const isFullset = name.toLowerCase().includes("fullset");
-              const priceStr = ((_b = variation.priceInput) == null ? void 0 : _b.value) || "0";
-              const price = parseInt(priceStr.replace(/\D/g, "")) || 0;
-              const fileIds = props.api.getVariationFiles(index);
-              return {
-                name,
-                price,
-                isFullset,
-                fileIds,
-                // 临时包含所有文件
-                fileItemMap: {}
-                // 初始化为空对象，待自动匹配
-              };
-            });
-            const files = props.api.files;
-            tempVariations.forEach((variation) => {
-              if (variation.fileIds && variation.fileIds.length > 0) {
-                variation.fileItemMap = {};
-                for (const fileId of variation.fileIds) {
-                  const file = files.find((f) => f.id === fileId);
-                  if (!file) continue;
-                  const matchedItemId = findBestMatchItem(file.name);
-                  if (matchedItemId) {
-                    variation.fileItemMap[fileId] = [matchedItemId];
-                  }
-                }
-              }
-            });
-            const allFiles = /* @__PURE__ */ new Set();
-            const mappedFiles = /* @__PURE__ */ new Set();
-            tempVariations.forEach((variation) => {
-              var _a;
-              (_a = variation.fileIds) == null ? void 0 : _a.forEach((fileId) => allFiles.add(fileId));
-              if (variation.fileItemMap) {
-                Object.keys(variation.fileItemMap).forEach((fileId) => {
-                  if (variation.fileItemMap[fileId] && variation.fileItemMap[fileId].length > 0) {
-                    mappedFiles.add(fileId);
-                  }
-                });
-              }
-            });
-            const commonFiles = Array.from(allFiles).filter((fileId) => !mappedFiles.has(fileId));
-            const commonFileSet = new Set(commonFiles);
-            tempVariations.forEach((variation) => {
-              if (variation.fileIds) {
-                variation.fileIds = variation.fileIds.filter((fileId) => !commonFileSet.has(fileId));
-              }
-            });
-            const fullsetVariation = tempVariations.find((v) => v.isFullset);
-            const normalVariation = tempVariations.find((v) => !v.isFullset);
+            const fullsetVariation = parsed.find((v) => v.isFullset);
+            const normalVariation = parsed.find((v) => !v.isFullset);
             if (fullsetVariation) {
               props.itemConfig.pricing.fullsetPrice = fullsetVariation.price;
             }
             if (normalVariation) {
               props.itemConfig.pricing.normalVariationPrice = normalVariation.price;
             }
-            props.itemConfig.variations = tempVariations;
+            props.itemConfig.variations = parsed.map((pv) => ({
+              name: pv.name,
+              price: pv.price,
+              isFullset: pv.isFullset,
+              fileIds: pv.fileIds,
+              fileItemMap: pv.fileItemMap
+            }));
             props.itemConfig.commonFiles = commonFiles;
-            const messages = [`已导入 ${pageVariations.length} 个 Variations`];
+            const messages = [`已导入 ${parsed.length} 个 Variations`];
             if (commonFiles.length > 0) {
               messages.push(`检测到 ${commonFiles.length} 个通用文件`);
             }
             toast.success(messages.join("，"));
             updatePageVariationNames();
+          }
+          function restoreFilesFromPage() {
+            const { variations: parsed, commonFiles: detectedCommon } = parseVariationsFromPage();
+            if (parsed.length === 0) return { restoredFiles: 0, addedVariations: 0 };
+            const configByName = /* @__PURE__ */ new Map();
+            props.itemConfig.variations.forEach((v) => {
+              const key = normalizeVariationName(v.name);
+              if (key) configByName.set(key, v);
+            });
+            let restoredFiles = 0;
+            let addedVariations = 0;
+            parsed.forEach((pv) => {
+              var _a;
+              if (pv.isFullset) return;
+              const existing = configByName.get(normalizeVariationName(pv.name));
+              if (existing) {
+                existing.fileIds = [...pv.fileIds];
+                if (!existing.fileItemMap) existing.fileItemMap = {};
+                for (const [fileId, itemIds] of Object.entries(pv.fileItemMap)) {
+                  if ((_a = existing.fileItemMap[fileId]) == null ? void 0 : _a.length) continue;
+                  existing.fileItemMap[fileId] = itemIds;
+                }
+                restoredFiles++;
+              } else {
+                props.itemConfig.variations.push({
+                  name: pv.name,
+                  price: pv.price,
+                  isFullset: false,
+                  fileIds: pv.fileIds,
+                  fileItemMap: pv.fileItemMap
+                });
+                addedVariations++;
+              }
+            });
+            const allPageFiles = /* @__PURE__ */ new Set();
+            parsed.forEach((pv) => pv.fileIds.forEach((id) => allPageFiles.add(id)));
+            detectedCommon.forEach((id) => allPageFiles.add(id));
+            const mergedCommon = /* @__PURE__ */ new Set([
+              ...props.itemConfig.commonFiles || [],
+              ...detectedCommon
+            ]);
+            props.itemConfig.commonFiles = Array.from(mergedCommon).filter((id) => allPageFiles.has(id));
+            syncVariationOrderFromPage();
+            updatePageVariationNames();
+            return { restoredFiles, addedVariations };
+          }
+          async function handleImportFromPage() {
+            const pageVariations = props.api.variations;
+            if (pageVariations.length === 0) {
+              toast.info("页面没有 Variations");
+              return;
+            }
+            if (props.itemConfig.variations.length === 0) {
+              await importVariations();
+              return;
+            }
+            const choice = await props.modal.openModal({
+              type: "delete",
+              title: "从页面恢复",
+              formData: {
+                message: "将从页面增量恢复 Variation 数据：\n  • 已存在的：保留名称/价格/自定义价格等，仅回填文件关联\n  • 配置中缺失但页面有的：完整补回\n  • 配置中有但页面没有的：不动\n\n取消=不做任何改动；确认=开始恢复。"
+              }
+            });
+            if (!choice) return;
+            const { restoredFiles, addedVariations } = restoreFilesFromPage();
+            const messages = [];
+            if (restoredFiles > 0) messages.push(`恢复 ${restoredFiles} 个的文件关联`);
+            if (addedVariations > 0) messages.push(`补回 ${addedVariations} 个缺失项`);
+            if (messages.length > 0) {
+              toast.success(messages.join("，"));
+            } else {
+              toast.warning("没有需要恢复的内容");
+            }
           }
           function syncVariationOrderFromPage() {
             const pageVariations = props.api.variations;
@@ -10994,16 +11557,11 @@ ${this.smart}`;
               var _a, _b;
               return ((_b = (_a = v.nameInput) == null ? void 0 : _a.value) == null ? void 0 : _b.trim()) || "";
             });
-            const pageNameSet = new Set(pageNames);
-            const configInPageOrder = pageNames.map((pageName) => props.itemConfig.variations.find((v) => {
-              var _a;
-              return (((_a = v.name) == null ? void 0 : _a.trim()) || "") === pageName;
-            })).filter((v) => v !== void 0);
+            const pageNamesNormalized = pageNames.map(normalizeVariationName);
+            const pageNameSet = new Set(pageNamesNormalized);
+            const configInPageOrder = pageNamesNormalized.map((key) => props.itemConfig.variations.find((v) => normalizeVariationName(v.name) === key)).filter((v) => v !== void 0);
             const configNotInPage = props.itemConfig.variations.filter(
-              (v) => {
-                var _a;
-                return !pageNameSet.has(((_a = v.name) == null ? void 0 : _a.trim()) || "");
-              }
+              (v) => !pageNameSet.has(normalizeVariationName(v.name))
             );
             const newOrder = [...configInPageOrder, ...configNotInPage];
             const currentOrder = props.itemConfig.variations.map((v) => {
@@ -11019,25 +11577,6 @@ ${this.smart}`;
             }
           }
           let variationObserver = null;
-          function waitForVariationsReady(timeout = 5e3) {
-            return new Promise((resolve) => {
-              const startTime = Date.now();
-              const checkVariations = () => {
-                const variations = props.api.variations;
-                if (variations && variations.length > 0) {
-                  resolve(true);
-                  return;
-                }
-                if (Date.now() - startTime > timeout) {
-                  console.warn("[VariationsListSection] 等待 variations 数据超时，可能页面暂无 variation");
-                  resolve(false);
-                  return;
-                }
-                setTimeout(checkVariations, 100);
-              };
-              checkVariations();
-            });
-          }
           function findVariationListContainer() {
             var _a;
             const variations = props.api.variations;
@@ -11046,10 +11585,9 @@ ${this.smart}`;
             if (!firstVariationElement) return null;
             return firstVariationElement.parentElement;
           }
-          async function startVariationOrderSync() {
-            const hasVariations = await waitForVariationsReady();
-            if (!hasVariations) {
-              console.log("[VariationsListSection] 页面暂无 variations，跳过顺序同步");
+          function startVariationOrderSync() {
+            const variations = props.api.variations;
+            if (variations.length === 0) {
               return;
             }
             syncVariationOrderFromPage();
@@ -11111,15 +11649,12 @@ ${this.smart}`;
           }
           function updatePageVariationInputsDisabledState() {
             const configNameSet = new Set(
-              props.itemConfig.variations.map((v) => {
-                var _a;
-                return (_a = v.name) == null ? void 0 : _a.trim();
-              }).filter(Boolean)
+              props.itemConfig.variations.map((v) => normalizeVariationName(v.name)).filter(Boolean)
             );
             props.api.variations.forEach((pageVar) => {
-              var _a, _b;
-              const pageName = ((_b = (_a = pageVar.nameInput) == null ? void 0 : _a.value) == null ? void 0 : _b.trim()) || "";
-              const shouldDisable = Boolean(pageName && configNameSet.has(pageName));
+              var _a;
+              const pageKey = normalizeVariationName((_a = pageVar.nameInput) == null ? void 0 : _a.value);
+              const shouldDisable = Boolean(pageKey && configNameSet.has(pageKey));
               if (pageVar.nameInput) {
                 toggleInputLock(pageVar.nameInput, shouldDisable, "name");
               }
@@ -11128,19 +11663,55 @@ ${this.smart}`;
               }
             });
           }
+          function clearAllPageLocks() {
+            const variations = props.api.variations;
+            variations.forEach((pageVar) => {
+              if (pageVar.nameInput) {
+                toggleInputLock(pageVar.nameInput, false, "name");
+              }
+              if (pageVar.priceInput) {
+                toggleInputLock(pageVar.priceInput, false, "price");
+              }
+            });
+            document.querySelectorAll(".booth-enhancer-lock-icon").forEach((el) => el.remove());
+            document.querySelectorAll("input[disabled].charcoal-text-field-input").forEach((input) => {
+              if (input.closest('[id^="variationName-"]') || input.closest('[id^="variationDigitalPrice-"]')) {
+                input.disabled = false;
+              }
+            });
+          }
+          let unsubscribeFilesChanged = null;
           onMounted(() => {
             props.api.onVariationAdded(() => {
               updatePageVariationNames();
               updatePageVariationInputsDisabledState();
+              if (!variationObserver) {
+                startVariationOrderSync();
+              }
             });
             startVariationOrderSync();
+            setTimeout(() => {
+              if (reactiveFiles.value.length > 0) {
+                syncFilesWithPage(true);
+              }
+            }, 500);
+            unsubscribeFilesChanged = props.api.onFilesChanged(() => {
+              if (reactiveFiles.value.length === 0) return;
+              const removed = syncFilesWithPage(true);
+              if (removed > 0) {
+                toast.info(`检测到文件变动，已清理 ${removed} 个失效引用`, 2500);
+              }
+            });
           });
           onUnmounted(() => {
             stopVariationOrderSync();
+            clearAllPageLocks();
+            unsubscribeFilesChanged == null ? void 0 : unsubscribeFilesChanged();
+            unsubscribeFilesChanged = null;
           });
           function autoCreateVariationsFromFiles() {
             var _a;
-            const files = props.api.files;
+            const files = reactiveFiles.value;
             if (files.length === 0) {
               toast.info("暂无可用文件");
               return;
@@ -11155,7 +11726,7 @@ ${this.smart}`;
             let skippedCount = 0;
             const commonFiles = [];
             for (const file of files) {
-              const matchedItemId = findBestMatchItem(file.name);
+              const matchedItemId = findBestMatchItem(file.name, props.itemTree);
               if (matchedItemId) {
                 const node = props.itemTree.nodes[matchedItemId];
                 const itemName = (((_a = node == null ? void 0 : node.data) == null ? void 0 : _a.itemName) || (node == null ? void 0 : node.name) || file.name).trim();
@@ -11251,7 +11822,7 @@ ${this.smart}`;
           }
           async function selectFilesForVariation(variationIndex) {
             const variation = props.itemConfig.variations[variationIndex];
-            const files = props.api.files;
+            const files = reactiveFiles.value;
             if (files.length === 0) {
               toast.error("无法获取文件列表，请先上传文件");
               return;
@@ -11306,9 +11877,16 @@ ${this.smart}`;
             }
           }
           function getFileName(fileId) {
-            const files = props.api.files;
-            const file = files.find((f) => f.id === fileId);
-            return file ? file.name : `File #${fileId}`;
+            const file = reactiveFiles.value.find((f) => f.id === fileId);
+            return file ? file.name : "";
+          }
+          function syncFilesWithPage(silent = true) {
+            const availableFileIds = new Set(reactiveFiles.value.map((f) => f.id));
+            const result = cleanMissingFileIds(props.itemConfig, availableFileIds);
+            if (!silent && result.total > 0) {
+              toast.info(`已清理 ${result.total} 个失效的文件引用`, 3e3);
+            }
+            return result.total;
           }
           function getFileItemIds(variationIndex, fileId) {
             var _a;
@@ -11337,6 +11915,12 @@ ${this.smart}`;
               delete variation.fileItemMap[fileId];
             }
           }
+          function removeCommonFile(fileId) {
+            if (!props.itemConfig.commonFiles) return;
+            props.itemConfig.commonFiles = props.itemConfig.commonFiles.filter(
+              (id) => id !== fileId
+            );
+          }
           function autoMatchItemsForFiles(variationIndex, fileIds) {
             var _a;
             const variation = props.itemConfig.variations[variationIndex];
@@ -11344,14 +11928,14 @@ ${this.smart}`;
               variation.fileItemMap = {};
             }
             let firstMatchedItemId = null;
-            const files = props.api.files;
+            const files = reactiveFiles.value;
             for (const fileId of fileIds) {
               if (variation.fileItemMap[fileId]) {
                 continue;
               }
               const file = files.find((f) => f.id === fileId);
               if (!file) continue;
-              const matchedItemId = findBestMatchItem(file.name);
+              const matchedItemId = findBestMatchItem(file.name, props.itemTree);
               if (matchedItemId) {
                 variation.fileItemMap[fileId] = [matchedItemId];
                 if (!firstMatchedItemId) {
@@ -11366,84 +11950,6 @@ ${this.smart}`;
               }
             }
           }
-          function findBestMatchItem(fileName) {
-            var _a;
-            if (!fileName || !props.itemTree) return null;
-            const normalizedFileName = normalizeString(fileName);
-            const MIN_SCORE_THRESHOLD = 0.4;
-            let bestMatch = null;
-            for (const [nodeId, node] of Object.entries(props.itemTree.nodes)) {
-              const itemName = (_a = node.data) == null ? void 0 : _a.itemName;
-              if (!itemName) continue;
-              const normalizedItemName = normalizeString(itemName);
-              let score = calculateMatchScore(normalizedFileName, normalizedItemName);
-              if (score > 0 && isWordBoundaryMatch(fileName, normalizedItemName)) {
-                score += 0.1;
-              }
-              if (score > 0 && (!bestMatch || score > bestMatch.score)) {
-                bestMatch = { itemId: nodeId, itemName, score };
-              }
-            }
-            return bestMatch && bestMatch.score >= MIN_SCORE_THRESHOLD ? bestMatch.itemId : null;
-          }
-          function isWordBoundaryMatch(originalFileName, normalizedItemName) {
-            const lowerFileName = originalFileName.toLowerCase();
-            const index = lowerFileName.indexOf(normalizedItemName.toLowerCase());
-            if (index === -1) return false;
-            const charBefore = index > 0 ? lowerFileName[index - 1] : "";
-            const isBoundaryBefore = index === 0 || /[\s\-_\.]/.test(charBefore);
-            const endIndex = index + normalizedItemName.length;
-            const charAfter = endIndex < lowerFileName.length ? lowerFileName[endIndex] : "";
-            const isBoundaryAfter = endIndex === lowerFileName.length || /[\s\-_\.]/.test(charAfter);
-            return isBoundaryBefore && isBoundaryAfter;
-          }
-          function normalizeString(str) {
-            return str.toLowerCase().replace(/\.(zip|rar|7z|unitypackage)$/i, "").replace(/[_\-\s]?v?\d+[\._]\d+[\._]?\d*/gi, "").replace(/[(\[（【][^)\]）】]*[)\]）】]/g, "").replace(/[\s\-_\.]/g, "").trim();
-          }
-          function calculateMatchScore(fileName, itemName) {
-            if (!itemName || !fileName) return 0;
-            if (fileName === itemName) return 1;
-            if (fileName.startsWith(itemName)) return 0.95;
-            if (fileName.includes(itemName)) {
-              const position = fileName.indexOf(itemName);
-              const relativePosition = position / fileName.length;
-              return 0.92 - relativePosition * 0.15;
-            }
-            if (itemName.includes(fileName)) return 0.6;
-            const lcs = longestCommonSubstring(fileName, itemName);
-            if (lcs.length === 0) return 0;
-            const lcsRatio = lcs.length / itemName.length;
-            if (lcsRatio >= 0.8) {
-              return 0.5 + lcsRatio * 0.3;
-            }
-            const minLen = Math.min(itemName.length, fileName.length);
-            return lcs.length / minLen * 0.5;
-          }
-          function longestCommonSubstring(str1, str2) {
-            if (!str1 || !str2) return "";
-            const m = str1.length;
-            const n = str2.length;
-            let maxLength = 0;
-            let endIndex = 0;
-            const dp = new Array(n + 1).fill(0);
-            for (let i = 1; i <= m; i++) {
-              let prev = 0;
-              for (let j = 1; j <= n; j++) {
-                const temp = dp[j];
-                if (str1[i - 1] === str2[j - 1]) {
-                  dp[j] = prev + 1;
-                  if (dp[j] > maxLength) {
-                    maxLength = dp[j];
-                    endIndex = i;
-                  }
-                } else {
-                  dp[j] = 0;
-                }
-                prev = temp;
-              }
-            }
-            return maxLength > 0 ? str1.substring(endIndex - maxLength, endIndex) : "";
-          }
           function fileIdsEqual(a, b) {
             if (a.length !== b.length) return false;
             const setA = new Set(a);
@@ -11452,32 +11958,29 @@ ${this.smart}`;
             return Array.from(setA).every((id) => setB.has(id));
           }
           function updatePageVariationNames() {
-            var _a;
             const pageVariations = props.api.variations;
-            const names = pageVariations.map((v) => {
-              var _a2, _b;
-              return (_b = (_a2 = v.nameInput) == null ? void 0 : _a2.value) == null ? void 0 : _b.trim();
+            const normalizedNames = pageVariations.map((v) => {
+              var _a;
+              return normalizeVariationName((_a = v.nameInput) == null ? void 0 : _a.value);
             }).filter(Boolean);
-            pageVariationNames.value = new Set(names);
-            const newMap = /* @__PURE__ */ new WeakMap();
+            pageVariationNames.value = new Set(normalizedNames);
+            _variationPageIndexMap.clear();
             const pageNameToIndex = /* @__PURE__ */ new Map();
             pageVariations.forEach((v, idx) => {
-              var _a2, _b;
-              const name = ((_b = (_a2 = v.nameInput) == null ? void 0 : _a2.value) == null ? void 0 : _b.trim()) || "";
-              if (name) pageNameToIndex.set(name, idx);
+              var _a;
+              const key = normalizeVariationName((_a = v.nameInput) == null ? void 0 : _a.value);
+              if (key) pageNameToIndex.set(key, idx);
             });
             for (const configVar of props.itemConfig.variations) {
-              const configName = (_a = configVar.name) == null ? void 0 : _a.trim();
-              if (configName && pageNameToIndex.has(configName)) {
-                newMap.set(configVar, pageNameToIndex.get(configName));
+              const key = normalizeVariationName(configVar.name);
+              if (key && pageNameToIndex.has(key)) {
+                _variationPageIndexMap.set(configVar, pageNameToIndex.get(key));
               }
             }
-            _variationPageIndexMap = newMap;
           }
           function handleVariationNameInput(variation, event) {
-            var _a;
             const newValue = event.target.value;
-            const oldName = (_a = variation.name) == null ? void 0 : _a.trim();
+            const oldKey = normalizeVariationName(variation.name);
             variation.name = newValue;
             const pageIndex = _variationPageIndexMap.get(variation);
             if (pageIndex === void 0) return;
@@ -11485,46 +11988,55 @@ ${this.smart}`;
             if (pageVar == null ? void 0 : pageVar.nameInput) {
               Simulate.input(pageVar.nameInput, newValue);
               const updated = new Set(pageVariationNames.value);
-              if (oldName) updated.delete(oldName);
-              const trimmed = newValue.trim();
-              if (trimmed) updated.add(trimmed);
+              if (oldKey) updated.delete(oldKey);
+              const newKey = normalizeVariationName(newValue);
+              if (newKey) updated.add(newKey);
               pageVariationNames.value = updated;
             }
           }
           function isVariationLocked(variation) {
-            var _a;
-            const configName = (_a = variation.name) == null ? void 0 : _a.trim();
-            return configName ? pageVariationNames.value.has(configName) : false;
+            const key = normalizeVariationName(variation.name);
+            return key ? pageVariationNames.value.has(key) : false;
           }
           function getVariationFileIds(config) {
+            const availableFileIds = new Set(reactiveFiles.value.map((f) => f.id));
+            const isValid = (id) => availableFileIds.has(id);
+            const commonFiles = (props.itemConfig.commonFiles || []).filter(isValid);
             if (config.isFullset) {
               const allFileIds = /* @__PURE__ */ new Set();
               props.itemConfig.variations.forEach((v) => {
                 if (!v.isFullset && v.fileIds) {
-                  v.fileIds.forEach((fileId) => allFileIds.add(fileId));
+                  v.fileIds.forEach((fileId) => {
+                    if (isValid(fileId)) allFileIds.add(fileId);
+                  });
                 }
               });
-              (props.itemConfig.commonFiles || []).forEach((fileId) => allFileIds.add(fileId));
+              commonFiles.forEach((fileId) => allFileIds.add(fileId));
               return Array.from(allFileIds);
             }
-            return [
-              ...config.fileIds || [],
-              ...props.itemConfig.commonFiles || []
-            ];
+            const ownFiles = (config.fileIds || []).filter(isValid);
+            return [...ownFiles, ...commonFiles];
           }
           async function applyVariations() {
-            var _a, _b;
+            var _a, _b, _c, _d, _e;
+            refreshFiles();
+            if (reactiveFiles.value.length > 0) {
+              syncFilesWithPage(true);
+            }
             const configVariations = props.itemConfig.variations;
             const pageVariations = props.api.variations;
             const configNameCount = /* @__PURE__ */ new Map();
+            const configNameDisplay = /* @__PURE__ */ new Map();
             configVariations.forEach((v) => {
               var _a2;
-              const name = ((_a2 = v.name) == null ? void 0 : _a2.trim()) || "";
-              if (name) {
-                configNameCount.set(name, (configNameCount.get(name) || 0) + 1);
+              const key = normalizeVariationName(v.name);
+              if (!key) return;
+              configNameCount.set(key, (configNameCount.get(key) || 0) + 1);
+              if (!configNameDisplay.has(key)) {
+                configNameDisplay.set(key, ((_a2 = v.name) == null ? void 0 : _a2.trim()) || key);
               }
             });
-            const duplicates = Array.from(configNameCount.entries()).filter(([_, count]) => count > 1).map(([name]) => name);
+            const duplicates = Array.from(configNameCount.entries()).filter(([_, count]) => count > 1).map(([key]) => configNameDisplay.get(key) || key);
             if (duplicates.length > 0) {
               toast.error(
                 `配置中存在重复名称：${duplicates.join("、")}，请先修正`,
@@ -11534,41 +12046,65 @@ ${this.smart}`;
             }
             const pageNameMap = /* @__PURE__ */ new Map();
             pageVariations.forEach((v, idx) => {
-              var _a2, _b2;
-              const name = ((_b2 = (_a2 = v.nameInput) == null ? void 0 : _a2.value) == null ? void 0 : _b2.trim()) || "";
-              if (name) pageNameMap.set(name, idx);
+              var _a2;
+              const key = normalizeVariationName((_a2 = v.nameInput) == null ? void 0 : _a2.value);
+              if (key) pageNameMap.set(key, idx);
             });
             const toCreate = [];
             const toUpdate = [];
             configVariations.forEach((config) => {
-              var _a2;
-              const name = ((_a2 = config.name) == null ? void 0 : _a2.trim()) || "";
-              if (!name) return;
-              const pageIndex = pageNameMap.get(name);
+              const key = normalizeVariationName(config.name);
+              if (!key) return;
+              const pageIndex = pageNameMap.get(key);
               if (pageIndex !== void 0) {
                 toUpdate.push({ config, pageIndex });
               } else {
                 toCreate.push(config);
               }
             });
-            const configNames = new Set(configVariations.map((v) => {
-              var _a2;
-              return (_a2 = v.name) == null ? void 0 : _a2.trim();
-            }).filter(Boolean));
-            const extraOnPage = pageVariations.filter((v) => {
-              var _a2, _b2;
-              const name = ((_b2 = (_a2 = v.nameInput) == null ? void 0 : _a2.value) == null ? void 0 : _b2.trim()) || "";
-              return name && !configNames.has(name);
-            });
+            const configNames = new Set(
+              configVariations.map((v) => normalizeVariationName(v.name)).filter(Boolean)
+            );
+            const extraOnPage = pageVariations.map((v, idx) => {
+              var _a2, _b2, _c2;
+              return {
+                pageIndex: idx,
+                name: ((_b2 = (_a2 = v.nameInput) == null ? void 0 : _a2.value) == null ? void 0 : _b2.trim()) || "",
+                key: normalizeVariationName((_c2 = v.nameInput) == null ? void 0 : _c2.value)
+              };
+            }).filter((item) => item.key && !configNames.has(item.key));
+            const toReuse = [];
+            while (toCreate.length > 0 && extraOnPage.length > 0) {
+              const config = toCreate.shift();
+              const extra = extraOnPage.shift();
+              toReuse.push({ config, pageIndex: extra.pageIndex });
+            }
+            let deletedExtraCount = 0;
             if (extraOnPage.length > 0) {
-              toast.warning(
-                `页面有 ${extraOnPage.length} 个配置中不存在的 Variation，请手动删除`,
-                5e3
-              );
+              const names = extraOnPage.map((e) => e.name).join("、");
+              const shouldDelete = await props.modal.openModal({
+                type: "delete",
+                title: "删除多余 Variation？",
+                formData: {
+                  message: `页面有 ${extraOnPage.length} 个配置中不存在的 Variation：${names}。是否自动删除？（取消则保留）`
+                }
+              });
+              if (shouldDelete) {
+                const sortedIndices = extraOnPage.map((e) => e.pageIndex).sort((a, b) => b - a);
+                for (const pageIndex of sortedIndices) {
+                  const ok = await props.api.removeVariation(pageIndex);
+                  if (ok) {
+                    deletedExtraCount++;
+                  } else {
+                    toast.error(`删除页面第 ${pageIndex + 1} 个 Variation 失败`);
+                    break;
+                  }
+                }
+              }
             }
             let createdCount = 0;
-            if (toCreate.length > 3) {
-              toast.info(`正在创建 ${toCreate.length} 个 Variations...`, 3e3);
+            if (toCreate.length > 0) {
+              toast.info(`准备创建 ${toCreate.length} 个 Variations...`, 2e3);
             }
             for (const config of toCreate) {
               const success = await props.api.addVariation();
@@ -11588,27 +12124,49 @@ ${this.smart}`;
                 await props.api.setVariationFiles(newIndex, targetFileIds, "replace");
               }
               createdCount++;
+              if (toCreate.length > 3 && (createdCount % 3 === 0 || createdCount === toCreate.length)) {
+                toast.info(`创建进度: ${createdCount} / ${toCreate.length}`, 1500);
+              }
             }
             let updatedPriceCount = 0;
             let updatedFileCount = 0;
-            for (const { config, pageIndex } of toUpdate) {
+            let updatedNameCount = 0;
+            let updateProcessedCount = 0;
+            const allUpdates = [
+              ...toUpdate,
+              ...toReuse
+            ];
+            const totalToUpdate = allUpdates.length;
+            for (const { config, pageIndex } of allUpdates) {
               const pageVar = props.api.variations[pageIndex];
               if (!pageVar) continue;
+              const currentName = ((_b = (_a = pageVar.nameInput) == null ? void 0 : _a.value) == null ? void 0 : _b.trim()) || "";
+              const targetName = ((_c = config.name) == null ? void 0 : _c.trim()) || "";
+              if (currentName !== targetName && targetName) {
+                props.api.updateVariation(pageIndex, { name: targetName });
+                updatedNameCount++;
+              }
               const targetPrice = getVariationPrice(config);
-              const currentPrice = ((_b = (_a = pageVar.priceInput) == null ? void 0 : _a.value) == null ? void 0 : _b.trim()) || "";
+              const currentPrice = ((_e = (_d = pageVar.priceInput) == null ? void 0 : _d.value) == null ? void 0 : _e.trim()) || "";
               if (currentPrice !== targetPrice.toString()) {
                 props.api.updateVariation(pageIndex, { price: targetPrice.toString() });
                 updatedPriceCount++;
               }
               const targetFileIds = getVariationFileIds(config);
               const currentFiles = props.api.getVariationFiles(pageIndex);
-              if (!fileIdsEqual(currentFiles, targetFileIds) && targetFileIds.length > 0) {
+              if (!fileIdsEqual(currentFiles, targetFileIds)) {
                 await props.api.setVariationFiles(pageIndex, targetFileIds, "replace");
                 updatedFileCount++;
+              }
+              updateProcessedCount++;
+              if (totalToUpdate > 5 && updatedFileCount > 0 && updateProcessedCount % 3 === 0) {
+                toast.info(`更新进度: ${updateProcessedCount} / ${totalToUpdate}`, 1500);
               }
             }
             const messages = [];
             if (createdCount > 0) messages.push(`创建 ${createdCount} 个`);
+            if (deletedExtraCount > 0) messages.push(`删除 ${deletedExtraCount} 个多余项`);
+            if (updatedNameCount > 0) messages.push(`覆盖 ${updatedNameCount} 个名称`);
             if (updatedPriceCount > 0) messages.push(`更新 ${updatedPriceCount} 个价格`);
             if (updatedFileCount > 0) messages.push(`更新 ${updatedFileCount} 个文件`);
             if (messages.length > 0) {
@@ -11616,6 +12174,9 @@ ${this.smart}`;
             } else {
               toast.success("所有 Variations 已是最新");
             }
+            syncVariationOrderFromPage();
+            updatePageVariationNames();
+            updatePageVariationInputsDisabledState();
             emit("applied");
           }
           __expose({
@@ -11625,22 +12186,23 @@ ${this.smart}`;
             return openBlock(), createElementBlock(Fragment, null, [
               createVNode(unref(SectionHeader), {
                 title: `Variations (${_ctx.itemConfig.variations.length})`,
-                "no-border": ""
+                "no-border": "",
+                collapsible: "",
+                "section-id": "edit-variations"
               }, {
                 actions: withCtx(() => [
-                  _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("button", {
-                    key: 0,
+                  createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-ghost",
                     type: "button",
-                    title: "从页面导入",
-                    onClick: importVariations
+                    title: _ctx.itemConfig.variations.length === 0 ? "从页面导入" : "从页面恢复（补回缺失的 Variation 和文件关联）",
+                    onClick: handleImportFromPage
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).download, 14)
-                    }, null, 8, _hoisted_1$1)
-                  ])) : createCommentVNode("", true),
+                    }, null, 8, _hoisted_2$1)
+                  ], 8, _hoisted_1$1),
                   _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("button", {
-                    key: 1,
+                    key: 0,
                     class: "booth-btn booth-btn-sm booth-btn-ghost",
                     type: "button",
                     title: "根据文件自动创建",
@@ -11648,7 +12210,7 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).magic, 14)
-                    }, null, 8, _hoisted_2$1)
+                    }, null, 8, _hoisted_3$1)
                   ])) : createCommentVNode("", true),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
@@ -11658,17 +12220,17 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).plus, 14)
-                    }, null, 8, _hoisted_3$1)
+                    }, null, 8, _hoisted_4$1)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-secondary",
                     type: "button",
-                    title: "配置价格与通用文件",
-                    onClick: _cache[0] || (_cache[0] = ($event) => showPriceModal.value = true)
+                    title: "通用文件配置",
+                    onClick: _cache[0] || (_cache[0] = ($event) => showCommonFilesModal.value = true)
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).edit, 14)
-                    }, null, 8, _hoisted_4$1)
+                      innerHTML: unref(withSize)(unref(icons).folder, 14)
+                    }, null, 8, _hoisted_5$1)
                   ]),
                   createElementVNode("button", {
                     class: "booth-btn booth-btn-sm booth-btn-primary",
@@ -11678,23 +12240,35 @@ ${this.smart}`;
                   }, [
                     createElementVNode("span", {
                       innerHTML: unref(withSize)(unref(icons).send, 14)
-                    }, null, 8, _hoisted_5$1)
+                    }, null, 8, _hoisted_6$1)
                   ])
                 ]),
                 default: withCtx(() => [
-                  _ctx.itemConfig.commonFiles && _ctx.itemConfig.commonFiles.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, [
-                    createElementVNode("div", _hoisted_7$1, [
+                  _ctx.itemConfig.commonFiles && _ctx.itemConfig.commonFiles.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_7$1, [
+                    createElementVNode("div", _hoisted_8$1, [
                       _cache[2] || (_cache[2] = createElementVNode("span", { class: "be-text-xs be-text-secondary be-font-semibold" }, "通用文件:", -1)),
                       (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.itemConfig.commonFiles, (fileId) => {
                         return openBlock(), createElementBlock("span", {
                           key: fileId,
-                          class: "file-tag be-text-xs be-px-xs be-py-1",
-                          style: { "background": "var(--be-color-bg)", "border": "1px solid var(--be-color-border)", "border-radius": "4px" }
-                        }, toDisplayString(getFileName(fileId)), 1);
+                          class: normalizeClass(["common-file-tag", { "is-missing": !getFileName(fileId) }]),
+                          title: getFileName(fileId) ? "" : "此文件已不存在，点击 × 移除"
+                        }, [
+                          createElementVNode("span", _hoisted_10$1, toDisplayString(getFileName(fileId) || "(已失效)"), 1),
+                          createElementVNode("button", {
+                            class: "common-file-remove",
+                            type: "button",
+                            title: "从通用文件中移除",
+                            onClick: withModifiers(($event) => removeCommonFile(fileId), ["stop"])
+                          }, [
+                            createElementVNode("span", {
+                              innerHTML: unref(withSize)(unref(icons).close, 10)
+                            }, null, 8, _hoisted_12$1)
+                          ], 8, _hoisted_11$1)
+                        ], 10, _hoisted_9$1);
                       }), 128))
                     ])
                   ])) : createCommentVNode("", true),
-                  _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_8$1, ' 暂无 Variations，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
+                  _ctx.itemConfig.variations.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_13$1, ' 暂无 Variations，点击"添加"或"从页面导入" ')) : (openBlock(), createBlock(unref(DraggableCardList), {
                     key: 2,
                     items: _ctx.itemConfig.variations,
                     "key-extractor": (item) => unref(getStableKey)(item),
@@ -11703,7 +12277,7 @@ ${this.smart}`;
                     onReorder: onVariationReorder
                   }, {
                     actions: withCtx(({ item: variation, index }) => [
-                      createElementVNode("div", _hoisted_9$1, [
+                      createElementVNode("div", _hoisted_14$1, [
                         createElementVNode("input", {
                           value: variation.name,
                           type: "text",
@@ -11711,13 +12285,13 @@ ${this.smart}`;
                           style: { "height": "28px" },
                           placeholder: "Variation 名称",
                           onInput: ($event) => handleVariationNameInput(variation, $event)
-                        }, null, 40, _hoisted_10$1),
-                        !hasFullset.value || variation.isFullset ? (openBlock(), createElementBlock("label", _hoisted_11$1, [
+                        }, null, 40, _hoisted_15$1),
+                        !hasFullset.value || variation.isFullset ? (openBlock(), createElementBlock("label", _hoisted_16$1, [
                           createElementVNode("input", {
                             type: "checkbox",
                             checked: variation.isFullset,
                             onChange: ($event) => toggleFullset(variation, index)
-                          }, null, 40, _hoisted_12$1),
+                          }, null, 40, _hoisted_17$1),
                           _cache[3] || (_cache[3] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
                         ])) : createCommentVNode("", true),
                         !variation.isFullset ? (openBlock(), createElementBlock("button", {
@@ -11729,20 +12303,20 @@ ${this.smart}`;
                         }, [
                           createElementVNode("span", {
                             innerHTML: unref(withSize)(unref(icons).folder, 14)
-                          }, null, 8, _hoisted_14$1)
-                        ], 8, _hoisted_13$1)) : createCommentVNode("", true)
+                          }, null, 8, _hoisted_19$1)
+                        ], 8, _hoisted_18$1)) : createCommentVNode("", true)
                       ])
                     ]),
                     content: withCtx(({ item: variation, index }) => [
-                      createElementVNode("div", _hoisted_15$1, [
-                        createElementVNode("div", _hoisted_16$1, [
-                          variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_17$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
-                            createElementVNode("span", _hoisted_18$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1),
-                            createElementVNode("label", _hoisted_19$1, [
+                      createElementVNode("div", _hoisted_20$1, [
+                        createElementVNode("div", _hoisted_21$1, [
+                          variation.isFullset ? (openBlock(), createElementBlock("span", _hoisted_22$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                            createElementVNode("span", _hoisted_23$1, " ¥" + toDisplayString(getVariationPrice(variation)), 1),
+                            createElementVNode("label", _hoisted_24$1, [
                               withDirectives(createElementVNode("input", {
                                 type: "checkbox",
                                 "onUpdate:modelValue": ($event) => variation.useCustomPrice = $event
-                              }, null, 8, _hoisted_20$1), [
+                              }, null, 8, _hoisted_25$1), [
                                 [vModelCheckbox, variation.useCustomPrice]
                               ]),
                               _cache[4] || (_cache[4] = createElementVNode("span", { class: "toggle-slider" }, null, -1))
@@ -11755,7 +12329,7 @@ ${this.smart}`;
                               style: { "height": "28px", "min-width": "80px" },
                               min: "0",
                               placeholder: "价格"
-                            }, null, 8, _hoisted_21$1)), [
+                            }, null, 8, _hoisted_26$1)), [
                               [
                                 vModelText,
                                 variation.customPrice,
@@ -11763,7 +12337,7 @@ ${this.smart}`;
                                 { number: true }
                               ]
                             ]) : createCommentVNode("", true),
-                            createElementVNode("span", _hoisted_22$1, " 支持数: " + toDisplayString(getVariationSupportCount(variation)), 1)
+                            createElementVNode("span", _hoisted_27$1, " 支持数: " + toDisplayString(getVariationSupportCount(variation)), 1)
                           ], 64))
                         ]),
                         !variation.isFullset && variation.fileIds && variation.fileIds.length > 0 ? (openBlock(), createElementBlock("div", {
@@ -11775,8 +12349,11 @@ ${this.smart}`;
                               key: fileId,
                               class: "item-card"
                             }, [
-                              createElementVNode("div", _hoisted_23$1, [
-                                createElementVNode("span", _hoisted_24, toDisplayString(getFileName(fileId)), 1),
+                              createElementVNode("div", _hoisted_28$1, [
+                                createElementVNode("span", {
+                                  class: normalizeClass(["item-card-title", { "is-missing": !getFileName(fileId) }]),
+                                  title: getFileName(fileId) ? getFileName(fileId) : "此文件已不存在，点击 × 移除"
+                                }, toDisplayString(getFileName(fileId) || "(已失效)"), 11, _hoisted_29$1),
                                 createElementVNode("button", {
                                   class: "item-card-delete-btn",
                                   type: "button",
@@ -11785,18 +12362,18 @@ ${this.smart}`;
                                 }, [
                                   createElementVNode("span", {
                                     innerHTML: unref(withSize)(unref(icons).close, 12)
-                                  }, null, 8, _hoisted_26)
-                                ], 8, _hoisted_25)
+                                  }, null, 8, _hoisted_31$1)
+                                ], 8, _hoisted_30$1)
                               ]),
-                              createElementVNode("div", _hoisted_27, [
-                                createElementVNode("div", _hoisted_28, [
+                              createElementVNode("div", _hoisted_32$1, [
+                                createElementVNode("div", _hoisted_33$1, [
                                   (openBlock(true), createElementBlock(Fragment, null, renderList(getFileItemIds(index, fileId), (itemId) => {
                                     var _a, _b, _c;
                                     return openBlock(), createElementBlock("div", {
                                       key: itemId,
                                       class: "item-tag"
                                     }, [
-                                      createElementVNode("span", _hoisted_29, toDisplayString(((_b = (_a = props.itemTree.nodes[itemId]) == null ? void 0 : _a.data) == null ? void 0 : _b.itemName) || ((_c = props.itemTree.nodes[itemId]) == null ? void 0 : _c.name) || "未知商品"), 1),
+                                      createElementVNode("span", _hoisted_34$1, toDisplayString(((_b = (_a = props.itemTree.nodes[itemId]) == null ? void 0 : _a.data) == null ? void 0 : _b.itemName) || ((_c = props.itemTree.nodes[itemId]) == null ? void 0 : _c.name) || "未知商品"), 1),
                                       createElementVNode("button", {
                                         class: "item-tag-remove",
                                         type: "button",
@@ -11805,8 +12382,8 @@ ${this.smart}`;
                                       }, [
                                         createElementVNode("span", {
                                           innerHTML: unref(withSize)(unref(icons).close, 10)
-                                        }, null, 8, _hoisted_31)
-                                      ], 8, _hoisted_30)
+                                        }, null, 8, _hoisted_36)
+                                      ], 8, _hoisted_35)
                                     ]);
                                   }), 128)),
                                   createElementVNode("button", {
@@ -11817,8 +12394,8 @@ ${this.smart}`;
                                   }, [
                                     createElementVNode("span", {
                                       innerHTML: unref(withSize)(unref(icons).plus, 12)
-                                    }, null, 8, _hoisted_33)
-                                  ], 8, _hoisted_32)
+                                    }, null, 8, _hoisted_38)
+                                  ], 8, _hoisted_37)
                                 ])
                               ])
                             ]);
@@ -11831,61 +12408,83 @@ ${this.smart}`;
                 ]),
                 _: 1
               }, 8, ["title"]),
-              createVNode(VariationConfigModal, {
-                show: showPriceModal.value,
+              createVNode(_sfc_main$2, {
+                show: showCommonFilesModal.value,
                 "item-config": _ctx.itemConfig,
-                "global-templates": _ctx.globalTemplates,
                 "available-files": availableFiles.value,
-                onClose: _cache[1] || (_cache[1] = ($event) => showPriceModal.value = false)
-              }, null, 8, ["show", "item-config", "global-templates", "available-files"])
+                onClose: _cache[1] || (_cache[1] = ($event) => showCommonFilesModal.value = false)
+              }, null, 8, ["show", "item-config", "available-files"])
             ], 64);
           };
         }
       });
-      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-1d97034f"]]);
+      const VariationsListSection = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-c585feee"]]);
       const _hoisted_1 = ["innerHTML"];
       const _hoisted_2 = { key: 0 };
       const _hoisted_3 = { class: "form-group" };
       const _hoisted_4 = { class: "form-group" };
-      const _hoisted_5 = {
+      const _hoisted_5 = { class: "form-group" };
+      const _hoisted_6 = {
         key: 1,
         class: "be-flex be-flex-column be-gap-sm"
       };
-      const _hoisted_6 = { class: "form-group" };
-      const _hoisted_7 = ["innerHTML"];
-      const _hoisted_8 = ["disabled"];
-      const _hoisted_9 = ["innerHTML"];
+      const _hoisted_7 = { class: "form-group" };
+      const _hoisted_8 = {
+        key: 2,
+        class: "modal-content"
+      };
+      const _hoisted_9 = { class: "modal-message" };
       const _hoisted_10 = ["innerHTML"];
-      const _hoisted_11 = {
+      const _hoisted_11 = ["disabled"];
+      const _hoisted_12 = ["innerHTML"];
+      const _hoisted_13 = ["innerHTML"];
+      const _hoisted_14 = ["innerHTML"];
+      const _hoisted_15 = {
         key: 0,
         class: "empty-state"
       };
-      const _hoisted_12 = ["innerHTML"];
-      const _hoisted_13 = {
+      const _hoisted_16 = { class: "empty-icon-wrap empty-icon-wrap--warning" };
+      const _hoisted_17 = ["innerHTML"];
+      const _hoisted_18 = {
         key: 1,
         class: "empty-state"
       };
-      const _hoisted_14 = ["innerHTML"];
-      const _hoisted_15 = ["innerHTML"];
-      const _hoisted_16 = {
+      const _hoisted_19 = { class: "empty-icon-wrap empty-icon-wrap--primary" };
+      const _hoisted_20 = ["innerHTML"];
+      const _hoisted_21 = ["innerHTML"];
+      const _hoisted_22 = {
         key: 2,
         class: "edit-tab"
       };
-      const _hoisted_17 = { class: "edit-tab-scrollable" };
-      const _hoisted_18 = { class: "be-text-primary be-font-bold be-mb-sm" };
-      const _hoisted_19 = { class: "be-text-secondary" };
-      const _hoisted_20 = { class: "be-flex be-flex-column be-gap-sm" };
-      const _hoisted_21 = { class: "form-hint be-text-xs be-text-secondary" };
-      const _hoisted_22 = ["innerHTML"];
-      const _hoisted_23 = ["innerHTML"];
+      const _hoisted_23 = { class: "edit-tab-toolbar" };
+      const _hoisted_24 = {
+        class: "toolbar-badge",
+        title: "适配数量"
+      };
+      const _hoisted_25 = {
+        key: 0,
+        class: "toolbar-badge toolbar-badge--sale",
+        title: "折扣已启用"
+      };
+      const _hoisted_26 = ["innerHTML"];
+      const _hoisted_27 = ["innerHTML"];
+      const _hoisted_28 = { class: "edit-tab-scrollable" };
+      const _hoisted_29 = { class: "be-text-primary be-font-bold be-mb-sm" };
+      const _hoisted_30 = { class: "be-text-secondary" };
+      const _hoisted_31 = { class: "be-flex be-flex-column be-gap-sm" };
+      const _hoisted_32 = { class: "form-hint be-text-xs be-text-secondary" };
+      const _hoisted_33 = ["innerHTML"];
+      const _hoisted_34 = ["innerHTML"];
       const _sfc_main = /* @__PURE__ */ defineComponent({
         __name: "EditTab",
         props: {
           api: {}
         },
         setup(__props, { expose: __expose }) {
+          const props = __props;
           const { data } = useStorage();
           const modal = useModal();
+          const { files: reactiveFiles } = useApiFiles(props.api);
           const modalState = computed(() => modal.state.value);
           const isPreviewModal = computed(() => {
             var _a;
@@ -11902,6 +12501,7 @@ ${this.smart}`;
             }
           );
           const showDescTemplateModal = ref(false);
+          const showPricingModal = ref(false);
           const currentItemId = computed(() => {
             const match = window.location.pathname.match(/\/items\/(\d+)\/edit/);
             return match ? match[1] : null;
@@ -11934,8 +12534,9 @@ ${this.smart}`;
             const firstName = (firstVariation == null ? void 0 : firstVariation.name) || firstItemId && getItemName(firstItemId) || config.itemName;
             const smartTitle = normalVariations.length > 1 || supportCount > 1 ? `${supportCount} ${pluralize(itemTypeName, supportCount)}` : firstName;
             const discountIndicatorTemplate = config.discount.enabled ? getSelectedDiscountIndicatorTemplate(globalTemplates.value, config) : "";
+            const activePeriod = getActiveDiscount(config.discount);
             const discountIndicator = parseTemplate(discountIndicatorTemplate, {
-              discountPercent: config.discount.discountPercent
+              discountPercent: (activePeriod == null ? void 0 : activePeriod.discountPercent) ?? 0
             });
             return {
               itemName: config.itemName || "",
@@ -11973,49 +12574,52 @@ ${this.smart}`;
             if (customDesc) {
               parts.push(customDesc);
             }
-            if (currentItemConfig.value.discount.enabled) {
+            if (currentItemConfig.value.discount.enabled && currentItemConfig.value.discount.periods.length > 0) {
               const normalOriginalPrice = currentItemConfig.value.pricing.normalVariationPrice;
-              const normalDiscountedPrice = applyDiscount(
-                normalOriginalPrice,
-                currentItemConfig.value.discount
-              );
               const fullsetOriginalPrice = currentItemConfig.value.pricing.fullsetPrice;
-              const fullsetDiscountedPrice = applyDiscount(
-                fullsetOriginalPrice,
-                currentItemConfig.value.discount
-              );
-              const discountTemplate = getSelectedDiscountTemplate(globalTemplates.value, currentItemConfig.value);
-              const discountText = parseTemplate(
-                discountTemplate,
-                {
-                  ...templateVars.value,
-                  originalPrice: normalOriginalPrice,
-                  discountedPrice: normalDiscountedPrice,
-                  discountPercent: currentItemConfig.value.discount.discountPercent,
-                  fullsetOriginalPrice,
-                  fullsetDiscountedPrice,
-                  startDate: formatDateTime(currentItemConfig.value.discount.startDate),
-                  endDate: formatDateTime(currentItemConfig.value.discount.endDate)
-                }
-              );
-              parts.push(discountText);
+              const discountTpl = getSelectedDiscountTemplate(globalTemplates.value, currentItemConfig.value);
+              if (discountTpl) {
+                const headerText = discountTpl.header || "";
+                const periodTpl = discountTpl.periodTemplate || discountTpl.template || "";
+                const periodTexts = currentItemConfig.value.discount.periods.map((period) => {
+                  const normalDiscountedPrice = applyDiscountPercent(normalOriginalPrice, period.discountPercent);
+                  const fullsetDiscountedPrice = applyDiscountPercent(fullsetOriginalPrice, period.discountPercent);
+                  return parseTemplate(periodTpl, {
+                    ...templateVars.value,
+                    originalPrice: normalOriginalPrice,
+                    discountedPrice: normalDiscountedPrice,
+                    discountPercent: period.discountPercent,
+                    fullsetOriginalPrice,
+                    fullsetDiscountedPrice,
+                    startDate: formatDateTime(period.startDate),
+                    endDate: formatDateTime(period.endDate)
+                  });
+                });
+                const discountBlock = [headerText, ...periodTexts].filter(Boolean).join("\n");
+                parts.push(discountBlock);
+              }
             }
             return parts.join("\n\n");
           });
           async function handleCreateItem() {
-            var _a;
+            var _a, _b;
             const result = await modal.openModal({
               type: "createItem",
               title: "创建商品配置",
               formData: {
                 itemName: "",
-                itemType: "adaptation"
+                itemType: "adaptation",
+                itemTypeName: "Avatar"
               }
             });
             if (((_a = result == null ? void 0 : result.itemName) == null ? void 0 : _a.trim()) && currentItemId.value) {
               const config = createDefaultItemConfig(currentItemId.value);
               config.itemName = result.itemName.trim();
               config.itemType = result.itemType;
+              const typeName = (_b = result.itemTypeName) == null ? void 0 : _b.trim();
+              if (typeName) {
+                config.itemTypeName = typeName;
+              }
               data.value.itemConfigs[currentItemId.value] = config;
               toast.success("已创建商品配置");
             }
@@ -12120,7 +12724,7 @@ ${this.smart}`;
                     onClick: _cache[0] || (_cache[0] = ($event) => showDescTemplateModal.value = true)
                   }, [
                     createElementVNode("span", {
-                      innerHTML: unref(withSize)(unref(icons).settings, 18)
+                      innerHTML: unref(withSize)(unref(icons).settings, 16)
                     }, null, 8, _hoisted_1)
                   ])) : createCommentVNode("", true)
                 ]),
@@ -12131,12 +12735,12 @@ ${this.smart}`;
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                       type: "button",
                       title: "取消",
-                      onClick: _cache[5] || (_cache[5] = //@ts-ignore
+                      onClick: _cache[7] || (_cache[7] = //@ts-ignore
                       (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
                     }, [
                       createElementVNode("span", {
-                        innerHTML: unref(withSize)(unref(icons).close, 18)
-                      }, null, 8, _hoisted_7)
+                        innerHTML: unref(withSize)(unref(icons).close, 16)
+                      }, null, 8, _hoisted_10)
                     ]),
                     modalState.value.type === "createItem" ? (openBlock(), createElementBlock("button", {
                       key: 0,
@@ -12144,102 +12748,160 @@ ${this.smart}`;
                       type: "button",
                       title: "创建配置",
                       disabled: !((_a = modalState.value.formData.itemName) == null ? void 0 : _a.trim()),
-                      onClick: _cache[6] || (_cache[6] = ($event) => unref(modal).confirmModal(modalState.value.formData))
+                      onClick: _cache[8] || (_cache[8] = ($event) => unref(modal).confirmModal(modalState.value.formData))
                     }, [
                       createElementVNode("span", {
-                        innerHTML: unref(withSize)(unref(icons).check, 18)
-                      }, null, 8, _hoisted_9)
-                    ], 8, _hoisted_8)) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
+                        innerHTML: unref(withSize)(unref(icons).check, 16)
+                      }, null, 8, _hoisted_12)
+                    ], 8, _hoisted_11)) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("button", {
                       key: 1,
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
                       type: "button",
                       title: "保存",
-                      onClick: _cache[7] || (_cache[7] = ($event) => unref(modal).confirmModal(modalState.value.formData))
+                      onClick: _cache[9] || (_cache[9] = ($event) => unref(modal).confirmModal(modalState.value.formData))
                     }, [
                       createElementVNode("span", {
-                        innerHTML: unref(withSize)(unref(icons).check, 18)
-                      }, null, 8, _hoisted_10)
+                        innerHTML: unref(withSize)(unref(icons).check, 16)
+                      }, null, 8, _hoisted_13)
+                    ])) : modalState.value.type === "delete" ? (openBlock(), createElementBlock("button", {
+                      key: 2,
+                      class: "booth-btn booth-btn-md booth-btn-icon booth-btn-danger",
+                      type: "button",
+                      title: "确认",
+                      onClick: _cache[10] || (_cache[10] = ($event) => unref(modal).confirmModal(true))
+                    }, [
+                      createElementVNode("span", {
+                        innerHTML: unref(withSize)(unref(icons).check, 16)
+                      }, null, 8, _hoisted_14)
                     ])) : createCommentVNode("", true)
                   ];
                 }),
-                default: withCtx(() => [
-                  modalState.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_2, [
-                    _cache[15] || (_cache[15] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
-                    createElementVNode("div", _hoisted_3, [
-                      _cache[12] || (_cache[12] = createElementVNode("label", null, [
-                        createTextVNode("商品名称 "),
-                        createElementVNode("span", { class: "required" }, "*")
-                      ], -1)),
-                      withDirectives(createElementVNode("input", {
-                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => modalState.value.formData.itemName = $event),
-                        type: "text",
-                        placeholder: "输入商品名称",
-                        onKeyup: _cache[2] || (_cache[2] = withKeys(($event) => unref(modal).confirmModal(modalState.value.formData), ["enter"]))
-                      }, null, 544), [
-                        [vModelText, modalState.value.formData.itemName]
-                      ])
-                    ]),
-                    createElementVNode("div", _hoisted_4, [
-                      _cache[14] || (_cache[14] = createElementVNode("label", null, "商品类型", -1)),
-                      withDirectives(createElementVNode("select", {
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => modalState.value.formData.itemType = $event)
-                      }, _cache[13] || (_cache[13] = [
-                        createElementVNode("option", { value: "normal" }, "普通商品", -1),
-                        createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
-                      ]), 512), [
-                        [vModelSelect, modalState.value.formData.itemType]
-                      ])
-                    ])
-                  ])) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_5, [
-                    createElementVNode("div", _hoisted_6, [
-                      _cache[16] || (_cache[16] = createElementVNode("label", null, "自定义描述 (此商品专属)", -1)),
-                      withDirectives(createElementVNode("textarea", {
-                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => modalState.value.formData.customDescription = $event),
-                        rows: "8",
-                        placeholder: "输入此商品的特殊说明..."
-                      }, null, 512), [
-                        [vModelText, modalState.value.formData.customDescription]
-                      ])
-                    ]),
-                    createVNode(unref(PreviewBox), {
-                      label: "最终描述预览",
-                      type: "pre"
-                    }, {
-                      default: withCtx(() => [
-                        createTextVNode(toDisplayString(previewDescription.value), 1)
+                default: withCtx(() => {
+                  var _a;
+                  return [
+                    modalState.value.type === "createItem" ? (openBlock(), createElementBlock("div", _hoisted_2, [
+                      _cache[21] || (_cache[21] = createElementVNode("p", { class: "hint-text" }, " 为当前商品创建编辑配置，配置后可以管理商品名称、描述、Sections 和 Variations。 ", -1)),
+                      createElementVNode("div", _hoisted_3, [
+                        _cache[17] || (_cache[17] = createElementVNode("label", null, [
+                          createTextVNode("商品名称 "),
+                          createElementVNode("span", { class: "required" }, "*")
+                        ], -1)),
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => modalState.value.formData.itemName = $event),
+                          type: "text",
+                          placeholder: "输入商品名称",
+                          onKeyup: _cache[2] || (_cache[2] = withKeys(($event) => unref(modal).confirmModal(modalState.value.formData), ["enter"]))
+                        }, null, 544), [
+                          [vModelText, modalState.value.formData.itemName]
+                        ])
                       ]),
-                      _: 1
-                    })
-                  ])) : createCommentVNode("", true)
-                ]),
+                      createElementVNode("div", _hoisted_4, [
+                        _cache[19] || (_cache[19] = createElementVNode("label", null, "商品类型", -1)),
+                        withDirectives(createElementVNode("select", {
+                          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => modalState.value.formData.itemType = $event)
+                        }, _cache[18] || (_cache[18] = [
+                          createElementVNode("option", { value: "normal" }, "普通商品", -1),
+                          createElementVNode("option", { value: "adaptation" }, "适配商品", -1)
+                        ]), 512), [
+                          [vModelSelect, modalState.value.formData.itemType]
+                        ])
+                      ]),
+                      createElementVNode("div", _hoisted_5, [
+                        _cache[20] || (_cache[20] = createElementVNode("label", null, [
+                          createTextVNode(" 商品类型名称 "),
+                          createElementVNode("span", { class: "label-hint" }, "（用于生成复数形式，如 Avatar → Avatars）")
+                        ], -1)),
+                        withDirectives(createElementVNode("input", {
+                          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => modalState.value.formData.itemTypeName = $event),
+                          type: "text",
+                          placeholder: "如: Avatar, Model, Texture",
+                          onKeyup: _cache[5] || (_cache[5] = withKeys(($event) => unref(modal).confirmModal(modalState.value.formData), ["enter"]))
+                        }, null, 544), [
+                          [vModelText, modalState.value.formData.itemTypeName]
+                        ])
+                      ])
+                    ])) : modalState.value.type === "editDescription" ? (openBlock(), createElementBlock("div", _hoisted_6, [
+                      createElementVNode("div", _hoisted_7, [
+                        _cache[22] || (_cache[22] = createElementVNode("label", null, "自定义描述 (此商品专属)", -1)),
+                        withDirectives(createElementVNode("textarea", {
+                          "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => modalState.value.formData.customDescription = $event),
+                          rows: "8",
+                          placeholder: "输入此商品的特殊说明..."
+                        }, null, 512), [
+                          [vModelText, modalState.value.formData.customDescription]
+                        ])
+                      ]),
+                      createVNode(unref(PreviewBox), {
+                        label: "最终描述预览",
+                        type: "pre"
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(toDisplayString(previewDescription.value), 1)
+                        ]),
+                        _: 1
+                      })
+                    ])) : modalState.value.type === "delete" ? (openBlock(), createElementBlock("div", _hoisted_8, [
+                      createElementVNode("p", _hoisted_9, toDisplayString(((_a = modalState.value.formData) == null ? void 0 : _a.message) || "确认执行此操作？"), 1)
+                    ])) : createCommentVNode("", true)
+                  ];
+                }),
                 _: 1
               }, 8, ["show", "title", "onClose"]),
-              !currentItemId.value ? (openBlock(), createElementBlock("div", _hoisted_11, [
-                createElementVNode("div", {
-                  class: "empty-icon",
-                  innerHTML: unref(withSize)(unref(icons).alertCircle, 48)
-                }, null, 8, _hoisted_12),
-                _cache[17] || (_cache[17] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "无法获取商品 ID", -1)),
-                _cache[18] || (_cache[18] = createElementVNode("p", null, "请确保在商品编辑页面使用此功能", -1))
-              ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_13, [
-                createElementVNode("div", {
-                  class: "empty-icon",
-                  innerHTML: unref(withSize)(unref(icons).file, 64)
-                }, null, 8, _hoisted_14),
-                _cache[20] || (_cache[20] = createElementVNode("div", { class: "be-text-lg be-font-bold" }, "未配置此商品", -1)),
-                _cache[21] || (_cache[21] = createElementVNode("p", null, "为当前商品创建编辑配置，开始管理商品信息", -1)),
+              !currentItemId.value ? (openBlock(), createElementBlock("div", _hoisted_15, [
+                createElementVNode("div", _hoisted_16, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).alertCircle, 40)
+                  }, null, 8, _hoisted_17)
+                ]),
+                _cache[23] || (_cache[23] = createElementVNode("div", { class: "empty-title" }, "无法获取商品 ID", -1)),
+                _cache[24] || (_cache[24] = createElementVNode("p", { class: "empty-subtitle" }, "请确保在商品编辑页面使用此功能", -1))
+              ])) : !hasConfig.value ? (openBlock(), createElementBlock("div", _hoisted_18, [
+                createElementVNode("div", _hoisted_19, [
+                  createElementVNode("span", {
+                    innerHTML: unref(withSize)(unref(icons).file, 40)
+                  }, null, 8, _hoisted_20)
+                ]),
+                _cache[26] || (_cache[26] = createElementVNode("div", { class: "empty-title" }, "还没有为这个商品创建配置", -1)),
+                _cache[27] || (_cache[27] = createElementVNode("p", { class: "empty-subtitle" }, " 创建配置后可以统一管理名称、描述、Sections、Tags 和 Variations，一键应用到 Booth 编辑页 ", -1)),
                 createElementVNode("button", {
-                  class: "booth-btn booth-btn-lg booth-btn-primary",
+                  class: "booth-btn booth-btn-lg booth-btn-primary empty-cta",
                   onClick: handleCreateItem
                 }, [
                   createElementVNode("span", {
                     innerHTML: unref(withSize)(unref(icons).plus, 16)
-                  }, null, 8, _hoisted_15),
-                  _cache[19] || (_cache[19] = createTextVNode(" 创建商品配置 ", -1))
+                  }, null, 8, _hoisted_21),
+                  _cache[25] || (_cache[25] = createElementVNode("span", null, "创建商品配置", -1))
                 ])
-              ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_16, [
-                createElementVNode("div", _hoisted_17, [
-                  createVNode(_sfc_main$b, {
+              ])) : currentItemConfig.value ? (openBlock(), createElementBlock("div", _hoisted_22, [
+                createElementVNode("div", _hoisted_23, [
+                  createElementVNode("span", _hoisted_24, toDisplayString(totalSupport.value) + " " + toDisplayString(currentItemConfig.value.itemTypeName || "Items"), 1),
+                  currentItemConfig.value.discount.enabled ? (openBlock(), createElementBlock("span", _hoisted_25, "SALE")) : createCommentVNode("", true),
+                  _cache[30] || (_cache[30] = createElementVNode("div", { style: { "flex": "1" } }, null, -1)),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-secondary",
+                    type: "button",
+                    title: "价格与折扣配置",
+                    onClick: _cache[11] || (_cache[11] = ($event) => showPricingModal.value = true)
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).settings, 14)
+                    }, null, 8, _hoisted_26),
+                    _cache[28] || (_cache[28] = createElementVNode("span", null, "价格", -1))
+                  ]),
+                  createElementVNode("button", {
+                    class: "booth-btn booth-btn-sm booth-btn-primary",
+                    type: "button",
+                    title: "应用所有配置到页面",
+                    onClick: applyAll
+                  }, [
+                    createElementVNode("span", {
+                      innerHTML: unref(withSize)(unref(icons).send, 14)
+                    }, null, 8, _hoisted_27),
+                    _cache[29] || (_cache[29] = createElementVNode("span", null, "应用所有", -1))
+                  ])
+                ]),
+                createElementVNode("div", _hoisted_28, [
+                  createVNode(_sfc_main$a, {
                     ref_key: "itemNameSectionRef",
                     ref: itemNameSectionRef,
                     "item-config": currentItemConfig.value,
@@ -12249,7 +12911,7 @@ ${this.smart}`;
                     "total-support": totalSupport.value,
                     "item-tree": unref(data).itemTree
                   }, null, 8, ["item-config", "global-templates", "template-vars", "api", "total-support", "item-tree"]),
-                  createVNode(_sfc_main$f, {
+                  createVNode(_sfc_main$e, {
                     ref_key: "itemDescriptionSectionRef",
                     ref: itemDescriptionSectionRef,
                     "item-config": currentItemConfig.value,
@@ -12283,11 +12945,10 @@ ${this.smart}`;
                     ref_key: "variationsListSectionRef",
                     ref: variationsListSectionRef,
                     "item-config": currentItemConfig.value,
-                    "global-templates": globalTemplates.value,
                     api: _ctx.api,
                     modal: unref(modal),
                     "item-tree": unref(data).itemTree
-                  }, null, 8, ["item-config", "global-templates", "api", "modal", "item-tree"])) : createCommentVNode("", true)
+                  }, null, 8, ["item-config", "api", "modal", "item-tree"])) : createCommentVNode("", true)
                 ]),
                 createVNode(unref(Modal), {
                   show: modalState.value.show && isPreviewModal.value,
@@ -12302,8 +12963,8 @@ ${this.smart}`;
                       type: "pre"
                     }, {
                       default: withCtx(() => [
-                        createElementVNode("div", _hoisted_18, toDisplayString(resolvedSections.value[previewSectionIndex.value].headline), 1),
-                        createElementVNode("div", _hoisted_19, toDisplayString(resolvedSections.value[previewSectionIndex.value].body), 1)
+                        createElementVNode("div", _hoisted_29, toDisplayString(resolvedSections.value[previewSectionIndex.value].headline), 1),
+                        createElementVNode("div", _hoisted_30, toDisplayString(resolvedSections.value[previewSectionIndex.value].body), 1)
                       ]),
                       _: 1
                     })) : createCommentVNode("", true)
@@ -12328,47 +12989,53 @@ ${this.smart}`;
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-secondary",
                       type: "button",
                       title: "取消",
-                      onClick: _cache[9] || (_cache[9] = //@ts-ignore
+                      onClick: _cache[13] || (_cache[13] = //@ts-ignore
                       (...args) => unref(modal).closeModal && unref(modal).closeModal(...args))
                     }, [
                       createElementVNode("span", {
-                        innerHTML: unref(withSize)(unref(icons).close, 18)
-                      }, null, 8, _hoisted_22)
+                        innerHTML: unref(withSize)(unref(icons).close, 16)
+                      }, null, 8, _hoisted_33)
                     ]),
                     createElementVNode("button", {
                       class: "booth-btn booth-btn-md booth-btn-icon booth-btn-primary",
                       type: "button",
                       title: "确认",
-                      onClick: _cache[10] || (_cache[10] = ($event) => unref(modal).confirmModal({ fileIds: tempSelectedFileIds.value }))
+                      onClick: _cache[14] || (_cache[14] = ($event) => unref(modal).confirmModal({ fileIds: tempSelectedFileIds.value }))
                     }, [
                       createElementVNode("span", {
-                        innerHTML: unref(withSize)(unref(icons).check, 18)
-                      }, null, 8, _hoisted_23)
+                        innerHTML: unref(withSize)(unref(icons).check, 16)
+                      }, null, 8, _hoisted_34)
                     ])
                   ]),
                   default: withCtx(() => [
-                    createElementVNode("div", _hoisted_20, [
-                      createElementVNode("p", _hoisted_21, " 点击选择文件（可多选，已选择: " + toDisplayString(tempSelectedFileIds.value.length) + "） ", 1),
+                    createElementVNode("div", _hoisted_31, [
+                      createElementVNode("p", _hoisted_32, " 点击选择文件（可多选，已选择: " + toDisplayString(tempSelectedFileIds.value.length) + "） ", 1),
                       createVNode(unref(FileSelector), {
-                        files: _ctx.api.files,
+                        files: unref(reactiveFiles),
                         "selected-file-ids": tempSelectedFileIds.value,
-                        "onUpdate:selectedFileIds": _cache[8] || (_cache[8] = ($event) => tempSelectedFileIds.value = $event)
+                        "onUpdate:selectedFileIds": _cache[12] || (_cache[12] = ($event) => tempSelectedFileIds.value = $event)
                       }, null, 8, ["files", "selected-file-ids"])
                     ])
                   ]),
                   _: 1
                 }, 8, ["show", "title", "onClose"]),
-                createVNode(_sfc_main$h, {
+                createVNode(_sfc_main$i, {
                   show: showDescTemplateModal.value,
                   "global-templates": globalTemplates.value,
-                  onClose: _cache[11] || (_cache[11] = ($event) => showDescTemplateModal.value = false)
-                }, null, 8, ["show", "global-templates"])
+                  onClose: _cache[15] || (_cache[15] = ($event) => showDescTemplateModal.value = false)
+                }, null, 8, ["show", "global-templates"]),
+                createVNode(PricingModal, {
+                  show: showPricingModal.value,
+                  "item-config": currentItemConfig.value,
+                  "global-templates": globalTemplates.value,
+                  onClose: _cache[16] || (_cache[16] = ($event) => showPricingModal.value = false)
+                }, null, 8, ["show", "item-config", "global-templates"])
               ])) : createCommentVNode("", true)
             ], 64);
           };
         }
       });
-      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-af4e9148"]]));
+      const EditTab = exports("default", /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-1be99d97"]]));
 
     })
   };

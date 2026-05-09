@@ -2,6 +2,7 @@
  * Composables 导出入口
  */
 
+export { useApiFileIdSet, useApiFiles } from './useApiFiles';
 export { createModalHandlers, createTemplateVars, useEditModal } from './useEditModal';
 export { useModal } from './useModal';
 export { itemDataSearchFilter, tagSearchFilter, useSearch } from './useSearch';

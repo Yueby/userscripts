@@ -5,7 +5,7 @@ export interface Tab {
   icon?: string;
 }
 
-const props = defineProps<{
+defineProps<{
   tabs: Tab[];
   activeTab: string;
 }>();
@@ -44,73 +44,105 @@ const handleTabClick = (tabId: string) => {
 <style scoped>
 .tab-bar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  gap: var(--be-space-sm);
+  padding: var(--be-space-xs) var(--be-space-md);
+  background: linear-gradient(
+    180deg,
+    var(--be-color-bg) 0%,
+    var(--be-color-bg-secondary) 100%
+  );
+  border-bottom: 1px solid var(--be-color-border);
+  flex-shrink: 0;
 }
 
 .tab-list {
   display: flex;
-  gap: 2px;
+  gap: var(--be-space-xs);
+  align-items: stretch;
+  min-width: 0;
+  flex: 1;
 }
 
 .tab-btn {
-  padding: 6px 12px;
-  border: 1px solid transparent;
+  position: relative;
+  padding: var(--be-space-sm) var(--be-space-md);
+  border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 12px;
-  color: #6b7280;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-  display: flex;
+  font-size: var(--be-font-size-base);
+  color: var(--be-color-text-secondary);
+  border-radius: var(--be-radius-sm) var(--be-radius-sm) 0 0;
+  transition: color var(--be-transition-normal),
+              background var(--be-transition-normal);
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--be-space-xs);
   font-weight: 500;
+  line-height: 1.2;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+/* 激活指示器：底部主色条，默认缩起，active 时展开 */
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: -1px; /* 与 .tab-bar 的 border-bottom 对齐覆盖 */
+  height: 2px;
+  background: var(--be-color-primary);
+  border-radius: 2px 2px 0 0;
+  transition: left var(--be-transition-normal),
+              right var(--be-transition-normal),
+              opacity var(--be-transition-normal);
+  opacity: 0;
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f3f4f6;
-  color: #374151;
+  color: var(--be-color-text);
+  background: var(--be-color-bg-hover);
+}
+
+.tab-btn:hover:not(.active)::after {
+  left: 30%;
+  right: 30%;
+  opacity: 0.3;
 }
 
 .tab-btn.active {
-  background: white;
-  color: #3b82f6;
+  color: var(--be-color-primary);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-/* Focus 状态 - 优雅的蓝色光晕 */
+.tab-btn.active::after {
+  left: var(--be-space-sm);
+  right: var(--be-space-sm);
+  opacity: 1;
+}
+
+/* Focus 状态 - 与项目其它按钮一致的蓝色光晕 */
 .tab-btn:focus {
   outline: none;
+}
+
+.tab-btn:focus-visible {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.tab-btn.active:focus {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-/* 只在键盘导航时显示 focus 样式 */
-.tab-btn:focus:not(:focus-visible) {
-  box-shadow: none;
-}
-
-.tab-btn.active:focus:not(:focus-visible) {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-radius: var(--be-radius-sm);
 }
 
 .tab-icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: currentColor;
 }
 
 .tab-icon :deep(svg) {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
 }
 
 .tab-label {
@@ -118,8 +150,26 @@ const handleTabClick = (tabId: string) => {
 }
 
 .tab-actions {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--be-space-xs);
+  flex-shrink: 0;
+  padding-left: var(--be-space-sm);
+  border-left: 1px solid var(--be-color-border-light);
+}
+
+/* 紧凑模式：窄屏 */
+@media (max-width: 480px) {
+  .tab-bar {
+    padding: var(--be-space-xs) var(--be-space-sm);
+  }
+  
+  .tab-btn {
+    padding: var(--be-space-sm);
+  }
+  
+  .tab-actions {
+    padding-left: var(--be-space-xs);
+  }
 }
 </style>

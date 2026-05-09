@@ -7,6 +7,7 @@ import ContextMenu from './components/ui/ContextMenu.vue';
 import { icons, withSize } from './components/ui/icons';
 import { useStorage } from './composables';
 import './styles/index.css';
+import { cleanMissingFileIds } from './utils/fileCleanup';
 import { downloadJSON, readJSONFile, triggerFileInput } from './utils/exportHelper';
 
 const props = defineProps<{
@@ -47,30 +48,6 @@ function getTabComponent() {
   }
 }
 
-// EditTab 引用
-const editTabRef = ref<InstanceType<typeof EditTab> | null>(null);
-
-// 设置 ref（用于动态组件）
-function setComponentRef(el: any) {
-  if (data.value.ui.activeTab === 'edit') {
-    editTabRef.value = el;
-  }
-}
-
-// 应用所有配置
-async function handleApplyAll() {
-  if (!editTabRef.value) {
-    toast.error('EditTab 未加载');
-    return;
-  }
-  
-  try {
-    await editTabRef.value.applyAll();
-  } catch (error) {
-    console.error('应用所有配置失败:', error);
-  }
-}
-
 // 根元素引用（用于 Toast 容器）
 const sidebarRef = ref<HTMLElement | null>(null);
 
@@ -95,15 +72,16 @@ watch(() => data.value.ui.sidebarOpen, (isOpen) => {
   const toggleBtn = document.querySelector('.booth-enhancer-toggle');
   
   if (panelRoot) {
-    if (isOpen) {
-      panelRoot.classList.add('panel-open');
-    } else {
-      panelRoot.classList.remove('panel-open');
-    }
+    panelRoot.classList.toggle('panel-open', isOpen);
   }
   
   if (toggleBtn) {
-    toggleBtn.innerHTML = isOpen ? icons.chevronRight : icons.chevronLeft;
+    // 使用与 index.ts 创建按钮时一致的尺寸/stroke
+    toggleBtn.innerHTML = withSize(
+      isOpen ? icons.chevronRight : icons.chevronLeft,
+      20,
+      2.5
+    );
   }
 });
 
@@ -147,8 +125,12 @@ const handleImport = () => {
   triggerFileInput('.json,application/json', async (file) => {
     try {
       const importData = await readJSONFile(file);
-      importAllFromJSON(importData);
-      toast.success('导入成功');
+      const result = importAllFromJSON(importData);
+      if (result.success) {
+        toast.success('导入成功');
+      } else {
+        toast.warning(`导入部分完成，失败项: ${result.failedParts.join('、')}`, 5000);
+      }
     } catch (error) {
       console.error('导入失败:', error);
       toast.error('导入失败：' + (error as Error).message);
@@ -247,52 +229,6 @@ function handleEditExport() {
 }
 
 /**
- * 清理配置中的无效文件ID
- * @returns 被清理的无效文件数量
- */
-function cleanInvalidFileIds(config: any, availableFileIds: Set<string>): number {
-  let removedCount = 0;
-  
-  // 清理通用文件
-  if (config.commonFiles) {
-    const initialLength = config.commonFiles.length;
-    config.commonFiles = config.commonFiles.filter((fileId: string) => 
-      availableFileIds.has(fileId)
-    );
-    removedCount += initialLength - config.commonFiles.length;
-  }
-  
-  // 清理每个 variation 的文件ID
-  if (config.variations) {
-    config.variations.forEach((variation: any) => {
-      // 清理 fileIds 数组
-      if (variation.fileIds) {
-        const initialLength = variation.fileIds.length;
-        variation.fileIds = variation.fileIds.filter((fileId: string) => 
-          availableFileIds.has(fileId)
-        );
-        removedCount += initialLength - variation.fileIds.length;
-      }
-      
-      // 清理 fileItemMap 对象
-      if (variation.fileItemMap) {
-        const validFileItemMap: Record<string, string> = {};
-        for (const [fileId, itemId] of Object.entries(variation.fileItemMap)) {
-          if (availableFileIds.has(fileId)) {
-            validFileItemMap[fileId] = itemId as string;
-          } else {
-            removedCount++;
-          }
-        }
-        variation.fileItemMap = validFileItemMap;
-      }
-    });
-  }
-  
-  return removedCount;
-}
-
-/**
  * 导入商品配置
  */
 function handleEditImport() {
@@ -303,9 +239,10 @@ function handleEditImport() {
       // 将导入的配置应用到当前商品
       config.itemId = props.itemId;
       
-      // 清理无效的文件ID
+      // 清理无效的文件ID（使用统一的 cleanMissingFileIds）
       const availableFileIds = new Set(props.api.files.map(f => f.id));
-      const removedCount = cleanInvalidFileIds(config, availableFileIds);
+      const cleanupResult = cleanMissingFileIds(config, availableFileIds);
+      const removedCount = cleanupResult.total;
       
       // 直接替换当前商品配置
       importSingleItem(config, { replace: true });
@@ -406,12 +343,6 @@ onUnmounted(() => {
       @update:active-tab="handleTabChange"
     >
       <template #actions>
-        <IconButton 
-          v-if="data.ui.activeTab === 'edit'" 
-          :icon="icons.send" 
-          title="应用所有" 
-          @click="handleApplyAll" 
-        />
         <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
         <IconButton :icon="icons.close" title="关闭" @click="closeSidebar" />
       </template>
@@ -440,10 +371,10 @@ onUnmounted(() => {
 
       <template #footer>
         <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-secondary" @click="cancelImport" title="取消">
-          <span v-html="withSize(icons.close, 18)"></span>
+          <span v-html="withSize(icons.close, 16)"></span>
         </button>
         <button class="booth-btn booth-btn-md booth-btn-icon booth-btn-danger" @click="confirmReplaceConfig" title="替换">
-          <span v-html="withSize(icons.check, 18)"></span>
+          <span v-html="withSize(icons.check, 16)"></span>
         </button>
       </template>
     </Modal>
@@ -452,8 +383,7 @@ onUnmounted(() => {
     <div class="sidebar-content">
       <component
         :is="getTabComponent()"
-        :ref="setComponentRef"
-        :key="data.ui.activeTab + '-' + Date.now()"
+        :key="data.ui.activeTab"
         :api="props.api"
       />
     </div>
@@ -468,11 +398,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.98);
-  border: 1px solid #e0e0e0;
-  border-radius: 12px 0 0 12px;
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-  font-size: 12px;
-  color: #333;
+  border: 1px solid var(--be-color-border);
+  border-radius: var(--be-radius-lg) 0 0 var(--be-radius-lg);
+  box-shadow: -6px 0 24px rgba(15, 23, 42, 0.08);
+  font-size: var(--be-font-size-base);
+  color: var(--be-color-text);
   overflow: hidden;
 }
 

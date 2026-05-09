@@ -45,7 +45,7 @@ defineExpose({
 </script>
 
 <template>
-  <SectionHeader title="商品名称">
+  <SectionHeader title="商品名称" collapsible section-id="edit-name">
     <template #actions>
       <button 
         class="booth-btn booth-btn-sm booth-btn-secondary" 

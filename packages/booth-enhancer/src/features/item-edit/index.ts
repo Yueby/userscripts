@@ -139,7 +139,7 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
                 }
 
     /**
-     * 更新侧边栏状态
+     * 更新侧边栏状态（仅在初始化时使用，运行时由 App.vue 的 watch 维护）
      */
     private updateSidebarState(isOpen: boolean): void {
         if (this.toggleBtn) {
@@ -160,10 +160,9 @@ export class ItemEditFeature extends PageFeature<ItemEditAPI> {
         this.toggleBtn.innerHTML = this.chevronLeftIcon;
 
         this.toggleBtn.addEventListener('click', () => {
+            // 只修改 storage 状态，DOM 同步由 App.vue 的 watch 统一处理
             const storage = ConfigStorage.getInstance();
-            const isOpen = !storage.data.value.ui.sidebarOpen;
-            storage.data.value.ui.sidebarOpen = isOpen;
-            this.updateSidebarState(isOpen);
+            storage.data.value.ui.sidebarOpen = !storage.data.value.ui.sidebarOpen;
         });
 
         document.body.appendChild(this.toggleBtn);

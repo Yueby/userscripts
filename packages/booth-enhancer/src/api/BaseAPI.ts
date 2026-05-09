@@ -40,19 +40,21 @@ export abstract class BaseAPI<T = any> {
     }
 
     /**
-     * 等待页面完全加载（包括所有资源和脚本）
+     * 等待 DOM 可交互（DOMContentLoaded 之后即可）
+     * 不等待图片、字体等资源加载完成（'complete' 状态）
      */
     protected waitForDOMReady(): Promise<void> {
         // document.readyState:
         // - 'loading': 文档正在加载
-        // - 'interactive': 文档已解析，DOMContentLoaded 触发
-        // - 'complete': 文档和所有资源加载完成，load 事件触发
-        if (document.readyState === 'complete') {
+        // - 'interactive': 文档已解析，DOMContentLoaded 已触发
+        // - 'complete': 文档和所有资源加载完成
+        // 脚本只需要 DOM 树就绪，不必等所有资源
+        if (document.readyState !== 'loading') {
             return Promise.resolve();
         }
         
         return new Promise(resolve => 
-            window.addEventListener('load', () => resolve(), { once: true })
+            document.addEventListener('DOMContentLoaded', () => resolve(), { once: true })
         );
     }
 

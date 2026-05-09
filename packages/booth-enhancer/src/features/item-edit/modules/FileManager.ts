@@ -96,22 +96,32 @@ export class FileManager extends PageModule<ItemEditAPI> {
     }
 
     /**
-     * 设置所有复选框状态
+     * 设置所有复选框状态（分批执行，避免一次性触发过多 React 更新）
      */
-    private setAllCheckboxes(checked: boolean): void {
-        // 获取所有文件的复选框
+    private async setAllCheckboxes(checked: boolean): Promise<void> {
         const fileCheckboxes = document.querySelectorAll(
             'ul.list-none input.charcoal-checkbox-input[type="checkbox"]'
         );
         
-        Array.from(fileCheckboxes).forEach((checkbox) => {
-            const input = checkbox as HTMLInputElement;
-            // 只操作状态不一致的复选框
-            if (input.checked !== checked) {
-                // 使用 Simulate.click 确保 React 状态正确更新
-                Simulate.click(input);
+        // 只处理状态需要变化的复选框
+        const toToggle = Array.from(fileCheckboxes).filter(
+            cb => (cb as HTMLInputElement).checked !== checked
+        );
+        
+        if (toToggle.length === 0) return;
+        
+        const BATCH_SIZE = 10;
+        const FRAME_DELAY = () => new Promise(resolve => requestAnimationFrame(resolve));
+        
+        for (let i = 0; i < toToggle.length; i += BATCH_SIZE) {
+            const batch = toToggle.slice(i, i + BATCH_SIZE);
+            batch.forEach(cb => Simulate.click(cb as HTMLInputElement));
+            
+            // 每批之间让出主线程，让 React 完成状态更新
+            if (i + BATCH_SIZE < toToggle.length) {
+                await FRAME_DELAY();
             }
-        });
+        }
     }
 }
 

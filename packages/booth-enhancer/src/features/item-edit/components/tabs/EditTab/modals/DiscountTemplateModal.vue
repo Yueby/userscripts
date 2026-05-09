@@ -28,7 +28,7 @@ const templates = computed({
 
 const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
   templates,
-  defaultTemplate: { template: '' }
+  defaultTemplate: { header: '', periodTemplate: '' }
 });
 </script>
 
@@ -46,12 +46,16 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
         title="添加模板"
         type="button"
       >
-        <span v-html="withSize(icons.plus, 18)"></span>
+        <span v-html="withSize(icons.plus, 16)"></span>
       </button>
     </template>
 
     <SectionHeader>
-      <p class="form-hint" v-html="TEMPLATE_HINTS.discount.replace('\n', '<br>')"></p>
+      <p class="form-hint">
+        头部：只渲染一次（如总标题）<br>
+        时段模板：对每个折扣时段循环渲染<br>
+        {{ TEMPLATE_HINTS.discount }}
+      </p>
       <DraggableCardList
         v-if="globalTemplates.discountTemplates && globalTemplates.discountTemplates.length > 0"
         :items="globalTemplates.discountTemplates"
@@ -63,9 +67,15 @@ const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
           <input v-model="item.name" type="text" placeholder="输入模板名称" style="flex: 1; min-width: 0;" />
         </template>
         <template #content="{ item }">
-          <div class="form-group">
-            <label>模板内容</label>
-            <textarea v-model="item.template" rows="3" placeholder="输入模板内容"></textarea>
+          <div class="be-flex be-flex-column be-gap-sm">
+            <div class="form-group">
+              <label>头部（总标题，只渲染一次）</label>
+              <input v-model="item.header" type="text" placeholder="如: ◆[セール開催中]◆" />
+            </div>
+            <div class="form-group">
+              <label>时段模板（每个折扣时段循环渲染）</label>
+              <textarea v-model="item.periodTemplate" rows="3" placeholder="如: ⏰ {折扣开始时间} - {折扣结束时间} ({折扣百分比}% OFF)&#10;- 単品: {原价} JPY >> {折扣价} JPY"></textarea>
+            </div>
           </div>
         </template>
       </DraggableCardList>

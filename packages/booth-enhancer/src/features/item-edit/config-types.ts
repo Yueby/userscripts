@@ -76,12 +76,18 @@ export interface VariationData {
   fileItemMap?: { [fileId: string]: string[] }; // 文件ID到商品ID数组的映射关系
 }
 
-// 打折配置
+// 单个折扣时段
+export interface DiscountPeriod {
+  id: string;
+  discountPercent: number;    // 该时段的折扣百分比
+  startDate?: string;         // 折扣开始时间 (ISO 8601 格式)
+  endDate?: string;           // 折扣结束时间 (ISO 8601 格式)
+}
+
+// 打折配置（支持多时段）
 export interface DiscountConfig {
-  enabled: boolean; // 打折开关
-  discountPercent: number; // 折扣百分比
-  startDate?: string; // 折扣开始时间 (ISO 8601 格式)
-  endDate?: string; // 折扣结束时间 (ISO 8601 格式)
+  enabled: boolean;           // 打折总开关
+  periods: DiscountPeriod[];  // 折扣时段列表（按时间顺序）
 }
 
 // 价格配置
@@ -114,10 +120,15 @@ export interface SectionTemplate extends BaseTemplate {
 // 类型别名（方便理解各个模板的用途和可用变量）
 export type NameTemplate = TextTemplate;         // 可用变量: {itemName}, {supportCount}
 export type DescriptionTemplate = TextTemplate;  // 可用变量: {itemName}, {supportCount}
-export type DiscountTemplate = TextTemplate;     // 可用变量: {originalPrice}, {discountedPrice}, {discountPercent}, {fullsetOriginalPrice}, {fullsetDiscountedPrice}, {startDate}, {endDate}
 export type DiscountIndicatorTemplate = TextTemplate; // 折扣标识模板（纯文本，如 [SALE]、🔥特价🔥）
 export type LogTemplate = TextTemplate;          // 可用变量: {date}, {content}
 export type ItemInfoTemplate = TextTemplate;     // 可用变量: {authorName}, {itemName}, {itemUrl}
+
+// 折扣模板（B 方案：header + periodTemplate）
+export interface DiscountTemplate extends BaseTemplate {
+  header: string;          // 头部（只渲染一次），可用变量: 无（纯文本标题）
+  periodTemplate: string;  // 每个时段的模板（循环渲染），可用变量: {原价}, {折扣价}, {折扣百分比}, {Fullset原价}, {Fullset折扣价}, {折扣开始时间}, {折扣结束时间}
+}
 
 // 全局模板配置
 export interface GlobalTemplateConfig {
@@ -203,6 +214,7 @@ export interface AppData {
   ui: {
     sidebarOpen: boolean;
     activeTab: 'tags' | 'items' | 'edit';
+    collapsedSections: string[]; // 折叠的 section id 列表
   };
 }
 
@@ -247,13 +259,15 @@ export function createDefaultGlobalTemplates(): GlobalTemplateConfig {
       {
         id: 'default-discount',
         name: '默认打折',
-        template: '【セール中】\n通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)',
+        header: '【セール中】',
+        periodTemplate: '通常価格: ¥{原价} → セール価格: ¥{折扣价} ({折扣百分比}% OFF)\n⏰ {折扣开始时间} - {折扣结束时间}',
         isDefault: true
       },
       {
         id: 'fullset-discount',
         name: '含 Fullset',
-        template: '◆[セール開催中]◆\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY\n⏰ {折扣开始时间} - {折扣结束时间}\n({折扣百分比}% OFF)',
+        header: '◆[セール開催中]◆',
+        periodTemplate: '⏰ {折扣开始时间} - {折扣结束时间} ({折扣百分比}% OFF)\n- フルセット : {Fullset原价} JPY >> {Fullset折扣价} JPY\n- 単品: {原价} JPY >> {折扣价} JPY',
         isDefault: false
       }
     ],
@@ -335,7 +349,7 @@ export function createDefaultSingleItemConfig(itemId: string): SingleItemConfig 
     customDescription: '',
     discount: {
       enabled: false,
-      discountPercent: 0
+      periods: []
     },
     pricing: {
       normalVariationPrice: 0,
@@ -441,13 +455,18 @@ export function getSelectedDescriptionTemplate(
 }
 
 /**
- * 获取选中的打折模板
+ * 获取选中的打折模板对象（B 方案：header + periodTemplate）
  */
 export function getSelectedDiscountTemplate(
   config: GlobalTemplateConfig,
   itemConfig: SingleItemConfig
-): string {
-  return getTemplateByType(config, itemConfig, 'discountTemplates', 'discountTemplateId');
+): DiscountTemplate | null {
+  const templates = config.discountTemplates;
+  if (!templates || templates.length === 0) return null;
+  
+  const selectedId = itemConfig.selectedTemplates?.discountTemplateId;
+  const found = selectedId ? templates.find(t => t.id === selectedId) : undefined;
+  return found || templates.find(t => t.isDefault) || templates[0] || null;
 }
 
 /**
@@ -475,7 +494,8 @@ export const createDefaultData = (): AppData => {
     itemConfigs: {},
     ui: {
       sidebarOpen: false,
-      activeTab: 'tags'
+      activeTab: 'tags',
+      collapsedSections: []
     }
   };
 };

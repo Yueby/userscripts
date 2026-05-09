@@ -6,14 +6,9 @@ import { PageModule } from "../../PageModule";
  * 为编辑页面的列表添加序号显示（支持变体列表和 section 列表）
  */
 export class ItemNumbers extends PageModule<ItemEditAPI> {
-    private _observedContainers?: WeakMap<HTMLElement, MutationObserver>;
-
-    private get observedContainers(): WeakMap<HTMLElement, MutationObserver> {
-        if (!this._observedContainers) {
-            this._observedContainers = new WeakMap();
-        }
-        return this._observedContainers;
-    }
+    // 用强引用记录 observer 列表，确保 destroy 能清理干净
+    private observers: MutationObserver[] = [];
+    private observedContainers = new WeakSet<HTMLElement>();
 
     constructor(api: ItemEditAPI) {
         super(api);
@@ -33,18 +28,25 @@ export class ItemNumbers extends PageModule<ItemEditAPI> {
 
         // 监听新增的元素
         this.api.onSectionAdded((section) => {
-            // 检查是否已经为该容器设置了观察器
             if (!this.observedContainers.has(section.container)) {
                 this.addNumbersToList(section.container);
             }
         });
 
         this.api.onVariationAdded((variation) => {
-            // 检查是否已经为该容器设置了观察器
             if (!this.observedContainers.has(variation.container)) {
                 this.addNumbersToList(variation.container);
             }
         });
+    }
+
+    /**
+     * 销毁模块，断开所有 observer
+     * （Booth 是 SPA，用户脚本目前不主动销毁，但保留此方法便于测试或未来需要）
+     */
+    destroy(): void {
+        this.observers.forEach(observer => observer.disconnect());
+        this.observers = [];
     }
 
     /**
@@ -88,17 +90,12 @@ export class ItemNumbers extends PageModule<ItemEditAPI> {
     }
 
     /**
-     * 设置列表观察器
+     * 设置列表观察器（每个容器只挂载一次）
      */
     private setupListObserver(ul: HTMLElement): void {
-        // 如果已经有观察器，先断开
-        const existingObserver = this.observedContainers.get(ul);
-        if (existingObserver) {
-            existingObserver.disconnect();
-        }
-
+        if (this.observedContainers.has(ul)) return;
+        
         const observer = new MutationObserver(() => {
-            // 重新为列表中的所有项添加序号
             const items = Array.from(ul.children).filter(
                 child => child.tagName.toLowerCase() === 'li'
             );
@@ -113,7 +110,7 @@ export class ItemNumbers extends PageModule<ItemEditAPI> {
             subtree: false
         });
 
-        // 将观察器存储到 WeakMap 中
-        this.observedContainers.set(ul, observer);
+        this.observers.push(observer);
+        this.observedContainers.add(ul);
     }
 }

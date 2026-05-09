@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import type { GlobalTemplateConfig, ItemData, ItemEditConfig, NodeTree } from '../../../../config-types';
 import { getSelectedDiscountIndicatorTemplate, getSelectedNameTemplate } from '../../../../config-types';
 import { calculateTotalSupport, parseTemplate, pluralize } from '../../../../utils/templateParser';
+import { getActiveDiscount } from '../../../../utils/priceCalculator';
 import { PreviewBox } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import Modal from '../../../ui/Modal.vue';
@@ -73,7 +74,7 @@ const templateVars = computed(() => {
     ? getSelectedDiscountIndicatorTemplate(props.globalTemplates, config)
     : '';
   const discountIndicator = parseTemplate(discountIndicatorTemplate, {
-    discountPercent: config.discount.discountPercent
+    discountPercent: getActiveDiscount(config.discount)?.discountPercent ?? 0
   });
   
   return {
@@ -115,7 +116,7 @@ function handleSave(): void {
         title="模板配置"
         type="button"
       >
-        <span v-html="withSize(icons.settings, 18)"></span>
+        <span v-html="withSize(icons.settings, 16)"></span>
       </button>
     </template>
     <div class="modal-content">
@@ -168,10 +169,10 @@ function handleSave(): void {
 
     <template #footer>
       <button :class="BUTTON_CLASSES.closeButton" @click="emit('close')" title="取消">
-        <span v-html="withSize(icons.close, 18)"></span>
+        <span v-html="withSize(icons.close, 16)"></span>
       </button>
       <button :class="BUTTON_CLASSES.saveButton" @click="handleSave" title="保存">
-        <span v-html="withSize(icons.check, 18)"></span>
+        <span v-html="withSize(icons.check, 16)"></span>
       </button>
     </template>
   </Modal>

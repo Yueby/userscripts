@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   icon: string;
   title?: string;
   variant?: 'default' | 'danger';
@@ -27,44 +27,51 @@ const handleClick = (e: MouseEvent) => {
 
 <style scoped>
 .icon-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
   background: transparent;
-  color: #64748b;
-  border-radius: 6px;
+  color: var(--be-color-text-secondary);
+  border-radius: var(--be-radius);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background var(--be-transition-normal),
+              color var(--be-transition-normal),
+              border-color var(--be-transition-normal),
+              transform var(--be-transition-fast);
   padding: 0;
 }
 
 .icon-btn :deep(svg) {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   stroke-width: 2;
 }
 
 .icon-btn:hover {
-  background: #f1f5f9;
-  color: #475569;
-  border-color: #e2e8f0;
+  background: var(--be-color-bg-tertiary);
+  color: var(--be-color-text);
+  border-color: var(--be-color-border);
   transform: translateY(-1px);
 }
 
 .icon-btn:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
-.icon-btn.variant-danger {
-  color: #64748b;
+.icon-btn:focus {
+  outline: none;
+}
+
+.icon-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .icon-btn.variant-danger:hover {
   background: #fef2f2;
-  color: #ef4444;
+  color: var(--be-color-danger);
   border-color: #fee2e2;
 }
 </style>

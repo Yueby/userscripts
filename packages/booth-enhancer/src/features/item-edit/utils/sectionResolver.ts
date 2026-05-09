@@ -130,11 +130,10 @@ export function resolveSectionContent(
   context: ResolveContext
 ): { headline: string; body: string } {
   // 向后兼容：旧数据可能没有 type 字段，默认为 normal
-  if (!section.type) {
-    (section as any).type = 'normal';
-  }
+  // 注意：这里不修改传入的 section 对象，避免在响应式/computed 上下文中触发副作用
+  const type: SectionType = section.type ?? 'normal';
   
-  switch (section.type) {
+  switch (type) {
     case 'normal':
       return resolveNormalSection(section as NormalSectionInstance, globalTemplates.sectionTemplates);
     

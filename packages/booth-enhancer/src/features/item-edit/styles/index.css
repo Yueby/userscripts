@@ -520,12 +520,12 @@
   border-color: #9ca3af;
 }
 
-/* 统一的 focus 状态 - 蓝色边框和光晕 */
+/* 统一的 focus 状态 - 蓝色边框和光晕（与按钮一致 0.2） */
 .booth-enhancer-sidebar input:not([type="checkbox"]):not([type="radio"]):focus,
 .booth-enhancer-sidebar textarea:focus,
 .booth-enhancer-sidebar select:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .booth-enhancer-sidebar input::placeholder,
@@ -684,7 +684,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .form-group textarea {

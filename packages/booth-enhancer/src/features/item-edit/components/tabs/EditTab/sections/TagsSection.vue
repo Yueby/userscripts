@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
 import type { ItemData, ItemEditConfig, NodeTree, TagData } from '../../../../config-types';
 import { PreviewBox, SectionHeader } from '../../../ui';
@@ -40,8 +40,10 @@ const allTags = computed(() => {
   return extractTagsFromNodeIds(props.itemConfig.tagNodeIds || []);
 });
 
-// 智能获取标签节点（静默模式，不显示 toast）
-function smartFetchTags(silent = false): void {
+// 智能匹配标签节点
+// @param mode - 'merge': 只添加新匹配（保留手动选择）；'replace': 完全替换（覆盖手动选择）
+// @param silent - 是否静默（不显示 toast）
+function smartFetchTags(mode: 'merge' | 'replace' = 'merge', silent = false): void {
   const matchedNodeIds = new Set<string>();
   
   // 遍历所有 variations（跳过 fullset）
@@ -80,28 +82,65 @@ function smartFetchTags(silent = false): void {
     }
   }
   
-  // 使用数组变异方法更新，确保触发响应式
-  const newIds = Array.from(matchedNodeIds);
-  
   if (!props.itemConfig.tagNodeIds) {
     props.itemConfig.tagNodeIds = [];
   }
-  props.itemConfig.tagNodeIds.splice(0, props.itemConfig.tagNodeIds.length, ...newIds);
   
-  if (!silent && matchedNodeIds.size > 0) {
-    toast.success(`已匹配 ${matchedNodeIds.size} 个标签节点`);
+  const existing = props.itemConfig.tagNodeIds;
+  let finalIds: string[];
+  let addedCount = 0;
+  
+  if (mode === 'replace') {
+    finalIds = Array.from(matchedNodeIds);
+    addedCount = matchedNodeIds.size;
+  } else {
+    // merge: 保留已有的，只添加新匹配
+    const existingSet = new Set(existing);
+    const newlyAdded: string[] = [];
+    matchedNodeIds.forEach(id => {
+      if (!existingSet.has(id)) {
+        newlyAdded.push(id);
+      }
+    });
+    finalIds = [...existing, ...newlyAdded];
+    addedCount = newlyAdded.length;
+  }
+  
+  // 使用变异方法更新，确保触发响应式
+  props.itemConfig.tagNodeIds.splice(0, props.itemConfig.tagNodeIds.length, ...finalIds);
+  
+  if (!silent) {
+    if (mode === 'replace') {
+      toast.success(`已匹配 ${matchedNodeIds.size} 个标签节点`);
+    } else if (addedCount > 0) {
+      toast.success(`已新增 ${addedCount} 个匹配的标签节点`);
+    } else {
+      toast.info('未发现新的匹配');
+    }
   }
 }
 
-// 自动监听 variations 变化
+// 手动触发完全重新匹配（清空后重新匹配）
+function handleResync(): void {
+  smartFetchTags('replace', false);
+}
+
+// 自动监听 variations 变化（merge 模式，避免覆盖手动选择）
 watch(
   () => props.itemConfig.variations,
   () => {
-    // 始终重新计算标签（包括删除 variation 的情况）
-    smartFetchTags(true);
+    smartFetchTags('merge', true);
   },
-  { deep: true, immediate: true }
+  { deep: true }
 );
+
+// 首次挂载：如果 config 里还没有 tagNodeIds，自动跑一次匹配
+// （合并模式下不会覆盖任何东西，对有手动选择的 config 无影响）
+onMounted(() => {
+  if ((props.itemConfig.tagNodeIds?.length ?? 0) === 0) {
+    smartFetchTags('merge', true);
+  }
+});
 
 // 应用标签到页面
 async function applyTags(): Promise<void> {
@@ -131,8 +170,16 @@ defineExpose({
 </script>
 
 <template>
-  <SectionHeader title="Tags">
+  <SectionHeader title="Tags" collapsible section-id="edit-tags">
     <template #actions>
+      <button 
+        class="booth-btn booth-btn-sm booth-btn-ghost" 
+        type="button"
+        title="根据 Variations 重新匹配（会清除手动选择）"
+        @click="handleResync"
+      >
+        <span v-html="withSize(icons.magic, 14)"></span>
+      </button>
       <button 
         class="booth-btn booth-btn-sm booth-btn-secondary" 
         type="button"

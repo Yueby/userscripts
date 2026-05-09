@@ -99,28 +99,21 @@ watch(() => props.show, (isOpen) => {
       <div 
         v-if="filteredItemNodes.length > 0"
         class="item-select-list"
-        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 400px; overflow-y: auto;"
       >
         <button
           v-for="nodeId in filteredItemNodes"
           :key="nodeId"
-          class="item-select-btn booth-btn booth-btn-sm booth-btn-ghost be-text-left"
+          class="item-select-card"
+          :class="{ 'is-selected': isItemSelected(nodeId) }"
           type="button"
-          :style="{
-            padding: '6px 8px',
-            backgroundColor: isItemSelected(nodeId) ? 'rgba(59, 130, 246, 0.1)' : undefined,
-            borderColor: isItemSelected(nodeId) ? 'rgba(59, 130, 246, 0.3)' : undefined
-          }"
           @click="toggleItemSelection(nodeId)"
         >
-          <div style="display: flex; flex-direction: column; gap: 2px; width: 100%;">
-            <span class="be-text-sm be-font-medium">
-              {{ itemTree.nodes[nodeId].data?.itemName || itemTree.nodes[nodeId].name }}
-            </span>
-            <span class="be-text-xs be-text-secondary">
-              {{ itemTree.nodes[nodeId].data?.authorName }}
-            </span>
-          </div>
+          <span class="item-select-card__name">
+            {{ itemTree.nodes[nodeId].data?.itemName || itemTree.nodes[nodeId].name }}
+          </span>
+          <span class="item-select-card__author">
+            {{ itemTree.nodes[nodeId].data?.authorName }}
+          </span>
         </button>
       </div>
       
@@ -136,7 +129,7 @@ watch(() => props.show, (isOpen) => {
         title="取消"
         @click="emit('close')"
       >
-        <span v-html="withSize(icons.close, 18)"></span>
+        <span v-html="withSize(icons.close, 16)"></span>
       </button>
       <button 
         class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
@@ -144,13 +137,86 @@ watch(() => props.show, (isOpen) => {
         title="确认"
         @click="confirmSelection"
       >
-        <span v-html="withSize(icons.check, 18)"></span>
+        <span v-html="withSize(icons.check, 16)"></span>
       </button>
     </template>
   </Modal>
 </template>
 
 <style scoped>
+.item-select-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+/* 商品选择卡片：两行信息（名称 + 作者），不能用 .booth-btn */
+.item-select-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 10px;
+  min-height: 0;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--be-color-border);
+  border-radius: var(--be-radius);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--be-transition-normal),
+              border-color var(--be-transition-normal);
+  width: 100%;
+}
+
+.item-select-card:hover {
+  background: var(--be-color-bg-hover);
+  border-color: var(--be-color-border-hover);
+}
+
+.item-select-card:focus {
+  outline: none;
+}
+
+.item-select-card:focus-visible {
+  border-color: var(--be-color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.item-select-card.is-selected {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.item-select-card.is-selected:hover {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.item-select-card__name {
+  font-size: var(--be-font-size-md);
+  font-weight: 500;
+  color: var(--be-color-text);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.item-select-card__author {
+  font-size: var(--be-font-size-xs);
+  color: var(--be-color-text-secondary);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
 .empty-hint {
   padding: 40px 20px;
   text-align: center;

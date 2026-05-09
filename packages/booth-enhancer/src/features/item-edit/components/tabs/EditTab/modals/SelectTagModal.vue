@@ -168,7 +168,7 @@ watch(() => props.show, (isOpen) => {
         title="取消"
         @click="emit('close')"
       >
-        <span v-html="withSize(icons.close, 18)"></span>
+        <span v-html="withSize(icons.close, 16)"></span>
       </button>
       <button 
         class="booth-btn booth-btn-md booth-btn-icon booth-btn-primary"
@@ -176,7 +176,7 @@ watch(() => props.show, (isOpen) => {
         title="确认"
         @click="confirmSelectTagNodes"
       >
-        <span v-html="withSize(icons.check, 18)"></span>
+        <span v-html="withSize(icons.check, 16)"></span>
       </button>
     </template>
   </Modal>

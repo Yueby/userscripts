@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import type { ItemEditAPI } from '../../../../../../api/item-edit';
 import { useModal } from '../../../../composables';
-import type { GlobalTemplateConfig, ItemEditConfig, SectionTemplate, SectionType } from '../../../../config-types';
+import type { GlobalTemplateConfig, ItemData, ItemEditConfig, NodeTree, SectionTemplate, SectionType } from '../../../../config-types';
 import { createSectionByType, createSectionFromTemplate, resolveSectionContent, type ResolveContext } from '../../../../utils/sectionResolver';
 import type { TemplateVariables } from '../../../../utils/templateParser';
 import { formatDate, parseTemplate } from '../../../../utils/templateParser';
@@ -22,7 +22,7 @@ const props = defineProps<{
   templateVars: TemplateVariables;
   api: ItemEditAPI;
   modal: ReturnType<typeof useModal>;
-  itemTree: any;
+  itemTree: NodeTree<ItemData>;
 }>();
 
 const emit = defineEmits<{
@@ -235,7 +235,7 @@ defineExpose({
 </script>
 
 <template>
-  <SectionHeader :title="`Sections (${itemConfig.sections.length})`">
+  <SectionHeader :title="`Sections (${itemConfig.sections.length})`" collapsible section-id="edit-sections">
     <template #actions>
       <button 
         class="booth-btn booth-btn-sm booth-btn-ghost" 

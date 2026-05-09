@@ -4,6 +4,7 @@ import { useTemplateManager } from '../../../../composables';
 import type { GlobalTemplateConfig, ItemData, ItemEditConfig, NameTemplate, NodeTree } from '../../../../config-types';
 import { getSelectedDiscountIndicatorTemplate } from '../../../../config-types';
 import { calculateTotalSupport, parseTemplate, pluralize } from '../../../../utils/templateParser';
+import { getActiveDiscount } from '../../../../utils/priceCalculator';
 import { PreviewBox, SectionHeader } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { DraggableCardList } from '../../../ui/list';
@@ -37,7 +38,7 @@ const templates = computed({
 
 const { addTemplate, removeTemplate, onReorder } = useTemplateManager({
   templates,
-  defaultTemplate: { template: '{smartTitle}' }
+  defaultTemplate: { template: '{智能标题}' }
 });
 
 // 折扣标识模板配置 Modal 状态
@@ -76,7 +77,7 @@ const templateVars = computed(() => {
     ? getSelectedDiscountIndicatorTemplate(props.globalTemplates, config)
     : '';
   const discountIndicator = parseTemplate(discountIndicatorTemplate, {
-    discountPercent: config.discount.discountPercent
+    discountPercent: getActiveDiscount(config.discount)?.discountPercent ?? 0
   });
   
   return {
@@ -121,7 +122,7 @@ function handlePreview(index: number): void {
         title="添加商品名模板"
         type="button"
       >
-        <span v-html="withSize(icons.plus, 18)"></span>
+        <span v-html="withSize(icons.plus, 16)"></span>
       </button>
       <button 
         :class="BUTTON_CLASSES.addButton" 
@@ -129,7 +130,7 @@ function handlePreview(index: number): void {
         title="折扣标识模板配置"
         type="button"
       >
-        <span v-html="withSize(icons.settings, 18)"></span>
+        <span v-html="withSize(icons.settings, 16)"></span>
       </button>
     </template>
 
@@ -198,7 +199,7 @@ function handlePreview(index: number): void {
         @click="showPreviewModal = false" 
         title="关闭"
       >
-        <span v-html="withSize(icons.close, 18)"></span>
+        <span v-html="withSize(icons.close, 16)"></span>
       </button>
     </template>
   </Modal>

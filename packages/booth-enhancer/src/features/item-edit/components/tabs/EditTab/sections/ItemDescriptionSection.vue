@@ -4,7 +4,7 @@ import type { ItemEditAPI } from '../../../../../../api/item-edit';
 import { useModal } from '../../../../composables';
 import type { GlobalTemplateConfig, ItemEditConfig } from '../../../../config-types';
 import { getSelectedDescriptionTemplate, getSelectedDiscountTemplate } from '../../../../config-types';
-import { applyDiscount } from '../../../../utils/priceCalculator';
+import { applyDiscountPercent } from '../../../../utils/priceCalculator';
 import type { TemplateVariables } from '../../../../utils/templateParser';
 import { formatDateTime, parseTemplate } from '../../../../utils/templateParser';
 import { PreviewBox, SectionHeader } from '../../../ui';
@@ -37,24 +37,35 @@ const previewDescription = computed((): string => {
     parts.push(props.itemConfig.customDescription);
   }
   
-  if (props.itemConfig.discount.enabled) {
+  if (props.itemConfig.discount.enabled && props.itemConfig.discount.periods.length > 0) {
     const normalOriginalPrice = props.itemConfig.pricing.normalVariationPrice;
-    const normalDiscountedPrice = applyDiscount(normalOriginalPrice, props.itemConfig.discount);
     const fullsetOriginalPrice = props.itemConfig.pricing.fullsetPrice;
-    const fullsetDiscountedPrice = applyDiscount(fullsetOriginalPrice, props.itemConfig.discount);
+    const discountTpl = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
     
-    const discountTemplate = getSelectedDiscountTemplate(props.globalTemplates, props.itemConfig);
-    const discountText = parseTemplate(discountTemplate, {
-      ...props.templateVars,
-      originalPrice: normalOriginalPrice,
-      discountedPrice: normalDiscountedPrice,
-      discountPercent: props.itemConfig.discount.discountPercent,
-      fullsetOriginalPrice,
-      fullsetDiscountedPrice,
-      startDate: formatDateTime(props.itemConfig.discount.startDate),
-      endDate: formatDateTime(props.itemConfig.discount.endDate)
-    });
-    parts.push(discountText);
+    if (discountTpl) {
+      // B 方案：header 渲染一次 + periodTemplate 循环每个时段
+      const headerText = discountTpl.header || '';
+      const periodTpl = discountTpl.periodTemplate || (discountTpl as any).template || '';
+      
+      const periodTexts = props.itemConfig.discount.periods.map(period => {
+        const normalDiscountedPrice = applyDiscountPercent(normalOriginalPrice, period.discountPercent);
+        const fullsetDiscountedPrice = applyDiscountPercent(fullsetOriginalPrice, period.discountPercent);
+        
+        return parseTemplate(periodTpl, {
+          ...props.templateVars,
+          originalPrice: normalOriginalPrice,
+          discountedPrice: normalDiscountedPrice,
+          discountPercent: period.discountPercent,
+          fullsetOriginalPrice,
+          fullsetDiscountedPrice,
+          startDate: formatDateTime(period.startDate),
+          endDate: formatDateTime(period.endDate)
+        });
+      });
+      
+      const discountBlock = [headerText, ...periodTexts].filter(Boolean).join('\n');
+      parts.push(discountBlock);
+    }
   }
   
   return parts.join('\n\n');
@@ -89,7 +100,7 @@ defineExpose({
 </script>
 
 <template>
-  <SectionHeader title="商品描述">
+  <SectionHeader title="商品描述" collapsible section-id="edit-desc">
     <template #actions>
       <button 
         class="booth-btn booth-btn-sm booth-btn-secondary" 
