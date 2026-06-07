@@ -2,7 +2,7 @@
 // @name               Booth ItemPage Enhancer
 // @name:zh-CN         Booth 商品页面增强
 // @namespace          yueby.booth
-// @version            0.2.0
+// @version            0.2.1
 // @author             Yueby
 // @description        A userscript for enhancing Booth item page experience
 // @description:zh-CN  增强 Booth 商品页面的功能体验，包括变体序号、标签管理、自动翻译等功能
@@ -27,7 +27,7 @@
 System.addImportMap({ imports: {"vue":"user:vue"} });
 System.set("user:vue", (()=>{const _=Vue;('default' in _)||(_.default=_);return _})());
 
-System.register("./__entry.js", ['./__monkey.entry-DvirMHzt.js'], (function (exports, module) {
+System.register("./__entry.js", ['./__monkey.entry-CAJCsesR.js'], (function (exports, module) {
 	'use strict';
 	return {
 		setters: [null],
@@ -39,7 +39,7 @@ System.register("./__entry.js", ['./__monkey.entry-DvirMHzt.js'], (function (exp
 	};
 }));
 
-System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, module) {
+System.register("./__monkey.entry-CAJCsesR.js", ['vue'], (function (exports, module) {
   'use strict';
   var createApp, ref, watch, defineComponent, defineAsyncComponent, computed, onMounted, onUnmounted, createElementBlock, openBlock, createVNode, createElementVNode, unref, withCtx, createTextVNode, toDisplayString, createBlock, resolveDynamicComponent, createCommentVNode, Fragment, renderList, normalizeClass, renderSlot, Teleport, Transition, normalizeStyle, nextTick;
   return {
@@ -439,16 +439,22 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
         parseSections() {
           return this.findAllListContainers().filter((container) => this.isSectionList(container)).flatMap(
             (container) => this.getListItems(container).flatMap((item) => {
-              const headlineInput = item.querySelector("input.charcoal-text-field-input");
-              const bodyTextarea = item.querySelector("textarea.charcoal-text-area-textarea");
+              const headlineInput = item.querySelector(
+                "input.charcoal-text-field-input"
+              );
+              const bodyTextarea = item.querySelector(
+                "textarea.charcoal-text-area-textarea"
+              );
               if (!headlineInput || !bodyTextarea) return [];
-              return [{
-                element: item,
-                container,
-                headlineInput,
-                bodyTextarea,
-                deleteButton: this.findDeleteButton(item)
-              }];
+              return [
+                {
+                  element: item,
+                  container,
+                  headlineInput,
+                  bodyTextarea,
+                  deleteButton: this.findDeleteButton(item)
+                }
+              ];
             })
           );
         }
@@ -459,18 +465,26 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           return this.findAllListContainers().filter((container) => !this.isSectionList(container)).flatMap(
             (container) => this.getListItems(container).flatMap((item) => {
               const nameContainer = item.querySelector('div[id^="variationName-"]');
-              const priceContainer = item.querySelector('div[id^="variationDigitalPrice-"]');
-              const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector("input.charcoal-text-field-input");
-              const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector("input.charcoal-text-field-input");
+              const priceContainer = item.querySelector(
+                'div[id^="variationDigitalPrice-"]'
+              );
+              const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector(
+                "input.charcoal-text-field-input"
+              );
+              const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector(
+                "input.charcoal-text-field-input"
+              );
               if (!nameInput || !priceInput) return [];
-              return [{
-                element: item,
-                container,
-                nameInput,
-                priceInput,
-                deleteButton: this.findDeleteButton(item),
-                dragHandle: this.findDragHandle(item)
-              }];
+              return [
+                {
+                  element: item,
+                  container,
+                  nameInput,
+                  priceInput,
+                  deleteButton: this.findDeleteButton(item),
+                  dragHandle: this.findDragHandle(item)
+                }
+              ];
             })
           );
         }
@@ -487,10 +501,11 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          */
         loadTagElements() {
           const container = document.querySelector("#item_tag");
-          const input = document.querySelector(
-            "#item_tag > div > div.w-full.mt-8.flex.gap-8.flex-col > div > div > input"
+          const combobox = container == null ? void 0 : container.querySelector(
+            '[role="combobox"]'
           );
-          const inputContainer = input == null ? void 0 : input.closest("div.w-full.mt-8.flex.gap-8.flex-col");
+          const input = combobox == null ? void 0 : combobox.querySelector("input");
+          const inputContainer = combobox == null ? void 0 : combobox.closest(".w-full");
           if (container && input && inputContainer) {
             this._data.tagElements = {
               container,
@@ -504,8 +519,12 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          */
         addSectionElement(item, container) {
           var _a;
-          const headlineInput = item.querySelector("input.charcoal-text-field-input");
-          const bodyTextarea = item.querySelector("textarea.charcoal-text-area-textarea");
+          const headlineInput = item.querySelector(
+            "input.charcoal-text-field-input"
+          );
+          const bodyTextarea = item.querySelector(
+            "textarea.charcoal-text-area-textarea"
+          );
           if (!headlineInput || !bodyTextarea) return;
           const sectionElement = {
             element: item,
@@ -526,9 +545,15 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
         addVariationElement(item, container) {
           var _a;
           const nameContainer = item.querySelector('div[id^="variationName-"]');
-          const priceContainer = item.querySelector('div[id^="variationDigitalPrice-"]');
-          const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector("input.charcoal-text-field-input");
-          const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector("input.charcoal-text-field-input");
+          const priceContainer = item.querySelector(
+            'div[id^="variationDigitalPrice-"]'
+          );
+          const nameInput = nameContainer == null ? void 0 : nameContainer.querySelector(
+            "input.charcoal-text-field-input"
+          );
+          const priceInput = priceContainer == null ? void 0 : priceContainer.querySelector(
+            "input.charcoal-text-field-input"
+          );
           if (!nameInput || !priceInput) return;
           const variationElement = {
             element: item,
@@ -932,11 +957,17 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          */
         onSectionsChange(callback) {
           this.sections.forEach((section) => {
-            this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
+            this.addInputListeners(
+              [section.headlineInput, section.bodyTextarea],
+              callback
+            );
           });
           const originalCallback = this._newSectionCallback;
           this._newSectionCallback = (section) => {
-            this.addInputListeners([section.headlineInput, section.bodyTextarea], callback);
+            this.addInputListeners(
+              [section.headlineInput, section.bodyTextarea],
+              callback
+            );
             originalCallback == null ? void 0 : originalCallback(section);
             callback();
           };
@@ -946,11 +977,17 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          */
         onVariationsChange(callback) {
           this.variations.forEach((variation) => {
-            this.addInputListeners([variation.nameInput, variation.priceInput], callback);
+            this.addInputListeners(
+              [variation.nameInput, variation.priceInput],
+              callback
+            );
           });
           const originalCallback = this._newVariationCallback;
           this._newVariationCallback = (variation) => {
-            this.addInputListeners([variation.nameInput, variation.priceInput], callback);
+            this.addInputListeners(
+              [variation.nameInput, variation.priceInput],
+              callback
+            );
             originalCallback == null ? void 0 : originalCallback(variation);
             callback();
           };
@@ -970,7 +1007,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          * @returns 拖拽按钮或 null
          */
         findDragHandle(itemElement) {
-          const firstButton = itemElement.querySelector("button.variation-box-head");
+          const firstButton = itemElement.querySelector(
+            "button.variation-box-head"
+          );
           return firstButton;
         }
         /**
@@ -992,7 +1031,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             "button.flex.flex-col.justify-between.items-center"
           );
           for (const button of buttons) {
-            const hasDownloadIcon = button.querySelector('pixiv-icon[name="16/Download"]');
+            const hasDownloadIcon = button.querySelector(
+              'pixiv-icon[name="16/Download"]'
+            );
             const textContent = (_a = button.textContent) == null ? void 0 : _a.trim();
             if (hasDownloadIcon && (textContent == null ? void 0 : textContent.includes("Digital"))) {
               return button;
@@ -1054,7 +1095,10 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          * @returns Promise<boolean> 是否成功添加
          */
         async addSection(timeout = 5e3) {
-          const waitPromise = this.createQueuedWaitPromise(this._tempSectionAddedCallbacks, timeout);
+          const waitPromise = this.createQueuedWaitPromise(
+            this._tempSectionAddedCallbacks,
+            timeout
+          );
           if (!this.clickAddSectionButton()) {
             this._tempSectionAddedCallbacks.pop();
             return false;
@@ -1067,7 +1111,10 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          * @returns Promise<boolean> 是否成功添加
          */
         async addVariation(timeout = 5e3) {
-          const waitPromise = this.createQueuedWaitPromise(this._tempVariationAddedCallbacks, timeout);
+          const waitPromise = this.createQueuedWaitPromise(
+            this._tempVariationAddedCallbacks,
+            timeout
+          );
           if (!this.clickAddVariationButton()) {
             this._tempVariationAddedCallbacks.pop();
             return false;
@@ -1160,7 +1207,10 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             section.deleteButton = this.findDeleteButton(section.element);
           }
           if (!section.deleteButton) return false;
-          const waitPromise = this.createQueuedWaitPromise(this._tempSectionRemovedCallbacks, timeout);
+          const waitPromise = this.createQueuedWaitPromise(
+            this._tempSectionRemovedCallbacks,
+            timeout
+          );
           section.deleteButton.click();
           return waitPromise;
         }
@@ -1219,7 +1269,10 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             variation.deleteButton = this.findDeleteButton(variation.element);
           }
           if (!variation.deleteButton) return false;
-          const waitPromise = this.createQueuedWaitPromise(this._tempVariationRemovedCallbacks, timeout);
+          const waitPromise = this.createQueuedWaitPromise(
+            this._tempVariationRemovedCallbacks,
+            timeout
+          );
           variation.deleteButton.click();
           return waitPromise;
         }
@@ -1251,7 +1304,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
         getVariationFiles(variationIndex) {
           const variation = this.variations[variationIndex];
           if (!variation) return [];
-          const fileLinks = variation.element.querySelectorAll('a[href*="/downloadables/"]');
+          const fileLinks = variation.element.querySelectorAll(
+            'a[href*="/downloadables/"]'
+          );
           const fileIds = [];
           fileLinks.forEach((link) => {
             const href = link.href;
@@ -1296,8 +1351,12 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           const files = [];
           fileElements.forEach((li) => {
             var _a;
-            const checkbox = li.querySelector('input.charcoal-checkbox-input[type="checkbox"]');
-            const link = li.querySelector('a[href*="/downloadables/"]');
+            const checkbox = li.querySelector(
+              'input.charcoal-checkbox-input[type="checkbox"]'
+            );
+            const link = li.querySelector(
+              'a[href*="/downloadables/"]'
+            );
             if (checkbox && link) {
               const href = link.href;
               const idMatch = href.match(/\/downloadables\/(\d+)/);
@@ -1324,14 +1383,18 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           if (!variation) return null;
           const iconElement = variation.element.querySelector("i.icon-downloadables");
           if (iconElement) {
-            const clickableParent = iconElement.closest("div.cursor-pointer");
+            const clickableParent = iconElement.closest(
+              "div.cursor-pointer"
+            );
             if ((_a = clickableParent == null ? void 0 : clickableParent.textContent) == null ? void 0 : _a.includes("Add/Edit Files")) {
               return clickableParent;
             }
           }
           const filesSection = variation.element.querySelector("div:nth-child(3)");
           if (filesSection) {
-            const buttons = Array.from(filesSection.querySelectorAll("button"));
+            const buttons = Array.from(
+              filesSection.querySelectorAll("button")
+            );
             const editButton = buttons.find((btn) => {
               var _a2;
               const text = ((_a2 = btn.textContent) == null ? void 0 : _a2.trim()) || "";
@@ -1385,7 +1448,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
          * @returns VariationEditPanel 或 null
          */
         findVariationEditPanel() {
-          const containers = document.querySelectorAll("body > div.fixed.top-0.left-0.right-0");
+          const containers = document.querySelectorAll(
+            "body > div.fixed.top-0.left-0.right-0"
+          );
           const container = Array.from(containers).find(
             (c) => {
               var _a;
@@ -1396,7 +1461,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           const hasHiddenClass = container.classList.contains("hidden");
           const hasFileList = container.querySelector("ul.list-none") !== null;
           if (hasHiddenClass && !hasFileList) return null;
-          const closeButton = Array.from(container.querySelectorAll("button")).find((btn) => btn.querySelector('pixiv-icon[name="32/BoothClose"]')) || null;
+          const closeButton = Array.from(container.querySelectorAll("button")).find(
+            (btn) => btn.querySelector('pixiv-icon[name="32/BoothClose"]')
+          ) || null;
           const files = this.parseFileList(container);
           return { container, closeButton, files };
         }
@@ -1410,8 +1477,12 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           const files = [];
           fileElements.forEach((li) => {
             var _a;
-            const checkbox = li.querySelector('input.charcoal-checkbox-input[type="checkbox"]');
-            const link = li.querySelector('a[href*="/downloadables/"]');
+            const checkbox = li.querySelector(
+              'input.charcoal-checkbox-input[type="checkbox"]'
+            );
+            const link = li.querySelector(
+              'a[href*="/downloadables/"]'
+            );
             if (checkbox && link) {
               const href = link.href;
               const idMatch = href.match(/\/downloadables\/(\d+)/);
@@ -3061,9 +3132,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
         },
         setup(__props) {
           const props = __props;
-          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-BIairI8h-DA5Ag8o8.js'), void 0 ));
-          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-CQLRRS42-DmNkHjDf.js'), void 0 ));
-          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-DJ3oWU94-L6MYeyCu.js'), void 0 ));
+          const TagTab = defineAsyncComponent(() => __vitePreload(() => module.import('./TagTab-D_CupEln-WSVbxSPx.js'), void 0 ));
+          const ItemTab = defineAsyncComponent(() => __vitePreload(() => module.import('./ItemTab-1Tzn8k1C-CbpuVJg9.js'), void 0 ));
+          const EditTab = defineAsyncComponent(() => __vitePreload(() => module.import('./EditTab-B3A7h8gX-BAbFsvxh.js'), void 0 ));
           const {
             data,
             exportTags,
@@ -3678,6 +3749,18 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           button.addEventListener("click", onClick);
           return button;
         }
+        /**
+         * 短暂切换按钮文字为完成状态，然后自动恢复
+         */
+        flashButtonText(button, text, duration = 1500) {
+          const span = button.querySelector("span");
+          if (!span) return;
+          const original = span.textContent || "";
+          span.textContent = text;
+          setTimeout(() => {
+            span.textContent = original;
+          }, duration);
+        }
         addTagButtons(inputContainer) {
           if (inputContainer.querySelector(".tag-action-buttons")) return;
           const buttonContainer = document.createElement("div");
@@ -3686,12 +3769,17 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-top: 8px;
         `;
-          buttonContainer.appendChild(this.createCharcoalButton("复制", () => this.copyTags()));
-          buttonContainer.appendChild(this.createCharcoalButton("粘贴", () => this.pasteTags()));
-          buttonContainer.appendChild(this.createCharcoalButton("清空", () => this.clearTags()));
-          inputContainer.appendChild(buttonContainer);
+          buttonContainer.appendChild(
+            this.createCharcoalButton("复制", () => this.copyTags())
+          );
+          buttonContainer.appendChild(
+            this.createCharcoalButton("粘贴", () => this.pasteTags())
+          );
+          buttonContainer.appendChild(
+            this.createCharcoalButton("清空", () => this.clearTags())
+          );
+          inputContainer.insertAdjacentElement("afterend", buttonContainer);
         }
         /**
          * 复制标签到剪贴板
@@ -3704,9 +3792,11 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
               return;
             }
             navigator.clipboard.writeText(JSON.stringify(tags)).then(() => {
-              const copyBtn = document.querySelector(".tag-action-buttons button:nth-child(1)");
+              const copyBtn = document.querySelector(
+                ".tag-action-buttons button:nth-child(1)"
+              );
               if (copyBtn instanceof HTMLElement) {
-                Utils.updateButtonState(copyBtn, true, copyBtn.innerHTML);
+                this.flashButtonText(copyBtn, "已完成");
               }
             });
           } catch (error) {
@@ -3745,9 +3835,11 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
               progress.complete(
                 `处理完成！已添加 ${tagsToAdd.length} 个新标签，跳过 ${newTags.length - tagsToAdd.length} 个已存在的标签。`
               );
-              const pasteBtn = document.querySelector(".tag-action-buttons button:nth-child(2)");
+              const pasteBtn = document.querySelector(
+                ".tag-action-buttons button:nth-child(2)"
+              );
               if (pasteBtn instanceof HTMLElement) {
-                Utils.updateButtonState(pasteBtn, true, pasteBtn.innerHTML);
+                this.flashButtonText(pasteBtn, "已完成");
               }
             } catch (error) {
               progress.remove();
@@ -3755,7 +3847,9 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             }
           } catch (error) {
             handleError(error, () => {
-              toast.error("粘贴标签失败：" + (error instanceof Error ? error.message : String(error)));
+              toast.error(
+                "粘贴标签失败：" + (error instanceof Error ? error.message : String(error))
+              );
             });
           }
         }
@@ -3776,15 +3870,20 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
             const progress = this.createProgressTip(tagElements.container);
             try {
               for (let i = deleteButtons.length - 1; i >= 0; i--) {
-                progress.updateProgress(deleteButtons.length - i, deleteButtons.length);
+                progress.updateProgress(
+                  deleteButtons.length - i,
+                  deleteButtons.length
+                );
                 const button = deleteButtons[i];
                 button.click();
                 await Utils.sleep(1);
               }
               progress.complete(`处理完成！已清空 ${deleteButtons.length} 个标签。`);
-              const clearBtn = document.querySelector(".tag-action-buttons button:nth-child(3)");
+              const clearBtn = document.querySelector(
+                ".tag-action-buttons button:nth-child(3)"
+              );
               if (clearBtn instanceof HTMLElement) {
-                Utils.updateButtonState(clearBtn, true, clearBtn.innerHTML);
+                this.flashButtonText(clearBtn, "已完成");
               }
             } catch (error) {
               progress.remove();
@@ -3826,9 +3925,10 @@ System.register("./__monkey.entry-DvirMHzt.js", ['vue'], (function (exports, mod
           progressBarContainer.appendChild(progressBar);
           tipContainer.appendChild(textElement);
           tipContainer.appendChild(progressBarContainer);
-          const inputWrapper = container.querySelector("div.w-full.mt-8.flex.gap-8.flex-col");
-          if (inputWrapper) {
-            inputWrapper.insertBefore(tipContainer, inputWrapper.firstChild);
+          const combobox = container.querySelector('[role="combobox"]');
+          const inputWrapper = combobox == null ? void 0 : combobox.closest(".w-full");
+          if (inputWrapper == null ? void 0 : inputWrapper.parentElement) {
+            inputWrapper.parentElement.insertBefore(tipContainer, inputWrapper);
           } else {
             container.appendChild(tipContainer);
           }
@@ -5929,7 +6029,7 @@ ${errorText}`);
   };
 }));
 
-System.register("./TagTab-BIairI8h-DA5Ag8o8.js", ['vue', './useTreeTab-Bqmsvh28-Cqlgntmi.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
+System.register("./TagTab-D_CupEln-WSVbxSPx.js", ['vue', './useTreeTab-PXORRHZp-BJU3Wmjx.js', './__monkey.entry-CAJCsesR.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, Fragment, renderList, toDisplayString, withModifiers, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, tagSearchFilter, _export_sfc, useStorage, withSize, icons, Modal;
   return {
@@ -6362,7 +6462,7 @@ System.register("./TagTab-BIairI8h-DA5Ag8o8.js", ['vue', './useTreeTab-Bqmsvh28-
   };
 }));
 
-System.register("./ItemTab-CQLRRS42-DmNkHjDf.js", ['vue', './useTreeTab-Bqmsvh28-Cqlgntmi.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
+System.register("./ItemTab-1Tzn8k1C-CbpuVJg9.js", ['vue', './useTreeTab-PXORRHZp-BJU3Wmjx.js', './__monkey.entry-CAJCsesR.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, createElementBlock, openBlock, createVNode, unref, withCtx, createCommentVNode, createElementVNode, toDisplayString, withDirectives, withKeys, vModelText, createTextVNode, useTreeTab, Tree, itemDataSearchFilter, _export_sfc, useStorage, Modal, withSize, icons;
   return {
@@ -6643,7 +6743,7 @@ System.register("./ItemTab-CQLRRS42-DmNkHjDf.js", ['vue', './useTreeTab-Bqmsvh28
   };
 }));
 
-System.register("./useTreeTab-Bqmsvh28-Cqlgntmi.js", ['vue', './__monkey.entry-DvirMHzt.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
+System.register("./useTreeTab-PXORRHZp-BJU3Wmjx.js", ['vue', './__monkey.entry-CAJCsesR.js', './useModal-Cv530RMh-DbZQZjC8.js'], (function (exports, module) {
   'use strict';
   var ref, computed, defineComponent, onMounted, onUnmounted, createElementBlock, openBlock, createCommentVNode, createVNode, withDirectives, createElementVNode, vModelText, renderSlot, Fragment, renderList, createBlock, createSlots, withCtx, mergeProps, withModifiers, normalizeClass, watch, resolveComponent, normalizeStyle, unref, toDisplayString, nextTick, _export_sfc, useStorage, ConfigStorage, ContextMenu, icons, withSize, useModal;
   return {
@@ -7601,7 +7701,7 @@ System.register("./useTreeTab-Bqmsvh28-Cqlgntmi.js", ['vue', './__monkey.entry-D
   };
 }));
 
-System.register("./EditTab-DJ3oWU94-L6MYeyCu.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-DvirMHzt.js'], (function (exports, module) {
+System.register("./EditTab-B3A7h8gX-BAbFsvxh.js", ['vue', './useModal-Cv530RMh-DbZQZjC8.js', './__monkey.entry-CAJCsesR.js'], (function (exports, module) {
   'use strict';
   var defineComponent, computed, ref, watch, onMounted, createElementBlock, openBlock, Fragment, createVNode, createCommentVNode, unref, withCtx, createElementVNode, withDirectives, createTextVNode, withKeys, vModelText, vModelSelect, toDisplayString, createBlock, shallowRef, onUnmounted, normalizeClass, renderSlot, withModifiers, renderList, vModelCheckbox, normalizeStyle, useSlots, vShow, TransitionGroup, useModal, _export_sfc, useStorage, getSelectedDiscountIndicatorTemplate, getSelectedDescriptionTemplate, getSelectedDiscountTemplate, toast, Modal, withSize, icons, createDefaultItemConfig, getSelectedNameTemplate, cleanMissingFileIds, getStableKey, ConfigStorage, Simulate;
   return {
