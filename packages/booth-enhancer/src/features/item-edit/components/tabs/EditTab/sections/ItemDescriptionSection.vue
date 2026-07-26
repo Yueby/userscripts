@@ -7,7 +7,7 @@ import { getSelectedDescriptionTemplate, getSelectedDiscountTemplate } from '../
 import { applyDiscountPercent } from '../../../../utils/priceCalculator';
 import type { TemplateVariables } from '../../../../utils/templateParser';
 import { formatDateTime, parseTemplate } from '../../../../utils/templateParser';
-import { PreviewBox, SectionHeader } from '../../../ui';
+import { PreviewBox, SectionHeader, TemplateSelector } from '../../../ui';
 import { icons, withSize } from '../../../ui/icons';
 import { toast } from '../../../ui/Toast';
 
@@ -18,7 +18,7 @@ const props = defineProps<{
   api: ItemEditAPI;
   modal: ReturnType<typeof useModal>;
   currentItemId: string;
-  onDescriptionUpdated: (description: string) => void;
+  onDescriptionUpdated: (description: string, descriptionTemplateId?: string) => void;
 }>();
 
 const emit = defineEmits<{
@@ -120,6 +120,15 @@ defineExpose({
       </button>
     </template>
     
+    <div class="form-group">
+      <TemplateSelector
+        v-model="itemConfig.selectedTemplates.descriptionTemplateId"
+        :templates="globalTemplates.descriptionTemplates"
+        label="选择描述模板"
+        empty-hint="请先在全局模板配置中添加描述模板"
+      />
+    </div>
+
     <PreviewBox 
       label="预览:" 
       type="pre"

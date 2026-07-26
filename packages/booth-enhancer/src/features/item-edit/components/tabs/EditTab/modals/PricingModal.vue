@@ -25,8 +25,11 @@ const showDiscountTemplateModal = ref(false);
 
 // 价格计算
 const totalSupport = computed(() => calculateTotalSupport(props.itemConfig.variations));
+const hasFullsetVariation = computed(() =>
+  props.itemConfig.variations.some(v => v.isFullset)
+);
 
-const suggestedPrice = computed(() => 
+const suggestedPrice = computed(() =>
   suggestFullsetPrice(
     props.itemConfig.pricing.normalVariationPrice,
     totalSupport.value,
@@ -112,7 +115,7 @@ const discountPreview = computed((): string => {
           />
         </div>
         
-        <div class="form-group">
+        <div v-if="hasFullsetVariation" class="form-group">
           <label>Fullset 价格 (¥)</label>
           <p class="form-hint">建议: ¥{{ suggestedPrice }}</p>
           <input 
@@ -128,7 +131,7 @@ const discountPreview = computed((): string => {
             总支持数: <strong>{{ totalSupport }}</strong>
           </span>
           <span class="be-p-xs be-px-sm be-text-sm be-text-secondary">
-            当前折后: ¥{{ normalDiscountedPrice }} / Fullset ¥{{ fullsetDiscountedPrice }}
+            当前折后: ¥{{ normalDiscountedPrice }}<template v-if="hasFullsetVariation"> / Fullset ¥{{ fullsetDiscountedPrice }}</template>
           </span>
         </div>
       </SectionHeader>

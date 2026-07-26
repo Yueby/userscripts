@@ -43,6 +43,26 @@ export function applyDiscount(
   return applyDiscountPercent(originalPrice, period.discountPercent);
 }
 
+/**
+ * 获取 variation 的应用价格。
+ * fixed 模式下 price 已是页面最终价格；否则按配置计算基础价并应用一次折扣。
+ */
+export function resolveVariationPrice(
+  variation: VariationData,
+  pricing: PriceConfig,
+  discount: DiscountConfig
+): number {
+  if (variation.priceMode === 'fixed') return variation.price;
+
+  const basePrice = variation.isFullset
+    ? pricing.fullsetPrice
+    : variation.useCustomPrice && variation.customPrice !== undefined
+      ? variation.customPrice
+      : pricing.normalVariationPrice;
+
+  return applyDiscount(basePrice, discount);
+}
+
 // 计算所有 Variation 的价格（使用当前生效时段）
 export function calculateVariationPrices(
   variations: VariationData[],
@@ -50,10 +70,9 @@ export function calculateVariationPrices(
   discount: DiscountConfig
 ): void {
   variations.forEach(variation => {
-    const basePrice = variation.isFullset 
-      ? pricing.fullsetPrice 
-      : pricing.normalVariationPrice;
-    variation.price = applyDiscount(basePrice, discount);
+    if (variation.priceMode !== 'fixed') {
+      variation.price = resolveVariationPrice(variation, pricing, discount);
+    }
   });
 }
 

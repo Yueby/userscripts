@@ -5,7 +5,7 @@ import { Simulate } from '../../../../../../utils/simulate';
 import { getStableKey } from '../../../../../../utils/utils';
 import { useApiFiles, useModal } from '../../../../composables';
 import type { ItemData, ItemEditConfig, NodeTree, VariationData } from '../../../../config-types';
-import { applyDiscount } from '../../../../utils/priceCalculator';
+import { applyDiscount, resolveVariationPrice } from '../../../../utils/priceCalculator';
 import { cleanMissingFileIds } from '../../../../utils/fileCleanup';
 import { findBestMatchItem } from '../../../../utils/fileNameMatcher';
 import { SectionHeader } from '../../../ui';
@@ -154,6 +154,7 @@ async function importVariations(): Promise<void> {
   props.itemConfig.variations = parsed.map(pv => ({
     name: pv.name,
     price: pv.price,
+    priceMode: 'fixed',
     isFullset: pv.isFullset,
     fileIds: pv.fileIds,
     fileItemMap: pv.fileItemMap
@@ -199,10 +200,16 @@ function restoreFilesFromPage(): { restoredFiles: number; addedVariations: numbe
   let addedVariations = 0;
   
   parsed.forEach(pv => {
+    const existing = configByName.get(normalizeVariationName(pv.name));
+    if (existing) {
+      // 页面价格是最终价格，避免恢复后再次套用折扣
+      existing.price = pv.price;
+      existing.priceMode = 'fixed';
+    }
+
     // Fullset 跳过：它的文件在 apply 阶段由其它 variation 推导，isFullset 状态由用户在 UI 控制
     if (pv.isFullset) return;
     
-    const existing = configByName.get(normalizeVariationName(pv.name));
     if (existing) {
       // 已存在：只回填文件关联，保留其它字段
       existing.fileIds = [...pv.fileIds];
@@ -217,6 +224,7 @@ function restoreFilesFromPage(): { restoredFiles: number; addedVariations: numbe
       props.itemConfig.variations.push({
         name: pv.name,
         price: pv.price,
+        priceMode: 'fixed',
         isFullset: false,
         fileIds: pv.fileIds,
         fileItemMap: pv.fileItemMap
@@ -660,17 +668,11 @@ function toggleFullset(variation: VariationData, index: number): void {
 
 // 获取 Variation 价格
 function getVariationPrice(variation: VariationData): number {
-  const { pricing, discount } = props.itemConfig;
-  
-  if (variation.isFullset) {
-    return applyDiscount(pricing.fullsetPrice, discount);
-  }
-  
-  if (variation.useCustomPrice && variation.customPrice !== undefined) {
-    return applyDiscount(variation.customPrice, discount);
-  }
-  
-  return applyDiscount(pricing.normalVariationPrice, discount);
+  return resolveVariationPrice(
+    variation,
+    props.itemConfig.pricing,
+    props.itemConfig.discount
+  );
 }
 
 // 获取支持数（统计唯一商品数量，多个文件引用同一商品只算一次）

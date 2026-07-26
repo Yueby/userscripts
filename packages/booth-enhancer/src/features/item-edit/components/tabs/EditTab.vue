@@ -224,9 +224,20 @@ async function handleCreateItem(): Promise<void> {
 }
 
 // 处理描述更新（由子组件调用）
-function handleDescriptionUpdated(description: string): void {
+function handleDescriptionUpdated(description: string, descriptionTemplateId?: string): void {
   if (currentItemId.value) {
     data.value.itemConfigs[currentItemId.value].customDescription = description;
+    if (descriptionTemplateId !== undefined) {
+      if (!data.value.itemConfigs[currentItemId.value].selectedTemplates) {
+        data.value.itemConfigs[currentItemId.value].selectedTemplates = {
+          nameTemplateId: 'default-name',
+          descriptionTemplateId: 'default-desc',
+          discountTemplateId: 'default-discount',
+          discountIndicatorTemplateId: 'default-discount-indicator'
+        };
+      }
+      data.value.itemConfigs[currentItemId.value].selectedTemplates.descriptionTemplateId = descriptionTemplateId;
+    }
   }
 }
 
