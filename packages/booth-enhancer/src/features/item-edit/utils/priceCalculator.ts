@@ -45,15 +45,13 @@ export function applyDiscount(
 
 /**
  * 获取 variation 的应用价格。
- * fixed 模式下 price 已是页面最终价格；否则按配置计算基础价并应用一次折扣。
+ * Fullset 使用 Fullset 价格；开启自定义价格时使用 customPrice；否则使用普通价格。
  */
 export function resolveVariationPrice(
   variation: VariationData,
   pricing: PriceConfig,
   discount: DiscountConfig
 ): number {
-  if (variation.priceMode === 'fixed') return variation.price;
-
   const basePrice = variation.isFullset
     ? pricing.fullsetPrice
     : variation.useCustomPrice && variation.customPrice !== undefined
@@ -70,9 +68,7 @@ export function calculateVariationPrices(
   discount: DiscountConfig
 ): void {
   variations.forEach(variation => {
-    if (variation.priceMode !== 'fixed') {
-      variation.price = resolveVariationPrice(variation, pricing, discount);
-    }
+    variation.price = resolveVariationPrice(variation, pricing, discount);
   });
 }
 

@@ -150,15 +150,19 @@ async function importVariations(): Promise<void> {
     props.itemConfig.pricing.normalVariationPrice = normalVariation.price;
   }
   
-  // 写入配置（剥离 parse 阶段多出的 price 字段，保持 VariationData 结构）
-  props.itemConfig.variations = parsed.map(pv => ({
-    name: pv.name,
-    price: pv.price,
-    priceMode: 'fixed',
-    isFullset: pv.isFullset,
-    fileIds: pv.fileIds,
-    fileItemMap: pv.fileItemMap
-  }));
+  // 写入配置：与普通价不同的 non-Fullset variation 还原为自定义价格
+  props.itemConfig.variations = parsed.map(pv => {
+    const useCustomPrice = !pv.isFullset && pv.price !== normalVariation?.price;
+    return {
+      name: pv.name,
+      price: pv.price,
+      isFullset: pv.isFullset,
+      useCustomPrice,
+      customPrice: useCustomPrice ? pv.price : undefined,
+      fileIds: pv.fileIds,
+      fileItemMap: pv.fileItemMap
+    };
+  });
   props.itemConfig.commonFiles = commonFiles;
   
   const messages: string[] = [`已导入 ${parsed.length} 个 Variations`];
@@ -201,11 +205,6 @@ function restoreFilesFromPage(): { restoredFiles: number; addedVariations: numbe
   
   parsed.forEach(pv => {
     const existing = configByName.get(normalizeVariationName(pv.name));
-    if (existing) {
-      // 页面价格是最终价格，避免恢复后再次套用折扣
-      existing.price = pv.price;
-      existing.priceMode = 'fixed';
-    }
 
     // Fullset 跳过：它的文件在 apply 阶段由其它 variation 推导，isFullset 状态由用户在 UI 控制
     if (pv.isFullset) return;
@@ -221,11 +220,13 @@ function restoreFilesFromPage(): { restoredFiles: number; addedVariations: numbe
       restoredFiles++;
     } else {
       // 配置中不存在：完整补回
+      const useCustomPrice = pv.price !== props.itemConfig.pricing.normalVariationPrice;
       props.itemConfig.variations.push({
         name: pv.name,
         price: pv.price,
-        priceMode: 'fixed',
         isFullset: false,
+        useCustomPrice,
+        customPrice: useCustomPrice ? pv.price : undefined,
         fileIds: pv.fileIds,
         fileItemMap: pv.fileItemMap
       });

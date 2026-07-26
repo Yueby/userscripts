@@ -68,8 +68,7 @@ export interface LogEntry {
 // Variation 数据
 export interface VariationData {
   name: string;
-  price: number; // Variation 价格（根据打折开关自动调整，fixed 模式除外）
-  priceMode?: 'fixed'; // fixed 表示 price 是页面最终价格，不再应用折扣
+  price: number; // Variation 价格（根据基础价、自定义价格和打折配置自动调整）
   isFullset?: boolean; // 是否为 Fullset variation
   useCustomPrice?: boolean; // 是否使用自定义价格
   customPrice?: number; // 自定义价格（覆盖配置的价格）
