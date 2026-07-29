@@ -11,7 +11,8 @@ export type ModalType =
   | 'createItem' 
   | 'editDescription'
   | 'rename' 
-  | 'delete' 
+  | 'delete'
+  | 'confirm'
   | 'template'
   | 'input'      // 通用输入框
   | 'textarea'   // 通用文本域

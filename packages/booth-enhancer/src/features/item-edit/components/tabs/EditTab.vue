@@ -419,7 +419,7 @@ defineExpose({
     </div>
 
     <!-- 通用确认 / 危险操作 -->
-    <div v-else-if="modalState.type === 'delete'" class="modal-content">
+    <div v-else-if="modalState.type === 'delete' || modalState.type === 'confirm'" class="modal-content">
       <p class="modal-message">{{ modalState.formData?.message || '确认执行此操作？' }}</p>
     </div>
 
@@ -452,8 +452,11 @@ defineExpose({
         <span v-html="withSize(icons.check, 16)"></span>
       </button>
       <button 
-        v-else-if="modalState.type === 'delete'"
-        class="booth-btn booth-btn-md booth-btn-icon booth-btn-danger" 
+        v-else-if="modalState.type === 'delete' || modalState.type === 'confirm'"
+        :class="[
+          'booth-btn booth-btn-md booth-btn-icon',
+          modalState.type === 'delete' ? 'booth-btn-danger' : 'booth-btn-primary'
+        ]"
         type="button"
         title="确认"
         @click="modal.confirmModal(true)"

@@ -154,6 +154,90 @@ const closeMenu = () => {
   showMenu.value = false;
 };
 
+const boothSaveButtonSelector =
+  '#js-mount-point-manage-item-edit > div.bg-white > div > div > div > div';
+
+function clickBoothSaveButton(index: 1 | 2, label: string): void {
+  const button = document.querySelector<HTMLButtonElement>(
+    `${boothSaveButtonSelector}:nth-child(${index}) > button`
+  );
+
+  if (!button) {
+    toast.error(`找不到 BOOTH 的“${label}”按钮`);
+    return;
+  }
+
+  button.click();
+}
+
+const saveAsPrivate = () => clickBoothSaveButton(1, '保存为私密');
+const saveAndPublish = () => clickBoothSaveButton(2, '保存并公开');
+
+function findOpenFileDialog(): HTMLElement | null {
+  const dialogs = document.querySelectorAll<HTMLElement>(
+    'body > div.fixed.top-0.left-0.right-0'
+  );
+
+  return Array.from(dialogs).find(dialog =>
+    dialog.textContent?.includes('Add/Edit Files')
+    && !dialog.classList.contains('hidden')
+    && dialog.querySelector('ul.list-none')
+  ) || null;
+}
+
+function findMainFileButton(): HTMLElement | null {
+  const headings = document.querySelectorAll<HTMLElement>(
+    'h1, h2, h3, h4, [role="heading"]'
+  );
+  const fileHeading = Array.from(headings).find(heading =>
+    /作品文件|digital files|downloadable files/i.test(heading.textContent?.trim() || '')
+  );
+  const fileSection = fileHeading?.closest<HTMLElement>('.bg-white')
+    || fileHeading?.parentElement;
+
+  if (fileSection) {
+    const button = Array.from(
+      fileSection.querySelectorAll<HTMLElement>('button, [role="button"], .cursor-pointer')
+    ).find(candidate => /^(Add\/Edit Files|Edit)$/i.test(candidate.textContent?.trim() || ''));
+    if (button) return button;
+  }
+
+  const addFileLabel = Array.from(
+    document.querySelectorAll<HTMLElement>('.font-booth-demi')
+  ).find(element => element.textContent?.trim() === 'Add/Edit Files');
+
+  return addFileLabel?.closest<HTMLElement>('button, [role="button"], .cursor-pointer')
+    || null;
+}
+
+function toggleFilePanel(): void {
+  const openDialog = findOpenFileDialog();
+  if (openDialog) {
+    const closeButton = Array.from(
+      openDialog.querySelectorAll<HTMLButtonElement>('button')
+    ).find(button =>
+      Boolean(button.querySelector('pixiv-icon[name="32/BoothClose"]'))
+      || /close|关闭/i.test(button.getAttribute('aria-label') || button.title)
+    );
+
+    if (!closeButton) {
+      toast.error('找不到 BOOTH 文件面板的关闭按钮');
+      return;
+    }
+
+    closeButton.click();
+    return;
+  }
+
+  const openButton = findMainFileButton();
+  if (!openButton) {
+    toast.error('找不到 BOOTH 的文件选择按钮');
+    return;
+  }
+
+  openButton.click();
+}
+
 // 导出当前 Tab 数据
 function handleTabExport() {
   const activeTab = data.value.ui.activeTab;
@@ -343,6 +427,21 @@ onUnmounted(() => {
       @update:active-tab="handleTabChange"
     >
       <template #actions>
+        <IconButton :icon="icons.folder" title="打开/关闭文件选择面板" @click="toggleFilePanel" />
+        <button
+          class="booth-btn booth-btn-sm booth-btn-secondary top-save-button"
+          type="button"
+          @click="saveAsPrivate"
+        >
+          保存为私密
+        </button>
+        <button
+          class="booth-btn booth-btn-sm booth-btn-primary top-save-button"
+          type="button"
+          @click="saveAndPublish"
+        >
+          保存并公开
+        </button>
         <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
         <IconButton :icon="icons.close" title="关闭" @click="closeSidebar" />
       </template>
@@ -414,6 +513,11 @@ onUnmounted(() => {
   background: #fff;
   min-height: 0;
   position: relative;
+}
+
+.top-save-button {
+  min-height: 30px;
+  padding-inline: var(--be-space-sm);
 }
 
 /* Tab 切换动画 */

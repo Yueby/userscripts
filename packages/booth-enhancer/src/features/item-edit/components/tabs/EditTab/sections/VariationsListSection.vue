@@ -619,21 +619,70 @@ function autoCreateVariationsFromFiles(): void {
   }
 }
 
-// 添加 Variation
-function addVariation(): void {
+function createVariationForFile(fileId?: string): void {
   const price = applyDiscount(
     props.itemConfig.pricing.normalVariationPrice,
     props.itemConfig.discount
   );
-  
+  const file = fileId
+    ? reactiveFiles.value.find(candidate => candidate.id === fileId)
+    : undefined;
+  const matchedItemId = file
+    ? findBestMatchItem(file.name, props.itemTree)
+    : null;
+  const matchedNode = matchedItemId
+    ? props.itemTree.nodes[matchedItemId]
+    : undefined;
+
   props.itemConfig.variations.push({
-    name: '',
+    name: matchedNode?.data?.itemName || matchedNode?.name || '',
     price,
     isFullset: false,
     useCustomPrice: false,
-    fileIds: [],
-    fileItemMap: {}
+    fileIds: fileId ? [fileId] : [],
+    fileItemMap: fileId && matchedItemId ? { [fileId]: [matchedItemId] } : {}
   });
+}
+
+function getUnconfiguredFiles() {
+  const referencedFileIds = new Set<string>(props.itemConfig.commonFiles || []);
+  props.itemConfig.variations.forEach(variation => {
+    variation.fileIds?.forEach(fileId => referencedFileIds.add(fileId));
+  });
+
+  return reactiveFiles.value.filter(file => !referencedFileIds.has(file.id));
+}
+
+// 添加 Variation
+async function addVariation(): Promise<void> {
+  refreshFiles();
+  const unconfiguredFiles = getUnconfiguredFiles();
+
+  if (unconfiguredFiles.length === 0) {
+    createVariationForFile();
+    return;
+  }
+
+  const fileNames = unconfiguredFiles.map(file => `• ${file.name}`).join('\n');
+  const shouldAutoCreate = await props.modal.openModal({
+    type: 'confirm',
+    title: '发现未配置文件',
+    formData: {
+      message: `发现 ${unconfiguredFiles.length} 个未被 Variation 或通用文件引用的文件：\n\n${fileNames}\n\n是否为这些文件自动创建 Variation？\n取消仍会新增一个空 Variation。`
+    }
+  });
+
+  if (!shouldAutoCreate) {
+    createVariationForFile();
+    return;
+  }
+
+  unconfiguredFiles.forEach(file => createVariationForFile(file.id));
+  const matchedCount = unconfiguredFiles.filter(file =>
+    Boolean(findBestMatchItem(file.name, props.itemTree))
+  ).length;
+  const details = matchedCount > 0 ? `，自动匹配 ${matchedCount} 个模型` : '';
+  toast.success(`已为 ${unconfiguredFiles.length} 个文件创建 Variation${details}`);
 }
 
 // 删除 Variation
