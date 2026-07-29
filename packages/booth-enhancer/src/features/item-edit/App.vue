@@ -181,32 +181,33 @@ function findOpenFileDialog(): HTMLElement | null {
   return Array.from(dialogs).find(dialog =>
     dialog.textContent?.includes('Add/Edit Files')
     && !dialog.classList.contains('hidden')
-    && dialog.querySelector('ul.list-none')
   ) || null;
 }
 
-function findMainFileButton(): HTMLElement | null {
+function findSingleItemFileButton(): HTMLElement | null {
   const headings = document.querySelectorAll<HTMLElement>(
     'h1, h2, h3, h4, [role="heading"]'
   );
   const fileHeading = Array.from(headings).find(heading =>
     /作品文件|digital files|downloadable files/i.test(heading.textContent?.trim() || '')
   );
-  const fileSection = fileHeading?.closest<HTMLElement>('.bg-white')
-    || fileHeading?.parentElement;
 
-  if (fileSection) {
+  let container = fileHeading?.parentElement || null;
+  for (let depth = 0; container && depth < 6; depth++) {
     const button = Array.from(
-      fileSection.querySelectorAll<HTMLElement>('button, [role="button"], .cursor-pointer')
+      container.querySelectorAll<HTMLElement>('button, [role="button"], .cursor-pointer')
     ).find(candidate => /^(Add\/Edit Files|Edit)$/i.test(candidate.textContent?.trim() || ''));
     if (button) return button;
+    container = container.parentElement;
   }
 
-  const addFileLabel = Array.from(
-    document.querySelectorAll<HTMLElement>('.font-booth-demi')
-  ).find(element => element.textContent?.trim() === 'Add/Edit Files');
+  const addFileButton = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('button')
+  ).find(button => button.textContent?.trim() === 'Add/Edit Files');
+  if (addFileButton) return addFileButton;
 
-  return addFileLabel?.closest<HTMLElement>('button, [role="button"], .cursor-pointer')
+  const downloadIcon = document.querySelector<HTMLElement>('i.icon-downloadables');
+  return downloadIcon?.closest<HTMLElement>('button, [role="button"], .cursor-pointer')
     || null;
 }
 
@@ -229,9 +230,13 @@ function toggleFilePanel(): void {
     return;
   }
 
-  const openButton = findMainFileButton();
+  const firstVariationFileButton = props.api.variations.length > 0
+    ? props.api.findVariationEditButton(0)
+    : null;
+  const openButton = firstVariationFileButton || findSingleItemFileButton();
+
   if (!openButton) {
-    toast.error('找不到 BOOTH 的文件选择按钮');
+    toast.error('找不到 BOOTH 的文件选择入口');
     return;
   }
 
@@ -428,20 +433,8 @@ onUnmounted(() => {
     >
       <template #actions>
         <IconButton :icon="icons.folder" title="打开/关闭文件选择面板" @click="toggleFilePanel" />
-        <button
-          class="booth-btn booth-btn-sm booth-btn-secondary top-save-button"
-          type="button"
-          @click="saveAsPrivate"
-        >
-          保存为私密
-        </button>
-        <button
-          class="booth-btn booth-btn-sm booth-btn-primary top-save-button"
-          type="button"
-          @click="saveAndPublish"
-        >
-          保存并公开
-        </button>
+        <IconButton :icon="icons.lock" title="保存为私密" @click="saveAsPrivate" />
+        <IconButton :icon="icons.upload" title="保存并公开" @click="saveAndPublish" />
         <IconButton :icon="icons.moreVertical" title="更多操作" @click="toggleMenu" />
         <IconButton :icon="icons.close" title="关闭" @click="closeSidebar" />
       </template>
@@ -513,11 +506,6 @@ onUnmounted(() => {
   background: #fff;
   min-height: 0;
   position: relative;
-}
-
-.top-save-button {
-  min-height: 30px;
-  padding-inline: var(--be-space-sm);
 }
 
 /* Tab 切换动画 */
