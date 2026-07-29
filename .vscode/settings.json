@@ -3,5 +3,6 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "svn.ignoreMissingSvnWarning": true
 }
