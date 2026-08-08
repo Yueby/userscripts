@@ -8,6 +8,7 @@ export interface User {
   followed_by: boolean;
   followersCount: number;
   followingCount: number;
+  profileLoaded?: boolean;
 }
 
 export interface DrawUser extends User {
@@ -32,10 +33,13 @@ export interface DrawResult {
   count?: number;
 }
 
+export type InteractionSource = 'retweets' | 'likes' | 'quotes';
+
 export interface InteractionData {
   retweets: User[];
   likes: User[];
   quotes: User[];
+  failedSources: InteractionSource[];
 }
 
 export interface DrawHistoryEntry {

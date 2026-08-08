@@ -3,7 +3,7 @@
 // @name:zh-CN         X(推特) 抽奖助手
 // @name:ja            X 抽選ツール
 // @namespace          yueby.x-draw-helper
-// @version            0.2.0
+// @version            0.2.1
 // @author             Yueby
 // @description        A userscript for conducting draws on X (Twitter) posts
 // @description:zh-CN  X(推特) 推文抽奖助手，支持转发/点赞用户筛选、随机抽奖、结果通知
@@ -165,7 +165,9 @@
       return _origPageFetch(input, init);
     };
   }
-  const _ON_DEMAND_RE = /(\d+):\s*["']ondemand\.s["'][\s\S]*?\}\[e\]\s*\|\|\s*e\)\s*\+\s*["']\.["']\s*\+\s*\{[\s\S]*?\b\1:\s*["']([a-zA-Z0-9_-]+)["']/s;
+  const _ON_DEMAND_RE = /(\d+):\s*["']ondemand\.s["'][\s\S]*?\}\)\[e\]\s*\|\|\s*e\)\s*\+\s*["']\.["']\s*\+\s*\(\{[\s\S]*?\b\1:\s*["']([a-zA-Z0-9_-]+)["']/s;
+  const _LEGACY_ON_DEMAND_RE = /["']ondemand\.s["']\s*:\s*["']([a-zA-Z0-9_-]+)["']/;
+  const _CHUNK_NAME_RE = /(\d+):\s*["']ondemand\.s["']/;
   const _INDICES_RE = /\(\w\[(\d{1,2})\],\s*16\)/g;
   class _ClientTransaction {
     keyBytes = [];
@@ -213,16 +215,26 @@
       }
     }
     _getOnDemandUrl() {
-      const scripts = Array.from(document.querySelectorAll("script"));
-      for (const s of scripts) {
-        const t2 = s.textContent ?? "";
-        if (!t2.includes("ondemand.s")) continue;
-        const m2 = _ON_DEMAND_RE.exec(t2);
-        if (m2) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m2[2]}a.js`;
+      const sources = Array.from(document.querySelectorAll("script")).map((script) => script.textContent ?? "").filter((source) => source.includes("ondemand.s"));
+      sources.push(document.documentElement.outerHTML);
+      for (const source of sources) {
+        const currentMatch = _ON_DEMAND_RE.exec(source);
+        if (currentMatch) return this._buildOnDemandUrl(currentMatch[2]);
+        const legacyMatch = _LEGACY_ON_DEMAND_RE.exec(source);
+        if (legacyMatch) return this._buildOnDemandUrl(legacyMatch[1]);
+        const chunkMatch = _CHUNK_NAME_RE.exec(source);
+        if (!chunkMatch) continue;
+        const hashMatches = source.matchAll(
+          new RegExp(`(?:^|[,{])\\s*${chunkMatch[1]}:\\s*["']([a-zA-Z0-9_-]+)["']`, "g")
+        );
+        for (const match of hashMatches) {
+          if (match[1] !== "ondemand.s") return this._buildOnDemandUrl(match[1]);
+        }
       }
-      const m = _ON_DEMAND_RE.exec(document.documentElement.outerHTML);
-      if (m) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m[2]}a.js`;
       return null;
+    }
+    _buildOnDemandUrl(hash) {
+      return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${hash}a.js`;
     }
     _buildAnimKey(doc = document) {
       const frames = Array.from(doc.querySelectorAll("[id^='loading-x-anim']"));
@@ -348,23 +360,33 @@
   const ENDPOINT_MAP = {
     retweeters: "Retweeters",
     favoriters: "Favoriters",
-    searchTimeline: "SearchTimeline"
+    searchTimeline: "SearchTimeline",
+    userByScreenName: "UserByScreenName"
   };
   const DEFAULT_ENDPOINTS = {
     retweeters: "",
     favoriters: "",
     searchTimeline: ""
   };
-  const ENDPOINTS = { ...DEFAULT_ENDPOINTS };
-  let GRAPHQL_FEATURES = {};
+  const ENDPOINTS = {
+    ...DEFAULT_ENDPOINTS,
+    userByScreenName: ""
+  };
+  const ENDPOINT_FEATURES = {
+    retweeters: {},
+    favoriters: {},
+    searchTimeline: {},
+    userByScreenName: {}
+  };
   function setEndpoint(key, value) {
     ENDPOINTS[key] = value;
   }
   function updateEndpoints(custom) {
     for (const [k, v] of Object.entries(custom)) {
-      if (!v || !(k in ENDPOINTS)) continue;
-      const opName = v.includes("/") ? v.split("/").pop() : ENDPOINT_MAP[k] ?? k;
-      setEndpoint(k, v.includes("/") ? v : `${v}/${opName}`);
+      if (!v || !(k in DEFAULT_ENDPOINTS)) continue;
+      const endpointKey = k;
+      const opName = v.includes("/") ? v.split("/").pop() : ENDPOINT_MAP[endpointKey];
+      setEndpoint(endpointKey, v.includes("/") ? v : `${v}/${opName}`);
     }
   }
   function loadCustomEndpoints() {
@@ -388,15 +410,14 @@
       const data = JSON.parse(text);
       const graphql = data?.graphql;
       if (!graphql || typeof graphql !== "object") return false;
-      let featuresSet = false;
       for (const [key, opName] of Object.entries(ENDPOINT_MAP)) {
+        const endpointKey = key;
         const entry = graphql[opName];
         if (entry?.queryId) {
-          setEndpoint(key, `${entry.queryId}/${opName}`);
+          setEndpoint(endpointKey, `${entry.queryId}/${opName}`);
         }
-        if (!featuresSet && entry?.features && typeof entry.features === "object") {
-          GRAPHQL_FEATURES = { ...entry.features };
-          featuresSet = true;
+        if (entry?.features && typeof entry.features === "object") {
+          ENDPOINT_FEATURES[endpointKey] = { ...entry.features };
         }
       }
       return true;
@@ -441,19 +462,36 @@
   function getCsrfToken() {
     return document.cookie.split("; ").find((row) => row.startsWith("ct0="))?.split("=")[1] ?? null;
   }
-  function getLoggedInUserId() {
-    const raw = document.cookie.split("; ").find((row) => row.startsWith("twid="))?.split("=").slice(1).join("=");
-    if (!raw) return null;
-    const decoded = decodeURIComponent(raw);
-    return decoded.startsWith("u=") ? decoded.slice(2) : null;
-  }
   function getTweetIdFromUrl() {
-    const match = window.location.href.match(/\/status\/(\d+)/);
+    const match = window.location.pathname.match(/\/status\/(\d+)/);
     return match?.[1] ?? null;
+  }
+  function getTweetAuthorHandleFromUrl() {
+    const match = window.location.pathname.match(/^\/([^/]+)\/status\/\d+/);
+    return match?.[1] ? decodeURIComponent(match[1]) : null;
+  }
+  function getNumericField(result, ...keys) {
+    const queue = [result];
+    const seen = new Set();
+    while (queue.length) {
+      const value = queue.shift();
+      if (!value || typeof value !== "object" || seen.has(value)) continue;
+      seen.add(value);
+      const record = value;
+      for (const key of keys) {
+        const field = record[key];
+        if (typeof field === "number" && Number.isFinite(field)) return field;
+      }
+      queue.push(...Object.values(record));
+    }
+    return void 0;
   }
   function userFromResult(result, legacy, core, perspectives, fallbackId = "") {
     const avatar = result.avatar;
     const profileBio = result.profile_bio;
+    const relationshipCounts = result.relationship_counts;
+    const followersCount = typeof relationshipCounts?.followers === "number" ? relationshipCounts.followers : getNumericField(result, "followers_count", "followersCount");
+    const followingCount = typeof relationshipCounts?.following === "number" ? relationshipCounts.following : getNumericField(result, "friends_count", "following_count", "followingCount");
     return {
       id: result.rest_id || fallbackId,
       username: legacy.name || core.name || "",
@@ -462,8 +500,9 @@
       bio: legacy.description || profileBio?.description || "",
       following: Boolean(perspectives.following ?? legacy.following),
       followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
-      followersCount: Number(legacy.followers_count ?? 0),
-      followingCount: Number(legacy.friends_count ?? 0)
+      followersCount: followersCount ?? 0,
+      followingCount: followingCount ?? 0,
+      profileLoaded: followersCount !== void 0 && followingCount !== void 0
     };
   }
   function extractInstructions(data, ...path) {
@@ -492,6 +531,7 @@
     const result = [];
     const seen = new Set();
     async function fetchWithRetry(cursor) {
+      let lastError = new Error("Request failed");
       for (let retry = 0; retry < maxRetries; retry++) {
         if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
         try {
@@ -501,19 +541,20 @@
           return await response.json();
         } catch (error) {
           if (error.name === "AbortError") throw error;
-          if (retry === maxRetries - 1) return null;
-          await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
+          lastError = error;
+          if (retry < maxRetries - 1) {
+            await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
+          }
         }
       }
-      return null;
+      throw lastError;
     }
     let currentCursor = null;
     let pendingFetch = fetchWithRetry(null);
     while (pendingFetch) {
       const data = await pendingFetch;
-      if (!data) break;
       const { users, nextCursor } = parsePage(data);
-      const filtered = filterUser ? users.filter(filterUser) : users;
+      const filtered = users;
       if (nextCursor && nextCursor !== currentCursor) {
         currentCursor = nextCursor;
         pendingFetch = fetchWithRetry(currentCursor);
@@ -544,7 +585,7 @@
     const addEntries = getAddEntries(instructions);
     if (!addEntries) return { users: [], nextCursor: null };
     const nextCursor = getBottomCursor(addEntries.entries);
-    const users = addEntries.entries.filter((e) => String(e.entryId ?? "").startsWith("user-")).map((entry) => {
+    const users = addEntries.entries.map((entry) => {
       const e = entry;
       const r = e.content?.itemContent?.user_results;
       const result = r?.result;
@@ -552,13 +593,11 @@
       const legacy = result.legacy ?? {};
       const core = result.core ?? {};
       const perspectives = result.relationship_perspectives ?? {};
-      const entryId = String(e.entryId ?? "");
-      const fallbackId = entryId.startsWith("user-") ? entryId.slice(5) : "";
-      return userFromResult(result, legacy, core, perspectives, fallbackId);
+      return userFromResult(result, legacy, core, perspectives);
     }).filter((u) => u !== null && u.handle !== "");
     return { users, nextCursor };
   }
-  function parseSearchTimeline(data) {
+  function parseSearchTimeline(data, quotedTweetId) {
     const instructions = extractInstructions(data, "data", "search_by_raw_query", "search_timeline", "timeline", "instructions");
     if (isTerminated(instructions)) return { users: [], nextCursor: null };
     const addEntries = getAddEntries(instructions);
@@ -569,12 +608,16 @@
       const tweetResult = e.content?.itemContent?.tweet_results;
       const raw = tweetResult?.result;
       const tweet = (raw?.__typename === "TweetWithVisibilityResults" ? raw.tweet : raw) ?? {};
+      const legacy = tweet.legacy ?? {};
+      const quotedRef = tweet.quotedRefResult?.result ?? {};
+      const quotedId = legacy.quoted_status_id_str ?? quotedRef.rest_id;
+      if (quotedId !== quotedTweetId) return null;
       const userResults = tweet.core?.user_results?.result;
       if (!userResults) return null;
-      const legacy = userResults.legacy ?? {};
+      const userLegacy = userResults.legacy ?? {};
       const core = userResults.core ?? {};
       const perspectives = userResults.relationship_perspectives ?? {};
-      return userFromResult(userResults, legacy, core, perspectives);
+      return userFromResult(userResults, userLegacy, core, perspectives);
     }).filter((u) => u !== null && u.handle !== "");
     return { users, nextCursor };
   }
@@ -587,17 +630,23 @@
       "content-type": "application/json"
     };
   }
-  function buildGraphqlUrl(endpoint, variables) {
-    return `https://x.com/i/api/graphql/${endpoint}?variables=${encodeURIComponent(JSON.stringify(variables))}&features=${encodeURIComponent(JSON.stringify(GRAPHQL_FEATURES))}`;
+  function requireEndpoint(key) {
+    const endpoint = ENDPOINTS[key];
+    if (!endpoint) throw new Error(`missingEndpoint:${key}`);
+    return endpoint;
+  }
+  function buildGraphqlUrl(endpoint, variables, features) {
+    return `https://x.com/i/api/graphql/${endpoint}?variables=${encodeURIComponent(JSON.stringify(variables))}&features=${encodeURIComponent(JSON.stringify(features))}`;
   }
   async function fetchRetweeters(tweetId, csrfToken, options = {}) {
+    const endpoint = requireEndpoint("retweeters");
     return paginateUsers({
-      buildUrl: (cursor) => buildGraphqlUrl(ENDPOINTS.retweeters, {
+      buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
         tweetId,
         count: LIMITS.PAGE_SIZE,
         includePromotedContent: true,
         ...cursor && { cursor }
-      }),
+      }, ENDPOINT_FEATURES.retweeters),
       parsePage: parseRetweeterTimeline,
       fetchFn: pageFetch(),
       headers: baseHeaders(csrfToken),
@@ -606,13 +655,14 @@
     }, options.onProgress);
   }
   async function fetchFavoriters(tweetId, csrfToken, options = {}) {
+    const endpoint = requireEndpoint("favoriters");
     return paginateUsers({
-      buildUrl: (cursor) => buildGraphqlUrl(ENDPOINTS.favoriters, {
+      buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
         tweetId,
         count: LIMITS.PAGE_SIZE,
         includePromotedContent: true,
         ...cursor && { cursor }
-      }),
+      }, ENDPOINT_FEATURES.favoriters),
       parsePage: parseFavoriterTimeline,
       fetchFn: pageFetch(),
       headers: baseHeaders(csrfToken),
@@ -621,9 +671,8 @@
     }, options.onProgress);
   }
   async function fetchQuoteTweeters(tweetId, csrfToken, options = {}) {
-    const endpoint = ENDPOINTS.searchTimeline;
+    const endpoint = requireEndpoint("searchTimeline");
     const path = `/i/api/graphql/${endpoint}`;
-    const selfId = getLoggedInUserId();
     return paginateUsers({
       buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
         rawQuery: `quoted_tweet_id:${tweetId}`,
@@ -631,17 +680,39 @@
         querySource: "tdqt",
         product: "Top",
         ...cursor && { cursor }
-      }),
-      parsePage: parseSearchTimeline,
+      }, ENDPOINT_FEATURES.searchTimeline),
+      parsePage: (data) => parseSearchTimeline(data, tweetId),
       fetchFn: pageFetch(),
       headers: baseHeaders(csrfToken),
       maxRetries: options.maxRetries ?? MAX_RETRIES_DEFAULT,
       signal: options.signal,
       extraHeaders: async () => {
         const txId = await getTxId("GET", path);
-        return txId ? { "x-client-transaction-id": txId } : {};
+        if (!txId) throw new Error("transactionIdUnavailable");
+        return { "x-client-transaction-id": txId };
       }
-    }, options.onProgress, selfId ? (u) => u.id !== selfId : void 0);
+    }, options.onProgress);
+  }
+  async function fetchUserProfile(handle) {
+    const csrfToken = getCsrfToken();
+    if (!csrfToken) throw new Error("loginRequired");
+    await initEndpoints();
+    const endpoint = requireEndpoint("userByScreenName");
+    const response = await pageFetch()(
+      buildGraphqlUrl(endpoint, {
+        screen_name: handle,
+        withSafetyModeUserFields: true
+      }, ENDPOINT_FEATURES.userByScreenName),
+      { headers: baseHeaders(csrfToken) }
+    );
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const result = data?.data?.user?.result;
+    if (!result) throw new Error("userProfileUnavailable");
+    const legacy = result.legacy ?? {};
+    const core = result.core ?? {};
+    const perspectives = result.relationship_perspectives ?? {};
+    return userFromResult(result, legacy, core, perspectives);
   }
   function getCacheIndex() {
     return gmStorage.get(STORAGE_KEYS.CACHE_INDEX, []);
@@ -683,29 +754,28 @@
   const quoteProgress = vue.ref(0);
   const lastTweetId = vue.ref(null);
   const fetchedAt = vue.ref(null);
+  const failedSources = vue.ref([]);
   let abortController = null;
   function useDrawData() {
     const mergedUsers = vue.computed(() => {
       const map = new Map();
-      for (const user of retweets.value) {
-        map.set(user.handle, { ...user, hasRetweet: true });
-      }
-      for (const user of likes.value) {
-        const existing = map.get(user.handle);
-        if (existing) {
-          existing.hasLike = true;
-        } else {
-          map.set(user.handle, { ...user, hasLike: true });
+      const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
+      function mergeUser(user, interaction) {
+        const handleKey = user.handle.toLowerCase();
+        if (handleKey === authorHandle) return;
+        const existing = map.get(handleKey);
+        if (!existing) {
+          map.set(handleKey, { ...user, [interaction]: true });
+          return;
         }
-      }
-      for (const user of quotes.value) {
-        const existing = map.get(user.handle);
-        if (existing) {
-          existing.hasQuote = true;
-        } else {
-          map.set(user.handle, { ...user, hasQuote: true });
+        if (user.profileLoaded && !existing.profileLoaded) {
+          Object.assign(existing, user);
         }
+        existing[interaction] = true;
       }
+      retweets.value.forEach((user) => mergeUser(user, "hasRetweet"));
+      likes.value.forEach((user) => mergeUser(user, "hasLike"));
+      quotes.value.forEach((user) => mergeUser(user, "hasQuote"));
       return Array.from(map.values());
     });
     const qualifiedUsers = vue.computed(() => {
@@ -774,6 +844,7 @@
       retweetProgress.value = 0;
       likeProgress.value = 0;
       quoteProgress.value = 0;
+      failedSources.value = [];
       try {
         await initEndpoints();
         const results = await Promise.allSettled([
@@ -796,7 +867,15 @@
             }
           })
         ]);
-        const settled = (r, fallback) => r.status === "fulfilled" ? r.value : fallback;
+        const sourceNames = ["retweets", "likes", "quotes"];
+        failedSources.value = results.flatMap(
+          (result, index) => result.status === "rejected" ? [sourceNames[index]] : []
+        );
+        if (failedSources.value.length === sourceNames.length) {
+          fetchedAt.value = cached?.fetchedAt ?? null;
+          throw new Error("allSourcesFailed");
+        }
+        const settled = (result, fallback) => result.status === "fulfilled" ? result.value : fallback;
         const retweetData = settled(results[0], retweets.value);
         const likeData = settled(results[1], likes.value);
         const quoteData = settled(results[2], quotes.value);
@@ -805,7 +884,12 @@
         quotes.value = quoteData;
         fetchedAt.value = Date.now();
         saveCache(tweetId, retweetData, likeData, quoteData);
-        return { retweets: retweetData, likes: likeData, quotes: quoteData };
+        return {
+          retweets: retweetData,
+          likes: likeData,
+          quotes: quoteData,
+          failedSources: failedSources.value
+        };
       } finally {
         loading.value = false;
       }
@@ -837,6 +921,7 @@
       quoteProgress.value = 0;
       lastTweetId.value = null;
       fetchedAt.value = null;
+      failedSources.value = [];
     }
     return {
       retweets,
@@ -850,8 +935,14 @@
       quoteProgress,
       lastTweetId,
       fetchedAt,
+      failedSources,
       mergedUsers,
       qualifiedUsers,
+      interactionCounts: vue.computed(() => ({
+        retweets: mergedUsers.value.filter((user) => user.hasRetweet).length,
+        likes: mergedUsers.value.filter((user) => user.hasLike).length,
+        quotes: mergedUsers.value.filter((user) => user.hasQuote).length
+      })),
       toggleFilter,
       performDraw,
       fetchInteractionData,
@@ -936,6 +1027,10 @@
       drawHelper: "Draw Helper",
       total: "Total",
       loginRequired: "Failed to get data. Please make sure you are logged in and refresh the page!",
+      allSourcesFailed: "Failed to update interaction data. Cached data was kept.",
+      partialFetchFailed: "Failed to update: ${sources}. Cached data may still be shown.",
+      missingEndpoint: "Could not detect the ${source} API endpoint. Try refreshing X or configure it in Settings.",
+      transactionIdUnavailable: "Could not generate the X request transaction ID. Refresh X and try again.",
       retweets: "Retweets",
       likes: "Likes",
       quotes: "Quotes",
@@ -970,6 +1065,7 @@
       noBio: "No bio",
       followers: "Followers",
       followingLabel: "Following",
+      loadingProfile: "Loading profile...",
       screenshot: "Screenshot",
       history: "History",
       drawHistory: "Draw History",
@@ -984,7 +1080,7 @@
       testDraw: "Test",
       winCount: "Wins",
       search: "Search users...",
-      excludePastWinners: "Exclude past winners",
+      excludePastWinners: "Exclude past winners of this post",
       copied: "Copied!",
       minutesAgo: "${count} min ago",
       justNow: "Just now",
@@ -1023,6 +1119,10 @@
       drawHelper: "抽奖助手",
       total: "总计",
       loginRequired: "获取数据失败，请登录后刷新页面！",
+      allSourcesFailed: "互动数据全部更新失败，已保留原有缓存数据。",
+      partialFetchFailed: "${sources}数据更新失败，当前可能仍显示缓存数据。",
+      missingEndpoint: "无法检测${source} API 端点，请刷新 X 页面或在设置中手动配置。",
+      transactionIdUnavailable: "无法生成 X 请求所需的 transaction ID，请刷新 X 页面后重试。",
       retweets: "转发",
       likes: "点赞",
       quotes: "引用",
@@ -1057,6 +1157,7 @@
       noBio: "暂无简介",
       followers: "粉丝",
       followingLabel: "正在关注",
+      loadingProfile: "正在获取用户资料…",
       screenshot: "截图",
       history: "历史记录",
       drawHistory: "抽奖历史",
@@ -1071,7 +1172,7 @@
       testDraw: "测试",
       winCount: "中奖次数",
       search: "搜索用户...",
-      excludePastWinners: "排除往期中奖者",
+      excludePastWinners: "排除当前推文往期中奖者",
       copied: "已复制！",
       minutesAgo: "${count} 分钟前",
       justNow: "刚刚",
@@ -1110,6 +1211,10 @@
       drawHelper: "抽選ツール",
       total: "合計",
       loginRequired: "データの取得に失敗しました。ログインして再度お試しください。",
+      allSourcesFailed: "アクションデータの更新に失敗しました。キャッシュデータは保持されています。",
+      partialFetchFailed: "${sources}の更新に失敗しました。キャッシュデータが表示されている可能性があります。",
+      missingEndpoint: "${source} APIエンドポイントを検出できません。Xを更新するか設定で指定してください。",
+      transactionIdUnavailable: "Xリクエストのtransaction IDを生成できません。Xを更新して再試行してください。",
       retweets: "リツイート",
       likes: "いいね",
       quotes: "引用",
@@ -1144,6 +1249,7 @@
       noBio: "プロフィールなし",
       followers: "フォロワー",
       followingLabel: "フォロー中",
+      loadingProfile: "プロフィールを取得中…",
       screenshot: "スクリーンショット",
       history: "履歴",
       drawHistory: "抽選履歴",
@@ -1158,7 +1264,7 @@
       testDraw: "テスト",
       winCount: "当選回数",
       search: "ユーザー検索...",
-      excludePastWinners: "過去の当選者を除外",
+      excludePastWinners: "このポストの過去の当選者を除外",
       copied: "コピーしました！",
       minutesAgo: "${count} 分前",
       justNow: "たった今",
@@ -1337,6 +1443,32 @@
       checkUpdate,
       openInstallPage
     };
+  }
+  const profileCache = new Map();
+  const pendingProfiles = new Map();
+  function useUserProfile() {
+    async function loadUserProfile(user) {
+      const handle = user.handle.toLowerCase();
+      if (user.profileLoaded) return;
+      const cached = profileCache.get(handle);
+      if (cached) {
+        Object.assign(user, cached, { profileLoaded: true });
+        return;
+      }
+      let pending = pendingProfiles.get(handle);
+      if (!pending) {
+        pending = fetchUserProfile(user.handle);
+        pendingProfiles.set(handle, pending);
+      }
+      try {
+        const profile = await pending;
+        profileCache.set(handle, profile);
+        Object.assign(user, profile, { profileLoaded: true });
+      } finally {
+        pendingProfiles.delete(handle);
+      }
+    }
+    return { loadUserProfile };
   }
   const _hoisted_1$9 = { style: { "display": "flex", "align-items": "center", "justify-content": "space-between", "padding": "16px 24px", "border-bottom": "1px solid #38444d", "flex-shrink": "0" } };
   const _hoisted_2$7 = { style: { "font-size": "18px", "font-weight": "700", "color": "#fff", "overflow": "hidden", "text-overflow": "ellipsis", "white-space": "nowrap", "margin": "0" } };
@@ -1528,7 +1660,7 @@
   const _hoisted_9$5 = { class: "flex items-center gap-2" };
   const _hoisted_10$4 = ["href"];
   const _hoisted_11$4 = ["onClick"];
-  const _hoisted_12$3 = { class: "flex gap-1.5 mb-3 flex-wrap" };
+  const _hoisted_12$4 = { class: "flex gap-1.5 mb-3 flex-wrap" };
   const _hoisted_13$3 = {
     key: 0,
     class: "xd-badge xd-badge-green"
@@ -1605,7 +1737,7 @@
                         }, "×", 8, _hoisted_11$4)
                       ])
                     ]),
-                    vue.createElementVNode("div", _hoisted_12$3, [
+                    vue.createElementVNode("div", _hoisted_12$4, [
                       entry.filters.retweet ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_13$3, vue.toDisplayString(vue.unref(t2)("hasRetweeted")), 1)) : vue.createCommentVNode("", true),
                       entry.filters.like ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_14$3, vue.toDisplayString(vue.unref(t2)("hasLiked")), 1)) : vue.createCommentVNode("", true),
                       entry.filters.quote ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15$2, vue.toDisplayString(vue.unref(t2)("hasQuoted")), 1)) : vue.createCommentVNode("", true),
@@ -2550,14 +2682,18 @@
   const _hoisted_7$4 = { class: "text-white font-bold" };
   const _hoisted_8$4 = { class: "text-white font-bold" };
   const _hoisted_9$4 = {
+    key: 1,
+    class: "animate-pulse"
+  };
+  const _hoisted_10$3 = {
     key: 0,
     class: "text-[#e7e9ea] text-sm leading-relaxed mt-1"
   };
-  const _hoisted_10$3 = {
+  const _hoisted_11$3 = {
     key: 1,
     class: "text-[#71767b] text-sm italic mt-1"
   };
-  const _hoisted_11$3 = { class: "flex gap-2 mt-2 flex-wrap" };
+  const _hoisted_12$3 = { class: "flex gap-2 mt-2 flex-wrap" };
   const _sfc_main$6 = vue.defineComponent({
     __name: "UserTooltip",
     props: {
@@ -2584,17 +2720,19 @@
             ])
           ]),
           vue.createElementVNode("div", _hoisted_6$4, [
-            vue.createElementVNode("span", null, [
-              vue.createElementVNode("span", _hoisted_7$4, vue.toDisplayString(__props.user.followingCount.toLocaleString()), 1),
-              vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followingLabel")), 1)
-            ]),
-            vue.createElementVNode("span", null, [
-              vue.createElementVNode("span", _hoisted_8$4, vue.toDisplayString(__props.user.followersCount.toLocaleString()), 1),
-              vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
-            ])
+            __props.user.profileLoaded ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 0 }, [
+              vue.createElementVNode("span", null, [
+                vue.createElementVNode("span", _hoisted_7$4, vue.toDisplayString(__props.user.followingCount.toLocaleString()), 1),
+                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followingLabel")), 1)
+              ]),
+              vue.createElementVNode("span", null, [
+                vue.createElementVNode("span", _hoisted_8$4, vue.toDisplayString(__props.user.followersCount.toLocaleString()), 1),
+                vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
+              ])
+            ], 64)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_9$4, vue.toDisplayString(vue.unref(t2)("loadingProfile")), 1))
           ]),
-          __props.user.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_9$4, vue.toDisplayString(__props.user.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_10$3, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
-          vue.createElementVNode("div", _hoisted_11$3, [
+          __props.user.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_10$3, vue.toDisplayString(__props.user.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_11$3, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
+          vue.createElementVNode("div", _hoisted_12$3, [
             __props.user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
               key: 0,
               type: "retweet",
@@ -2667,6 +2805,7 @@
       const { t: t2 } = useI18n();
       const { show: showToast } = useToast();
       const tpl = useTemplates();
+      const { loadUserProfile } = useUserProfile();
       const captureRef = vue.ref(null);
       const showTemplateEditor = vue.ref(false);
       const editingName = vue.ref(false);
@@ -2748,6 +2887,7 @@
         const rect = el.getBoundingClientRect();
         tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
         hoveredUser.value = user;
+        loadUserProfile(user).catch(() => void 0);
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
@@ -3040,7 +3180,7 @@
       const emit = __emit;
       const { t: t2 } = useI18n();
       const drawData = useDrawData();
-      const { history: history2, winCountMap } = useDrawHistory();
+      const { history: history2 } = useDrawHistory();
       const { show: showToast } = useToast();
       const excludePastWinners = vue.ref(false);
       const showLastResult = vue.ref(false);
@@ -3064,7 +3204,10 @@
       }
       const qualifiedCount = vue.computed(() => drawData.qualifiedUsers.value.length);
       function handleDraw() {
-        const exclude = excludePastWinners.value ? new Set(winCountMap.value.keys()) : void 0;
+        const tweetId = drawData.lastTweetId.value;
+        const exclude = excludePastWinners.value && tweetId ? new Set(
+          history2.value.filter((entry) => entry.confirmed && entry.tweetId === tweetId).flatMap((entry) => entry.winners.map((winner) => winner.handle))
+        ) : void 0;
         const result = drawData.performDraw({ excludeHandles: exclude });
         if (!result.success) {
           if (result.message === "notEnoughUsers") {
@@ -3376,103 +3519,107 @@
   const _hoisted_20 = { class: "flex flex-col items-center py-3" };
   const _hoisted_21 = { class: "text-xs text-[#71767b]" };
   const _hoisted_22 = { class: "text-xl font-bold text-[#1d9bf0]" };
-  const _hoisted_23 = { class: "px-5 py-2.5 border-b border-[#38444d] shrink-0 flex flex-col gap-2" };
-  const _hoisted_24 = { class: "flex items-center justify-between" };
-  const _hoisted_25 = { class: "xd-tab-group" };
-  const _hoisted_26 = ["onClick"];
-  const _hoisted_27 = { class: "ml-1 opacity-60 text-[11px]" };
-  const _hoisted_28 = { class: "flex items-center gap-2" };
+  const _hoisted_23 = {
+    key: 0,
+    class: "px-5 py-2 border-b border-[#f4212e]/40 bg-[#f4212e]/10 text-xs text-[#ff7a85]"
+  };
+  const _hoisted_24 = { class: "px-5 py-2.5 border-b border-[#38444d] shrink-0 flex flex-col gap-2" };
+  const _hoisted_25 = { class: "flex items-center justify-between" };
+  const _hoisted_26 = { class: "xd-tab-group" };
+  const _hoisted_27 = ["onClick"];
+  const _hoisted_28 = { class: "ml-1 opacity-60 text-[11px]" };
   const _hoisted_29 = { class: "flex items-center gap-2" };
-  const _hoisted_30 = {
+  const _hoisted_30 = { class: "flex items-center gap-2" };
+  const _hoisted_31 = {
     class: "flex items-center flex-1",
     style: { background: "#273340", border: "1px solid #38444d", borderRadius: "9999px", padding: "0 12px", gap: "8px" }
   };
-  const _hoisted_31 = {
+  const _hoisted_32 = {
     class: "w-4 h-4 shrink-0",
     style: { color: "#71767b" },
     viewBox: "0 0 24 24",
     fill: "currentColor"
   };
-  const _hoisted_32 = ["placeholder"];
-  const _hoisted_33 = ["title"];
-  const _hoisted_34 = { key: 0 };
-  const _hoisted_35 = { class: "flex-1 overflow-auto min-h-0" };
-  const _hoisted_36 = { class: "w-full text-sm border-collapse" };
-  const _hoisted_37 = { class: "sticky top-0 bg-[#15202b] z-[1]" };
-  const _hoisted_38 = { class: "text-left border-b border-[#38444d]" };
-  const _hoisted_39 = { class: "text-xs opacity-50" };
+  const _hoisted_33 = ["placeholder"];
+  const _hoisted_34 = ["title"];
+  const _hoisted_35 = { key: 0 };
+  const _hoisted_36 = { class: "flex-1 overflow-auto min-h-0" };
+  const _hoisted_37 = { class: "w-full text-sm border-collapse" };
+  const _hoisted_38 = { class: "sticky top-0 bg-[#15202b] z-[1]" };
+  const _hoisted_39 = { class: "text-left border-b border-[#38444d]" };
   const _hoisted_40 = { class: "text-xs opacity-50" };
-  const _hoisted_41 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_42 = { class: "text-xs opacity-50" };
-  const _hoisted_43 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_44 = { class: "text-xs opacity-50" };
-  const _hoisted_45 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_46 = { class: "text-xs opacity-50" };
-  const _hoisted_47 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_48 = { class: "text-xs opacity-50" };
-  const _hoisted_49 = { class: "inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium" };
-  const _hoisted_50 = { class: "opacity-50" };
-  const _hoisted_51 = { class: "w-16 px-4 py-2.5 text-center text-[#71767b] font-medium text-xs" };
-  const _hoisted_52 = { class: "w-14 px-4 text-[#71767b]" };
-  const _hoisted_53 = { class: "px-4" };
-  const _hoisted_54 = { class: "flex items-center gap-3" };
-  const _hoisted_55 = ["src", "alt", "onMouseenter"];
-  const _hoisted_56 = ["onClick"];
-  const _hoisted_57 = { class: "w-40 px-4 text-[#71767b] truncate" };
-  const _hoisted_58 = { class: "w-20 px-4 text-center" };
-  const _hoisted_59 = {
+  const _hoisted_41 = { class: "text-xs opacity-50" };
+  const _hoisted_42 = { class: "inline-flex items-center justify-center gap-1" };
+  const _hoisted_43 = { class: "text-xs opacity-50" };
+  const _hoisted_44 = { class: "inline-flex items-center justify-center gap-1" };
+  const _hoisted_45 = { class: "text-xs opacity-50" };
+  const _hoisted_46 = { class: "inline-flex items-center justify-center gap-1" };
+  const _hoisted_47 = { class: "text-xs opacity-50" };
+  const _hoisted_48 = { class: "inline-flex items-center justify-center gap-1" };
+  const _hoisted_49 = { class: "text-xs opacity-50" };
+  const _hoisted_50 = { class: "inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium" };
+  const _hoisted_51 = { class: "opacity-50" };
+  const _hoisted_52 = { class: "w-16 px-4 py-2.5 text-center text-[#71767b] font-medium text-xs" };
+  const _hoisted_53 = { class: "w-14 px-4 text-[#71767b]" };
+  const _hoisted_54 = { class: "px-4" };
+  const _hoisted_55 = { class: "flex items-center gap-3" };
+  const _hoisted_56 = ["src", "alt", "onMouseenter"];
+  const _hoisted_57 = ["onClick"];
+  const _hoisted_58 = { class: "w-40 px-4 text-[#71767b] truncate" };
+  const _hoisted_59 = { class: "w-20 px-4 text-center" };
+  const _hoisted_60 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_60 = { class: "w-20 px-4 text-center" };
-  const _hoisted_61 = {
+  const _hoisted_61 = { class: "w-20 px-4 text-center" };
+  const _hoisted_62 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_62 = { class: "w-20 px-4 text-center" };
-  const _hoisted_63 = {
+  const _hoisted_63 = { class: "w-20 px-4 text-center" };
+  const _hoisted_64 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_64 = { class: "w-20 px-4 text-center" };
-  const _hoisted_65 = {
+  const _hoisted_65 = { class: "w-20 px-4 text-center" };
+  const _hoisted_66 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_66 = { class: "w-24 px-4 text-center text-[#71767b] text-xs" };
-  const _hoisted_67 = { class: "w-16 px-4 text-center" };
-  const _hoisted_68 = {
+  const _hoisted_67 = { class: "w-24 px-4 text-center text-[#71767b] text-xs" };
+  const _hoisted_68 = { class: "w-16 px-4 text-center" };
+  const _hoisted_69 = {
     key: 0,
     class: "text-[#ffd700] font-bold text-sm"
   };
-  const _hoisted_69 = {
+  const _hoisted_70 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_70 = { key: 1 };
-  const _hoisted_71 = {
+  const _hoisted_71 = { key: 1 };
+  const _hoisted_72 = {
     colspan: "9",
     class: "text-center py-12 text-[#71767b]"
   };
-  const _hoisted_72 = {
-    key: 0,
+  const _hoisted_73 = {
+    key: 1,
     class: "flex items-center justify-center px-5 py-2.5 border-t border-[#38444d] shrink-0"
   };
-  const _hoisted_73 = { class: "flex items-center gap-1" };
-  const _hoisted_74 = {
+  const _hoisted_74 = { class: "flex items-center gap-1" };
+  const _hoisted_75 = {
     key: 0,
     class: "px-1 text-[#71767b]"
   };
-  const _hoisted_75 = ["onClick"];
-  const _hoisted_76 = { class: "px-5 py-2 flex items-center justify-between text-xs text-[#71767b]" };
-  const _hoisted_77 = { class: "flex items-center gap-2" };
-  const _hoisted_78 = { class: "opacity-60" };
-  const _hoisted_79 = {
+  const _hoisted_76 = ["onClick"];
+  const _hoisted_77 = { class: "px-5 py-2 flex items-center justify-between text-xs text-[#71767b]" };
+  const _hoisted_78 = { class: "flex items-center gap-2" };
+  const _hoisted_79 = { class: "opacity-60" };
+  const _hoisted_80 = {
     key: 0,
     class: "text-[#71767b] cursor-default",
     disabled: ""
   };
-  const _hoisted_80 = {
+  const _hoisted_81 = {
     key: 2,
     class: "text-[#00ba7c] cursor-default"
   };
@@ -3487,6 +3634,7 @@
       const { exportCsv } = useExport();
       const { show: showToast } = useToast();
       const versionCheck = useVersionCheck();
+      const { loadUserProfile } = useUserProfile();
       versionCheck.checkUpdate();
       const TAB_CONFIG = [
         { key: "all", labelKey: "total", statKey: "total" },
@@ -3579,9 +3727,7 @@
       }
       const stats = vue.computed(() => ({
         total: drawData.mergedUsers.value.length,
-        retweets: drawData.retweets.value.length,
-        likes: drawData.likes.value.length,
-        quotes: drawData.quotes.value.length,
+        ...drawData.interactionCounts.value,
         followers: drawData.mergedUsers.value.filter((u) => u.followed_by).length
       }));
       const now = vue.ref(Date.now());
@@ -3594,10 +3740,26 @@
         const mins = Math.floor((now.value - drawData.fetchedAt.value) / 6e4);
         return mins < 1 ? t2("justNow") : t2("minutesAgo", { count: mins });
       });
+      const interactionSourceLabels = {
+        retweets: "retweets",
+        likes: "likes",
+        quotes: "quotes"
+      };
       function handleRefresh() {
-        drawData.fetchInteractionData().catch((err) => {
+        drawData.fetchInteractionData().then(({ failedSources: failedSources2 }) => {
+          if (failedSources2.length === 0) return;
+          const labels = failedSources2.map((source) => t2(interactionSourceLabels[source])).join("、");
+          showToast(t2("partialFetchFailed", { sources: labels }), "error", TIMING.TOAST_DURATION * 2);
+        }).catch((err) => {
           if (err instanceof DOMException && err.name === "AbortError") return;
-          showToast(t2(err.message || "loginRequired"), "error", TIMING.TOAST_DURATION * 2);
+          const message = String(err?.message || "loginRequired");
+          if (message.startsWith("missingEndpoint:")) {
+            const source = message.slice("missingEndpoint:".length);
+            const labelKey = interactionSourceLabels[source];
+            showToast(t2("missingEndpoint", { source: labelKey ? t2(labelKey) : source }), "error", TIMING.TOAST_DURATION * 2);
+            return;
+          }
+          showToast(t2(message), "error", TIMING.TOAST_DURATION * 2);
         });
       }
       function handleDraw() {
@@ -3644,6 +3806,7 @@
         const rect = el.getBoundingClientRect();
         tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
         hoveredUser.value = user;
+        loadUserProfile(user).catch(() => void 0);
       }
       function openProfile(handle) {
         window.open(`https://x.com/${handle}`, "_blank");
@@ -3684,7 +3847,7 @@
               ])], 8, _hoisted_3)
             ]),
             footer: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_76, [
+              vue.createElementVNode("div", _hoisted_77, [
                 vue.createElementVNode("span", null, [
                   vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("madeWith")) + " ", 1),
                   _cache[28] || (_cache[28] = vue.createElementVNode("a", {
@@ -3693,13 +3856,13 @@
                     class: "text-[#1d9bf0] hover:underline"
                   }, "Yueby", -1))
                 ]),
-                vue.createElementVNode("span", _hoisted_77, [
-                  vue.createElementVNode("span", _hoisted_78, vue.toDisplayString(vue.unref(t2)("version", { version: vue.unref(versionCheck).currentVersion.value })), 1),
-                  vue.unref(versionCheck).checking.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_79, vue.toDisplayString(vue.unref(t2)("checking")), 1)) : vue.unref(versionCheck).hasUpdate.value ? (vue.openBlock(), vue.createElementBlock("button", {
+                vue.createElementVNode("span", _hoisted_78, [
+                  vue.createElementVNode("span", _hoisted_79, vue.toDisplayString(vue.unref(t2)("version", { version: vue.unref(versionCheck).currentVersion.value })), 1),
+                  vue.unref(versionCheck).checking.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_80, vue.toDisplayString(vue.unref(t2)("checking")), 1)) : vue.unref(versionCheck).hasUpdate.value ? (vue.openBlock(), vue.createElementBlock("button", {
                     key: 1,
                     class: "text-[#1d9bf0] hover:underline cursor-pointer",
                     onClick: _cache[13] || (_cache[13] = ($event) => vue.unref(versionCheck).openInstallPage())
-                  }, vue.toDisplayString(vue.unref(t2)("updateAvailable", { version: vue.unref(versionCheck).latestVersion.value })), 1)) : vue.unref(versionCheck).latestVersion.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_80, vue.toDisplayString(vue.unref(t2)("latestVersion")), 1)) : (vue.openBlock(), vue.createElementBlock("button", {
+                  }, vue.toDisplayString(vue.unref(t2)("updateAvailable", { version: vue.unref(versionCheck).latestVersion.value })), 1)) : vue.unref(versionCheck).latestVersion.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_81, vue.toDisplayString(vue.unref(t2)("latestVersion")), 1)) : (vue.openBlock(), vue.createElementBlock("button", {
                     key: 3,
                     class: "hover:text-[#1d9bf0] cursor-pointer transition-colors",
                     onClick: _cache[14] || (_cache[14] = ($event) => vue.unref(versionCheck).checkUpdate())
@@ -3796,9 +3959,12 @@
                   vue.createElementVNode("span", _hoisted_22, vue.toDisplayString(stats.value.followers), 1)
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_23, [
-                vue.createElementVNode("div", _hoisted_24, [
-                  vue.createElementVNode("div", _hoisted_25, [
+              vue.unref(drawData).failedSources.value.length ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_23, vue.toDisplayString(vue.unref(t2)("partialFetchFailed", {
+                sources: vue.unref(drawData).failedSources.value.map((source) => vue.unref(t2)(interactionSourceLabels[source])).join("、")
+              })), 1)) : vue.createCommentVNode("", true),
+              vue.createElementVNode("div", _hoisted_24, [
+                vue.createElementVNode("div", _hoisted_25, [
+                  vue.createElementVNode("div", _hoisted_26, [
                     (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(TAB_CONFIG, (tab) => {
                       return vue.createElementVNode("button", {
                         key: tab.key,
@@ -3806,11 +3972,11 @@
                         onClick: ($event) => activeFilter.value = tab.key
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)(tab.labelKey)) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_27, vue.toDisplayString(stats.value[tab.statKey]), 1)
-                      ], 10, _hoisted_26);
+                        vue.createElementVNode("span", _hoisted_28, vue.toDisplayString(stats.value[tab.statKey]), 1)
+                      ], 10, _hoisted_27);
                     }), 64))
                   ]),
-                  vue.createElementVNode("div", _hoisted_28, [
+                  vue.createElementVNode("div", _hoisted_29, [
                     vue.createElementVNode("button", {
                       class: "xd-btn xd-btn-primary text-sm",
                       onClick: handleDraw
@@ -3825,9 +3991,9 @@
                     }, vue.toDisplayString(vue.unref(t2)("export")), 1)
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_29, [
-                  vue.createElementVNode("div", _hoisted_30, [
-                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_31, [..._cache[24] || (_cache[24] = [
+                vue.createElementVNode("div", _hoisted_30, [
+                  vue.createElementVNode("div", _hoisted_31, [
+                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_32, [..._cache[24] || (_cache[24] = [
                       vue.createElementVNode("path", { d: "M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z" }, null, -1)
                     ])])),
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -3835,7 +4001,7 @@
                       type: "text",
                       placeholder: vue.unref(t2)("search"),
                       style: { flex: "1", background: "transparent", border: "none", color: "#fff", fontSize: "14px", padding: "6px 0", outline: "none", appearance: "none" }
-                    }, null, 8, _hoisted_32), [
+                    }, null, 8, _hoisted_33), [
                       [vue.vModelText, searchQuery.value]
                     ])
                   ]),
@@ -3852,75 +4018,75 @@
                     }, [..._cache[25] || (_cache[25] = [
                       vue.createElementVNode("path", { d: "M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" }, null, -1)
                     ])], 2)),
-                    cacheAge.value ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_34, vue.toDisplayString(cacheAge.value), 1)) : vue.createCommentVNode("", true)
-                  ], 8, _hoisted_33)
+                    cacheAge.value ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_35, vue.toDisplayString(cacheAge.value), 1)) : vue.createCommentVNode("", true)
+                  ], 8, _hoisted_34)
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_35, [
-                vue.createElementVNode("table", _hoisted_36, [
-                  vue.createElementVNode("thead", _hoisted_37, [
-                    vue.createElementVNode("tr", _hoisted_38, [
+              vue.createElementVNode("div", _hoisted_36, [
+                vue.createElementVNode("table", _hoisted_37, [
+                  vue.createElementVNode("thead", _hoisted_38, [
+                    vue.createElementVNode("tr", _hoisted_39, [
                       _cache[26] || (_cache[26] = vue.createElementVNode("th", { class: "w-14 px-4 py-2.5 text-[#71767b] font-medium" }, "#", -1)),
                       vue.createElementVNode("th", {
                         class: "xd-th px-4 py-2.5",
                         onClick: _cache[3] || (_cache[3] = ($event) => toggleSort("username"))
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("username")) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_39, vue.toDisplayString(getSortIcon("username")), 1)
+                        vue.createElementVNode("span", _hoisted_40, vue.toDisplayString(getSortIcon("username")), 1)
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-40 px-4 py-2.5",
                         onClick: _cache[4] || (_cache[4] = ($event) => toggleSort("handle"))
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("handle")) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_40, vue.toDisplayString(getSortIcon("handle")), 1)
+                        vue.createElementVNode("span", _hoisted_41, vue.toDisplayString(getSortIcon("handle")), 1)
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-20 px-4 py-2.5 text-center",
                         onClick: _cache[5] || (_cache[5] = ($event) => toggleSort("retweet"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_41, [
+                        vue.createElementVNode("span", _hoisted_42, [
                           vue.createVNode(_sfc_main$8, { type: "retweet" }),
-                          vue.createElementVNode("span", _hoisted_42, vue.toDisplayString(getSortIcon("retweet")), 1)
+                          vue.createElementVNode("span", _hoisted_43, vue.toDisplayString(getSortIcon("retweet")), 1)
                         ])
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-20 px-4 py-2.5 text-center",
                         onClick: _cache[6] || (_cache[6] = ($event) => toggleSort("like"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_43, [
+                        vue.createElementVNode("span", _hoisted_44, [
                           vue.createVNode(_sfc_main$8, { type: "like" }),
-                          vue.createElementVNode("span", _hoisted_44, vue.toDisplayString(getSortIcon("like")), 1)
+                          vue.createElementVNode("span", _hoisted_45, vue.toDisplayString(getSortIcon("like")), 1)
                         ])
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-20 px-4 py-2.5 text-center",
                         onClick: _cache[7] || (_cache[7] = ($event) => toggleSort("quote"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_45, [
+                        vue.createElementVNode("span", _hoisted_46, [
                           vue.createVNode(_sfc_main$8, { type: "quote" }),
-                          vue.createElementVNode("span", _hoisted_46, vue.toDisplayString(getSortIcon("quote")), 1)
+                          vue.createElementVNode("span", _hoisted_47, vue.toDisplayString(getSortIcon("quote")), 1)
                         ])
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-20 px-4 py-2.5 text-center",
                         onClick: _cache[8] || (_cache[8] = ($event) => toggleSort("followed_by"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_47, [
+                        vue.createElementVNode("span", _hoisted_48, [
                           vue.createVNode(_sfc_main$8, { type: "follow" }),
-                          vue.createElementVNode("span", _hoisted_48, vue.toDisplayString(getSortIcon("followed_by")), 1)
+                          vue.createElementVNode("span", _hoisted_49, vue.toDisplayString(getSortIcon("followed_by")), 1)
                         ])
                       ]),
                       vue.createElementVNode("th", {
                         class: "xd-th w-24 px-4 py-2.5 text-center",
                         onClick: _cache[9] || (_cache[9] = ($event) => toggleSort("followersCount"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_49, [
+                        vue.createElementVNode("span", _hoisted_50, [
                           vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("followers")) + " ", 1),
-                          vue.createElementVNode("span", _hoisted_50, vue.toDisplayString(getSortIcon("followersCount")), 1)
+                          vue.createElementVNode("span", _hoisted_51, vue.toDisplayString(getSortIcon("followersCount")), 1)
                         ])
                       ]),
-                      vue.createElementVNode("th", _hoisted_51, vue.toDisplayString(vue.unref(t2)("winCount")), 1)
+                      vue.createElementVNode("th", _hoisted_52, vue.toDisplayString(vue.unref(t2)("winCount")), 1)
                     ])
                   ]),
                   vue.createElementVNode("tbody", null, [
@@ -3929,50 +4095,50 @@
                         key: user.handle,
                         class: "border-b border-[#38444d]/30 hover:bg-white/[0.03] transition-colors h-12"
                       }, [
-                        vue.createElementVNode("td", _hoisted_52, vue.toDisplayString(pageOffset.value + i + 1), 1),
-                        vue.createElementVNode("td", _hoisted_53, [
-                          vue.createElementVNode("div", _hoisted_54, [
+                        vue.createElementVNode("td", _hoisted_53, vue.toDisplayString(pageOffset.value + i + 1), 1),
+                        vue.createElementVNode("td", _hoisted_54, [
+                          vue.createElementVNode("div", _hoisted_55, [
                             vue.createElementVNode("img", {
                               src: user.avatarUrl,
                               alt: user.username,
                               class: "w-8 h-8 rounded-full shrink-0 cursor-pointer",
                               onMouseenter: ($event) => onRowEnter(user, $event),
                               onMouseleave: _cache[10] || (_cache[10] = ($event) => hoveredUser.value = null)
-                            }, null, 40, _hoisted_55),
+                            }, null, 40, _hoisted_56),
                             vue.createElementVNode("span", {
                               class: "font-medium text-[#1d9bf0] truncate max-w-[240px] cursor-pointer hover:underline",
                               onClick: ($event) => openProfile(user.handle)
-                            }, vue.toDisplayString(user.username), 9, _hoisted_56)
+                            }, vue.toDisplayString(user.username), 9, _hoisted_57)
                           ])
                         ]),
-                        vue.createElementVNode("td", _hoisted_57, "@" + vue.toDisplayString(user.handle), 1),
-                        vue.createElementVNode("td", _hoisted_58, [
+                        vue.createElementVNode("td", _hoisted_58, "@" + vue.toDisplayString(user.handle), 1),
+                        vue.createElementVNode("td", _hoisted_59, [
                           user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "retweet"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_59, "—"))
+                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_60, "—"))
                         ]),
-                        vue.createElementVNode("td", _hoisted_60, [
+                        vue.createElementVNode("td", _hoisted_61, [
                           user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "like"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_61, "—"))
+                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_62, "—"))
                         ]),
-                        vue.createElementVNode("td", _hoisted_62, [
+                        vue.createElementVNode("td", _hoisted_63, [
                           user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "quote"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_63, "—"))
+                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_64, "—"))
                         ]),
-                        vue.createElementVNode("td", _hoisted_64, [
+                        vue.createElementVNode("td", _hoisted_65, [
                           user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
                             key: 0,
                             type: "follow"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_65, "—"))
+                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_66, "—"))
                         ]),
-                        vue.createElementVNode("td", _hoisted_66, vue.toDisplayString(user.followersCount.toLocaleString()), 1),
-                        vue.createElementVNode("td", _hoisted_67, [
-                          vue.unref(getWinCount)(user.handle) ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_68, vue.toDisplayString(vue.unref(getWinCount)(user.handle)), 1)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_69, "—"))
+                        vue.createElementVNode("td", _hoisted_67, vue.toDisplayString(user.followersCount.toLocaleString()), 1),
+                        vue.createElementVNode("td", _hoisted_68, [
+                          vue.unref(getWinCount)(user.handle) ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_69, vue.toDisplayString(vue.unref(getWinCount)(user.handle)), 1)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_70, "—"))
                         ])
                       ]);
                     }), 128)),
@@ -4012,14 +4178,14 @@
                           vue.createElementVNode("div", { class: "h-3 w-6 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1)
                       ])]);
-                    }), 128)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_70, [
-                      vue.createElementVNode("td", _hoisted_71, vue.toDisplayString(vue.unref(t2)("noUsers")), 1)
+                    }), 128)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_71, [
+                      vue.createElementVNode("td", _hoisted_72, vue.toDisplayString(vue.unref(t2)("noUsers")), 1)
                     ])) : vue.createCommentVNode("", true)
                   ])
                 ])
               ]),
-              totalPages.value > 1 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_72, [
-                vue.createElementVNode("div", _hoisted_73, [
+              totalPages.value > 1 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_73, [
+                vue.createElementVNode("div", _hoisted_74, [
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon",
                     style: vue.normalizeStyle({ opacity: currentPage.value <= 1 ? 0.3 : 1, pointerEvents: currentPage.value <= 1 ? "none" : "auto" }),
@@ -4027,11 +4193,11 @@
                   }, "«", 4),
                   (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(visiblePages.value, (p) => {
                     return vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: p }, [
-                      typeof p === "string" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_74, "…")) : (vue.openBlock(), vue.createElementBlock("button", {
+                      typeof p === "string" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_75, "…")) : (vue.openBlock(), vue.createElementBlock("button", {
                         key: 1,
                         class: vue.normalizeClass(["xd-tab", { active: currentPage.value === p }]),
                         onClick: ($event) => currentPage.value = p
-                      }, vue.toDisplayString(p), 11, _hoisted_75))
+                      }, vue.toDisplayString(p), 11, _hoisted_76))
                     ], 64);
                   }), 128)),
                   vue.createElementVNode("button", {
@@ -4079,21 +4245,30 @@
       };
     }
   });
-  const ACTION_BAR_SELECTOR = 'article[data-testid="tweet"] div[role="group"]';
+  const ACTION_BAR_SELECTOR = 'div[role="group"]';
   const TRIGGER_ID = "x-draw-helper-trigger";
   const _sfc_main = vue.defineComponent({
     __name: "App",
     setup(__props) {
-      const TWEET_URL_PATTERN = /https:\/\/x\.com\/[^/]+\/status\/\d+/;
+      const TWEET_PATH_PATTERN = /^\/[^/]+\/status\/(\d+)/;
       const isValidPage = vue.ref(false);
       const showPanel = vue.ref(false);
       let triggerContainer = null;
       let triggerApp = null;
       let observer = null;
       let lastUrl = "";
+      function findTargetTweet() {
+        const tweetId = window.location.pathname.match(TWEET_PATH_PATTERN)?.[1];
+        if (!tweetId) return null;
+        return Array.from(
+          document.querySelectorAll('article[data-testid="tweet"]')
+        ).find(
+          (article) => Array.from(article.querySelectorAll('a[href*="/status/"]')).some((link) => link.pathname.match(TWEET_PATH_PATTERN)?.[1] === tweetId)
+        ) ?? null;
+      }
       function injectTrigger() {
         removeTrigger();
-        const actionBar = document.querySelector(ACTION_BAR_SELECTOR);
+        const actionBar = findTargetTweet()?.querySelector(ACTION_BAR_SELECTOR);
         if (!actionBar) return;
         triggerContainer = document.createElement("div");
         triggerContainer.id = TRIGGER_ID;
@@ -4119,7 +4294,7 @@
         triggerContainer = null;
       }
       function checkUrl() {
-        const valid = TWEET_URL_PATTERN.test(window.location.href);
+        const valid = TWEET_PATH_PATTERN.test(window.location.pathname);
         isValidPage.value = valid;
         if (!valid) {
           showPanel.value = false;
@@ -4159,7 +4334,7 @@
       };
     }
   });
-  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10003\\]{z-index:10003}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-8{height:calc(var(--spacing) * 8)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[240px\\]{max-width:240px}.min-w-0{min-width:calc(var(--spacing) * 0)}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.p-2{padding:calc(var(--spacing) * 2)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.break-words{overflow-wrap:break-word}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#00ba7c\\]:hover{color:#00ba7c}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:text-\\[\\#f4212e\\]:hover{color:#f4212e}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:ring-2:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.hover\\:ring-\\[\\#1d9bf0\\]:hover{--tw-ring-color:#1d9bf0}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
+  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10003\\]{z-index:10003}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-8{height:calc(var(--spacing) * 8)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[240px\\]{max-width:240px}.min-w-0{min-width:calc(var(--spacing) * 0)}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.border-\\[\\#f4212e\\]\\/40{border-color:#f4212e66}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.bg-\\[\\#f4212e\\]\\/10{background-color:#f4212e1a}.p-2{padding:calc(var(--spacing) * 2)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.break-words{overflow-wrap:break-word}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ff7a85\\]{color:#ff7a85}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#00ba7c\\]:hover{color:#00ba7c}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:text-\\[\\#f4212e\\]:hover{color:#f4212e}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:ring-2:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.hover\\:ring-\\[\\#1d9bf0\\]:hover{--tw-ring-color:#1d9bf0}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
   importCSS(styleCss);
   migrateStorageKeys();
   initTxIdCapture();

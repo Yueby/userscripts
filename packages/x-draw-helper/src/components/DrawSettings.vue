@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const drawData = useDrawData();
-const { history, winCountMap } = useDrawHistory();
+const { history } = useDrawHistory();
 const { show: showToast } = useToast();
 
 const excludePastWinners = ref(false);
@@ -47,8 +47,13 @@ function getFilterLabel(key: FilterKey): string {
 const qualifiedCount = computed(() => drawData.qualifiedUsers.value.length);
 
 function handleDraw() {
-  const exclude = excludePastWinners.value
-    ? new Set(winCountMap.value.keys())
+  const tweetId = drawData.lastTweetId.value;
+  const exclude = excludePastWinners.value && tweetId
+    ? new Set(
+        history.value
+          .filter((entry) => entry.confirmed && entry.tweetId === tweetId)
+          .flatMap((entry) => entry.winners.map((winner) => winner.handle)),
+      )
     : undefined;
   const result = drawData.performDraw({ excludeHandles: exclude });
   if (!result.success) {

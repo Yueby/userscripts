@@ -5,6 +5,7 @@ import type { DrawUser } from '../types';
 import { useI18n } from '../composables/useI18n';
 import { useToast } from '../composables/useToast';
 import { useTemplates } from '../composables/useTemplates';
+import { useUserProfile } from '../composables/useUserProfile';
 import { getTweetIdFromUrl } from '../api/twitter';
 import InteractionBadge from './InteractionBadge.vue';
 import Modal from './Modal.vue';
@@ -16,6 +17,7 @@ const emit = defineEmits<{ close: [] }>();
 const { t } = useI18n();
 const { show: showToast } = useToast();
 const tpl = useTemplates();
+const { loadUserProfile } = useUserProfile();
 
 const captureRef = ref<HTMLElement | null>(null);
 const showTemplateEditor = ref(false);
@@ -112,6 +114,7 @@ function onAvatarEnter(user: DrawUser, e: MouseEvent) {
   const rect = el.getBoundingClientRect();
   tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
   hoveredUser.value = user;
+  loadUserProfile(user).catch(() => undefined);
 }
 </script>
 

@@ -14,11 +14,12 @@ const API_DOC_URL =
 // Endpoints & features — resolved at runtime from fa0311/TwitterInternalAPIDocument
 // ---------------------------------------------------------------------------
 
-const ENDPOINT_MAP: Record<string, string> = {
+const ENDPOINT_MAP = {
   retweeters: 'Retweeters',
   favoriters: 'Favoriters',
   searchTimeline: 'SearchTimeline',
-};
+  userByScreenName: 'UserByScreenName',
+} as const;
 
 export const DEFAULT_ENDPOINTS = {
   retweeters: '',
@@ -26,21 +27,29 @@ export const DEFAULT_ENDPOINTS = {
   searchTimeline: '',
 } as const;
 
-type EndpointKey = keyof typeof DEFAULT_ENDPOINTS;
+type EndpointKey = keyof typeof DEFAULT_ENDPOINTS | 'userByScreenName';
 
-const ENDPOINTS: Record<EndpointKey, string> = { ...DEFAULT_ENDPOINTS };
-
-let GRAPHQL_FEATURES: Record<string, boolean> = {};
+const ENDPOINTS: Record<EndpointKey, string> = {
+  ...DEFAULT_ENDPOINTS,
+  userByScreenName: '',
+};
+const ENDPOINT_FEATURES: Record<EndpointKey, Record<string, boolean>> = {
+  retweeters: {},
+  favoriters: {},
+  searchTimeline: {},
+  userByScreenName: {},
+};
 
 function setEndpoint(key: EndpointKey, value: string) {
   ENDPOINTS[key] = value;
 }
 
-export function updateEndpoints(custom: Partial<Record<EndpointKey, string>>) {
+export function updateEndpoints(custom: Partial<Record<keyof typeof DEFAULT_ENDPOINTS, string>>) {
   for (const [k, v] of Object.entries(custom)) {
-    if (!v || !(k in ENDPOINTS)) continue;
-    const opName = v.includes('/') ? v.split('/').pop()! : ENDPOINT_MAP[k] ?? k;
-    setEndpoint(k as EndpointKey, v.includes('/') ? v : `${v}/${opName}`);
+    if (!v || !(k in DEFAULT_ENDPOINTS)) continue;
+    const endpointKey = k as keyof typeof DEFAULT_ENDPOINTS;
+    const opName = v.includes('/') ? v.split('/').pop()! : ENDPOINT_MAP[endpointKey];
+    setEndpoint(endpointKey, v.includes('/') ? v : `${v}/${opName}`);
   }
 }
 
@@ -73,15 +82,14 @@ async function _resolveFromApiDoc(): Promise<boolean> {
     const graphql = data?.graphql;
     if (!graphql || typeof graphql !== 'object') return false;
 
-    let featuresSet = false;
     for (const [key, opName] of Object.entries(ENDPOINT_MAP)) {
+      const endpointKey = key as EndpointKey;
       const entry = graphql[opName];
       if (entry?.queryId) {
-        setEndpoint(key as EndpointKey, `${entry.queryId}/${opName}`);
+        setEndpoint(endpointKey, `${entry.queryId}/${opName}`);
       }
-      if (!featuresSet && entry?.features && typeof entry.features === 'object') {
-        GRAPHQL_FEATURES = { ...entry.features };
-        featuresSet = true;
+      if (entry?.features && typeof entry.features === 'object') {
+        ENDPOINT_FEATURES[endpointKey] = { ...entry.features };
       }
     }
     return true;
@@ -144,28 +152,51 @@ function getCsrfToken(): string | null {
     ?.split('=')[1] ?? null;
 }
 
-function getLoggedInUserId(): string | null {
-  const raw = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('twid='))
-    ?.split('=').slice(1).join('=');
-  if (!raw) return null;
-  const decoded = decodeURIComponent(raw);
-  return decoded.startsWith('u=') ? decoded.slice(2) : null;
+function getTweetIdFromUrl(): string | null {
+  const match = window.location.pathname.match(/\/status\/(\d+)/);
+  return match?.[1] ?? null;
 }
 
-function getTweetIdFromUrl(): string | null {
-  const match = window.location.href.match(/\/status\/(\d+)/);
-  return match?.[1] ?? null;
+function getTweetAuthorHandleFromUrl(): string | null {
+  const match = window.location.pathname.match(/^\/([^/]+)\/status\/\d+/);
+  return match?.[1] ? decodeURIComponent(match[1]) : null;
 }
 
 // ---------------------------------------------------------------------------
 // Shared user extraction from GraphQL results
 // ---------------------------------------------------------------------------
 
+function getNumericField(result: Record<string, unknown>, ...keys: string[]): number | undefined {
+  const queue: unknown[] = [result];
+  const seen = new Set<object>();
+
+  while (queue.length) {
+    const value = queue.shift();
+    if (!value || typeof value !== 'object' || seen.has(value)) continue;
+    seen.add(value);
+
+    const record = value as Record<string, unknown>;
+    for (const key of keys) {
+      const field = record[key];
+      if (typeof field === 'number' && Number.isFinite(field)) return field;
+    }
+    queue.push(...Object.values(record));
+  }
+
+  return undefined;
+}
+
 function userFromResult(result: Record<string, unknown>, legacy: Record<string, unknown>, core: Record<string, unknown>, perspectives: Record<string, unknown>, fallbackId = ''): User {
   const avatar = result.avatar as Record<string, unknown> | undefined;
   const profileBio = result.profile_bio as Record<string, unknown> | undefined;
+  const relationshipCounts = result.relationship_counts as Record<string, unknown> | undefined;
+  const followersCount = typeof relationshipCounts?.followers === 'number'
+    ? relationshipCounts.followers
+    : getNumericField(result, 'followers_count', 'followersCount');
+  const followingCount = typeof relationshipCounts?.following === 'number'
+    ? relationshipCounts.following
+    : getNumericField(result, 'friends_count', 'following_count', 'followingCount');
+
   return {
     id: (result.rest_id as string) || fallbackId,
     username: (legacy.name || core.name || '') as string,
@@ -174,8 +205,9 @@ function userFromResult(result: Record<string, unknown>, legacy: Record<string, 
     bio: (legacy.description || profileBio?.description || '') as string,
     following: Boolean(perspectives.following ?? legacy.following),
     followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
-    followersCount: Number(legacy.followers_count ?? 0),
-    followingCount: Number(legacy.friends_count ?? 0),
+    followersCount: followersCount ?? 0,
+    followingCount: followingCount ?? 0,
+    profileLoaded: followersCount !== undefined && followingCount !== undefined,
   };
 }
 
@@ -239,7 +271,9 @@ async function paginateUsers(
   const result: User[] = [];
   const seen = new Set<string>();
 
-  async function fetchWithRetry(cursor: string | null): Promise<unknown | null> {
+  async function fetchWithRetry(cursor: string | null): Promise<unknown> {
+    let lastError: unknown = new Error('Request failed');
+
     for (let retry = 0; retry < maxRetries; retry++) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       try {
@@ -249,19 +283,21 @@ async function paginateUsers(
         return await response.json();
       } catch (error) {
         if ((error as Error).name === 'AbortError') throw error;
-        if (retry === maxRetries - 1) return null;
-        await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
+        lastError = error;
+        if (retry < maxRetries - 1) {
+          await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
+        }
       }
     }
-    return null;
+
+    throw lastError;
   }
 
   let currentCursor: string | null = null;
-  let pendingFetch: Promise<unknown | null> | null = fetchWithRetry(null);
+  let pendingFetch: Promise<unknown> | null = fetchWithRetry(null);
 
   while (pendingFetch) {
     const data = await pendingFetch;
-    if (!data) break;
 
     const { users, nextCursor } = parsePage(data);
     const filtered = filterUser ? users.filter(filterUser) : users;
@@ -306,7 +342,6 @@ function parseUserTimeline(instructions: unknown[]): TimelinePage {
   const nextCursor = getBottomCursor(addEntries.entries);
 
   const users: User[] = addEntries.entries
-    .filter((e: unknown) => String((e as Record<string, unknown>).entryId ?? '').startsWith('user-'))
     .map((entry: unknown) => {
       const e = entry as Record<string, unknown>;
       const r = ((e.content as Record<string, unknown>)?.itemContent as Record<string, unknown>)?.user_results as Record<string, unknown>;
@@ -315,16 +350,14 @@ function parseUserTimeline(instructions: unknown[]): TimelinePage {
       const legacy = (result.legacy ?? {}) as Record<string, unknown>;
       const core = (result.core ?? {}) as Record<string, unknown>;
       const perspectives = (result.relationship_perspectives ?? {}) as Record<string, unknown>;
-      const entryId = String(e.entryId ?? '');
-      const fallbackId = entryId.startsWith('user-') ? entryId.slice(5) : '';
-      return userFromResult(result, legacy, core, perspectives, fallbackId);
+      return userFromResult(result, legacy, core, perspectives);
     })
     .filter((u): u is User => u !== null && u.handle !== '');
 
   return { users, nextCursor };
 }
 
-function parseSearchTimeline(data: unknown): TimelinePage {
+function parseSearchTimeline(data: unknown, quotedTweetId: string): TimelinePage {
   const instructions = extractInstructions(data, 'data', 'search_by_raw_query', 'search_timeline', 'timeline', 'instructions');
 
   if (isTerminated(instructions)) return { users: [], nextCursor: null };
@@ -341,12 +374,17 @@ function parseSearchTimeline(data: unknown): TimelinePage {
       const tweetResult = ((e.content as Record<string, unknown>)?.itemContent as Record<string, unknown>)?.tweet_results as Record<string, unknown>;
       const raw = tweetResult?.result as Record<string, unknown> | undefined;
       const tweet = (raw?.__typename === 'TweetWithVisibilityResults' ? (raw.tweet as Record<string, unknown>) : raw) ?? {};
+      const legacy = (tweet.legacy ?? {}) as Record<string, unknown>;
+      const quotedRef = ((tweet.quotedRefResult as Record<string, unknown>)?.result ?? {}) as Record<string, unknown>;
+      const quotedId = legacy.quoted_status_id_str ?? quotedRef.rest_id;
+      if (quotedId !== quotedTweetId) return null;
+
       const userResults = ((tweet.core as Record<string, unknown>)?.user_results as Record<string, unknown>)?.result as Record<string, unknown> | undefined;
       if (!userResults) return null;
-      const legacy = (userResults.legacy ?? {}) as Record<string, unknown>;
+      const userLegacy = (userResults.legacy ?? {}) as Record<string, unknown>;
       const core = (userResults.core ?? {}) as Record<string, unknown>;
       const perspectives = (userResults.relationship_perspectives ?? {}) as Record<string, unknown>;
-      return userFromResult(userResults, legacy, core, perspectives);
+      return userFromResult(userResults, userLegacy, core, perspectives);
     })
     .filter((u): u is User => u !== null && u.handle !== '');
 
@@ -367,11 +405,21 @@ function baseHeaders(csrfToken: string): Record<string, string> {
   };
 }
 
-function buildGraphqlUrl(endpoint: string, variables: Record<string, unknown>): string {
+function requireEndpoint(key: EndpointKey): string {
+  const endpoint = ENDPOINTS[key];
+  if (!endpoint) throw new Error(`missingEndpoint:${key}`);
+  return endpoint;
+}
+
+function buildGraphqlUrl(
+  endpoint: string,
+  variables: Record<string, unknown>,
+  features: Record<string, boolean>,
+): string {
   return (
     `https://x.com/i/api/graphql/${endpoint}` +
     `?variables=${encodeURIComponent(JSON.stringify(variables))}` +
-    `&features=${encodeURIComponent(JSON.stringify(GRAPHQL_FEATURES))}`
+    `&features=${encodeURIComponent(JSON.stringify(features))}`
   );
 }
 
@@ -380,10 +428,11 @@ export async function fetchRetweeters(
   csrfToken: string,
   options: FetchOptions = {},
 ): Promise<User[]> {
+  const endpoint = requireEndpoint('retweeters');
   return paginateUsers({
-    buildUrl: (cursor) => buildGraphqlUrl(ENDPOINTS.retweeters, {
+    buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
       tweetId, count: LIMITS.PAGE_SIZE, includePromotedContent: true, ...(cursor && { cursor }),
-    }),
+    }, ENDPOINT_FEATURES.retweeters),
     parsePage: parseRetweeterTimeline,
     fetchFn: pageFetch(),
     headers: baseHeaders(csrfToken),
@@ -397,10 +446,11 @@ export async function fetchFavoriters(
   csrfToken: string,
   options: FetchOptions = {},
 ): Promise<User[]> {
+  const endpoint = requireEndpoint('favoriters');
   return paginateUsers({
-    buildUrl: (cursor) => buildGraphqlUrl(ENDPOINTS.favoriters, {
+    buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
       tweetId, count: LIMITS.PAGE_SIZE, includePromotedContent: true, ...(cursor && { cursor }),
-    }),
+    }, ENDPOINT_FEATURES.favoriters),
     parsePage: parseFavoriterTimeline,
     fetchFn: pageFetch(),
     headers: baseHeaders(csrfToken),
@@ -414,9 +464,8 @@ export async function fetchQuoteTweeters(
   csrfToken: string,
   options: FetchOptions = {},
 ): Promise<User[]> {
-  const endpoint = ENDPOINTS.searchTimeline;
+  const endpoint = requireEndpoint('searchTimeline');
   const path = `/i/api/graphql/${endpoint}`;
-  const selfId = getLoggedInUserId();
 
   return paginateUsers({
     buildUrl: (cursor) => buildGraphqlUrl(endpoint, {
@@ -425,18 +474,44 @@ export async function fetchQuoteTweeters(
       querySource: 'tdqt',
       product: 'Top',
       ...(cursor && { cursor }),
-    }),
-    parsePage: parseSearchTimeline,
+    }, ENDPOINT_FEATURES.searchTimeline),
+    parsePage: (data) => parseSearchTimeline(data, tweetId),
     fetchFn: pageFetch(),
     headers: baseHeaders(csrfToken),
     maxRetries: options.maxRetries ?? MAX_RETRIES_DEFAULT,
     signal: options.signal,
     extraHeaders: async () => {
       const txId = await getTxId('GET', path);
-      return txId ? { 'x-client-transaction-id': txId } : ({} as Record<string, string>);
+      if (!txId) throw new Error('transactionIdUnavailable');
+      return { 'x-client-transaction-id': txId };
     },
-  }, options.onProgress, selfId ? (u) => u.id !== selfId : undefined);
+  }, options.onProgress);
 }
 
-export { getCsrfToken, getTweetIdFromUrl };
+export async function fetchUserProfile(handle: string): Promise<User> {
+  const csrfToken = getCsrfToken();
+  if (!csrfToken) throw new Error('loginRequired');
+
+  await initEndpoints();
+  const endpoint = requireEndpoint('userByScreenName');
+  const response = await pageFetch()(
+    buildGraphqlUrl(endpoint, {
+      screen_name: handle,
+      withSafetyModeUserFields: true,
+    }, ENDPOINT_FEATURES.userByScreenName),
+    { headers: baseHeaders(csrfToken) },
+  );
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+  const data = await response.json();
+  const result = data?.data?.user?.result as Record<string, unknown> | undefined;
+  if (!result) throw new Error('userProfileUnavailable');
+
+  const legacy = (result.legacy ?? {}) as Record<string, unknown>;
+  const core = (result.core ?? {}) as Record<string, unknown>;
+  const perspectives = (result.relationship_perspectives ?? {}) as Record<string, unknown>;
+  return userFromResult(result, legacy, core, perspectives);
+}
+
+export { getCsrfToken, getTweetAuthorHandleFromUrl, getTweetIdFromUrl };
 

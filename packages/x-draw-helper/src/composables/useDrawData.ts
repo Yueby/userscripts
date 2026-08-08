@@ -1,8 +1,8 @@
 import { ref, computed } from 'vue';
-import type { User, DrawUser, Filters, FilterKey, DrawResult, InteractionData } from '../types';
+import type { User, DrawUser, Filters, FilterKey, DrawResult, InteractionData, InteractionSource } from '../types';
 import { LIMITS, STORAGE_KEYS } from '../constants';
 import { gmStorage } from '../utils/storage';
-import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, getCsrfToken, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
+import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, getCsrfToken, getTweetAuthorHandleFromUrl, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
 
 interface CachedData {
   retweets: User[];
@@ -56,6 +56,7 @@ const likeProgress = ref(0);
 const quoteProgress = ref(0);
 const lastTweetId = ref<string | null>(null);
 const fetchedAt = ref<number | null>(null);
+const failedSources = ref<InteractionSource[]>([]);
 
 let abortController: AbortController | null = null;
 
@@ -63,25 +64,27 @@ export function useDrawData() {
 
   const mergedUsers = computed(() => {
     const map = new Map<string, DrawUser>();
-    for (const user of retweets.value) {
-      map.set(user.handle, { ...user, hasRetweet: true });
-    }
-    for (const user of likes.value) {
-      const existing = map.get(user.handle);
-      if (existing) {
-        existing.hasLike = true;
-      } else {
-        map.set(user.handle, { ...user, hasLike: true });
+    const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
+
+    function mergeUser(user: User, interaction: 'hasRetweet' | 'hasLike' | 'hasQuote') {
+      const handleKey = user.handle.toLowerCase();
+      if (handleKey === authorHandle) return;
+
+      const existing = map.get(handleKey);
+      if (!existing) {
+        map.set(handleKey, { ...user, [interaction]: true });
+        return;
       }
-    }
-    for (const user of quotes.value) {
-      const existing = map.get(user.handle);
-      if (existing) {
-        existing.hasQuote = true;
-      } else {
-        map.set(user.handle, { ...user, hasQuote: true });
+
+      if (user.profileLoaded && !existing.profileLoaded) {
+        Object.assign(existing, user);
       }
+      existing[interaction] = true;
     }
+
+    retweets.value.forEach((user) => mergeUser(user, 'hasRetweet'));
+    likes.value.forEach((user) => mergeUser(user, 'hasLike'));
+    quotes.value.forEach((user) => mergeUser(user, 'hasQuote'));
     return Array.from(map.values());
   });
 
@@ -165,6 +168,7 @@ export function useDrawData() {
     retweetProgress.value = 0;
     likeProgress.value = 0;
     quoteProgress.value = 0;
+    failedSources.value = [];
 
     try {
       await initEndpoints();
@@ -184,8 +188,18 @@ export function useDrawData() {
         }),
       ]);
 
-      const settled = <T>(r: PromiseSettledResult<T>, fallback: T): T =>
-        r.status === 'fulfilled' ? r.value : fallback;
+      const sourceNames: InteractionSource[] = ['retweets', 'likes', 'quotes'];
+      failedSources.value = results.flatMap((result, index) =>
+        result.status === 'rejected' ? [sourceNames[index]] : [],
+      );
+
+      if (failedSources.value.length === sourceNames.length) {
+        fetchedAt.value = cached?.fetchedAt ?? null;
+        throw new Error('allSourcesFailed');
+      }
+
+      const settled = <T>(result: PromiseSettledResult<T>, fallback: T): T =>
+        result.status === 'fulfilled' ? result.value : fallback;
 
       const retweetData = settled(results[0], retweets.value);
       const likeData = settled(results[1], likes.value);
@@ -197,7 +211,12 @@ export function useDrawData() {
       fetchedAt.value = Date.now();
       saveCache(tweetId, retweetData, likeData, quoteData);
 
-      return { retweets: retweetData, likes: likeData, quotes: quoteData };
+      return {
+        retweets: retweetData,
+        likes: likeData,
+        quotes: quoteData,
+        failedSources: failedSources.value,
+      };
     } finally {
       loading.value = false;
     }
@@ -232,6 +251,7 @@ export function useDrawData() {
     quoteProgress.value = 0;
     lastTweetId.value = null;
     fetchedAt.value = null;
+    failedSources.value = [];
   }
 
   return {
@@ -246,8 +266,14 @@ export function useDrawData() {
     quoteProgress,
     lastTweetId,
     fetchedAt,
+    failedSources,
     mergedUsers,
     qualifiedUsers,
+    interactionCounts: computed(() => ({
+      retweets: mergedUsers.value.filter((user) => user.hasRetweet).length,
+      likes: mergedUsers.value.filter((user) => user.hasLike).length,
+      quotes: mergedUsers.value.filter((user) => user.hasQuote).length,
+    })),
     toggleFilter,
     performDraw,
     fetchInteractionData,

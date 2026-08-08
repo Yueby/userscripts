@@ -5,7 +5,7 @@ import { useI18n } from './useI18n';
 export function useExport() {
   const { t } = useI18n();
 
-  function exportCsv(data: InteractionData) {
+  function exportCsv(data: Pick<InteractionData, 'retweets' | 'likes' | 'quotes'>) {
     const rows: string[][] = [
       [
         t('interactionType'),

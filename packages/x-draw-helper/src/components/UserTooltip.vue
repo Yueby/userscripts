@@ -25,8 +25,11 @@ const { t } = useI18n();
       </div>
     </div>
     <div class="flex gap-4 text-sm text-[#71767b]">
-      <span><span class="text-white font-bold">{{ user.followingCount.toLocaleString() }}</span> {{ t('followingLabel') }}</span>
-      <span><span class="text-white font-bold">{{ user.followersCount.toLocaleString() }}</span> {{ t('followers') }}</span>
+      <template v-if="user.profileLoaded">
+        <span><span class="text-white font-bold">{{ user.followingCount.toLocaleString() }}</span> {{ t('followingLabel') }}</span>
+        <span><span class="text-white font-bold">{{ user.followersCount.toLocaleString() }}</span> {{ t('followers') }}</span>
+      </template>
+      <span v-else class="animate-pulse">{{ t('loadingProfile') }}</span>
     </div>
     <p v-if="user.bio" class="text-[#e7e9ea] text-sm leading-relaxed mt-1">{{ user.bio }}</p>
     <p v-else class="text-[#71767b] text-sm italic mt-1">{{ t('noBio') }}</p>

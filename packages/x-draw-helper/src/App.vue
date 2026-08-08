@@ -3,9 +3,8 @@ import { ref, onMounted, onUnmounted, createApp, h, nextTick } from 'vue';
 import TriggerButton from './components/TriggerButton.vue';
 import DrawPanel from './components/DrawPanel.vue';
 
-const TWEET_URL_PATTERN = /https:\/\/x\.com\/[^/]+\/status\/\d+/;
-const ACTION_BAR_SELECTOR =
-  'article[data-testid="tweet"] div[role="group"]';
+const TWEET_PATH_PATTERN = /^\/[^/]+\/status\/(\d+)/;
+const ACTION_BAR_SELECTOR = 'div[role="group"]';
 const TRIGGER_ID = 'x-draw-helper-trigger';
 
 const isValidPage = ref(false);
@@ -16,10 +15,22 @@ let triggerApp: ReturnType<typeof createApp> | null = null;
 let observer: MutationObserver | null = null;
 let lastUrl = '';
 
+function findTargetTweet(): HTMLElement | null {
+  const tweetId = window.location.pathname.match(TWEET_PATH_PATTERN)?.[1];
+  if (!tweetId) return null;
+
+  return Array.from(
+    document.querySelectorAll<HTMLElement>('article[data-testid="tweet"]'),
+  ).find((article) =>
+    Array.from(article.querySelectorAll<HTMLAnchorElement>('a[href*="/status/"]'))
+      .some((link) => link.pathname.match(TWEET_PATH_PATTERN)?.[1] === tweetId),
+  ) ?? null;
+}
+
 function injectTrigger() {
   removeTrigger();
 
-  const actionBar = document.querySelector(ACTION_BAR_SELECTOR);
+  const actionBar = findTargetTweet()?.querySelector(ACTION_BAR_SELECTOR);
   if (!actionBar) return;
 
   triggerContainer = document.createElement('div');
@@ -50,7 +61,7 @@ function removeTrigger() {
 }
 
 function checkUrl() {
-  const valid = TWEET_URL_PATTERN.test(window.location.href);
+  const valid = TWEET_PATH_PATTERN.test(window.location.pathname);
   isValidPage.value = valid;
   if (!valid) {
     showPanel.value = false;

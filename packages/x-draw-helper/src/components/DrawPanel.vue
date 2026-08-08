@@ -6,8 +6,9 @@ import { useExport } from '../composables/useExport';
 import { useI18n } from '../composables/useI18n';
 import { useToast } from '../composables/useToast';
 import { useVersionCheck } from '../composables/useVersionCheck';
+import { useUserProfile } from '../composables/useUserProfile';
 import { LIMITS, TIMING, UI } from '../constants';
-import type { DrawUser, LangKey } from '../types';
+import type { DrawUser, InteractionSource, LangKey } from '../types';
 import DrawAnimation from './DrawAnimation.vue';
 import DrawHistory from './DrawHistory.vue';
 import DrawResult from './DrawResult.vue';
@@ -29,6 +30,7 @@ const { addEntry, getWinCount } = useDrawHistory();
 const { exportCsv } = useExport();
 const { show: showToast } = useToast();
 const versionCheck = useVersionCheck();
+const { loadUserProfile } = useUserProfile();
 versionCheck.checkUpdate();
 
 type TabFilter = 'all' | 'retweet' | 'like' | 'quote' | 'followed_by';
@@ -147,9 +149,7 @@ function getSortIcon(key: SortKey): string {
 
 const stats = computed(() => ({
   total: drawData.mergedUsers.value.length,
-  retweets: drawData.retweets.value.length,
-  likes: drawData.likes.value.length,
-  quotes: drawData.quotes.value.length,
+  ...drawData.interactionCounts.value,
   followers: drawData.mergedUsers.value.filter((u) => u.followed_by).length,
 }));
 
@@ -163,11 +163,30 @@ const cacheAge = computed(() => {
   return mins < 1 ? t('justNow') : t('minutesAgo', { count: mins });
 });
 
+const interactionSourceLabels: Record<InteractionSource, string> = {
+  retweets: 'retweets',
+  likes: 'likes',
+  quotes: 'quotes',
+};
+
 function handleRefresh() {
-  drawData.fetchInteractionData().catch((err) => {
-    if (err instanceof DOMException && err.name === 'AbortError') return;
-    showToast(t(err.message || 'loginRequired'), 'error', TIMING.TOAST_DURATION * 2);
-  });
+  drawData.fetchInteractionData()
+    .then(({ failedSources }) => {
+      if (failedSources.length === 0) return;
+      const labels = failedSources.map((source) => t(interactionSourceLabels[source])).join('、');
+      showToast(t('partialFetchFailed', { sources: labels }), 'error', TIMING.TOAST_DURATION * 2);
+    })
+    .catch((err) => {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      const message = String(err?.message || 'loginRequired');
+      if (message.startsWith('missingEndpoint:')) {
+        const source = message.slice('missingEndpoint:'.length) as InteractionSource;
+        const labelKey = interactionSourceLabels[source];
+        showToast(t('missingEndpoint', { source: labelKey ? t(labelKey) : source }), 'error', TIMING.TOAST_DURATION * 2);
+        return;
+      }
+      showToast(t(message), 'error', TIMING.TOAST_DURATION * 2);
+    });
 }
 
 function handleDraw() {
@@ -221,6 +240,7 @@ function onRowEnter(user: DrawUser, e: MouseEvent) {
   const rect = el.getBoundingClientRect();
   tooltipPos.value = { x: rect.left + rect.width / 2, y: rect.top };
   hoveredUser.value = user;
+  loadUserProfile(user).catch(() => undefined);
 }
 
 function openProfile(handle: string) {
@@ -273,6 +293,15 @@ function openProfile(handle: string) {
         <span class="text-xs text-[#71767b]">{{ t('followingMe') }}</span>
         <span class="text-xl font-bold text-[#1d9bf0]">{{ stats.followers }}</span>
       </div>
+    </div>
+
+    <div
+      v-if="drawData.failedSources.value.length"
+      class="px-5 py-2 border-b border-[#f4212e]/40 bg-[#f4212e]/10 text-xs text-[#ff7a85]"
+    >
+      {{ t('partialFetchFailed', {
+        sources: drawData.failedSources.value.map((source) => t(interactionSourceLabels[source])).join('、')
+      }) }}
     </div>
 
     <!-- Toolbar -->

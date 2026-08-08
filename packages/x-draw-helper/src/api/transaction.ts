@@ -46,7 +46,10 @@ export function initTxIdCapture(): void {
 // ---------------------------------------------------------------------------
 
 const _ON_DEMAND_RE =
-  /(\d+):\s*["']ondemand\.s["'][\s\S]*?\}\[e\]\s*\|\|\s*e\)\s*\+\s*["']\.["']\s*\+\s*\{[\s\S]*?\b\1:\s*["']([a-zA-Z0-9_-]+)["']/s;
+  /(\d+):\s*["']ondemand\.s["'][\s\S]*?\}\)\[e\]\s*\|\|\s*e\)\s*\+\s*["']\.["']\s*\+\s*\(\{[\s\S]*?\b\1:\s*["']([a-zA-Z0-9_-]+)["']/s;
+const _LEGACY_ON_DEMAND_RE =
+  /["']ondemand\.s["']\s*:\s*["']([a-zA-Z0-9_-]+)["']/;
+const _CHUNK_NAME_RE = /(\d+):\s*["']ondemand\.s["']/;
 const _INDICES_RE = /\(\w\[(\d{1,2})\],\s*16\)/g;
 
 class _ClientTransaction {
@@ -103,16 +106,34 @@ class _ClientTransaction {
   }
 
   private _getOnDemandUrl(): string | null {
-    const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script'));
-    for (const s of scripts) {
-      const t = s.textContent ?? '';
-      if (!t.includes('ondemand.s')) continue;
-      const m = _ON_DEMAND_RE.exec(t);
-      if (m) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m[2]}a.js`;
+    const sources = Array.from(document.querySelectorAll<HTMLScriptElement>('script'))
+      .map((script) => script.textContent ?? '')
+      .filter((source) => source.includes('ondemand.s'));
+    sources.push(document.documentElement.outerHTML);
+
+    for (const source of sources) {
+      const currentMatch = _ON_DEMAND_RE.exec(source);
+      if (currentMatch) return this._buildOnDemandUrl(currentMatch[2]);
+
+      const legacyMatch = _LEGACY_ON_DEMAND_RE.exec(source);
+      if (legacyMatch) return this._buildOnDemandUrl(legacyMatch[1]);
+
+      const chunkMatch = _CHUNK_NAME_RE.exec(source);
+      if (!chunkMatch) continue;
+
+      const hashMatches = source.matchAll(
+        new RegExp(`(?:^|[,{])\\s*${chunkMatch[1]}:\\s*["']([a-zA-Z0-9_-]+)["']`, 'g'),
+      );
+      for (const match of hashMatches) {
+        if (match[1] !== 'ondemand.s') return this._buildOnDemandUrl(match[1]);
+      }
     }
-    const m = _ON_DEMAND_RE.exec(document.documentElement.outerHTML);
-    if (m) return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${m[2]}a.js`;
+
     return null;
+  }
+
+  private _buildOnDemandUrl(hash: string): string {
+    return `https://abs.twimg.com/responsive-web/client-web/ondemand.s.${hash}a.js`;
   }
 
   private _buildAnimKey(doc: Document = document): string {
