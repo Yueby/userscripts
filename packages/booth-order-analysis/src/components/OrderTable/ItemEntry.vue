@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { Order } from '../../types/order';
 import { ItemManager } from '../../utils/booth/item-manager';
 import ItemIcon from '../common/ItemIcon/index.vue';
 import MaskedText from '../common/MaskedText/index.vue';
@@ -12,12 +11,13 @@ interface Props {
     quantity: number;
   };
   size?: string;
-  allOrders?: Order[]; // 所有订单数据，用于计算总销量
+  totalSales?: number;
   privacyMode?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: '20px',
+  totalSales: 0,
   privacyMode: false
 });
 
@@ -30,27 +30,13 @@ const itemDetails = computed(() => {
   const itemData = itemManager.getItem(props.item.itemId);
   const boothItem = itemManager.getBoothItem(props.item.itemId);
   
-  // 计算该商品在所有订单中的总销量
-  let totalSales = 0;
-  if (props.allOrders) {
-    props.allOrders.forEach(order => {
-      if (order.items && Array.isArray(order.items)) {
-        order.items.forEach((item: { itemId: string; quantity: number }) => {
-          if (item.itemId === props.item.itemId) {
-            totalSales += item.quantity;
-          }
-        });
-      }
-    });
-  }
-  
   return {
     name: boothItem?.name || itemData?.name || props.item.name,
     state: boothItem?.state || itemData?.state || '',
     stateLabel: boothItem?.state || itemData?.state_label || '',
     url: boothItem?.url || itemData?.url || '',
     iconUrl: boothItem?.iconUrl || itemData?.iconUrl || '',
-    totalSales: totalSales,
+    totalSales: props.totalSales,
     favorites: boothItem?.favorites || 0
   };
 });
