@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const drawData = useDrawData();
-const { history } = useDrawHistory();
+const { history } = useDrawHistory(drawData.lastTweetId);
 const { show: showToast } = useToast();
 
 const excludePastWinners = ref(false);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 import { DEFAULT_ENDPOINTS, updateEndpoints } from '../api/twitter';
 import { useDrawHistory } from '../composables/useDrawHistory';
 import { useI18n } from '../composables/useI18n';
@@ -9,9 +9,10 @@ import { gmStorage } from '../utils/storage';
 import Modal from './Modal.vue';
 
 const emit = defineEmits<{ close: [] }>();
+const props = defineProps<{ tweetId: string | null }>();
 
 const { t } = useI18n();
-const { clearHistory } = useDrawHistory();
+const { clearHistory } = useDrawHistory(toRef(props, 'tweetId'));
 const { show: showToast } = useToast();
 
 type EndpointKeys = keyof typeof DEFAULT_ENDPOINTS;

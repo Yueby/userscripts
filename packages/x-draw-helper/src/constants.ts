@@ -2,6 +2,7 @@ export const STORAGE_KEYS = {
   TWEET_CACHE_PREFIX: 'xd:cache:',
   CACHE_INDEX: 'xd:cache-index',
   DRAW_HISTORY: 'xd:history',
+  DRAW_HISTORY_PREFIX: 'xd:history:',
   LANGUAGE: 'xd:lang',
   DM_TEMPLATE: 'xd:dm-template',
   CUSTOM_ENDPOINTS: 'xd:endpoints',

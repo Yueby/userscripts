@@ -62,6 +62,16 @@ let abortController: AbortController | null = null;
 
 export function useDrawData() {
 
+  function syncTweetId(tweetId: string | null) {
+    if (lastTweetId.value === tweetId) return;
+    retweets.value = [];
+    likes.value = [];
+    quotes.value = [];
+    fetchedAt.value = null;
+    failedSources.value = [];
+    lastTweetId.value = tweetId;
+  }
+
   const mergedUsers = computed(() => {
     const map = new Map<string, DrawUser>();
     const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
@@ -149,12 +159,7 @@ export function useDrawData() {
     if (!csrfToken) throw new Error('loginRequired');
 
     // If tweet changed, clear stale data immediately
-    if (lastTweetId.value !== tweetId) {
-      retweets.value = [];
-      likes.value = [];
-      quotes.value = [];
-      lastTweetId.value = tweetId;
-    }
+    syncTweetId(tweetId);
 
     const cached = loadCache(tweetId);
     if (cached) {
@@ -225,7 +230,7 @@ export function useDrawData() {
   function restoreFromCache(): boolean {
     const tweetId = getTweetIdFromUrl();
     if (!tweetId) return false;
-    lastTweetId.value = tweetId;
+    syncTweetId(tweetId);
     const cached = loadCache(tweetId);
     if (!cached) return false;
     retweets.value = cached.retweets;
@@ -280,5 +285,6 @@ export function useDrawData() {
     restoreFromCache,
     cancelFetch,
     reset,
+    syncTweetId,
   };
 }

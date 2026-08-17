@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, toRef, watch } from 'vue';
 import { useDrawData } from '../composables/useDrawData';
 import { useDrawHistory } from '../composables/useDrawHistory';
 import { useExport } from '../composables/useExport';
@@ -20,13 +20,14 @@ import Settings from './Settings.vue';
 import Toast from './Toast.vue';
 import UserTooltip from './UserTooltip.vue';
 
+const props = defineProps<{ tweetId: string | null }>();
 const emit = defineEmits<{
   close: [];
 }>();
 
 const { t, currentLang, setLang, availableLangs, getLangName } = useI18n();
 const drawData = useDrawData();
-const { addEntry, getWinCount } = useDrawHistory();
+const { addEntry, getWinCount } = useDrawHistory(toRef(props, 'tweetId'));
 const { exportCsv } = useExport();
 const { show: showToast } = useToast();
 const versionCheck = useVersionCheck();
@@ -63,7 +64,13 @@ const PAGE_SIZE = LIMITS.PAGE_SIZE;
 const currentPage = ref(1);
 
 // Load cached data on mount; user triggers fresh fetch manually
-drawData.restoreFromCache();
+watch(toRef(props, 'tweetId'), (tweetId) => {
+  drawData.syncTweetId(tweetId);
+  winners.value = [];
+  showResult.value = false;
+  showAnimation.value = false;
+  drawData.restoreFromCache();
+}, { immediate: true });
 
 const filteredUsers = computed<DrawUser[]>(() => {
   const users = drawData.mergedUsers.value;
@@ -507,10 +514,10 @@ function openProfile(handle: string) {
   <DrawResult v-if="showResult" :winners="winners" @close="showResult = false" />
 
   <!-- Draw History Modal -->
-  <DrawHistory v-if="showHistory" @close="showHistory = false" />
+  <DrawHistory v-if="showHistory" :tweet-id="props.tweetId" @close="showHistory = false" />
 
   <!-- Settings Modal -->
-  <Settings v-if="showSettingsPanel" @close="showSettingsPanel = false" />
+  <Settings v-if="showSettingsPanel" :tweet-id="props.tweetId" @close="showSettingsPanel = false" />
 
   <Toast />
 

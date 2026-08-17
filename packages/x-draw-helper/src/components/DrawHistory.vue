@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toRef } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useDrawHistory } from '../composables/useDrawHistory';
 import { formatDateTime } from '../utils/format';
@@ -7,9 +8,10 @@ import Modal from './Modal.vue';
 const emit = defineEmits<{
   close: [];
 }>();
+const props = defineProps<{ tweetId: string | null }>();
 
 const { t } = useI18n();
-const { history, removeEntry, toggleConfirm, clearHistory } = useDrawHistory();
+const { history, removeEntry, toggleConfirm, clearHistory } = useDrawHistory(toRef(props, 'tweetId'));
 
 function handleClear() {
   if (confirm(t('confirmClear'))) clearHistory();

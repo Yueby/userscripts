@@ -1,20 +1,21 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch, type Ref } from 'vue';
 import type { DrawHistoryEntry, DrawUser, Filters } from '../types';
 import { STORAGE_KEYS, LIMITS } from '../constants';
 import { gmStorage } from '../utils/storage';
 
-function loadHistory(): DrawHistoryEntry[] {
-  const raw = gmStorage.get<DrawHistoryEntry[]>(STORAGE_KEYS.DRAW_HISTORY, []);
+function loadHistory(tweetId: string | null): DrawHistoryEntry[] {
+  if (!tweetId) return [];
+  const raw = gmStorage.get<DrawHistoryEntry[]>(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, []);
   return raw.map((e) => ({ ...e, confirmed: e.confirmed ?? true }));
 }
 
-function persistHistory(entries: DrawHistoryEntry[]) {
-  gmStorage.set(STORAGE_KEYS.DRAW_HISTORY, entries);
+function persistHistory(tweetId: string | null, entries: DrawHistoryEntry[]) {
+  if (tweetId) gmStorage.set(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, entries);
 }
 
-const history = ref<DrawHistoryEntry[]>(loadHistory());
-
-export function useDrawHistory() {
+export function useDrawHistory(tweetId: Ref<string | null>) {
+  const history = ref<DrawHistoryEntry[]>(loadHistory(tweetId.value));
+  watch(tweetId, (value) => { history.value = loadHistory(value); }, { immediate: true });
 
   function addEntry(params: {
     tweetId: string;
@@ -33,26 +34,26 @@ export function useDrawHistory() {
       confirmed: true,
     };
     history.value = [entry, ...history.value].slice(0, LIMITS.MAX_HISTORY_ENTRIES);
-    persistHistory(history.value);
+    persistHistory(tweetId.value, history.value);
     return entry;
   }
 
   function removeEntry(id: string) {
     history.value = history.value.filter((e) => e.id !== id);
-    persistHistory(history.value);
+    persistHistory(tweetId.value, history.value);
   }
 
   function toggleConfirm(id: string) {
     const entry = history.value.find((e) => e.id === id);
     if (entry) {
       entry.confirmed = !entry.confirmed;
-      persistHistory(history.value);
+      persistHistory(tweetId.value, history.value);
     }
   }
 
   function clearHistory() {
     history.value = [];
-    persistHistory([]);
+    persistHistory(tweetId.value, []);
   }
 
   const winCountMap = computed(() => {

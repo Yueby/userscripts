@@ -9,6 +9,7 @@ const TRIGGER_ID = 'x-draw-helper-trigger';
 
 const isValidPage = ref(false);
 const showPanel = ref(false);
+const currentTweetId = ref<string | null>(null);
 
 let triggerContainer: HTMLElement | null = null;
 let triggerApp: ReturnType<typeof createApp> | null = null;
@@ -63,6 +64,7 @@ function removeTrigger() {
 function checkUrl() {
   const valid = TWEET_PATH_PATTERN.test(window.location.pathname);
   isValidPage.value = valid;
+  currentTweetId.value = valid ? window.location.pathname.match(TWEET_PATH_PATTERN)?.[1] ?? null : null;
   if (!valid) {
     showPanel.value = false;
     removeTrigger();
@@ -102,5 +104,5 @@ function closePanel() {
 </script>
 
 <template>
-  <DrawPanel v-if="showPanel" @close="closePanel" />
+  <DrawPanel v-if="showPanel" :tweet-id="currentTweetId" @close="closePanel" />
 </template>

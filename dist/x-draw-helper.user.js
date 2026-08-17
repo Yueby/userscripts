@@ -61,6 +61,7 @@
     TWEET_CACHE_PREFIX: "xd:cache:",
     CACHE_INDEX: "xd:cache-index",
     DRAW_HISTORY: "xd:history",
+    DRAW_HISTORY_PREFIX: "xd:history:",
     LANGUAGE: "xd:lang",
     DM_TEMPLATE: "xd:dm-template",
     CUSTOM_ENDPOINTS: "xd:endpoints"
@@ -138,6 +139,43 @@
         gmStorage.remove(key);
       }
     }
+    migrateDrawHistory();
+  }
+  function migrateDrawHistory() {
+    const raw = gmStorage.get(STORAGE_KEYS.DRAW_HISTORY, null);
+    if (!Array.isArray(raw)) return;
+    const grouped = new Map();
+    const unassigned = [];
+    for (const entry of raw) {
+      const tweetId = entry && typeof entry === "object" ? entry.tweetId : void 0;
+      if (typeof tweetId !== "string" || !tweetId) {
+        unassigned.push(entry);
+        continue;
+      }
+      const entries = grouped.get(tweetId) ?? [];
+      entries.push(entry);
+      grouped.set(tweetId, entries);
+    }
+    for (const [tweetId, entries] of grouped) {
+      const key = `${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`;
+      const existing = gmStorage.get(key, []);
+      const merged = Array.isArray(existing) ? [...existing, ...entries] : entries;
+      const deduped = merged.filter((entry, index, all) => {
+        if (!entry || typeof entry !== "object") return true;
+        const id = entry.id;
+        if (!id) return true;
+        return all.findIndex(
+          (candidate) => !!candidate && typeof candidate === "object" && candidate.id === id
+        ) === index;
+      });
+      gmStorage.set(key, deduped);
+      if (!Array.isArray(gmStorage.get(key, null))) return;
+    }
+    if (unassigned.length > 0) {
+      gmStorage.set(STORAGE_KEYS.DRAW_HISTORY, unassigned);
+      return;
+    }
+    gmStorage.remove(STORAGE_KEYS.DRAW_HISTORY);
   }
   const LOG = "[x-draw]";
   let _origPageFetch = null;
@@ -757,6 +795,15 @@
   const failedSources = vue.ref([]);
   let abortController = null;
   function useDrawData() {
+    function syncTweetId(tweetId) {
+      if (lastTweetId.value === tweetId) return;
+      retweets.value = [];
+      likes.value = [];
+      quotes.value = [];
+      fetchedAt.value = null;
+      failedSources.value = [];
+      lastTweetId.value = tweetId;
+    }
     const mergedUsers = vue.computed(() => {
       const map = new Map();
       const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
@@ -827,12 +874,7 @@
       if (!tweetId) throw new Error("invalidTweetUrl");
       const csrfToken = getCsrfToken();
       if (!csrfToken) throw new Error("loginRequired");
-      if (lastTweetId.value !== tweetId) {
-        retweets.value = [];
-        likes.value = [];
-        quotes.value = [];
-        lastTweetId.value = tweetId;
-      }
+      syncTweetId(tweetId);
       const cached = loadCache(tweetId);
       if (cached) {
         retweets.value = cached.retweets;
@@ -897,7 +939,7 @@
     function restoreFromCache() {
       const tweetId = getTweetIdFromUrl();
       if (!tweetId) return false;
-      lastTweetId.value = tweetId;
+      syncTweetId(tweetId);
       const cached = loadCache(tweetId);
       if (!cached) return false;
       retweets.value = cached.retweets;
@@ -948,18 +990,23 @@
       fetchInteractionData,
       restoreFromCache,
       cancelFetch,
-      reset
+      reset,
+      syncTweetId
     };
   }
-  function loadHistory() {
-    const raw = gmStorage.get(STORAGE_KEYS.DRAW_HISTORY, []);
+  function loadHistory(tweetId) {
+    if (!tweetId) return [];
+    const raw = gmStorage.get(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, []);
     return raw.map((e) => ({ ...e, confirmed: e.confirmed ?? true }));
   }
-  function persistHistory(entries) {
-    gmStorage.set(STORAGE_KEYS.DRAW_HISTORY, entries);
+  function persistHistory(tweetId, entries) {
+    if (tweetId) gmStorage.set(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, entries);
   }
-  const history = vue.ref(loadHistory());
-  function useDrawHistory() {
+  function useDrawHistory(tweetId) {
+    const history = vue.ref(loadHistory(tweetId.value));
+    vue.watch(tweetId, (value) => {
+      history.value = loadHistory(value);
+    }, { immediate: true });
     function addEntry(params) {
       const entry = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -972,23 +1019,23 @@
         confirmed: true
       };
       history.value = [entry, ...history.value].slice(0, LIMITS.MAX_HISTORY_ENTRIES);
-      persistHistory(history.value);
+      persistHistory(tweetId.value, history.value);
       return entry;
     }
     function removeEntry(id) {
       history.value = history.value.filter((e) => e.id !== id);
-      persistHistory(history.value);
+      persistHistory(tweetId.value, history.value);
     }
     function toggleConfirm(id) {
       const entry = history.value.find((e) => e.id === id);
       if (entry) {
         entry.confirmed = !entry.confirmed;
-        persistHistory(history.value);
+        persistHistory(tweetId.value, history.value);
       }
     }
     function clearHistory() {
       history.value = [];
-      persistHistory([]);
+      persistHistory(tweetId.value, []);
     }
     const winCountMap = vue.computed(() => {
       const map = new Map();
@@ -1684,11 +1731,15 @@
   const _hoisted_21$2 = { class: "text-sm text-[#e7e9ea]" };
   const _sfc_main$9 = vue.defineComponent({
     __name: "DrawHistory",
+    props: {
+      tweetId: {}
+    },
     emits: ["close"],
     setup(__props, { emit: __emit }) {
       const emit = __emit;
+      const props = __props;
       const { t: t2 } = useI18n();
-      const { history: history2, removeEntry, toggleConfirm, clearHistory } = useDrawHistory();
+      const { history, removeEntry, toggleConfirm, clearHistory } = useDrawHistory(vue.toRef(props, "tweetId"));
       function handleClear() {
         if (confirm(t2("confirmClear"))) clearHistory();
       }
@@ -1701,7 +1752,7 @@
           onClose: _cache[0] || (_cache[0] = ($event) => emit("close"))
         }, {
           "header-controls": vue.withCtx(() => [
-            vue.unref(history2).length ? (vue.openBlock(), vue.createElementBlock("button", {
+            vue.unref(history).length ? (vue.openBlock(), vue.createElementBlock("button", {
               key: 0,
               class: "xd-btn xd-btn-ghost text-sm text-[#f4212e]",
               onClick: handleClear
@@ -1709,8 +1760,8 @@
           ]),
           default: vue.withCtx(() => [
             vue.createElementVNode("div", _hoisted_1$7, [
-              vue.unref(history2).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$5, [
-                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(history2), (entry) => {
+              vue.unref(history).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$5, [
+                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(history), (entry) => {
                   return vue.openBlock(), vue.createElementBlock("div", {
                     key: entry.id,
                     class: vue.normalizeClass(["rounded-xl border p-4", entry.confirmed ? "bg-[#1e2d3d] border-[#38444d]" : "bg-[#1e2d3d]/50 border-[#38444d]/50 opacity-70"])
@@ -3180,14 +3231,14 @@
       const emit = __emit;
       const { t: t2 } = useI18n();
       const drawData = useDrawData();
-      const { history: history2 } = useDrawHistory();
+      const { history } = useDrawHistory(drawData.lastTweetId);
       const { show: showToast } = useToast();
       const excludePastWinners = vue.ref(false);
       const showLastResult = vue.ref(false);
       const lastEntry = vue.computed(() => {
         const tweetId = drawData.lastTweetId.value;
         if (!tweetId) return null;
-        return history2.value.find((e) => e.tweetId === tweetId) ?? null;
+        return history.value.find((e) => e.tweetId === tweetId) ?? null;
       });
       const lastWinners = vue.computed(() => lastEntry.value?.winners ?? []);
       const filterOptions = [
@@ -3206,7 +3257,7 @@
       function handleDraw() {
         const tweetId = drawData.lastTweetId.value;
         const exclude = excludePastWinners.value && tweetId ? new Set(
-          history2.value.filter((entry) => entry.confirmed && entry.tweetId === tweetId).flatMap((entry) => entry.winners.map((winner) => winner.handle))
+          history.value.filter((entry) => entry.confirmed && entry.tweetId === tweetId).flatMap((entry) => entry.winners.map((winner) => winner.handle))
         ) : void 0;
         const result = drawData.performDraw({ excludeHandles: exclude });
         if (!result.success) {
@@ -3330,11 +3381,15 @@
   const _hoisted_9$1 = { style: { display: "flex", gap: "8px" } };
   const _sfc_main$3 = vue.defineComponent({
     __name: "Settings",
+    props: {
+      tweetId: {}
+    },
     emits: ["close"],
     setup(__props, { emit: __emit }) {
       const emit = __emit;
+      const props = __props;
       const { t: t2 } = useI18n();
-      const { clearHistory } = useDrawHistory();
+      const { clearHistory } = useDrawHistory(vue.toRef(props, "tweetId"));
       const { show: showToast } = useToast();
       const saved = gmStorage.get(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
       const endpoints = vue.ref({
@@ -3625,12 +3680,16 @@
   };
   const _sfc_main$1 = vue.defineComponent({
     __name: "DrawPanel",
+    props: {
+      tweetId: {}
+    },
     emits: ["close"],
     setup(__props, { emit: __emit }) {
+      const props = __props;
       const emit = __emit;
       const { t: t2, currentLang: currentLang2, setLang: setLang2, availableLangs, getLangName } = useI18n();
       const drawData = useDrawData();
-      const { addEntry, getWinCount } = useDrawHistory();
+      const { addEntry, getWinCount } = useDrawHistory(vue.toRef(props, "tweetId"));
       const { exportCsv } = useExport();
       const { show: showToast } = useToast();
       const versionCheck = useVersionCheck();
@@ -3657,7 +3716,13 @@
       const sortDir = vue.ref("asc");
       const PAGE_SIZE = LIMITS.PAGE_SIZE;
       const currentPage = vue.ref(1);
-      drawData.restoreFromCache();
+      vue.watch(vue.toRef(props, "tweetId"), (tweetId) => {
+        drawData.syncTweetId(tweetId);
+        winners.value = [];
+        showResult.value = false;
+        showAnimation.value = false;
+        drawData.restoreFromCache();
+      }, { immediate: true });
       const filteredUsers = vue.computed(() => {
         const users = drawData.mergedUsers.value;
         if (activeFilter.value === "all") return users;
@@ -4228,12 +4293,14 @@
           }, null, 8, ["winners"])) : vue.createCommentVNode("", true),
           showHistory.value ? (vue.openBlock(), vue.createBlock(_sfc_main$9, {
             key: 3,
+            "tweet-id": props.tweetId,
             onClose: _cache[18] || (_cache[18] = ($event) => showHistory.value = false)
-          })) : vue.createCommentVNode("", true),
+          }, null, 8, ["tweet-id"])) : vue.createCommentVNode("", true),
           showSettingsPanel.value ? (vue.openBlock(), vue.createBlock(_sfc_main$3, {
             key: 4,
+            "tweet-id": props.tweetId,
             onClose: _cache[19] || (_cache[19] = ($event) => showSettingsPanel.value = false)
-          })) : vue.createCommentVNode("", true),
+          }, null, 8, ["tweet-id"])) : vue.createCommentVNode("", true),
           vue.createVNode(Toast),
           hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
             key: 5,
@@ -4253,6 +4320,7 @@
       const TWEET_PATH_PATTERN = /^\/[^/]+\/status\/(\d+)/;
       const isValidPage = vue.ref(false);
       const showPanel = vue.ref(false);
+      const currentTweetId = vue.ref(null);
       let triggerContainer = null;
       let triggerApp = null;
       let observer = null;
@@ -4296,6 +4364,7 @@
       function checkUrl() {
         const valid = TWEET_PATH_PATTERN.test(window.location.pathname);
         isValidPage.value = valid;
+        currentTweetId.value = valid ? window.location.pathname.match(TWEET_PATH_PATTERN)?.[1] ?? null : null;
         if (!valid) {
           showPanel.value = false;
           removeTrigger();
@@ -4329,8 +4398,9 @@
       return (_ctx, _cache) => {
         return showPanel.value ? (vue.openBlock(), vue.createBlock(_sfc_main$1, {
           key: 0,
+          "tweet-id": currentTweetId.value,
           onClose: closePanel
-        })) : vue.createCommentVNode("", true);
+        }, null, 8, ["tweet-id"])) : vue.createCommentVNode("", true);
       };
     }
   });
