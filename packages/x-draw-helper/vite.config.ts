@@ -29,7 +29,7 @@ export default defineConfig({
           'ja': 'X(Twitter)の投稿でRT・いいね・引用・返信の参加者を抽選し、投稿をまたぐ当選履歴に対応'
         },
         author: 'Yueby',
-        version: '0.3.0',
+        version: '0.3.1',
         grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'GM_listValues', 'GM_deleteValue', 'GM_xmlhttpRequest', 'unsafeWindow'],
         connect: ['raw.githubusercontent.com'],
         'run-at': 'document-start'

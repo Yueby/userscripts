@@ -169,6 +169,12 @@ const cacheAge = computed(() => {
   return mins < 1 ? t('justNow') : t('minutesAgo', { count: mins });
 });
 
+const showGuideOverlay = computed(() => (
+  drawData.fetchedAt.value === null &&
+  drawData.mergedUsers.value.length === 0 &&
+  !drawData.loading.value
+));
+
 const interactionSourceLabels: Record<InteractionSource, string> = {
   retweets: 'retweets',
   likes: 'likes',
@@ -355,7 +361,8 @@ function openProfile(handle: string) {
           />
         </div>
         <button
-          class="xd-btn xd-btn-secondary shrink-0"
+          class="xd-btn xd-btn-secondary shrink-0 transition-all duration-300"
+          :class="{ 'ring-2 ring-[#1d9bf0] text-[#1d9bf0] bg-[#1d9bf0]/10': showGuideOverlay }"
           :style="{ fontSize: '11px', padding: '4px 10px' }"
           :title="t('refresh')"
           @click="handleRefresh"
@@ -367,7 +374,7 @@ function openProfile(handle: string) {
     </div>
 
     <!-- Table -->
-    <div class="flex-1 overflow-auto min-h-0">
+    <div class="flex-1 overflow-auto min-h-0 relative">
       <table class="w-full text-sm border-collapse">
         <thead class="sticky top-0 bg-[#15202b] z-[1]">
           <tr class="text-left border-b border-[#38444d]">
@@ -477,6 +484,38 @@ function openProfile(handle: string) {
           </tr>
         </tbody>
       </table>
+
+      <!-- First-time Guide Overlay -->
+      <div
+        v-if="showGuideOverlay"
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 bg-[#15202b]/95 backdrop-blur-sm select-none"
+        role="region"
+        :aria-label="t('noDataGuideTitle')"
+      >
+        <div class="max-w-md text-center flex flex-col items-center px-4">
+          <div class="w-16 h-16 rounded-2xl bg-[#1d9bf0]/10 border border-[#1d9bf0]/20 flex items-center justify-center mb-4 text-[#1d9bf0] shadow-inner">
+            <svg viewBox="0 0 24 24" class="w-8 h-8" fill="currentColor">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+          </div>
+          <h3 class="text-white text-base font-bold mb-2">
+            {{ t('noDataGuideTitle') }}
+          </h3>
+          <p class="text-sm text-[#71767b] leading-relaxed mb-6">
+            {{ t('noDataGuideDesc') }}
+          </p>
+          <button
+            type="button"
+            class="xd-btn xd-btn-primary px-6 py-2.5 text-sm font-semibold flex items-center gap-2 shadow-lg shadow-[#1d9bf0]/20 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            @click="handleRefresh"
+          >
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+            {{ t('fetchDataAction') }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Pagination -->
