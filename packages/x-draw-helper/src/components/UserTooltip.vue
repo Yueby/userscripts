@@ -37,7 +37,19 @@ const { t } = useI18n();
       <InteractionBadge v-if="user.hasRetweet" type="retweet" :label="t('retweetType')" />
       <InteractionBadge v-if="user.hasLike" type="like" :label="t('likeType')" />
       <InteractionBadge v-if="user.hasQuote" type="quote" :label="t('quoteType')" />
+      <InteractionBadge v-if="user.hasReply" type="reply" :label="t('replyType')" />
       <InteractionBadge v-if="user.followed_by" type="follow" :label="t('followingYou')" />
+    </div>
+    <div v-if="user.replyComments && user.replyComments.length > 0" class="mt-2.5 pt-2 border-t border-[#38444d]/60 text-xs">
+      <div class="text-[#71767b] mb-1 flex items-center justify-between">
+        <span>{{ t('comment') }}</span>
+        <span v-if="user.replyComments.length > 1" class="text-[10px] text-[#1d9bf0] font-medium">
+          {{ user.replyComments.length }} {{ t('comments') }}
+        </span>
+      </div>
+      <p class="text-[#e7e9ea] line-clamp-2 italic">
+        "{{ user.replyComments[0].text }}"
+      </p>
     </div>
   </div>
 </template>

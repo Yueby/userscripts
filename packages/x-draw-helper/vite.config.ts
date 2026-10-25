@@ -24,12 +24,12 @@ export default defineConfig({
           'ja': 'X 抽選ツール'
         },
         description: {
-          '': 'A userscript for conducting draws on X (Twitter) posts',
-          'zh-CN': 'X(推特) 推文抽奖助手，支持转发/点赞用户筛选、随机抽奖、结果通知',
-          'ja': 'X(Twitter)の投稿で抽選を行うためのユーザースクリプト'
+          '': 'X (Twitter) draw helper for retweet, like, quote and reply participants, with cross-post winner history',
+          'zh-CN': 'X(推特) 推文抽奖助手，支持转发/点赞/引用/评论参与者抽取，并跨帖记录中奖历史',
+          'ja': 'X(Twitter)の投稿でRT・いいね・引用・返信の参加者を抽選し、投稿をまたぐ当選履歴に対応'
         },
         author: 'Yueby',
-        version: '0.2.1',
+        version: '0.3.0',
         grant: ['GM_openInTab', 'GM_getValue', 'GM_setValue', 'GM_listValues', 'GM_deleteValue', 'GM_xmlhttpRequest', 'unsafeWindow'],
         connect: ['raw.githubusercontent.com'],
         'run-at': 'document-start'

@@ -1,3 +1,10 @@
+export interface ReplyComment {
+  id: string;
+  text: string;
+  createdAt: string;
+  url: string;
+}
+
 export interface User {
   id: string;
   username: string;
@@ -9,12 +16,14 @@ export interface User {
   followersCount: number;
   followingCount: number;
   profileLoaded?: boolean;
+  replyComments?: ReplyComment[];
 }
 
 export interface DrawUser extends User {
   hasRetweet?: boolean;
   hasLike?: boolean;
   hasQuote?: boolean;
+  hasReply?: boolean;
 }
 
 export interface Filters {
@@ -22,6 +31,7 @@ export interface Filters {
   retweet: boolean;
   like: boolean;
   quote: boolean;
+  reply: boolean;
 }
 
 export type FilterKey = keyof Filters;
@@ -33,12 +43,13 @@ export interface DrawResult {
   count?: number;
 }
 
-export type InteractionSource = 'retweets' | 'likes' | 'quotes';
+export type InteractionSource = 'retweets' | 'likes' | 'quotes' | 'replies';
 
 export interface InteractionData {
   retweets: User[];
   likes: User[];
   quotes: User[];
+  replies: User[];
   failedSources: InteractionSource[];
 }
 

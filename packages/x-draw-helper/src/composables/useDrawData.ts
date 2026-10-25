@@ -2,14 +2,10 @@ import { ref, computed } from 'vue';
 import type { User, DrawUser, Filters, FilterKey, DrawResult, InteractionData, InteractionSource } from '../types';
 import { LIMITS, STORAGE_KEYS } from '../constants';
 import { gmStorage } from '../utils/storage';
-import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, getCsrfToken, getTweetAuthorHandleFromUrl, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
-
-interface CachedData {
-  retweets: User[];
-  likes: User[];
-  quotes: User[];
-  fetchedAt: number;
-}
+import { fetchRetweeters, fetchFavoriters, fetchQuoteTweeters, fetchRepliers, getCsrfToken, getTweetAuthorHandleFromUrl, getTweetIdFromUrl, initEndpoints } from '../api/twitter';
+import { filterQualifiedUsers, mergeInteractionUsers, normalizeCachedData, type CachedInteractionData } from './drawDataCore';
+import { abortError, createFetchRunGuard } from './fetchRunGuard';
+import { isExcludedWinner } from './historyCore';
 
 function getCacheIndex(): string[] {
   return gmStorage.get<string[]>(STORAGE_KEYS.CACHE_INDEX, []);
@@ -31,102 +27,80 @@ function touchCacheIndex(tweetId: string) {
   setCacheIndex(index);
 }
 
-function loadCache(tweetId: string): CachedData | null {
-  return gmStorage.get<CachedData | null>(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
+function loadCache(tweetId: string): CachedInteractionData | null {
+  return gmStorage.get<CachedInteractionData | null>(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
 }
 
-function saveCache(tweetId: string, retweets: User[], likes: User[], quotes: User[]) {
-  gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets, likes, quotes, fetchedAt: Date.now() } as CachedData);
+function saveCache(tweetId: string, retweets: User[], likes: User[], quotes: User[], replies: User[]) {
+  gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets, likes, quotes, replies, fetchedAt: Date.now() } as CachedInteractionData);
   touchCacheIndex(tweetId);
 }
 
 const retweets = ref<User[]>([]);
 const likes = ref<User[]>([]);
 const quotes = ref<User[]>([]);
+const replies = ref<User[]>([]);
 const filters = ref<Filters>({
   followed_by: false,
   retweet: false,
   like: false,
   quote: false,
+  reply: false,
 });
 const drawCount = ref(1);
 const loading = ref(false);
 const retweetProgress = ref(0);
 const likeProgress = ref(0);
 const quoteProgress = ref(0);
+const replyProgress = ref(0);
 const lastTweetId = ref<string | null>(null);
 const fetchedAt = ref<number | null>(null);
 const failedSources = ref<InteractionSource[]>([]);
 
-let abortController: AbortController | null = null;
+const fetchGuard = createFetchRunGuard();
 
 export function useDrawData() {
 
   function syncTweetId(tweetId: string | null) {
     if (lastTweetId.value === tweetId) return;
+    fetchGuard.invalidate();
     retweets.value = [];
     likes.value = [];
     quotes.value = [];
+    replies.value = [];
     fetchedAt.value = null;
     failedSources.value = [];
     lastTweetId.value = tweetId;
   }
 
-  const mergedUsers = computed(() => {
-    const map = new Map<string, DrawUser>();
-    const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
+  const mergedUsers = computed(() => mergeInteractionUsers({
+    retweets: retweets.value,
+    likes: likes.value,
+    quotes: quotes.value,
+    replies: replies.value,
+  }, getTweetAuthorHandleFromUrl()));
 
-    function mergeUser(user: User, interaction: 'hasRetweet' | 'hasLike' | 'hasQuote') {
-      const handleKey = user.handle.toLowerCase();
-      if (handleKey === authorHandle) return;
-
-      const existing = map.get(handleKey);
-      if (!existing) {
-        map.set(handleKey, { ...user, [interaction]: true });
-        return;
-      }
-
-      if (user.profileLoaded && !existing.profileLoaded) {
-        Object.assign(existing, user);
-      }
-      existing[interaction] = true;
-    }
-
-    retweets.value.forEach((user) => mergeUser(user, 'hasRetweet'));
-    likes.value.forEach((user) => mergeUser(user, 'hasLike'));
-    quotes.value.forEach((user) => mergeUser(user, 'hasQuote'));
-    return Array.from(map.values());
-  });
-
-  const qualifiedUsers = computed(() => {
-    const hasActive = Object.values(filters.value).some(Boolean);
-    if (!hasActive) return mergedUsers.value;
-
-    return mergedUsers.value.filter((user) => {
-      if (filters.value.followed_by && !user.followed_by) return false;
-      if (filters.value.like && !user.hasLike) return false;
-      // Quotes count as retweets: when both active, OR logic
-      if (filters.value.retweet && filters.value.quote) {
-        if (!user.hasRetweet && !user.hasQuote) return false;
-      } else {
-        if (filters.value.retweet && !user.hasRetweet) return false;
-        if (filters.value.quote && !user.hasQuote) return false;
-      }
-      return true;
-    });
-  });
+  const qualifiedUsers = computed(() => filterQualifiedUsers(mergedUsers.value, filters.value));
 
   function toggleFilter(key: FilterKey) {
     filters.value[key] = !filters.value[key];
   }
 
-  function performDraw(options?: { excludeHandles?: Set<string> }): DrawResult {
+  function performDraw(options?: {
+    excludeHandles?: Set<string>;
+    excludeWinnerKeys?: Set<string>;
+  }): DrawResult {
     const count = Math.max(1, Math.floor(drawCount.value) || 1);
     drawCount.value = count;
 
     let users = qualifiedUsers.value;
+    if (options?.excludeWinnerKeys?.size) {
+      const keys = options.excludeWinnerKeys;
+      users = users.filter((user) => !isExcludedWinner(user, keys));
+    }
     if (options?.excludeHandles?.size) {
-      users = users.filter((u) => !options.excludeHandles!.has(u.handle));
+      const handles = options.excludeHandles;
+      users = users.filter((u) => !handles.has(u.handle.toLowerCase()) && !handles.has(u.handle));
     }
     if (users.length === 0) {
       return { success: false, message: 'noQualifiedUsers' };
@@ -147,53 +121,61 @@ export function useDrawData() {
   }
 
   async function fetchInteractionData(): Promise<InteractionData> {
-    if (abortController) {
-      abortController.abort();
-    }
-    abortController = new AbortController();
-
     const tweetId = getTweetIdFromUrl();
     if (!tweetId) throw new Error('invalidTweetUrl');
 
     const csrfToken = getCsrfToken();
     if (!csrfToken) throw new Error('loginRequired');
 
-    // If tweet changed, clear stale data immediately
+    // If tweet changed, clear stale data immediately; also cancels any old run.
     syncTweetId(tweetId);
+
+    const run = fetchGuard.start();
+    const signal = run.controller.signal;
 
     const cached = loadCache(tweetId);
     if (cached) {
-      retweets.value = cached.retweets;
-      likes.value = cached.likes;
-      quotes.value = cached.quotes || [];
-      fetchedAt.value = cached.fetchedAt;
+      const data = normalizeCachedData(cached);
+      retweets.value = data.retweets;
+      likes.value = data.likes;
+      quotes.value = data.quotes;
+      replies.value = data.replies;
+      fetchedAt.value = data.fetchedAt;
     }
 
     loading.value = true;
     retweetProgress.value = 0;
     likeProgress.value = 0;
     quoteProgress.value = 0;
+    replyProgress.value = 0;
     failedSources.value = [];
 
     try {
       await initEndpoints();
+      if (!fetchGuard.isCurrent(run)) throw abortError();
 
       const results = await Promise.allSettled([
         fetchRetweeters(tweetId, csrfToken, {
-          signal: abortController.signal,
-          onProgress: (count) => { retweetProgress.value = count; },
+          signal,
+          onProgress: (count) => { if (fetchGuard.isCurrent(run)) retweetProgress.value = count; },
         }),
         fetchFavoriters(tweetId, csrfToken, {
-          signal: abortController.signal,
-          onProgress: (count) => { likeProgress.value = count; },
+          signal,
+          onProgress: (count) => { if (fetchGuard.isCurrent(run)) likeProgress.value = count; },
         }),
         fetchQuoteTweeters(tweetId, csrfToken, {
-          signal: abortController.signal,
-          onProgress: (count) => { quoteProgress.value = count; },
+          signal,
+          onProgress: (count) => { if (fetchGuard.isCurrent(run)) quoteProgress.value = count; },
+        }),
+        fetchRepliers(tweetId, csrfToken, {
+          signal,
+          onProgress: (count) => { if (fetchGuard.isCurrent(run)) replyProgress.value = count; },
         }),
       ]);
 
-      const sourceNames: InteractionSource[] = ['retweets', 'likes', 'quotes'];
+      if (!fetchGuard.isCurrent(run)) throw abortError();
+
+      const sourceNames: InteractionSource[] = ['retweets', 'likes', 'quotes', 'replies'];
       failedSources.value = results.flatMap((result, index) =>
         result.status === 'rejected' ? [sourceNames[index]] : [],
       );
@@ -209,21 +191,25 @@ export function useDrawData() {
       const retweetData = settled(results[0], retweets.value);
       const likeData = settled(results[1], likes.value);
       const quoteData = settled(results[2], quotes.value);
+      const replyData = settled(results[3], replies.value);
 
       retweets.value = retweetData;
       likes.value = likeData;
       quotes.value = quoteData;
+      replies.value = replyData;
       fetchedAt.value = Date.now();
-      saveCache(tweetId, retweetData, likeData, quoteData);
+      saveCache(tweetId, retweetData, likeData, quoteData, replyData);
 
       return {
         retweets: retweetData,
         likes: likeData,
         quotes: quoteData,
+        replies: replyData,
         failedSources: failedSources.value,
       };
     } finally {
-      loading.value = false;
+      if (fetchGuard.isCurrent(run)) loading.value = false;
+      fetchGuard.finish(run);
     }
   }
 
@@ -233,42 +219,50 @@ export function useDrawData() {
     syncTweetId(tweetId);
     const cached = loadCache(tweetId);
     if (!cached) return false;
-    retweets.value = cached.retweets;
-    likes.value = cached.likes;
-    quotes.value = cached.quotes || [];
-    fetchedAt.value = cached.fetchedAt;
+    const data = normalizeCachedData(cached);
+    retweets.value = data.retweets;
+    likes.value = data.likes;
+    quotes.value = data.quotes;
+    replies.value = data.replies;
+    fetchedAt.value = data.fetchedAt;
     return true;
   }
 
   function cancelFetch() {
-    abortController?.abort();
+    fetchGuard.invalidate();
     loading.value = false;
   }
 
   function reset() {
+    fetchGuard.invalidate();
     retweets.value = [];
     likes.value = [];
     quotes.value = [];
-    filters.value = { followed_by: false, retweet: false, like: false, quote: false };
+    replies.value = [];
+    filters.value = { followed_by: false, retweet: false, like: false, quote: false, reply: false };
     drawCount.value = 1;
     retweetProgress.value = 0;
     likeProgress.value = 0;
     quoteProgress.value = 0;
+    replyProgress.value = 0;
     lastTweetId.value = null;
     fetchedAt.value = null;
     failedSources.value = [];
+    loading.value = false;
   }
 
   return {
     retweets,
     likes,
     quotes,
+    replies,
     filters,
     drawCount,
     loading,
     retweetProgress,
     likeProgress,
     quoteProgress,
+    replyProgress,
     lastTweetId,
     fetchedAt,
     failedSources,
@@ -278,6 +272,7 @@ export function useDrawData() {
       retweets: mergedUsers.value.filter((user) => user.hasRetweet).length,
       likes: mergedUsers.value.filter((user) => user.hasLike).length,
       quotes: mergedUsers.value.filter((user) => user.hasQuote).length,
+      replies: mergedUsers.value.filter((user) => user.hasReply).length,
     })),
     toggleFilter,
     performDraw,

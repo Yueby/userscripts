@@ -1,11 +1,12 @@
 import type { InteractionData } from '../types';
+import { buildCsv, formatReplyComments } from '../utils/csv';
 import { formatFileTimestamp } from '../utils/format';
 import { useI18n } from './useI18n';
 
 export function useExport() {
   const { t } = useI18n();
 
-  function exportCsv(data: Pick<InteractionData, 'retweets' | 'likes' | 'quotes'>) {
+  function exportCsv(data: Pick<InteractionData, 'retweets' | 'likes' | 'quotes' | 'replies'>) {
     const rows: string[][] = [
       [
         t('interactionType'),
@@ -17,6 +18,7 @@ export function useExport() {
         t('followingYou'),
         t('followers'),
         t('followingLabel'),
+        t('comment'),
       ],
     ];
 
@@ -30,25 +32,15 @@ export function useExport() {
       user.followed_by ? t('yes') : t('no'),
       String(user.followersCount),
       String(user.followingCount),
+      formatReplyComments(user),
     ];
 
     for (const user of data.retweets) rows.push(userRow(t('retweetType'), user));
     for (const user of data.likes) rows.push(userRow(t('likeType'), user));
     for (const user of data.quotes) rows.push(userRow(t('quoteType'), user));
+    for (const user of data.replies ?? []) rows.push(userRow(t('replyType'), user));
 
-    const csvContent =
-      '\uFEFF' +
-      rows
-        .map((row) =>
-          row
-            .map((cell) =>
-              typeof cell === 'string'
-                ? `"${cell.replace(/"/g, '""')}"`
-                : cell
-            )
-            .join(',')
-        )
-        .join('\n');
+    const csvContent = buildCsv(rows);
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');

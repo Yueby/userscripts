@@ -1,5 +1,6 @@
 import type { DrawUser, User } from '../types';
 import { fetchUserProfile } from '../api/twitter';
+import { applyUserProfile } from '../utils/replyComments';
 
 const profileCache = new Map<string, User>();
 const pendingProfiles = new Map<string, Promise<User>>();
@@ -11,7 +12,7 @@ export function useUserProfile() {
 
     const cached = profileCache.get(handle);
     if (cached) {
-      Object.assign(user, cached, { profileLoaded: true });
+      applyUserProfile(user, cached);
       return;
     }
 
@@ -24,7 +25,7 @@ export function useUserProfile() {
     try {
       const profile = await pending;
       profileCache.set(handle, profile);
-      Object.assign(user, profile, { profileLoaded: true });
+      applyUserProfile(user, profile);
     } finally {
       pendingProfiles.delete(handle);
     }

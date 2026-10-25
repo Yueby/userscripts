@@ -1,0 +1,318 @@
+{
+  "note": "Anonymized minimal TweetDetail pages. No headers, images, post text or real profile data.",
+  "focalTweetId": "9000000000000000001",
+  "pages": [
+    {
+      "data": {
+        "threaded_conversation_with_injections_v2": {
+          "instructions": [
+            {
+              "type": "TimelineAddEntries",
+              "entries": [
+                {
+                  "entryId": "tweet-9000000000000000001",
+                  "content": {
+                    "itemContent": {
+                      "tweet_results": {
+                        "result": {
+                          "__typename": "Tweet",
+                          "rest_id": "9000000000000000001",
+                          "legacy": {
+                            "id_str": "9000000000000000001",
+                            "full_text": "Author follow-up",
+                            "created_at": "Sun Oct 25 01:02:03 +0000 2026"
+                          },
+                          "core": {
+                            "user_results": {
+                              "result": {
+                                "__typename": "User",
+                                "rest_id": "7000000000000000001",
+                                "core": {
+                                  "name": "Name author",
+                                  "screen_name": "author",
+                                  "created_at": "Sun Oct 25 00:00:00 +0000 2026"
+                                },
+                                "avatar": {
+                                  "image_url": "https://example.invalid/avatar/author.jpg"
+                                },
+                                "profile_bio": {
+                                  "description": "Bio author"
+                                },
+                                "relationship_counts": {
+                                  "followers": 6764,
+                                  "following": 421
+                                },
+                                "relationship_perspectives": {
+                                  "following": false,
+                                  "followed_by": false
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "entryId": "conversationthread-11",
+                  "content": {
+                    "items": [
+                      {
+                        "entryId": "conversationthread-11-tweet",
+                        "item": {
+                          "itemContent": {
+                            "tweet_results": {
+                              "result": {
+                                "__typename": "Tweet",
+                                "rest_id": "9000000000000000101",
+                                "legacy": {
+                                  "id_str": "9000000000000000101",
+                                  "in_reply_to_status_id_str": "9000000000000000001",
+                                  "full_text": "Author follow-up",
+                                  "created_at": "Sun Oct 25 01:02:03 +0000 2026"
+                                },
+                                "core": {
+                                  "user_results": {
+                                    "result": {
+                                      "__typename": "User",
+                                      "rest_id": "7000000000000000002",
+                                      "core": {
+                                        "name": "Name author",
+                                        "screen_name": "author",
+                                        "created_at": "Sun Oct 25 00:00:00 +0000 2026"
+                                      },
+                                      "avatar": {
+                                        "image_url": "https://example.invalid/avatar/author.jpg"
+                                      },
+                                      "profile_bio": {
+                                        "description": "Bio author"
+                                      },
+                                      "relationship_counts": {
+                                        "followers": 6764,
+                                        "following": 421
+                                      },
+                                      "relationship_perspectives": {
+                                        "following": false,
+                                        "followed_by": false
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "entryId": "conversationthread-12",
+                  "content": {
+                    "items": [
+                      {
+                        "entryId": "conversationthread-12-tweet",
+                        "item": {
+                          "itemContent": {
+                            "tweet_results": {
+                              "result": {
+                                "__typename": "Tweet",
+                                "rest_id": "9000000000000000102",
+                                "legacy": {
+                                  "id_str": "9000000000000000102",
+                                  "in_reply_to_status_id_str": "9000000000000000001",
+                                  "full_text": "Reply A original text",
+                                  "created_at": "Sun Oct 25 01:02:03 +0000 2026"
+                                },
+                                "core": {
+                                  "user_results": {
+                                    "result": {
+                                      "__typename": "User",
+                                      "rest_id": "7000000000000000003",
+                                      "core": {
+                                        "name": "Name reply_a",
+                                        "screen_name": "reply_a",
+                                        "created_at": "Sun Oct 25 00:00:00 +0000 2026"
+                                      },
+                                      "avatar": {
+                                        "image_url": "https://example.invalid/avatar/reply_a.jpg"
+                                      },
+                                      "profile_bio": {
+                                        "description": "Bio reply_a"
+                                      },
+                                      "relationship_counts": {
+                                        "followers": 3,
+                                        "following": 2
+                                      },
+                                      "relationship_perspectives": {
+                                        "following": false,
+                                        "followed_by": false
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "entryId": "cursor-showmorethreads-1",
+                  "content": {
+                    "cursorType": "ShowMoreThreads",
+                    "value": "show-more-cursor-1"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "TimelineTerminateTimeline",
+              "direction": "Top"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "data": {
+        "threaded_conversation_with_injections_v2": {
+          "instructions": [
+            {
+              "type": "TimelineAddEntries",
+              "entries": [
+                {
+                  "entryId": "conversationthread-21",
+                  "content": {
+                    "items": [
+                      {
+                        "entryId": "conversationthread-21-tweet",
+                        "item": {
+                          "itemContent": {
+                            "tweet_results": {
+                              "result": {
+                                "__typename": "Tweet",
+                                "rest_id": "9000000000000000103",
+                                "legacy": {
+                                  "id_str": "9000000000000000103",
+                                  "in_reply_to_status_id_str": "9000000000000000001",
+                                  "full_text": "Reply B truncated",
+                                  "created_at": "Sun Oct 25 01:02:03 +0000 2026"
+                                },
+                                "core": {
+                                  "user_results": {
+                                    "result": {
+                                      "__typename": "User",
+                                      "rest_id": "7000000000000000004",
+                                      "core": {
+                                        "name": "Name reply_b",
+                                        "screen_name": "reply_b",
+                                        "created_at": "Sun Oct 25 00:00:00 +0000 2026"
+                                      },
+                                      "avatar": {
+                                        "image_url": "https://example.invalid/avatar/reply_b.jpg"
+                                      },
+                                      "profile_bio": {
+                                        "description": "Bio reply_b"
+                                      },
+                                      "relationship_counts": {
+                                        "followers": 30,
+                                        "following": 1656
+                                      },
+                                      "relationship_perspectives": {
+                                        "following": false,
+                                        "followed_by": true
+                                      }
+                                    }
+                                  }
+                                },
+                                "note_tweet": {
+                                  "note_tweet_results": {
+                                    "result": {
+                                      "text": "Reply B long-form note text"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "entryId": "conversationthread-22",
+                  "content": {
+                    "items": [
+                      {
+                        "entryId": "conversationthread-22-tweet",
+                        "item": {
+                          "itemContent": {
+                            "tweet_results": {
+                              "result": {
+                                "__typename": "Tweet",
+                                "rest_id": "9000000000000000104",
+                                "legacy": {
+                                  "id_str": "9000000000000000104",
+                                  "in_reply_to_status_id_str": "9000000000000000001",
+                                  "full_text": "Line one,\nLine \"two\" ok",
+                                  "created_at": "Sun Oct 25 01:02:03 +0000 2026"
+                                },
+                                "core": {
+                                  "user_results": {
+                                    "result": {
+                                      "__typename": "User",
+                                      "rest_id": "7000000000000000005",
+                                      "core": {
+                                        "name": "Name reply_c",
+                                        "screen_name": "reply_c",
+                                        "created_at": "Sun Oct 25 00:00:00 +0000 2026"
+                                      },
+                                      "avatar": {
+                                        "image_url": "https://example.invalid/avatar/reply_c.jpg"
+                                      },
+                                      "profile_bio": {
+                                        "description": "Bio reply_c"
+                                      },
+                                      "relationship_counts": {
+                                        "followers": 568,
+                                        "following": 4067
+                                      },
+                                      "relationship_perspectives": {
+                                        "following": false,
+                                        "followed_by": true
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "entryId": "cursor-bottom-2",
+                  "content": {
+                    "cursorType": "Bottom",
+                    "value": "bottom-cursor-2"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "TimelineTerminateTimeline",
+              "direction": "Bottom"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

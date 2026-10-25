@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { toPng } from 'html-to-image';
-import type { DrawUser } from '../types';
+import type { DrawUser, Filters } from '../types';
 import { useI18n } from '../composables/useI18n';
 import { useToast } from '../composables/useToast';
 import { useTemplates } from '../composables/useTemplates';
@@ -11,7 +11,10 @@ import InteractionBadge from './InteractionBadge.vue';
 import Modal from './Modal.vue';
 import UserTooltip from './UserTooltip.vue';
 
-const props = defineProps<{ winners: DrawUser[] }>();
+const props = defineProps<{
+  winners: DrawUser[];
+  filters?: Filters;
+}>();
 const emit = defineEmits<{ close: [] }>();
 
 const { t } = useI18n();
@@ -25,6 +28,17 @@ const editingName = ref(false);
 const nameInput = ref('');
 const hoveredUser = ref<DrawUser | null>(null);
 const tooltipPos = ref({ x: 0, y: 0 });
+
+const activeFilters = computed(() => {
+  if (!props.filters) return [];
+  const list: { key: string; label: string; badgeClass: string }[] = [];
+  if (props.filters.retweet) list.push({ key: 'retweet', label: t('hasRetweeted'), badgeClass: 'xd-badge-green' });
+  if (props.filters.like) list.push({ key: 'like', label: t('hasLiked'), badgeClass: 'xd-badge-pink' });
+  if (props.filters.quote) list.push({ key: 'quote', label: t('hasQuoted'), badgeClass: 'xd-badge-orange' });
+  if (props.filters.reply) list.push({ key: 'reply', label: t('hasReplied'), badgeClass: 'xd-badge-blue' });
+  if (props.filters.followed_by) list.push({ key: 'followed_by', label: t('followingMe'), badgeClass: 'xd-badge-blue' });
+  return list;
+});
 
 function getTweetUrl(): string {
   const tweetId = getTweetIdFromUrl();
@@ -123,6 +137,16 @@ function onAvatarEnter(user: DrawUser, e: MouseEvent) {
     <div class="flex-1 overflow-auto min-h-0">
       <!-- Screenshot area -->
       <div ref="captureRef">
+        <div v-if="activeFilters.length" class="px-4 pt-4 pb-0 flex gap-1.5 flex-wrap">
+          <span
+            v-for="item in activeFilters"
+            :key="item.key"
+            class="xd-badge"
+            :class="item.badgeClass"
+          >
+            {{ item.label }}
+          </span>
+        </div>
         <div class="px-4 py-4">
           <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }">
             <div
@@ -141,11 +165,19 @@ function onAvatarEnter(user: DrawUser, e: MouseEvent) {
               <div class="text-center min-w-0 w-full">
                 <div class="text-white font-medium text-sm truncate">{{ user.username }}</div>
                 <div class="text-[#71767b] text-xs truncate">@{{ user.handle }}</div>
+                <div
+                  v-if="user.replyComments && user.replyComments.length > 0"
+                  class="text-[11px] text-[#71767b] truncate italic mt-0.5 px-1"
+                  :title="user.replyComments[0].text"
+                >
+                  "{{ user.replyComments[0].text }}"
+                </div>
               </div>
               <div class="flex gap-1">
                 <InteractionBadge v-if="user.hasRetweet" type="retweet" icon-size="w-3 h-3" />
                 <InteractionBadge v-if="user.hasLike" type="like" icon-size="w-3 h-3" />
                 <InteractionBadge v-if="user.hasQuote" type="quote" icon-size="w-3 h-3" />
+                <InteractionBadge v-if="user.hasReply" type="reply" icon-size="w-3 h-3" />
                 <InteractionBadge v-if="user.followed_by" type="follow" icon-size="w-3 h-3" />
               </div>
             </div>

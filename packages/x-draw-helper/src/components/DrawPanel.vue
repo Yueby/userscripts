@@ -14,11 +14,11 @@ import DrawHistory from './DrawHistory.vue';
 import DrawResult from './DrawResult.vue';
 import DrawSettings from './DrawSettings.vue';
 import InteractionBadge from './InteractionBadge.vue';
-import InteractionIcon from './InteractionIcon.vue';
 import Modal from './Modal.vue';
 import Settings from './Settings.vue';
 import Toast from './Toast.vue';
 import UserTooltip from './UserTooltip.vue';
+import UserCommentsModal from './UserCommentsModal.vue';
 
 const props = defineProps<{ tweetId: string | null }>();
 const emit = defineEmits<{
@@ -34,8 +34,8 @@ const versionCheck = useVersionCheck();
 const { loadUserProfile } = useUserProfile();
 versionCheck.checkUpdate();
 
-type TabFilter = 'all' | 'retweet' | 'like' | 'quote' | 'followed_by';
-type SortKey = 'username' | 'handle' | 'retweet' | 'like' | 'quote' | 'followed_by' | 'followersCount';
+type TabFilter = 'all' | 'retweet' | 'like' | 'quote' | 'reply' | 'followed_by';
+type SortKey = 'username' | 'handle' | 'followersCount';
 type SortDir = 'asc' | 'desc';
 
 const TAB_CONFIG: { key: TabFilter; labelKey: string; statKey: string }[] = [
@@ -43,6 +43,7 @@ const TAB_CONFIG: { key: TabFilter; labelKey: string; statKey: string }[] = [
   { key: 'retweet', labelKey: 'retweets', statKey: 'retweets' },
   { key: 'like', labelKey: 'likes', statKey: 'likes' },
   { key: 'quote', labelKey: 'quotes', statKey: 'quotes' },
+  { key: 'reply', labelKey: 'replies', statKey: 'replies' },
   { key: 'followed_by', labelKey: 'followingMe', statKey: 'followers' },
 ];
 
@@ -55,6 +56,7 @@ const showAnimation = ref(false);
 const showSettingsPanel = ref(false);
 const winners = ref<DrawUser[]>([]);
 const hoveredUser = ref<DrawUser | null>(null);
+const selectedCommentUser = ref<DrawUser | null>(null);
 const tooltipPos = ref({ x: 0, y: 0 });
 const sortKey = ref<SortKey | null>(null);
 const sortDir = ref<SortDir>('asc');
@@ -78,6 +80,7 @@ const filteredUsers = computed<DrawUser[]>(() => {
   if (activeFilter.value === 'retweet') return users.filter((u) => u.hasRetweet);
   if (activeFilter.value === 'like') return users.filter((u) => u.hasLike);
   if (activeFilter.value === 'quote') return users.filter((u) => u.hasQuote);
+  if (activeFilter.value === 'reply') return users.filter((u) => u.hasReply);
   if (activeFilter.value === 'followed_by') return users.filter((u) => u.followed_by);
   return users;
 });
@@ -101,10 +104,6 @@ const sortedUsers = computed<DrawUser[]>(() => {
     if (key === 'username') return dir * a.username.localeCompare(b.username);
     if (key === 'handle') return dir * a.handle.localeCompare(b.handle);
     if (key === 'followersCount') return dir * (a.followersCount - b.followersCount);
-    if (key === 'retweet') return dir * (Number(!!b.hasRetweet) - Number(!!a.hasRetweet));
-    if (key === 'like') return dir * (Number(!!b.hasLike) - Number(!!a.hasLike));
-    if (key === 'quote') return dir * (Number(!!b.hasQuote) - Number(!!a.hasQuote));
-    if (key === 'followed_by') return dir * (Number(!!b.followed_by) - Number(!!a.followed_by));
     return 0;
   });
 });
@@ -174,6 +173,7 @@ const interactionSourceLabels: Record<InteractionSource, string> = {
   retweets: 'retweets',
   likes: 'likes',
   quotes: 'quotes',
+  replies: 'replies',
 };
 
 function handleRefresh() {
@@ -184,7 +184,7 @@ function handleRefresh() {
       showToast(t('partialFetchFailed', { sources: labels }), 'error', TIMING.TOAST_DURATION * 2);
     })
     .catch((err) => {
-      if (err instanceof DOMException && err.name === 'AbortError') return;
+      if (err?.name === 'AbortError' || err?.message === 'Aborted' || (err instanceof DOMException && err.name === 'AbortError')) return;
       const message = String(err?.message || 'loginRequired');
       if (message.startsWith('missingEndpoint:')) {
         const source = message.slice('missingEndpoint:'.length) as InteractionSource;
@@ -235,6 +235,7 @@ function handleExport() {
     retweets: drawData.retweets.value,
     likes: drawData.likes.value,
     quotes: drawData.quotes.value,
+    replies: drawData.replies.value,
   });
 }
 
@@ -267,7 +268,7 @@ function openProfile(handle: string) {
     </template>
 
     <!-- Stats -->
-    <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', borderBottom: '1px solid #38444d', flexShrink: 0, overflowX: 'auto' }">
+    <div :style="{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', borderBottom: '1px solid #38444d', flexShrink: 0, overflowX: 'auto' }">
       <div class="flex flex-col items-center py-3 border-r border-[#38444d]">
         <span class="text-xs text-[#71767b]">{{ t('total') }}</span>
         <span class="text-xl font-bold text-white">{{ stats.total }}</span>
@@ -294,6 +295,17 @@ function openProfile(handle: string) {
         <div v-if="drawData.loading.value" class="mt-1 text-[11px] text-[#71767b] flex items-center gap-1">
           <svg class="animate-spin h-3 w-3 text-[#ff7a00]" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
           <span>{{ drawData.quoteProgress.value }}</span>
+        </div>
+      </div>
+      <div class="flex flex-col items-center py-3 border-r border-[#38444d]">
+        <span class="text-xs text-[#71767b] flex items-center gap-1">
+          {{ t('replies') }}
+          <span :title="t('replyNotice')" class="cursor-help opacity-70 hover:opacity-100">ⓘ</span>
+        </span>
+        <span class="text-xl font-bold text-[#1d9bf0]">{{ stats.replies }}</span>
+        <div v-if="drawData.loading.value" class="mt-1 text-[11px] text-[#71767b] flex items-center gap-1">
+          <svg class="animate-spin h-3 w-3 text-[#1d9bf0]" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+          <span>{{ drawData.replyProgress.value }}</span>
         </div>
       </div>
       <div class="flex flex-col items-center py-3">
@@ -363,20 +375,14 @@ function openProfile(handle: string) {
             <th class="xd-th px-4 py-2.5" @click="toggleSort('username')">
               {{ t('username') }} <span class="text-xs opacity-50">{{ getSortIcon('username') }}</span>
             </th>
-            <th class="xd-th w-40 px-4 py-2.5" @click="toggleSort('handle')">
+            <th class="xd-th w-36 px-4 py-2.5" @click="toggleSort('handle')">
               {{ t('handle') }} <span class="text-xs opacity-50">{{ getSortIcon('handle') }}</span>
             </th>
-            <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('retweet')">
-              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="retweet" /><span class="text-xs opacity-50">{{ getSortIcon('retweet') }}</span></span>
+            <th class="w-32 px-3 py-2.5 text-center text-[#71767b] font-medium">
+              {{ t('interactions') }}
             </th>
-            <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('like')">
-              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="like" /><span class="text-xs opacity-50">{{ getSortIcon('like') }}</span></span>
-            </th>
-            <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('quote')">
-              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="quote" /><span class="text-xs opacity-50">{{ getSortIcon('quote') }}</span></span>
-            </th>
-            <th class="xd-th w-20 px-4 py-2.5 text-center" @click="toggleSort('followed_by')">
-              <span class="inline-flex items-center justify-center gap-1"><InteractionIcon type="follow" /><span class="text-xs opacity-50">{{ getSortIcon('followed_by') }}</span></span>
+            <th class="px-4 py-2.5 text-left text-[#71767b] font-medium min-w-[200px]">
+              {{ t('comment') }}
             </th>
             <th class="xd-th w-24 px-4 py-2.5 text-center" @click="toggleSort('followersCount')">
               <span class="inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium">{{ t('followers') }} <span class="opacity-50">{{ getSortIcon('followersCount') }}</span></span>
@@ -394,31 +400,64 @@ function openProfile(handle: string) {
             <td class="px-4">
               <div class="flex items-center gap-3">
                 <img :src="user.avatarUrl" :alt="user.username" class="w-8 h-8 rounded-full shrink-0 cursor-pointer" @mouseenter="onRowEnter(user, $event)" @mouseleave="hoveredUser = null" />
-                <span class="font-medium text-[#1d9bf0] truncate max-w-[240px] cursor-pointer hover:underline" @click="openProfile(user.handle)">{{ user.username }}</span>
+                <span class="font-medium text-[#1d9bf0] truncate max-w-[220px] cursor-pointer hover:underline" @click="openProfile(user.handle)">{{ user.username }}</span>
               </div>
             </td>
-            <td class="w-40 px-4 text-[#71767b] truncate">@{{ user.handle }}</td>
-            <td class="w-20 px-4 text-center">
-              <InteractionBadge v-if="user.hasRetweet" type="retweet" />
-              <span v-else class="text-[#38444d]">—</span>
+            <td class="w-36 px-4 text-[#71767b] truncate">@{{ user.handle }}</td>
+            <td class="w-32 px-3 text-center">
+              <div class="inline-flex items-center justify-center gap-1 flex-wrap">
+                <span v-if="user.hasRetweet" :title="t('hasRetweeted')">
+                  <InteractionBadge type="retweet" icon-size="w-3 h-3" />
+                </span>
+                <span v-if="user.hasLike" :title="t('hasLiked')">
+                  <InteractionBadge type="like" icon-size="w-3 h-3" />
+                </span>
+                <span v-if="user.hasQuote" :title="t('hasQuoted')">
+                  <InteractionBadge type="quote" icon-size="w-3 h-3" />
+                </span>
+                <span v-if="user.hasReply" :title="t('hasReplied')">
+                  <InteractionBadge type="reply" icon-size="w-3 h-3" />
+                </span>
+                <span v-if="user.followed_by" :title="t('followingMe')">
+                  <InteractionBadge type="follow" icon-size="w-3 h-3" />
+                </span>
+              </div>
             </td>
-            <td class="w-20 px-4 text-center">
-              <InteractionBadge v-if="user.hasLike" type="like" />
-              <span v-else class="text-[#38444d]">—</span>
-            </td>
-            <td class="w-20 px-4 text-center">
-              <InteractionBadge v-if="user.hasQuote" type="quote" />
-              <span v-else class="text-[#38444d]">—</span>
-            </td>
-            <td class="w-20 px-4 text-center">
-              <InteractionBadge v-if="user.followed_by" type="follow" />
-              <span v-else class="text-[#38444d]">—</span>
+            <td class="px-4 py-2 min-w-[200px]">
+              <template v-if="user.replyComments && user.replyComments.length > 0">
+                <div class="flex items-center gap-2 max-w-[340px]">
+                  <span
+                    class="text-xs truncate cursor-pointer hover:text-[#1d9bf0] transition-colors select-text inline-block min-w-[36px]"
+                    :class="user.replyComments[0].text?.trim() ? 'text-[#e7e9ea]' : 'text-[#71767b] italic'"
+                    :title="user.replyComments[0].text?.trim() ? user.replyComments[0].text : t('emptyCommentText')"
+                    @click="selectedCommentUser = user"
+                  >
+                    {{ user.replyComments[0].text?.trim() ? user.replyComments[0].text : t('emptyCommentText') }}
+                  </span>
+                  <button
+                    v-if="user.replyComments.length > 1"
+                    class="shrink-0 text-[10px] font-semibold bg-[#1d9bf0]/15 text-[#1d9bf0] px-1.5 py-0.5 rounded-full hover:bg-[#1d9bf0]/25 transition-colors"
+                    :title="t('viewAllComments', { count: user.replyComments.length })"
+                    @click="selectedCommentUser = user"
+                  >
+                    +{{ user.replyComments.length - 1 }}
+                  </button>
+                </div>
+              </template>
+              <template v-else-if="user.hasReply">
+                <span class="text-xs text-[#71767b] italic opacity-60" :title="t('noCommentText')">
+                  {{ t('noCommentText') }}
+                </span>
+              </template>
+              <template v-else>
+                <span class="text-[#38444d]">—</span>
+              </template>
             </td>
             <td class="w-24 px-4 text-center text-[#71767b] text-xs">
               {{ user.followersCount.toLocaleString() }}
             </td>
             <td class="w-16 px-4 text-center">
-              <span v-if="getWinCount(user.handle)" class="text-[#ffd700] font-bold text-sm">{{ getWinCount(user.handle) }}</span>
+              <span v-if="getWinCount(user)" class="text-[#ffd700] font-bold text-sm">{{ getWinCount(user) }}</span>
               <span v-else class="text-[#38444d]">—</span>
             </td>
           </tr>
@@ -426,17 +465,15 @@ function openProfile(handle: string) {
             <tr v-for="i in UI.SKELETON_ROWS" :key="'sk-' + i" class="border-b border-[#38444d]/30 h-12">
               <td class="w-14 px-4"><div class="h-3 w-6 bg-[#38444d]/50 rounded animate-pulse" /></td>
               <td class="px-4"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-[#38444d]/50 rounded-full animate-pulse" /><div class="h-3 w-24 bg-[#38444d]/50 rounded animate-pulse" /></div></td>
-              <td class="w-40 px-4"><div class="h-3 w-20 bg-[#38444d]/50 rounded animate-pulse" /></td>
-              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
-              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
-              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
-              <td class="w-20 px-4"><div class="h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-36 px-4"><div class="h-3 w-20 bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="w-32 px-3"><div class="h-3 w-16 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
+              <td class="px-4"><div class="h-3 w-40 bg-[#38444d]/50 rounded animate-pulse" /></td>
               <td class="w-24 px-4"><div class="h-3 w-12 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
               <td class="w-16 px-4"><div class="h-3 w-6 mx-auto bg-[#38444d]/50 rounded animate-pulse" /></td>
             </tr>
           </template>
           <tr v-else-if="sortedUsers.length === 0">
-            <td colspan="9" class="text-center py-12 text-[#71767b]">{{ t('noUsers') }}</td>
+            <td colspan="7" class="text-center py-12 text-[#71767b]">{{ t('noUsers') }}</td>
           </tr>
         </tbody>
       </table>
@@ -511,13 +548,25 @@ function openProfile(handle: string) {
   />
 
   <!-- Draw Result Modal -->
-  <DrawResult v-if="showResult" :winners="winners" @close="showResult = false" />
+  <DrawResult
+    v-if="showResult"
+    :winners="winners"
+    :filters="drawData.filters.value"
+    @close="showResult = false"
+  />
 
   <!-- Draw History Modal -->
   <DrawHistory v-if="showHistory" :tweet-id="props.tweetId" @close="showHistory = false" />
 
   <!-- Settings Modal -->
   <Settings v-if="showSettingsPanel" :tweet-id="props.tweetId" @close="showSettingsPanel = false" />
+
+  <!-- User Comments Modal -->
+  <UserCommentsModal
+    v-if="selectedCommentUser"
+    :user="selectedCommentUser"
+    @close="selectedCommentUser = null"
+  />
 
   <Toast />
 

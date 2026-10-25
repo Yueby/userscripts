@@ -2,7 +2,10 @@ import { GM_xmlhttpRequest } from '$';
 import { LIMITS, STORAGE_KEYS } from '../constants';
 import type { User } from '../types';
 import { gmStorage } from '../utils/storage';
+import { MAX_RETRIES_DEFAULT, paginateUsers, type TimelinePage } from './paginate.ts';
+import { buildTweetDetailVariables, parseTweetDetailPage } from './replies.ts';
 import { getTxId, pageFetch } from './transaction';
+import { userFromResult } from './user.ts';
 
 const BEARER_TOKEN =
   'AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
@@ -18,6 +21,7 @@ const ENDPOINT_MAP = {
   retweeters: 'Retweeters',
   favoriters: 'Favoriters',
   searchTimeline: 'SearchTimeline',
+  replies: 'TweetDetail',
   userByScreenName: 'UserByScreenName',
 } as const;
 
@@ -25,6 +29,7 @@ export const DEFAULT_ENDPOINTS = {
   retweeters: '',
   favoriters: '',
   searchTimeline: '',
+  replies: '',
 } as const;
 
 type EndpointKey = keyof typeof DEFAULT_ENDPOINTS | 'userByScreenName';
@@ -32,11 +37,13 @@ type EndpointKey = keyof typeof DEFAULT_ENDPOINTS | 'userByScreenName';
 const ENDPOINTS: Record<EndpointKey, string> = {
   ...DEFAULT_ENDPOINTS,
   userByScreenName: '',
+  replies: '',
 };
 const ENDPOINT_FEATURES: Record<EndpointKey, Record<string, boolean>> = {
   retweeters: {},
   favoriters: {},
   searchTimeline: {},
+  replies: {},
   userByScreenName: {},
 };
 
@@ -166,56 +173,6 @@ function getTweetAuthorHandleFromUrl(): string | null {
 // Shared user extraction from GraphQL results
 // ---------------------------------------------------------------------------
 
-function getNumericField(result: Record<string, unknown>, ...keys: string[]): number | undefined {
-  const queue: unknown[] = [result];
-  const seen = new Set<object>();
-
-  while (queue.length) {
-    const value = queue.shift();
-    if (!value || typeof value !== 'object' || seen.has(value)) continue;
-    seen.add(value);
-
-    const record = value as Record<string, unknown>;
-    for (const key of keys) {
-      const field = record[key];
-      if (typeof field === 'number' && Number.isFinite(field)) return field;
-    }
-    queue.push(...Object.values(record));
-  }
-
-  return undefined;
-}
-
-function userFromResult(result: Record<string, unknown>, legacy: Record<string, unknown>, core: Record<string, unknown>, perspectives: Record<string, unknown>, fallbackId = ''): User {
-  const avatar = result.avatar as Record<string, unknown> | undefined;
-  const profileBio = result.profile_bio as Record<string, unknown> | undefined;
-  const relationshipCounts = result.relationship_counts as Record<string, unknown> | undefined;
-  const followersCount = typeof relationshipCounts?.followers === 'number'
-    ? relationshipCounts.followers
-    : getNumericField(result, 'followers_count', 'followersCount');
-  const followingCount = typeof relationshipCounts?.following === 'number'
-    ? relationshipCounts.following
-    : getNumericField(result, 'friends_count', 'following_count', 'followingCount');
-
-  return {
-    id: (result.rest_id as string) || fallbackId,
-    username: (legacy.name || core.name || '') as string,
-    handle: (legacy.screen_name || core.screen_name || (result.rest_id as string) || '') as string,
-    avatarUrl: (legacy.profile_image_url_https || avatar?.image_url || '') as string,
-    bio: (legacy.description || profileBio?.description || '') as string,
-    following: Boolean(perspectives.following ?? legacy.following),
-    followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
-    followersCount: followersCount ?? 0,
-    followingCount: followingCount ?? 0,
-    profileLoaded: followersCount !== undefined && followingCount !== undefined,
-  };
-}
-
-interface TimelinePage {
-  users: User[];
-  nextCursor: string | null;
-}
-
 function extractInstructions(data: unknown, ...path: string[]): unknown[] {
   let node: unknown = data;
   for (const key of path) {
@@ -240,83 +197,13 @@ function getBottomCursor(entries: unknown[]): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// Shared paginated fetch with retry + dedup
+// Shared paginated fetch with retry + dedup lives in ./paginate.ts
 // ---------------------------------------------------------------------------
-
-const RETRY_BACKOFF_MS = 2000;
-const MAX_RETRIES_DEFAULT = 3;
 
 interface FetchOptions {
   onProgress?: (count: number) => void;
   signal?: AbortSignal;
   maxRetries?: number;
-}
-
-interface PaginateConfig {
-  buildUrl: (cursor: string | null) => string;
-  parsePage: (data: unknown) => TimelinePage;
-  fetchFn: typeof fetch;
-  headers: Record<string, string>;
-  maxRetries: number;
-  signal?: AbortSignal;
-  extraHeaders?: (cursor: string | null) => Promise<Record<string, string>>;
-}
-
-async function paginateUsers(
-  config: PaginateConfig,
-  onProgress?: (count: number) => void,
-  filterUser?: (u: User) => boolean,
-): Promise<User[]> {
-  const { buildUrl, parsePage, fetchFn, headers, maxRetries, signal, extraHeaders } = config;
-  const result: User[] = [];
-  const seen = new Set<string>();
-
-  async function fetchWithRetry(cursor: string | null): Promise<unknown> {
-    let lastError: unknown = new Error('Request failed');
-
-    for (let retry = 0; retry < maxRetries; retry++) {
-      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-      try {
-        const extra = extraHeaders ? await extraHeaders(cursor) : {};
-        const response = await fetchFn(buildUrl(cursor), { headers: { ...headers, ...extra }, signal });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-      } catch (error) {
-        if ((error as Error).name === 'AbortError') throw error;
-        lastError = error;
-        if (retry < maxRetries - 1) {
-          await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
-        }
-      }
-    }
-
-    throw lastError;
-  }
-
-  let currentCursor: string | null = null;
-  let pendingFetch: Promise<unknown> | null = fetchWithRetry(null);
-
-  while (pendingFetch) {
-    const data = await pendingFetch;
-
-    const { users, nextCursor } = parsePage(data);
-    const filtered = filterUser ? users.filter(filterUser) : users;
-
-    if (nextCursor && nextCursor !== currentCursor) {
-      currentCursor = nextCursor;
-      pendingFetch = fetchWithRetry(currentCursor);
-    } else {
-      pendingFetch = null;
-    }
-
-    for (const u of filtered) {
-      const key = u.id || u.handle;
-      if (!seen.has(key)) { seen.add(key); result.push(u); }
-    }
-    onProgress?.(result.length);
-  }
-
-  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -486,6 +373,48 @@ export async function fetchQuoteTweeters(
       return { 'x-client-transaction-id': txId };
     },
   }, options.onProgress);
+}
+
+export async function fetchRepliers(
+  tweetId: string,
+  csrfToken: string,
+  options: FetchOptions = {},
+): Promise<User[]> {
+  const endpoint = requireEndpoint('replies');
+  const path = `/i/api/graphql/${endpoint}`;
+  let authorHandle = getTweetAuthorHandleFromUrl();
+
+  const users = await paginateUsers({
+    buildUrl: (cursor) => buildGraphqlUrl(
+      endpoint,
+      buildTweetDetailVariables(tweetId, cursor),
+      ENDPOINT_FEATURES.replies,
+    ),
+    parsePage: (data) => {
+      const page = parseTweetDetailPage(data, tweetId, authorHandle);
+      if (page.authorHandle) authorHandle = page.authorHandle;
+      return {
+        users: page.users,
+        nextCursor: page.nextCursors[0] ?? null,
+        nextCursors: page.nextCursors,
+      };
+    },
+    fetchFn: pageFetch(),
+    headers: baseHeaders(csrfToken),
+    maxRetries: options.maxRetries ?? MAX_RETRIES_DEFAULT,
+    signal: options.signal,
+    extraHeaders: async () => {
+      const txId = await getTxId('GET', path);
+      const headers: Record<string, string> = {};
+      if (txId) headers['x-client-transaction-id'] = txId;
+      return headers;
+    },
+  }, options.onProgress);
+
+  const excludedAuthor = authorHandle?.toLowerCase();
+  return excludedAuthor
+    ? users.filter((user) => user.handle.toLowerCase() !== excludedAuthor)
+    : users;
 }
 
 export async function fetchUserProfile(handle: string): Promise<User> {

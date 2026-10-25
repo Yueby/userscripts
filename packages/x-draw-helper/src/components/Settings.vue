@@ -22,6 +22,7 @@ const endpoints = ref({
   retweeters: extractQueryId(saved.retweeters ?? ''),
   favoriters: extractQueryId(saved.favoriters ?? ''),
   searchTimeline: extractQueryId(saved.searchTimeline ?? ''),
+  replies: extractQueryId(saved.replies ?? ''),
 });
 
 function extractQueryId(endpoint: string): string {
@@ -39,7 +40,7 @@ function handleSave() {
 }
 
 function handleReset() {
-  endpoints.value = { retweeters: '', favoriters: '', searchTimeline: '' };
+  endpoints.value = { retweeters: '', favoriters: '', searchTimeline: '', replies: '' };
   gmStorage.set(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
   updateEndpoints({});
   showToast(t('saved'), 'success');
@@ -75,6 +76,7 @@ const ENDPOINT_FIELDS: { key: EndpointKeys; label: string }[] = [
   { key: 'retweeters', label: 'retweetersEndpoint' },
   { key: 'favoriters', label: 'favoritersEndpoint' },
   { key: 'searchTimeline', label: 'searchEndpoint' },
+  { key: 'replies', label: 'tweetDetailEndpoint' },
 ];
 </script>
 

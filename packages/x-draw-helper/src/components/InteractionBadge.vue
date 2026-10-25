@@ -12,6 +12,7 @@ const BADGE_VARIANTS: Record<InteractionType, string> = {
   retweet: 'xd-badge-green',
   like: 'xd-badge-pink',
   quote: 'xd-badge-orange',
+  reply: 'xd-badge-blue',
   follow: 'xd-badge-blue',
 };
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { toRef, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useDrawHistory } from '../composables/useDrawHistory';
 import { formatDateTime } from '../utils/format';
@@ -12,6 +12,9 @@ const props = defineProps<{ tweetId: string | null }>();
 
 const { t } = useI18n();
 const { history, removeEntry, toggleConfirm, clearHistory } = useDrawHistory(toRef(props, 'tweetId'));
+
+const uniquePostCount = computed(() => new Set(history.value.map((e) => e.tweetId)).size);
+const confirmedCount = computed(() => history.value.filter((e) => e.confirmed).length);
 
 function handleClear() {
   if (confirm(t('confirmClear'))) clearHistory();
@@ -32,39 +35,61 @@ function handleClear() {
       </div>
 
       <div v-else class="flex flex-col gap-3">
-          <div
+        <!-- Global History Summary -->
+        <div class="bg-[#1e2d3d] border border-[#38444d] rounded-xl p-3 flex items-center justify-around text-center">
+          <div>
+            <span class="text-xs text-[#71767b] block">{{ t('totalDraws') }}</span>
+            <span class="text-lg font-bold text-white">{{ history.length }}</span>
+          </div>
+          <div class="border-r border-[#38444d] h-7" />
+          <div>
+            <span class="text-xs text-[#71767b] block">{{ t('totalPosts') }}</span>
+            <span class="text-lg font-bold text-[#1d9bf0]">{{ uniquePostCount }}</span>
+          </div>
+          <div class="border-r border-[#38444d] h-7" />
+          <div>
+            <span class="text-xs text-[#71767b] block">{{ t('confirmed') }}</span>
+            <span class="text-lg font-bold text-[#00ba7c]">{{ confirmedCount }}</span>
+          </div>
+        </div>
+
+        <div
           v-for="entry in history"
-          :key="entry.id"
+          :key="`${entry.tweetId}:${entry.id}`"
           class="rounded-xl border p-4"
           :class="entry.confirmed ? 'bg-[#1e2d3d] border-[#38444d]' : 'bg-[#1e2d3d]/50 border-[#38444d]/50 opacity-70'"
         >
           <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-3 text-sm">
+            <div class="flex items-center gap-2.5 text-sm flex-wrap">
               <button
                 class="xd-btn text-xs px-2 py-0.5"
                 :class="entry.confirmed ? 'xd-btn-success' : 'xd-btn-secondary'"
-                @click="toggleConfirm(entry.id)"
+                @click="toggleConfirm(entry.id, entry.tweetId)"
               >{{ entry.confirmed ? t('confirmed') : t('testDraw') }}</button>
               <span class="text-[#71767b]">{{ formatDateTime(entry.timestamp) }}</span>
               <span class="text-[#71767b]">·</span>
               <span class="text-[#71767b]">{{ t('participants') }}: {{ entry.totalParticipants }}</span>
+              <span v-if="entry.tweetId" class="text-xs text-[#71767b] bg-[#15202b] px-2 py-0.5 rounded font-mono border border-[#38444d]/50">
+                {{ t('post') }}: {{ entry.tweetId }}
+              </span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 shrink-0">
               <a
                 :href="entry.tweetUrl"
                 target="_blank"
                 class="text-[#1d9bf0] text-sm hover:underline"
               >{{ t('viewTweet') }}</a>
-              <button class="xd-btn-icon text-sm" @click="removeEntry(entry.id)">×</button>
+              <button class="xd-btn-icon text-sm" @click="removeEntry(entry.id, entry.tweetId)">×</button>
             </div>
           </div>
 
           <!-- Filters used -->
           <div class="flex gap-1.5 mb-3 flex-wrap">
-            <span v-if="entry.filters.retweet" class="xd-badge xd-badge-green">{{ t('hasRetweeted') }}</span>
-            <span v-if="entry.filters.like" class="xd-badge xd-badge-pink">{{ t('hasLiked') }}</span>
-            <span v-if="entry.filters.quote" class="xd-badge xd-badge-orange">{{ t('hasQuoted') }}</span>
-            <span v-if="entry.filters.followed_by" class="xd-badge xd-badge-blue">{{ t('followingMe') }}</span>
+            <span v-if="entry.filters?.retweet" class="xd-badge xd-badge-green">{{ t('hasRetweeted') }}</span>
+            <span v-if="entry.filters?.like" class="xd-badge xd-badge-pink">{{ t('hasLiked') }}</span>
+            <span v-if="entry.filters?.quote" class="xd-badge xd-badge-orange">{{ t('hasQuoted') }}</span>
+            <span v-if="entry.filters?.reply" class="xd-badge xd-badge-blue">{{ t('hasReplied') }}</span>
+            <span v-if="entry.filters?.followed_by" class="xd-badge xd-badge-blue">{{ t('followingMe') }}</span>
           </div>
 
           <!-- Winners -->

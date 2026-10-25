@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const drawData = useDrawData();
-const { history } = useDrawHistory(drawData.lastTweetId);
+const { history, confirmedWinnerKeys } = useDrawHistory(drawData.lastTweetId);
 const { show: showToast } = useToast();
 
 const excludePastWinners = ref(false);
@@ -34,6 +34,7 @@ const filterOptions: { key: FilterKey; icon: InteractionType }[] = [
   { key: 'retweet', icon: 'retweet' },
   { key: 'like', icon: 'like' },
   { key: 'quote', icon: 'quote' },
+  { key: 'reply', icon: 'reply' },
   { key: 'followed_by', icon: 'follow' },
 ];
 
@@ -41,21 +42,16 @@ function getFilterLabel(key: FilterKey): string {
   if (key === 'retweet') return t('hasRetweeted');
   if (key === 'like') return t('hasLiked');
   if (key === 'quote') return t('hasQuoted');
+  if (key === 'reply') return t('hasReplied');
   return t('followingMe');
 }
 
 const qualifiedCount = computed(() => drawData.qualifiedUsers.value.length);
 
 function handleDraw() {
-  const tweetId = drawData.lastTweetId.value;
-  const exclude = excludePastWinners.value && tweetId
-    ? new Set(
-        history.value
-          .filter((entry) => entry.confirmed && entry.tweetId === tweetId)
-          .flatMap((entry) => entry.winners.map((winner) => winner.handle)),
-      )
-    : undefined;
-  const result = drawData.performDraw({ excludeHandles: exclude });
+  const result = drawData.performDraw({
+    excludeWinnerKeys: excludePastWinners.value ? confirmedWinnerKeys.value : undefined,
+  });
   if (!result.success) {
     if (result.message === 'notEnoughUsers') {
       showToast(t('notEnoughUsers', { count: String(result.count) }), 'error');
@@ -86,7 +82,13 @@ function handleDraw() {
           @change="drawData.toggleFilter(opt.key)"
         />
         <InteractionIcon :type="opt.icon" />
-        <span class="text-[#e7e9ea] text-sm">{{ getFilterLabel(opt.key) }}</span>
+        <span class="text-[#e7e9ea] text-sm flex-1">{{ getFilterLabel(opt.key) }}</span>
+        <span
+          v-if="opt.key === 'reply'"
+          class="text-[#71767b] hover:text-[#1d9bf0] cursor-help text-xs"
+          :title="t('replyNotice')"
+          @click.stop
+        >ⓘ</span>
       </label>
     </div>
 
@@ -133,5 +135,10 @@ function handleDraw() {
     </template>
   </Modal>
 
-  <DrawResult v-if="showLastResult" :winners="lastWinners" @close="showLastResult = false" />
+  <DrawResult
+    v-if="showLastResult"
+    :winners="lastWinners"
+    :filters="lastEntry?.filters"
+    @close="showLastResult = false"
+  />
 </template>

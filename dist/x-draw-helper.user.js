@@ -3,11 +3,11 @@
 // @name:zh-CN         X(推特) 抽奖助手
 // @name:ja            X 抽選ツール
 // @namespace          yueby.x-draw-helper
-// @version            0.2.1
+// @version            0.3.0
 // @author             Yueby
-// @description        A userscript for conducting draws on X (Twitter) posts
-// @description:zh-CN  X(推特) 推文抽奖助手，支持转发/点赞用户筛选、随机抽奖、结果通知
-// @description:ja     X(Twitter)の投稿で抽選を行うためのユーザースクリプト
+// @description        X (Twitter) draw helper for retweet, like, quote and reply participants, with cross-post winner history
+// @description:zh-CN  X(推特) 推文抽奖助手，支持转发/点赞/引用/评论参与者抽取，并跨帖记录中奖历史
+// @description:ja     X(Twitter)の投稿でRT・いいね・引用・返信の参加者を抽選し、投稿をまたぐ当選履歴に対応
 // @match              https://x.com/*
 // @match              https://twitter.com/*
 // @require            https://cdn.jsdelivr.net/npm/vue@3.5.31/dist/vue.global.prod.js
@@ -31,7 +31,7 @@
 
   importCSS(" .toast-enter-active[data-v-82edf3f7],.toast-leave-active[data-v-82edf3f7]{transition:all .3s ease}.toast-enter-from[data-v-82edf3f7],.toast-leave-to[data-v-82edf3f7]{opacity:0;transform:translateY(-12px)} ");
 
-  const _sfc_main$c = vue.defineComponent({
+  const _sfc_main$d = vue.defineComponent({
     __name: "TriggerButton",
     emits: ["click"],
     setup(__props) {
@@ -176,6 +176,285 @@
       return;
     }
     gmStorage.remove(STORAGE_KEYS.DRAW_HISTORY);
+  }
+  function normalizeReplyComments(value) {
+    if (!Array.isArray(value)) return void 0;
+    const byId = new Map();
+    for (const item of value) {
+      if (!item || typeof item !== "object") continue;
+      const record = item;
+      const id = typeof record.id === "string" ? record.id : "";
+      if (!id) continue;
+      const comment = {
+        id,
+        text: typeof record.text === "string" ? record.text : "",
+        createdAt: typeof record.createdAt === "string" ? record.createdAt : "",
+        url: typeof record.url === "string" ? record.url : ""
+      };
+      const existing = byId.get(id);
+      if (!existing || !existing.text && comment.text) byId.set(id, comment);
+    }
+    return Array.from(byId.values());
+  }
+  function mergeReplyComments(first, second) {
+    if (first === void 0 && second === void 0) return void 0;
+    const byId = new Map();
+    for (const comment of [...first ?? [], ...second ?? []]) {
+      const existing = byId.get(comment.id);
+      if (!existing || !existing.text && comment.text) byId.set(comment.id, comment);
+    }
+    return Array.from(byId.values());
+  }
+  function mergeUserPreservingComments(existing, incoming) {
+    const comments = mergeReplyComments(existing.replyComments, incoming.replyComments);
+    const merged = incoming.profileLoaded && !existing.profileLoaded ? { ...existing, ...incoming } : { ...existing };
+    if (comments !== void 0) merged.replyComments = comments;
+    return merged;
+  }
+  function applyUserProfile(target, profile) {
+    const comments = target.replyComments;
+    Object.assign(target, profile, { profileLoaded: true });
+    if (comments !== void 0) target.replyComments = comments;
+  }
+  const RETRY_BACKOFF_MS = 2e3;
+  const MAX_RETRIES_DEFAULT = 3;
+  async function paginateUsers(config, onProgress, filterUser) {
+    const { buildUrl, parsePage, fetchFn, headers, maxRetries, signal, extraHeaders } = config;
+    const result = [];
+    const indexByKey = new Map();
+    const pendingCursors = [];
+    const scheduledCursors = new Set();
+    async function fetchWithRetry(cursor) {
+      let lastError = new Error("Request failed");
+      for (let retry = 0; retry < maxRetries; retry++) {
+        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+        try {
+          const extra = extraHeaders ? await extraHeaders(cursor) : {};
+          const response = await fetchFn(buildUrl(cursor), { headers: { ...headers, ...extra }, signal });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          if (error.name === "AbortError") throw error;
+          lastError = error;
+          if (retry < maxRetries - 1) {
+            await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
+          }
+        }
+      }
+      throw lastError;
+    }
+    let pendingFetch = fetchWithRetry(null);
+    while (pendingFetch) {
+      const data = await pendingFetch;
+      const { users, nextCursor, nextCursors } = parsePage(data);
+      const cursors = nextCursors ?? (nextCursor ? [nextCursor] : []);
+      for (const cursor of cursors) {
+        if (!cursor || scheduledCursors.has(cursor)) continue;
+        scheduledCursors.add(cursor);
+        pendingCursors.push(cursor);
+      }
+      pendingFetch = pendingCursors.length > 0 ? fetchWithRetry(pendingCursors.shift()) : null;
+      const filtered = users;
+      for (const u of filtered) {
+        const key = u.id || u.handle.toLowerCase();
+        const existingIndex = indexByKey.get(key);
+        if (existingIndex === void 0) {
+          indexByKey.set(key, result.length);
+          result.push(u);
+        } else {
+          result[existingIndex] = mergeUserPreservingComments(result[existingIndex], u);
+        }
+      }
+      onProgress?.(result.length);
+    }
+    return result;
+  }
+  function getNumericField(result, ...keys) {
+    const queue = [result];
+    const seen = new Set();
+    while (queue.length) {
+      const value = queue.shift();
+      if (!value || typeof value !== "object" || seen.has(value)) continue;
+      seen.add(value);
+      const record = value;
+      for (const key of keys) {
+        const field = record[key];
+        if (typeof field === "number" && Number.isFinite(field)) return field;
+      }
+      queue.push(...Object.values(record));
+    }
+    return void 0;
+  }
+  function userFromResult(result, legacy, core, perspectives, fallbackId = "") {
+    const avatar = result.avatar;
+    const profileBio = result.profile_bio;
+    const relationshipCounts = result.relationship_counts;
+    const followersCount = typeof relationshipCounts?.followers === "number" ? relationshipCounts.followers : getNumericField(result, "followers_count", "followersCount");
+    const followingCount = typeof relationshipCounts?.following === "number" ? relationshipCounts.following : getNumericField(result, "friends_count", "following_count", "followingCount");
+    return {
+      id: result.rest_id || fallbackId,
+      username: legacy.name || core.name || "",
+      handle: legacy.screen_name || core.screen_name || result.rest_id || "",
+      avatarUrl: legacy.profile_image_url_https || avatar?.image_url || "",
+      bio: legacy.description || profileBio?.description || "",
+      following: Boolean(perspectives.following ?? legacy.following),
+      followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
+      followersCount: followersCount ?? 0,
+      followingCount: followingCount ?? 0,
+      profileLoaded: followersCount !== void 0 && followingCount !== void 0
+    };
+  }
+  function buildTweetDetailVariables(focalTweetId, cursor) {
+    const variables = {
+      focalTweetId,
+      with_rux_injections: false,
+      rankingMode: "Relevance",
+      includePromotedContent: true,
+      withCommunity: true,
+      withQuickPromoteEligibilityTweetFields: true,
+      withBirdwatchNotes: true,
+      withVoice: true
+    };
+    if (cursor) {
+      variables.cursor = cursor;
+      variables.referrer = "tweet";
+    }
+    return variables;
+  }
+  function asRecord(value) {
+    return value && typeof value === "object" ? value : null;
+  }
+  function unwrapTweet(result) {
+    const raw = asRecord(result);
+    if (!raw) return null;
+    if (raw.__typename === "TweetWithVisibilityResults") {
+      return asRecord(raw.tweet);
+    }
+    return raw;
+  }
+  function getTweetResults(entry) {
+    const content = asRecord(asRecord(entry)?.content);
+    if (!content) return [];
+    const results = [];
+    if (Array.isArray(content.items)) {
+      for (const item of content.items) {
+        const itemContent = asRecord(asRecord(asRecord(item)?.item)?.itemContent);
+        const result = asRecord(itemContent?.tweet_results)?.result;
+        if (result) results.push(result);
+      }
+    }
+    const directResult = asRecord(asRecord(content.itemContent)?.tweet_results)?.result;
+    if (directResult) results.push(directResult);
+    return results;
+  }
+  function getAuthorHandle(tweet) {
+    const userResult = asRecord(asRecord(asRecord(tweet.core)?.user_results)?.result);
+    const core = asRecord(userResult?.core);
+    const legacy = asRecord(userResult?.legacy);
+    const handle = core?.screen_name || legacy?.screen_name;
+    return typeof handle === "string" && handle ? handle : null;
+  }
+  function getCommentText(tweet) {
+    const noteResult = asRecord(
+      asRecord(asRecord(tweet.note_tweet)?.note_tweet_results)?.result
+    );
+    const noteText = noteResult?.text;
+    if (typeof noteText === "string" && noteText.length > 0) return noteText;
+    const fullText = asRecord(tweet.legacy)?.full_text;
+    return typeof fullText === "string" ? fullText : "";
+  }
+  function commentFromTweet(tweet, tweetId, authorHandle) {
+    if (!tweetId || !authorHandle) return null;
+    const legacy = asRecord(tweet.legacy) ?? {};
+    return {
+      id: tweetId,
+      text: getCommentText(tweet),
+      createdAt: typeof legacy.created_at === "string" ? legacy.created_at : "",
+      url: `https://x.com/${authorHandle}/status/${tweetId}`
+    };
+  }
+  function getCursors(entries) {
+    const showMore = [];
+    const bottom = [];
+    for (const entry of entries) {
+      const content = asRecord(asRecord(entry)?.content);
+      const value = content?.value;
+      if (typeof value !== "string" || !value) continue;
+      if (content?.cursorType === "ShowMoreThreads") showMore.push(value);
+      else if (content?.cursorType === "Bottom") bottom.push(value);
+    }
+    return { showMore, bottom };
+  }
+  function hasBottomTermination(instructions) {
+    return instructions.some((instruction) => {
+      const record = asRecord(instruction);
+      if (record?.type !== "TimelineTerminateTimeline") return false;
+      return String(record.direction ?? "").toLowerCase() !== "top";
+    });
+  }
+  function getGraphqlErrorMessage(data) {
+    const errors = asRecord(data)?.errors;
+    if (!Array.isArray(errors) || errors.length === 0) return null;
+    const messages = errors.map((error) => asRecord(error)?.message).filter((message) => typeof message === "string" && message.length > 0);
+    return messages.join("; ") || "unknown";
+  }
+  function parseTweetDetailPage(data, focalTweetId, knownAuthorHandle = null) {
+    const graphqlError = getGraphqlErrorMessage(data);
+    if (graphqlError) throw new Error(`tweetDetailErrors:${graphqlError}`);
+    const instructions = asRecord(asRecord(asRecord(data)?.data)?.threaded_conversation_with_injections_v2)?.instructions;
+    if (!Array.isArray(instructions)) throw new Error("tweetDetailInstructionsMissing");
+    const addEntries = instructions.map(asRecord).find((instruction) => instruction?.type === "TimelineAddEntries");
+    if (!addEntries) {
+      const terminated = instructions.some(
+        (instruction) => asRecord(instruction)?.type === "TimelineTerminateTimeline"
+      );
+      if (terminated) return { users: [], nextCursors: [], authorHandle: knownAuthorHandle };
+      throw new Error("tweetDetailInstructionsMissing");
+    }
+    if (!Array.isArray(addEntries.entries)) throw new Error("tweetDetailInstructionsMissing");
+    const entries = addEntries.entries;
+    const tweets = [];
+    let authorHandle = knownAuthorHandle;
+    for (const entry of entries) {
+      for (const result of getTweetResults(entry)) {
+        const tweet = unwrapTweet(result);
+        if (!tweet) continue;
+        const legacy = asRecord(tweet.legacy) ?? {};
+        const tweetId = String(tweet.rest_id ?? legacy.id_str ?? "");
+        if (tweetId === focalTweetId) {
+          authorHandle = getAuthorHandle(tweet) ?? authorHandle;
+          continue;
+        }
+        tweets.push(tweet);
+      }
+    }
+    const authorKey = authorHandle?.toLowerCase() ?? null;
+    const usersByKey = new Map();
+    for (const tweet of tweets) {
+      const legacy = asRecord(tweet.legacy) ?? {};
+      if (String(legacy.in_reply_to_status_id_str ?? "") !== focalTweetId) continue;
+      const userResult = asRecord(asRecord(asRecord(tweet.core)?.user_results)?.result);
+      if (!userResult) continue;
+      const core = asRecord(userResult.core) ?? {};
+      const userLegacy = asRecord(userResult.legacy) ?? {};
+      const perspectives = asRecord(userResult.relationship_perspectives) ?? {};
+      const user = userFromResult(userResult, userLegacy, core, perspectives);
+      if (!user.handle) continue;
+      if (authorKey && user.handle.toLowerCase() === authorKey) continue;
+      const key = user.id || user.handle.toLowerCase();
+      const existing = usersByKey.get(key);
+      const merged = existing ? mergeUserPreservingComments(existing, user) : { ...user, replyComments: [] };
+      const tweetId = String(tweet.rest_id ?? legacy.id_str ?? "");
+      const comment = commentFromTweet(tweet, tweetId, user.handle);
+      if (comment) {
+        merged.replyComments = mergeReplyComments(merged.replyComments, [comment]);
+      }
+      usersByKey.set(key, merged);
+    }
+    const users = Array.from(usersByKey.values());
+    const { showMore, bottom } = getCursors(entries);
+    const nextCursors = hasBottomTermination(instructions) ? [] : Array.from( new Set([...showMore, ...bottom]));
+    return { users, nextCursors, authorHandle };
   }
   const LOG = "[x-draw]";
   let _origPageFetch = null;
@@ -399,21 +678,25 @@
     retweeters: "Retweeters",
     favoriters: "Favoriters",
     searchTimeline: "SearchTimeline",
+    replies: "TweetDetail",
     userByScreenName: "UserByScreenName"
   };
   const DEFAULT_ENDPOINTS = {
     retweeters: "",
     favoriters: "",
-    searchTimeline: ""
+    searchTimeline: "",
+    replies: ""
   };
   const ENDPOINTS = {
     ...DEFAULT_ENDPOINTS,
-    userByScreenName: ""
+    userByScreenName: "",
+    replies: ""
   };
   const ENDPOINT_FEATURES = {
     retweeters: {},
     favoriters: {},
     searchTimeline: {},
+    replies: {},
     userByScreenName: {}
   };
   function setEndpoint(key, value) {
@@ -508,41 +791,6 @@
     const match = window.location.pathname.match(/^\/([^/]+)\/status\/\d+/);
     return match?.[1] ? decodeURIComponent(match[1]) : null;
   }
-  function getNumericField(result, ...keys) {
-    const queue = [result];
-    const seen = new Set();
-    while (queue.length) {
-      const value = queue.shift();
-      if (!value || typeof value !== "object" || seen.has(value)) continue;
-      seen.add(value);
-      const record = value;
-      for (const key of keys) {
-        const field = record[key];
-        if (typeof field === "number" && Number.isFinite(field)) return field;
-      }
-      queue.push(...Object.values(record));
-    }
-    return void 0;
-  }
-  function userFromResult(result, legacy, core, perspectives, fallbackId = "") {
-    const avatar = result.avatar;
-    const profileBio = result.profile_bio;
-    const relationshipCounts = result.relationship_counts;
-    const followersCount = typeof relationshipCounts?.followers === "number" ? relationshipCounts.followers : getNumericField(result, "followers_count", "followersCount");
-    const followingCount = typeof relationshipCounts?.following === "number" ? relationshipCounts.following : getNumericField(result, "friends_count", "following_count", "followingCount");
-    return {
-      id: result.rest_id || fallbackId,
-      username: legacy.name || core.name || "",
-      handle: legacy.screen_name || core.screen_name || result.rest_id || "",
-      avatarUrl: legacy.profile_image_url_https || avatar?.image_url || "",
-      bio: legacy.description || profileBio?.description || "",
-      following: Boolean(perspectives.following ?? legacy.following),
-      followed_by: Boolean(perspectives.followed_by ?? legacy.followed_by),
-      followersCount: followersCount ?? 0,
-      followingCount: followingCount ?? 0,
-      profileLoaded: followersCount !== void 0 && followingCount !== void 0
-    };
-  }
   function extractInstructions(data, ...path) {
     let node = data;
     for (const key of path) {
@@ -561,54 +809,6 @@
   function getBottomCursor(entries) {
     const cursor = entries.find((e) => e?.content && e.content?.cursorType === "Bottom");
     return cursor?.content?.value ?? null;
-  }
-  const RETRY_BACKOFF_MS = 2e3;
-  const MAX_RETRIES_DEFAULT = 3;
-  async function paginateUsers(config, onProgress, filterUser) {
-    const { buildUrl, parsePage, fetchFn, headers, maxRetries, signal, extraHeaders } = config;
-    const result = [];
-    const seen = new Set();
-    async function fetchWithRetry(cursor) {
-      let lastError = new Error("Request failed");
-      for (let retry = 0; retry < maxRetries; retry++) {
-        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-        try {
-          const extra = extraHeaders ? await extraHeaders(cursor) : {};
-          const response = await fetchFn(buildUrl(cursor), { headers: { ...headers, ...extra }, signal });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return await response.json();
-        } catch (error) {
-          if (error.name === "AbortError") throw error;
-          lastError = error;
-          if (retry < maxRetries - 1) {
-            await new Promise((r) => setTimeout(r, RETRY_BACKOFF_MS * (retry + 1)));
-          }
-        }
-      }
-      throw lastError;
-    }
-    let currentCursor = null;
-    let pendingFetch = fetchWithRetry(null);
-    while (pendingFetch) {
-      const data = await pendingFetch;
-      const { users, nextCursor } = parsePage(data);
-      const filtered = users;
-      if (nextCursor && nextCursor !== currentCursor) {
-        currentCursor = nextCursor;
-        pendingFetch = fetchWithRetry(currentCursor);
-      } else {
-        pendingFetch = null;
-      }
-      for (const u of filtered) {
-        const key = u.id || u.handle;
-        if (!seen.has(key)) {
-          seen.add(key);
-          result.push(u);
-        }
-      }
-      onProgress?.(result.length);
-    }
-    return result;
   }
   function parseRetweeterTimeline(data) {
     const instructions = extractInstructions(data, "data", "retweeters_timeline", "timeline", "instructions");
@@ -731,6 +931,39 @@
       }
     }, options.onProgress);
   }
+  async function fetchRepliers(tweetId, csrfToken, options = {}) {
+    const endpoint = requireEndpoint("replies");
+    const path = `/i/api/graphql/${endpoint}`;
+    let authorHandle = getTweetAuthorHandleFromUrl();
+    const users = await paginateUsers({
+      buildUrl: (cursor) => buildGraphqlUrl(
+        endpoint,
+        buildTweetDetailVariables(tweetId, cursor),
+        ENDPOINT_FEATURES.replies
+      ),
+      parsePage: (data) => {
+        const page = parseTweetDetailPage(data, tweetId, authorHandle);
+        if (page.authorHandle) authorHandle = page.authorHandle;
+        return {
+          users: page.users,
+          nextCursor: page.nextCursors[0] ?? null,
+          nextCursors: page.nextCursors
+        };
+      },
+      fetchFn: pageFetch(),
+      headers: baseHeaders(csrfToken),
+      maxRetries: options.maxRetries ?? MAX_RETRIES_DEFAULT,
+      signal: options.signal,
+      extraHeaders: async () => {
+        const txId = await getTxId("GET", path);
+        const headers = {};
+        if (txId) headers["x-client-transaction-id"] = txId;
+        return headers;
+      }
+    }, options.onProgress);
+    const excludedAuthor = authorHandle?.toLowerCase();
+    return excludedAuthor ? users.filter((user) => user.handle.toLowerCase() !== excludedAuthor) : users;
+  }
   async function fetchUserProfile(handle) {
     const csrfToken = getCsrfToken();
     if (!csrfToken) throw new Error("loginRequired");
@@ -752,6 +985,211 @@
     const perspectives = result.relationship_perspectives ?? {};
     return userFromResult(result, legacy, core, perspectives);
   }
+  function asUsers(value) {
+    if (!Array.isArray(value)) return [];
+    return value.filter((item) => Boolean(item) && typeof item === "object").map((user) => {
+      const comments = normalizeReplyComments(user.replyComments);
+      return comments === void 0 && user.replyComments === void 0 ? user : { ...user, replyComments: comments };
+    });
+  }
+  function normalizeCachedData(cached) {
+    return {
+      retweets: asUsers(cached?.retweets),
+      likes: asUsers(cached?.likes),
+      quotes: asUsers(cached?.quotes),
+      replies: asUsers(cached?.replies),
+      fetchedAt: typeof cached?.fetchedAt === "number" ? cached.fetchedAt : null
+    };
+  }
+  function mergeInteractionUsers(sources, authorHandle) {
+    const map = new Map();
+    const authorKey = authorHandle?.toLowerCase();
+    function mergeUser(user, interaction) {
+      const handleKey2 = user.handle.toLowerCase();
+      if (authorKey && handleKey2 === authorKey) return;
+      const existing = map.get(handleKey2);
+      if (!existing) {
+        map.set(handleKey2, { ...user, [interaction]: true });
+        return;
+      }
+      const comments = mergeReplyComments(existing.replyComments, user.replyComments);
+      if (user.profileLoaded && !existing.profileLoaded) {
+        Object.assign(existing, user);
+      }
+      if (comments !== void 0) existing.replyComments = comments;
+      existing[interaction] = true;
+    }
+    sources.retweets.forEach((user) => mergeUser(user, "hasRetweet"));
+    sources.likes.forEach((user) => mergeUser(user, "hasLike"));
+    sources.quotes.forEach((user) => mergeUser(user, "hasQuote"));
+    sources.replies.forEach((user) => mergeUser(user, "hasReply"));
+    return Array.from(map.values());
+  }
+  function filterQualifiedUsers(users, filters2) {
+    const hasActive = Object.values(filters2).some(Boolean);
+    if (!hasActive) return users;
+    return users.filter((user) => {
+      if (filters2.followed_by && !user.followed_by) return false;
+      if (filters2.like && !user.hasLike) return false;
+      if (filters2.reply && !user.hasReply) return false;
+      if (filters2.retweet && filters2.quote) {
+        if (!user.hasRetweet && !user.hasQuote) return false;
+      } else {
+        if (filters2.retweet && !user.hasRetweet) return false;
+        if (filters2.quote && !user.hasQuote) return false;
+      }
+      return true;
+    });
+  }
+  function abortError() {
+    return new DOMException("Aborted", "AbortError");
+  }
+  function createFetchRunGuard() {
+    let nextId2 = 0;
+    let active = null;
+    function start() {
+      active?.controller.abort();
+      const run = { id: ++nextId2, controller: new AbortController() };
+      active = run;
+      return run;
+    }
+    function invalidate() {
+      const run = active;
+      active = null;
+      nextId2++;
+      run?.controller.abort();
+    }
+    function isCurrent(run) {
+      return active?.id === run.id && !run.controller.signal.aborted;
+    }
+    function finish(run) {
+      if (active?.id === run.id) active = null;
+    }
+    return { start, invalidate, isCurrent, finish };
+  }
+  function asBucket(entries) {
+    return Array.isArray(entries) ? entries.filter((entry) => Boolean(entry) && typeof entry === "object") : [];
+  }
+  function historyBucketKey(tweetId) {
+    return `${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`;
+  }
+  function buildHistoryTweetUrl(tweetId, location) {
+    const match = location?.pathname.match(/^\/([^/]+)\/status\/(\d+)(?:\/|$)/);
+    if (match && match[2] === tweetId) {
+      return `https://x.com/${match[1]}/status/${match[2]}`;
+    }
+    return `https://x.com/i/status/${tweetId}`;
+  }
+  function normalizeHistoryEntry(entry) {
+    const savedFilters = entry.filters;
+    return {
+      ...entry,
+      tweetId: typeof entry.tweetId === "string" ? entry.tweetId : "",
+      tweetUrl: typeof entry.tweetUrl === "string" ? entry.tweetUrl : "",
+      winners: Array.isArray(entry.winners) ? entry.winners.map((winner) => {
+        if (!winner || typeof winner !== "object") return winner;
+        const comments = normalizeReplyComments(winner.replyComments);
+        return comments === void 0 ? winner : { ...winner, replyComments: comments };
+      }) : [],
+      filters: {
+        followed_by: savedFilters?.followed_by ?? false,
+        retweet: savedFilters?.retweet ?? false,
+        like: savedFilters?.like ?? false,
+        quote: savedFilters?.quote ?? false,
+        reply: savedFilters?.reply ?? false
+      },
+      totalParticipants: Number.isFinite(entry.totalParticipants) ? entry.totalParticipants : 0,
+      timestamp: Number.isFinite(entry.timestamp) ? entry.timestamp : 0,
+      confirmed: entry.confirmed ?? true
+    };
+  }
+  function listHistoryBuckets(storage) {
+    return storage.list().filter((key) => key.startsWith(STORAGE_KEYS.DRAW_HISTORY_PREFIX));
+  }
+  function loadAllHistory(storage) {
+    const entries = [];
+    for (const key of listHistoryBuckets(storage)) {
+      const bucket = asBucket(storage.get(key, []));
+      for (const entry of bucket) entries.push(normalizeHistoryEntry(entry));
+    }
+    return entries.sort((a, b) => b.timestamp - a.timestamp);
+  }
+  function appendHistoryEntry(storage, entry) {
+    const key = historyBucketKey(entry.tweetId);
+    const bucket = asBucket(storage.get(key, [])).map(normalizeHistoryEntry);
+    const next = [normalizeHistoryEntry(entry), ...bucket].slice(0, LIMITS.MAX_HISTORY_ENTRIES);
+    storage.set(key, next);
+  }
+  function removeHistoryEntry(storage, entryId, tweetId) {
+    const keys = tweetId === void 0 ? listHistoryBuckets(storage) : [historyBucketKey(tweetId)];
+    for (const key of keys) {
+      const bucket = asBucket(storage.get(key, []));
+      const index = bucket.findIndex((entry) => entry.id === entryId && (tweetId === void 0 || String(entry.tweetId ?? "") === tweetId));
+      if (index === -1) continue;
+      bucket.splice(index, 1);
+      storage.set(key, bucket);
+      return;
+    }
+  }
+  function toggleHistoryEntry(storage, entryId, tweetId) {
+    const keys = tweetId === void 0 ? listHistoryBuckets(storage) : [historyBucketKey(tweetId)];
+    for (const key of keys) {
+      const bucket = asBucket(storage.get(key, []));
+      const index = bucket.findIndex((entry) => entry.id === entryId && (tweetId === void 0 || String(entry.tweetId ?? "") === tweetId));
+      if (index === -1) continue;
+      const current = normalizeHistoryEntry(bucket[index]);
+      bucket[index] = { ...current, confirmed: !current.confirmed };
+      storage.set(key, bucket);
+      return;
+    }
+  }
+  function clearAllHistory(storage) {
+    for (const key of listHistoryBuckets(storage)) storage.remove(key);
+  }
+  function handleKey(handle) {
+    return `handle:${handle.toLowerCase()}`;
+  }
+  function userKey(user) {
+    return user.id ? `id:${user.id}` : handleKey(user.handle);
+  }
+  function collectConfirmedWinStats(entries) {
+    const keys = new Set();
+    const idCounts = new Map();
+    const handleOnlyCounts = new Map();
+    const handleCounts = new Map();
+    for (const entry of entries) {
+      if (entry.confirmed === false) continue;
+      if (!Array.isArray(entry.winners)) continue;
+      const seen = new Set();
+      for (const winner of entry.winners) {
+        if (!winner || typeof winner.handle !== "string") continue;
+        const key = userKey(winner);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        keys.add(key);
+        const lowerHandle = winner.handle.toLowerCase();
+        handleCounts.set(lowerHandle, (handleCounts.get(lowerHandle) ?? 0) + 1);
+        if (winner.id) {
+          idCounts.set(winner.id, (idCounts.get(winner.id) ?? 0) + 1);
+        } else {
+          handleOnlyCounts.set(lowerHandle, (handleOnlyCounts.get(lowerHandle) ?? 0) + 1);
+        }
+      }
+    }
+    return { keys, idCounts, handleOnlyCounts, handleCounts };
+  }
+  function getWinCountFromStats(stats, user) {
+    if (typeof user === "string") {
+      return stats.handleCounts.get(user.toLowerCase()) ?? 0;
+    }
+    const lowerHandle = user.handle.toLowerCase();
+    if (!user.id) return stats.handleOnlyCounts.get(lowerHandle) ?? 0;
+    return (stats.idCounts.get(user.id) ?? 0) + (stats.handleOnlyCounts.get(lowerHandle) ?? 0);
+  }
+  function isExcludedWinner(user, keys) {
+    if (user.id && keys.has(`id:${user.id}`)) return true;
+    return keys.has(handleKey(user.handle));
+  }
   function getCacheIndex() {
     return gmStorage.get(STORAGE_KEYS.CACHE_INDEX, []);
   }
@@ -772,74 +1210,50 @@
   function loadCache(tweetId) {
     return gmStorage.get(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, null);
   }
-  function saveCache(tweetId, retweets2, likes2, quotes2) {
-    gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets: retweets2, likes: likes2, quotes: quotes2, fetchedAt: Date.now() });
+  function saveCache(tweetId, retweets2, likes2, quotes2, replies2) {
+    gmStorage.set(`${STORAGE_KEYS.TWEET_CACHE_PREFIX}${tweetId}`, { retweets: retweets2, likes: likes2, quotes: quotes2, replies: replies2, fetchedAt: Date.now() });
     touchCacheIndex(tweetId);
   }
   const retweets = vue.ref([]);
   const likes = vue.ref([]);
   const quotes = vue.ref([]);
+  const replies = vue.ref([]);
   const filters = vue.ref({
     followed_by: false,
     retweet: false,
     like: false,
-    quote: false
+    quote: false,
+    reply: false
   });
   const drawCount = vue.ref(1);
   const loading = vue.ref(false);
   const retweetProgress = vue.ref(0);
   const likeProgress = vue.ref(0);
   const quoteProgress = vue.ref(0);
+  const replyProgress = vue.ref(0);
   const lastTweetId = vue.ref(null);
   const fetchedAt = vue.ref(null);
   const failedSources = vue.ref([]);
-  let abortController = null;
+  const fetchGuard = createFetchRunGuard();
   function useDrawData() {
     function syncTweetId(tweetId) {
       if (lastTweetId.value === tweetId) return;
+      fetchGuard.invalidate();
       retweets.value = [];
       likes.value = [];
       quotes.value = [];
+      replies.value = [];
       fetchedAt.value = null;
       failedSources.value = [];
       lastTweetId.value = tweetId;
     }
-    const mergedUsers = vue.computed(() => {
-      const map = new Map();
-      const authorHandle = getTweetAuthorHandleFromUrl()?.toLowerCase();
-      function mergeUser(user, interaction) {
-        const handleKey = user.handle.toLowerCase();
-        if (handleKey === authorHandle) return;
-        const existing = map.get(handleKey);
-        if (!existing) {
-          map.set(handleKey, { ...user, [interaction]: true });
-          return;
-        }
-        if (user.profileLoaded && !existing.profileLoaded) {
-          Object.assign(existing, user);
-        }
-        existing[interaction] = true;
-      }
-      retweets.value.forEach((user) => mergeUser(user, "hasRetweet"));
-      likes.value.forEach((user) => mergeUser(user, "hasLike"));
-      quotes.value.forEach((user) => mergeUser(user, "hasQuote"));
-      return Array.from(map.values());
-    });
-    const qualifiedUsers = vue.computed(() => {
-      const hasActive = Object.values(filters.value).some(Boolean);
-      if (!hasActive) return mergedUsers.value;
-      return mergedUsers.value.filter((user) => {
-        if (filters.value.followed_by && !user.followed_by) return false;
-        if (filters.value.like && !user.hasLike) return false;
-        if (filters.value.retweet && filters.value.quote) {
-          if (!user.hasRetweet && !user.hasQuote) return false;
-        } else {
-          if (filters.value.retweet && !user.hasRetweet) return false;
-          if (filters.value.quote && !user.hasQuote) return false;
-        }
-        return true;
-      });
-    });
+    const mergedUsers = vue.computed(() => mergeInteractionUsers({
+      retweets: retweets.value,
+      likes: likes.value,
+      quotes: quotes.value,
+      replies: replies.value
+    }, getTweetAuthorHandleFromUrl()));
+    const qualifiedUsers = vue.computed(() => filterQualifiedUsers(mergedUsers.value, filters.value));
     function toggleFilter(key) {
       filters.value[key] = !filters.value[key];
     }
@@ -847,8 +1261,13 @@
       const count = Math.max(1, Math.floor(drawCount.value) || 1);
       drawCount.value = count;
       let users = qualifiedUsers.value;
+      if (options?.excludeWinnerKeys?.size) {
+        const keys = options.excludeWinnerKeys;
+        users = users.filter((user) => !isExcludedWinner(user, keys));
+      }
       if (options?.excludeHandles?.size) {
-        users = users.filter((u) => !options.excludeHandles.has(u.handle));
+        const handles = options.excludeHandles;
+        users = users.filter((u) => !handles.has(u.handle.toLowerCase()) && !handles.has(u.handle));
       }
       if (users.length === 0) {
         return { success: false, message: "noQualifiedUsers" };
@@ -866,50 +1285,59 @@
       return { success: true, winners };
     }
     async function fetchInteractionData() {
-      if (abortController) {
-        abortController.abort();
-      }
-      abortController = new AbortController();
       const tweetId = getTweetIdFromUrl();
       if (!tweetId) throw new Error("invalidTweetUrl");
       const csrfToken = getCsrfToken();
       if (!csrfToken) throw new Error("loginRequired");
       syncTweetId(tweetId);
+      const run = fetchGuard.start();
+      const signal = run.controller.signal;
       const cached = loadCache(tweetId);
       if (cached) {
-        retweets.value = cached.retweets;
-        likes.value = cached.likes;
-        quotes.value = cached.quotes || [];
-        fetchedAt.value = cached.fetchedAt;
+        const data = normalizeCachedData(cached);
+        retweets.value = data.retweets;
+        likes.value = data.likes;
+        quotes.value = data.quotes;
+        replies.value = data.replies;
+        fetchedAt.value = data.fetchedAt;
       }
       loading.value = true;
       retweetProgress.value = 0;
       likeProgress.value = 0;
       quoteProgress.value = 0;
+      replyProgress.value = 0;
       failedSources.value = [];
       try {
         await initEndpoints();
+        if (!fetchGuard.isCurrent(run)) throw abortError();
         const results = await Promise.allSettled([
           fetchRetweeters(tweetId, csrfToken, {
-            signal: abortController.signal,
+            signal,
             onProgress: (count) => {
-              retweetProgress.value = count;
+              if (fetchGuard.isCurrent(run)) retweetProgress.value = count;
             }
           }),
           fetchFavoriters(tweetId, csrfToken, {
-            signal: abortController.signal,
+            signal,
             onProgress: (count) => {
-              likeProgress.value = count;
+              if (fetchGuard.isCurrent(run)) likeProgress.value = count;
             }
           }),
           fetchQuoteTweeters(tweetId, csrfToken, {
-            signal: abortController.signal,
+            signal,
             onProgress: (count) => {
-              quoteProgress.value = count;
+              if (fetchGuard.isCurrent(run)) quoteProgress.value = count;
+            }
+          }),
+          fetchRepliers(tweetId, csrfToken, {
+            signal,
+            onProgress: (count) => {
+              if (fetchGuard.isCurrent(run)) replyProgress.value = count;
             }
           })
         ]);
-        const sourceNames = ["retweets", "likes", "quotes"];
+        if (!fetchGuard.isCurrent(run)) throw abortError();
+        const sourceNames = ["retweets", "likes", "quotes", "replies"];
         failedSources.value = results.flatMap(
           (result, index) => result.status === "rejected" ? [sourceNames[index]] : []
         );
@@ -921,19 +1349,23 @@
         const retweetData = settled(results[0], retweets.value);
         const likeData = settled(results[1], likes.value);
         const quoteData = settled(results[2], quotes.value);
+        const replyData = settled(results[3], replies.value);
         retweets.value = retweetData;
         likes.value = likeData;
         quotes.value = quoteData;
+        replies.value = replyData;
         fetchedAt.value = Date.now();
-        saveCache(tweetId, retweetData, likeData, quoteData);
+        saveCache(tweetId, retweetData, likeData, quoteData, replyData);
         return {
           retweets: retweetData,
           likes: likeData,
           quotes: quoteData,
+          replies: replyData,
           failedSources: failedSources.value
         };
       } finally {
-        loading.value = false;
+        if (fetchGuard.isCurrent(run)) loading.value = false;
+        fetchGuard.finish(run);
       }
     }
     function restoreFromCache() {
@@ -942,39 +1374,47 @@
       syncTweetId(tweetId);
       const cached = loadCache(tweetId);
       if (!cached) return false;
-      retweets.value = cached.retweets;
-      likes.value = cached.likes;
-      quotes.value = cached.quotes || [];
-      fetchedAt.value = cached.fetchedAt;
+      const data = normalizeCachedData(cached);
+      retweets.value = data.retweets;
+      likes.value = data.likes;
+      quotes.value = data.quotes;
+      replies.value = data.replies;
+      fetchedAt.value = data.fetchedAt;
       return true;
     }
     function cancelFetch() {
-      abortController?.abort();
+      fetchGuard.invalidate();
       loading.value = false;
     }
     function reset() {
+      fetchGuard.invalidate();
       retweets.value = [];
       likes.value = [];
       quotes.value = [];
-      filters.value = { followed_by: false, retweet: false, like: false, quote: false };
+      replies.value = [];
+      filters.value = { followed_by: false, retweet: false, like: false, quote: false, reply: false };
       drawCount.value = 1;
       retweetProgress.value = 0;
       likeProgress.value = 0;
       quoteProgress.value = 0;
+      replyProgress.value = 0;
       lastTweetId.value = null;
       fetchedAt.value = null;
       failedSources.value = [];
+      loading.value = false;
     }
     return {
       retweets,
       likes,
       quotes,
+      replies,
       filters,
       drawCount,
       loading,
       retweetProgress,
       likeProgress,
       quoteProgress,
+      replyProgress,
       lastTweetId,
       fetchedAt,
       failedSources,
@@ -983,7 +1423,8 @@
       interactionCounts: vue.computed(() => ({
         retweets: mergedUsers.value.filter((user) => user.hasRetweet).length,
         likes: mergedUsers.value.filter((user) => user.hasLike).length,
-        quotes: mergedUsers.value.filter((user) => user.hasQuote).length
+        quotes: mergedUsers.value.filter((user) => user.hasQuote).length,
+        replies: mergedUsers.value.filter((user) => user.hasReply).length
       })),
       toggleFilter,
       performDraw,
@@ -994,61 +1435,46 @@
       syncTweetId
     };
   }
-  function loadHistory(tweetId) {
-    if (!tweetId) return [];
-    const raw = gmStorage.get(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, []);
-    return raw.map((e) => ({ ...e, confirmed: e.confirmed ?? true }));
-  }
-  function persistHistory(tweetId, entries) {
-    if (tweetId) gmStorage.set(`${STORAGE_KEYS.DRAW_HISTORY_PREFIX}${tweetId}`, entries);
-  }
-  function useDrawHistory(tweetId) {
-    const history = vue.ref(loadHistory(tweetId.value));
-    vue.watch(tweetId, (value) => {
-      history.value = loadHistory(value);
-    }, { immediate: true });
+  function createHistoryStore(storage) {
+    const history = vue.ref(loadAllHistory(storage));
+    const winStats = vue.computed(() => collectConfirmedWinStats(history.value));
+    const confirmedWinnerKeys = vue.computed(() => winStats.value.keys);
+    const winCountMap = vue.computed(() => winStats.value.handleCounts);
+    function refresh() {
+      history.value = loadAllHistory(storage);
+    }
     function addEntry(params) {
-      const entry = {
+      const entry = normalizeHistoryEntry({
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         tweetId: params.tweetId,
-        tweetUrl: window.location.href,
+        tweetUrl: buildHistoryTweetUrl(
+          params.tweetId,
+          typeof window !== "undefined" ? window.location : null
+        ),
         winners: params.winners,
         filters: { ...params.filters },
         totalParticipants: params.totalParticipants,
         timestamp: Date.now(),
         confirmed: true
-      };
-      history.value = [entry, ...history.value].slice(0, LIMITS.MAX_HISTORY_ENTRIES);
-      persistHistory(tweetId.value, history.value);
+      });
+      appendHistoryEntry(storage, entry);
+      refresh();
       return entry;
     }
-    function removeEntry(id) {
-      history.value = history.value.filter((e) => e.id !== id);
-      persistHistory(tweetId.value, history.value);
+    function removeEntry(id, tweetId) {
+      removeHistoryEntry(storage, id, tweetId);
+      refresh();
     }
-    function toggleConfirm(id) {
-      const entry = history.value.find((e) => e.id === id);
-      if (entry) {
-        entry.confirmed = !entry.confirmed;
-        persistHistory(tweetId.value, history.value);
-      }
+    function toggleConfirm(id, tweetId) {
+      toggleHistoryEntry(storage, id, tweetId);
+      refresh();
     }
     function clearHistory() {
-      history.value = [];
-      persistHistory(tweetId.value, []);
+      clearAllHistory(storage);
+      refresh();
     }
-    const winCountMap = vue.computed(() => {
-      const map = new Map();
-      for (const entry of history.value) {
-        if (!entry.confirmed) continue;
-        for (const w of entry.winners) {
-          map.set(w.handle, (map.get(w.handle) ?? 0) + 1);
-        }
-      }
-      return map;
-    });
-    function getWinCount(handle) {
-      return winCountMap.value.get(handle) ?? 0;
+    function getWinCount(user) {
+      return getWinCountFromStats(winStats.value, user);
     }
     return {
       history,
@@ -1057,8 +1483,23 @@
       toggleConfirm,
       clearHistory,
       winCountMap,
+      confirmedWinnerKeys,
       getWinCount
     };
+  }
+  let historyStore = null;
+  function useDrawHistory(_tweetId) {
+    if (!historyStore) historyStore = createHistoryStore(gmStorage);
+    return historyStore;
+  }
+  function escapeCsvCell(value) {
+    return `"${String(value).replace(/"/g, '""')}"`;
+  }
+  function buildCsv(rows) {
+    return "\uFEFF" + rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");
+  }
+  function formatReplyComments(user) {
+    return (user.replyComments ?? []).map((comment) => comment.text).join("\n");
   }
   const pad = (n) => n.toString().padStart(2, "0");
   function formatDateTime(ts) {
@@ -1081,6 +1522,7 @@
       retweets: "Retweets",
       likes: "Likes",
       quotes: "Quotes",
+      replies: "Replies",
       draw: "Draw",
       export: "Export",
       notify: "Notify",
@@ -1088,6 +1530,7 @@
       hasRetweeted: "Has retweeted",
       hasLiked: "Has liked",
       hasQuoted: "Has quoted",
+      hasReplied: "Replied",
       qualifiedUsers: "Qualified Users",
       selectFilters: "Please select filters",
       noQualifiedUsers: "No qualified users",
@@ -1108,6 +1551,8 @@
       retweetType: "Retweet",
       likeType: "Like",
       quoteType: "Quote",
+      replyType: "Reply",
+      replyNotice: "Only direct replies to the original post count, once per user. Collapsed replies are included when available; X may not return every reply.",
       madeWith: "Made with ❤️ by",
       noBio: "No bio",
       followers: "Followers",
@@ -1118,7 +1563,7 @@
       drawHistory: "Draw History",
       noHistory: "No draw history yet",
       clearHistory: "Clear All",
-      confirmClear: "Clear all draw history?",
+      confirmClear: "Clear draw history across all posts? This cannot be undone.",
       participants: "Participants",
       winnersLabel: "Winners",
       viewTweet: "View Tweet",
@@ -1127,7 +1572,18 @@
       testDraw: "Test",
       winCount: "Wins",
       search: "Search users...",
-      excludePastWinners: "Exclude past winners of this post",
+      excludePastWinners: "Exclude past winners",
+      interactions: "Interactions",
+      comment: "Comment",
+      comments: "comments",
+      noCommentText: "No text cached (refresh)",
+      emptyCommentText: "[No text content]",
+      viewOnX: "View on X",
+      userReplies: "Replies by ${user}",
+      viewAllComments: "View all ${count} comments",
+      post: "Post",
+      totalPosts: "Posts Drawn",
+      totalDraws: "Total Draws",
       copied: "Copied!",
       minutesAgo: "${count} min ago",
       justNow: "Just now",
@@ -1148,6 +1604,7 @@
       retweetersEndpoint: "Retweeters queryId",
       favoritersEndpoint: "Favoriters queryId",
       searchEndpoint: "SearchTimeline queryId",
+      tweetDetailEndpoint: "TweetDetail queryId",
       dataManagement: "Data Management",
       clearCache: "Clear Tweet Cache",
       cacheCleared: "Cache cleared",
@@ -1173,6 +1630,7 @@
       retweets: "转发",
       likes: "点赞",
       quotes: "引用",
+      replies: "评论",
       draw: "抽奖",
       export: "导出",
       notify: "通知",
@@ -1180,6 +1638,7 @@
       hasRetweeted: "已转发",
       hasLiked: "已点赞",
       hasQuoted: "已引用",
+      hasReplied: "已评论",
       qualifiedUsers: "符合条件的用户",
       selectFilters: "请选择筛选条件",
       noQualifiedUsers: "暂无符合条件的用户",
@@ -1200,6 +1659,8 @@
       retweetType: "转发",
       likeType: "点赞",
       quoteType: "引用",
+      replyType: "评论",
+      replyNotice: "仅统计直接回复原推文的用户，每人一次。会继续获取折叠回复，但 X 可能不会返回全部评论。",
       madeWith: "开发者：❤️",
       noBio: "暂无简介",
       followers: "粉丝",
@@ -1210,7 +1671,7 @@
       drawHistory: "抽奖历史",
       noHistory: "暂无抽奖记录",
       clearHistory: "清空全部",
-      confirmClear: "确定清空所有抽奖记录？",
+      confirmClear: "确定清空所有帖子的抽奖记录？此操作不可恢复。",
       participants: "参与者",
       winnersLabel: "中奖者",
       viewTweet: "查看推文",
@@ -1219,7 +1680,18 @@
       testDraw: "测试",
       winCount: "中奖次数",
       search: "搜索用户...",
-      excludePastWinners: "排除当前推文往期中奖者",
+      excludePastWinners: "排除往期中奖者",
+      interactions: "互动",
+      comment: "评论",
+      comments: "条评论",
+      noCommentText: "未缓存原文（刷新获取）",
+      emptyCommentText: "[无文字内容]",
+      viewOnX: "在 X 上查看",
+      userReplies: "${user} 的评论",
+      viewAllComments: "查看全部 ${count} 条评论",
+      post: "帖子",
+      totalPosts: "抽奖帖子数",
+      totalDraws: "总抽奖次数",
       copied: "已复制！",
       minutesAgo: "${count} 分钟前",
       justNow: "刚刚",
@@ -1240,6 +1712,7 @@
       retweetersEndpoint: "Retweeters queryId",
       favoritersEndpoint: "Favoriters queryId",
       searchEndpoint: "SearchTimeline queryId",
+      tweetDetailEndpoint: "TweetDetail queryId",
       dataManagement: "数据管理",
       clearCache: "清除推文缓存",
       cacheCleared: "缓存已清除",
@@ -1265,6 +1738,7 @@
       retweets: "リツイート",
       likes: "いいね",
       quotes: "引用",
+      replies: "返信",
       draw: "抽選",
       export: "エクスポート",
       notify: "通知",
@@ -1272,6 +1746,7 @@
       hasRetweeted: "リツイート済",
       hasLiked: "いいね済",
       hasQuoted: "引用済",
+      hasReplied: "返信済み",
       qualifiedUsers: "対象ユーザー",
       selectFilters: "フィルターを選択",
       noQualifiedUsers: "対象ユーザーがいません",
@@ -1292,6 +1767,8 @@
       retweetType: "リツイート",
       likeType: "いいね",
       quoteType: "引用",
+      replyType: "返信",
+      replyNotice: "元ポストへの直接の返信のみ、ユーザーごとに重複排除。折りたたまれた返信を含みますが、非表示の返信の全件取得は保証されません。",
       madeWith: "開発者：❤️",
       noBio: "プロフィールなし",
       followers: "フォロワー",
@@ -1302,7 +1779,7 @@
       drawHistory: "抽選履歴",
       noHistory: "抽選履歴はまだありません",
       clearHistory: "すべて削除",
-      confirmClear: "すべての抽選履歴を削除しますか？",
+      confirmClear: "すべてのポストの抽選履歴を削除しますか？この操作は取り消せません。",
       participants: "参加者",
       winnersLabel: "当選者",
       viewTweet: "ツイートを見る",
@@ -1311,7 +1788,18 @@
       testDraw: "テスト",
       winCount: "当選回数",
       search: "ユーザー検索...",
-      excludePastWinners: "このポストの過去の当選者を除外",
+      excludePastWinners: "過去の当選者を除外",
+      interactions: "アクション",
+      comment: "返信",
+      comments: "件の返信",
+      noCommentText: "本文未取得（更新で取得）",
+      emptyCommentText: "[テキストなし]",
+      viewOnX: "Xで見る",
+      userReplies: "${user} の返信",
+      viewAllComments: "すべての返信 (${count}件) を表示",
+      post: "ポスト",
+      totalPosts: "対象ポスト数",
+      totalDraws: "総抽選回数",
       copied: "コピーしました！",
       minutesAgo: "${count} 分前",
       justNow: "たった今",
@@ -1332,6 +1820,7 @@
       retweetersEndpoint: "Retweeters queryId",
       favoritersEndpoint: "Favoriters queryId",
       searchEndpoint: "SearchTimeline queryId",
+      tweetDetailEndpoint: "TweetDetail queryId",
       dataManagement: "データ管理",
       clearCache: "ツイートキャッシュを削除",
       cacheCleared: "キャッシュを削除しました",
@@ -1383,7 +1872,8 @@
           t2("following"),
           t2("followingYou"),
           t2("followers"),
-          t2("followingLabel")
+          t2("followingLabel"),
+          t2("comment")
         ]
       ];
       const userRow = (type, user) => [
@@ -1395,16 +1885,14 @@
         user.following ? t2("yes") : t2("no"),
         user.followed_by ? t2("yes") : t2("no"),
         String(user.followersCount),
-        String(user.followingCount)
+        String(user.followingCount),
+        formatReplyComments(user)
       ];
       for (const user of data.retweets) rows.push(userRow(t2("retweetType"), user));
       for (const user of data.likes) rows.push(userRow(t2("likeType"), user));
       for (const user of data.quotes) rows.push(userRow(t2("quoteType"), user));
-      const csvContent = "\uFEFF" + rows.map(
-        (row) => row.map(
-          (cell) => typeof cell === "string" ? `"${cell.replace(/"/g, '""')}"` : cell
-        ).join(",")
-      ).join("\n");
+      for (const user of data.replies ?? []) rows.push(userRow(t2("replyType"), user));
+      const csvContent = buildCsv(rows);
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
@@ -1499,7 +1987,7 @@
       if (user.profileLoaded) return;
       const cached = profileCache.get(handle);
       if (cached) {
-        Object.assign(user, cached, { profileLoaded: true });
+        applyUserProfile(user, cached);
         return;
       }
       let pending = pendingProfiles.get(handle);
@@ -1510,18 +1998,18 @@
       try {
         const profile = await pending;
         profileCache.set(handle, profile);
-        Object.assign(user, profile, { profileLoaded: true });
+        applyUserProfile(user, profile);
       } finally {
         pendingProfiles.delete(handle);
       }
     }
     return { loadUserProfile };
   }
-  const _hoisted_1$9 = { style: { "display": "flex", "align-items": "center", "justify-content": "space-between", "padding": "16px 24px", "border-bottom": "1px solid #38444d", "flex-shrink": "0" } };
-  const _hoisted_2$7 = { style: { "font-size": "18px", "font-weight": "700", "color": "#fff", "overflow": "hidden", "text-overflow": "ellipsis", "white-space": "nowrap", "margin": "0" } };
-  const _hoisted_3$7 = { style: { "display": "flex", "align-items": "center", "gap": "12px", "flex-shrink": "0" } };
-  const _hoisted_4$7 = { style: { "flex": "1", "min-height": "0", "display": "flex", "flex-direction": "column" } };
-  const _hoisted_5$7 = {
+  const _hoisted_1$a = { style: { "display": "flex", "align-items": "center", "justify-content": "space-between", "padding": "16px 24px", "border-bottom": "1px solid #38444d", "flex-shrink": "0" } };
+  const _hoisted_2$8 = { style: { "font-size": "18px", "font-weight": "700", "color": "#fff", "overflow": "hidden", "text-overflow": "ellipsis", "white-space": "nowrap", "margin": "0" } };
+  const _hoisted_3$8 = { style: { "display": "flex", "align-items": "center", "gap": "12px", "flex-shrink": "0" } };
+  const _hoisted_4$8 = { style: { "flex": "1", "min-height": "0", "display": "flex", "flex-direction": "column" } };
+  const _hoisted_5$8 = {
     key: 0,
     style: { "border-top": "1px solid #38444d", "flex-shrink": "0" }
   };
@@ -1534,7 +2022,7 @@
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", globalKeydown);
   }
-  const _sfc_main$b = vue.defineComponent({
+  const _sfc_main$c = vue.defineComponent({
     __name: "Modal",
     props: {
       title: {},
@@ -1567,9 +2055,9 @@
           vue.createElementVNode("div", {
             style: vue.normalizeStyle([panelStyle.value, { "background": "#15202b", "border-radius": "16px", "border": "1px solid #38444d", "display": "flex", "flex-direction": "column", "overflow": "hidden", "box-shadow": "0 25px 50px -12px rgba(0,0,0,0.5)" }])
           }, [
-            vue.createElementVNode("div", _hoisted_1$9, [
-              vue.createElementVNode("h2", _hoisted_2$7, vue.toDisplayString(__props.title), 1),
-              vue.createElementVNode("div", _hoisted_3$7, [
+            vue.createElementVNode("div", _hoisted_1$a, [
+              vue.createElementVNode("h2", _hoisted_2$8, vue.toDisplayString(__props.title), 1),
+              vue.createElementVNode("div", _hoisted_3$8, [
                 vue.renderSlot(_ctx.$slots, "header-controls"),
                 vue.createElementVNode("button", {
                   class: "xd-btn-icon",
@@ -1577,10 +2065,10 @@
                 }, "×")
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_4$7, [
+            vue.createElementVNode("div", _hoisted_4$8, [
               vue.renderSlot(_ctx.$slots, "default")
             ]),
-            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$7, [
+            _ctx.$slots.footer ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_5$8, [
               vue.renderSlot(_ctx.$slots, "footer")
             ])) : vue.createCommentVNode("", true)
           ], 4)
@@ -1588,14 +2076,14 @@
       };
     }
   });
-  const _hoisted_1$8 = { class: "p-8 flex flex-col items-center gap-6" };
-  const _hoisted_2$6 = { class: "flex gap-4 justify-center flex-wrap" };
-  const _hoisted_3$6 = ["src", "alt"];
-  const _hoisted_4$6 = { class: "text-xs text-white truncate w-full text-center font-medium" };
-  const _hoisted_5$6 = { class: "text-[10px] text-[#71767b] truncate w-full text-center" };
-  const _hoisted_6$6 = { class: "flex items-center gap-2" };
-  const _hoisted_7$6 = { class: "text-[#71767b] text-sm" };
-  const _sfc_main$a = vue.defineComponent({
+  const _hoisted_1$9 = { class: "p-8 flex flex-col items-center gap-6" };
+  const _hoisted_2$7 = { class: "flex gap-4 justify-center flex-wrap" };
+  const _hoisted_3$7 = ["src", "alt"];
+  const _hoisted_4$7 = { class: "text-xs text-white truncate w-full text-center font-medium" };
+  const _hoisted_5$7 = { class: "text-[10px] text-[#71767b] truncate w-full text-center" };
+  const _hoisted_6$7 = { class: "flex items-center gap-2" };
+  const _hoisted_7$7 = { class: "text-[#71767b] text-sm" };
+  const _sfc_main$b = vue.defineComponent({
     __name: "DrawAnimation",
     props: {
       pool: {},
@@ -1637,15 +2125,15 @@
         if (timeoutId) clearTimeout(timeoutId);
       });
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$c, {
           title: vue.unref(t2)("drawing"),
           "max-width": "500px",
           "z-index": 10002,
           onClose: _cache[0] || (_cache[0] = ($event) => emit("done"))
         }, {
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$8, [
-              vue.createElementVNode("div", _hoisted_2$6, [
+            vue.createElementVNode("div", _hoisted_1$9, [
+              vue.createElementVNode("div", _hoisted_2$7, [
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(slots.value, (slot, i) => {
                   return vue.openBlock(), vue.createElementBlock("div", {
                     key: i,
@@ -1655,13 +2143,13 @@
                       src: slot.avatarUrl,
                       alt: slot.username,
                       class: "w-14 h-14 rounded-full"
-                    }, null, 8, _hoisted_3$6),
-                    vue.createElementVNode("div", _hoisted_4$6, vue.toDisplayString(slot.username), 1),
-                    vue.createElementVNode("div", _hoisted_5$6, "@" + vue.toDisplayString(slot.handle), 1)
+                    }, null, 8, _hoisted_3$7),
+                    vue.createElementVNode("div", _hoisted_4$7, vue.toDisplayString(slot.username), 1),
+                    vue.createElementVNode("div", _hoisted_5$7, "@" + vue.toDisplayString(slot.handle), 1)
                   ]);
                 }), 128))
               ]),
-              vue.createElementVNode("div", _hoisted_6$6, [
+              vue.createElementVNode("div", _hoisted_6$7, [
                 _cache[1] || (_cache[1] = vue.createElementVNode("svg", {
                   class: "animate-spin h-5 w-5 text-[#1d9bf0]",
                   viewBox: "0 0 24 24",
@@ -1681,7 +2169,7 @@
                     d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   })
                 ], -1)),
-                vue.createElementVNode("span", _hoisted_7$6, vue.toDisplayString(vue.unref(t2)("drawing")), 1)
+                vue.createElementVNode("span", _hoisted_7$7, vue.toDisplayString(vue.unref(t2)("drawing")), 1)
               ])
             ])
           ]),
@@ -1690,46 +2178,61 @@
       };
     }
   });
-  const _hoisted_1$7 = { class: "flex-1 overflow-auto min-h-0 p-4" };
-  const _hoisted_2$5 = {
+  const _hoisted_1$8 = { class: "flex-1 overflow-auto min-h-0 p-4" };
+  const _hoisted_2$6 = {
     key: 0,
     class: "flex items-center justify-center h-full text-[#71767b]"
   };
-  const _hoisted_3$5 = {
+  const _hoisted_3$6 = {
     key: 1,
     class: "flex flex-col gap-3"
   };
-  const _hoisted_4$5 = { class: "flex items-center justify-between mb-3" };
-  const _hoisted_5$5 = { class: "flex items-center gap-3 text-sm" };
-  const _hoisted_6$5 = ["onClick"];
-  const _hoisted_7$5 = { class: "text-[#71767b]" };
-  const _hoisted_8$5 = { class: "text-[#71767b]" };
-  const _hoisted_9$5 = { class: "flex items-center gap-2" };
-  const _hoisted_10$4 = ["href"];
-  const _hoisted_11$4 = ["onClick"];
-  const _hoisted_12$4 = { class: "flex gap-1.5 mb-3 flex-wrap" };
-  const _hoisted_13$3 = {
+  const _hoisted_4$6 = { class: "bg-[#1e2d3d] border border-[#38444d] rounded-xl p-3 flex items-center justify-around text-center" };
+  const _hoisted_5$6 = { class: "text-xs text-[#71767b] block" };
+  const _hoisted_6$6 = { class: "text-lg font-bold text-white" };
+  const _hoisted_7$6 = { class: "text-xs text-[#71767b] block" };
+  const _hoisted_8$6 = { class: "text-lg font-bold text-[#1d9bf0]" };
+  const _hoisted_9$6 = { class: "text-xs text-[#71767b] block" };
+  const _hoisted_10$5 = { class: "text-lg font-bold text-[#00ba7c]" };
+  const _hoisted_11$5 = { class: "flex items-center justify-between mb-3" };
+  const _hoisted_12$5 = { class: "flex items-center gap-2.5 text-sm flex-wrap" };
+  const _hoisted_13$4 = ["onClick"];
+  const _hoisted_14$4 = { class: "text-[#71767b]" };
+  const _hoisted_15$4 = { class: "text-[#71767b]" };
+  const _hoisted_16$3 = {
+    key: 0,
+    class: "text-xs text-[#71767b] bg-[#15202b] px-2 py-0.5 rounded font-mono border border-[#38444d]/50"
+  };
+  const _hoisted_17$2 = { class: "flex items-center gap-2 shrink-0" };
+  const _hoisted_18$2 = ["href"];
+  const _hoisted_19$2 = ["onClick"];
+  const _hoisted_20$2 = { class: "flex gap-1.5 mb-3 flex-wrap" };
+  const _hoisted_21$2 = {
     key: 0,
     class: "xd-badge xd-badge-green"
   };
-  const _hoisted_14$3 = {
+  const _hoisted_22$2 = {
     key: 1,
     class: "xd-badge xd-badge-pink"
   };
-  const _hoisted_15$2 = {
+  const _hoisted_23$2 = {
     key: 2,
     class: "xd-badge xd-badge-orange"
   };
-  const _hoisted_16$2 = {
+  const _hoisted_24$2 = {
     key: 3,
     class: "xd-badge xd-badge-blue"
   };
-  const _hoisted_17$2 = { class: "text-xs text-[#71767b] mb-2" };
-  const _hoisted_18$2 = { class: "flex flex-wrap gap-2" };
-  const _hoisted_19$2 = ["href"];
-  const _hoisted_20$2 = ["src", "alt"];
-  const _hoisted_21$2 = { class: "text-sm text-[#e7e9ea]" };
-  const _sfc_main$9 = vue.defineComponent({
+  const _hoisted_25$2 = {
+    key: 4,
+    class: "xd-badge xd-badge-blue"
+  };
+  const _hoisted_26$2 = { class: "text-xs text-[#71767b] mb-2" };
+  const _hoisted_27$2 = { class: "flex flex-wrap gap-2" };
+  const _hoisted_28$2 = ["href"];
+  const _hoisted_29$2 = ["src", "alt"];
+  const _hoisted_30$2 = { class: "text-sm text-[#e7e9ea]" };
+  const _sfc_main$a = vue.defineComponent({
     __name: "DrawHistory",
     props: {
       tweetId: {}
@@ -1740,11 +2243,13 @@
       const props = __props;
       const { t: t2 } = useI18n();
       const { history, removeEntry, toggleConfirm, clearHistory } = useDrawHistory(vue.toRef(props, "tweetId"));
+      const uniquePostCount = vue.computed(() => new Set(history.value.map((e) => e.tweetId)).size);
+      const confirmedCount = vue.computed(() => history.value.filter((e) => e.confirmed).length);
       function handleClear() {
         if (confirm(t2("confirmClear"))) clearHistory();
       }
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$c, {
           title: vue.unref(t2)("drawHistory"),
           "max-width": "700px",
           "max-height": "600px",
@@ -1759,43 +2264,61 @@
             }, vue.toDisplayString(vue.unref(t2)("clearHistory")), 1)) : vue.createCommentVNode("", true)
           ]),
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$7, [
-              vue.unref(history).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$5, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$5, [
+            vue.createElementVNode("div", _hoisted_1$8, [
+              vue.unref(history).length === 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$6, vue.toDisplayString(vue.unref(t2)("noHistory")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_3$6, [
+                vue.createElementVNode("div", _hoisted_4$6, [
+                  vue.createElementVNode("div", null, [
+                    vue.createElementVNode("span", _hoisted_5$6, vue.toDisplayString(vue.unref(t2)("totalDraws")), 1),
+                    vue.createElementVNode("span", _hoisted_6$6, vue.toDisplayString(vue.unref(history).length), 1)
+                  ]),
+                  _cache[1] || (_cache[1] = vue.createElementVNode("div", { class: "border-r border-[#38444d] h-7" }, null, -1)),
+                  vue.createElementVNode("div", null, [
+                    vue.createElementVNode("span", _hoisted_7$6, vue.toDisplayString(vue.unref(t2)("totalPosts")), 1),
+                    vue.createElementVNode("span", _hoisted_8$6, vue.toDisplayString(uniquePostCount.value), 1)
+                  ]),
+                  _cache[2] || (_cache[2] = vue.createElementVNode("div", { class: "border-r border-[#38444d] h-7" }, null, -1)),
+                  vue.createElementVNode("div", null, [
+                    vue.createElementVNode("span", _hoisted_9$6, vue.toDisplayString(vue.unref(t2)("confirmed")), 1),
+                    vue.createElementVNode("span", _hoisted_10$5, vue.toDisplayString(confirmedCount.value), 1)
+                  ])
+                ]),
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(history), (entry) => {
                   return vue.openBlock(), vue.createElementBlock("div", {
-                    key: entry.id,
+                    key: `${entry.tweetId}:${entry.id}`,
                     class: vue.normalizeClass(["rounded-xl border p-4", entry.confirmed ? "bg-[#1e2d3d] border-[#38444d]" : "bg-[#1e2d3d]/50 border-[#38444d]/50 opacity-70"])
                   }, [
-                    vue.createElementVNode("div", _hoisted_4$5, [
-                      vue.createElementVNode("div", _hoisted_5$5, [
+                    vue.createElementVNode("div", _hoisted_11$5, [
+                      vue.createElementVNode("div", _hoisted_12$5, [
                         vue.createElementVNode("button", {
                           class: vue.normalizeClass(["xd-btn text-xs px-2 py-0.5", entry.confirmed ? "xd-btn-success" : "xd-btn-secondary"]),
-                          onClick: ($event) => vue.unref(toggleConfirm)(entry.id)
-                        }, vue.toDisplayString(entry.confirmed ? vue.unref(t2)("confirmed") : vue.unref(t2)("testDraw")), 11, _hoisted_6$5),
-                        vue.createElementVNode("span", _hoisted_7$5, vue.toDisplayString(vue.unref(formatDateTime)(entry.timestamp)), 1),
-                        _cache[1] || (_cache[1] = vue.createElementVNode("span", { class: "text-[#71767b]" }, "·", -1)),
-                        vue.createElementVNode("span", _hoisted_8$5, vue.toDisplayString(vue.unref(t2)("participants")) + ": " + vue.toDisplayString(entry.totalParticipants), 1)
+                          onClick: ($event) => vue.unref(toggleConfirm)(entry.id, entry.tweetId)
+                        }, vue.toDisplayString(entry.confirmed ? vue.unref(t2)("confirmed") : vue.unref(t2)("testDraw")), 11, _hoisted_13$4),
+                        vue.createElementVNode("span", _hoisted_14$4, vue.toDisplayString(vue.unref(formatDateTime)(entry.timestamp)), 1),
+                        _cache[3] || (_cache[3] = vue.createElementVNode("span", { class: "text-[#71767b]" }, "·", -1)),
+                        vue.createElementVNode("span", _hoisted_15$4, vue.toDisplayString(vue.unref(t2)("participants")) + ": " + vue.toDisplayString(entry.totalParticipants), 1),
+                        entry.tweetId ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16$3, vue.toDisplayString(vue.unref(t2)("post")) + ": " + vue.toDisplayString(entry.tweetId), 1)) : vue.createCommentVNode("", true)
                       ]),
-                      vue.createElementVNode("div", _hoisted_9$5, [
+                      vue.createElementVNode("div", _hoisted_17$2, [
                         vue.createElementVNode("a", {
                           href: entry.tweetUrl,
                           target: "_blank",
                           class: "text-[#1d9bf0] text-sm hover:underline"
-                        }, vue.toDisplayString(vue.unref(t2)("viewTweet")), 9, _hoisted_10$4),
+                        }, vue.toDisplayString(vue.unref(t2)("viewTweet")), 9, _hoisted_18$2),
                         vue.createElementVNode("button", {
                           class: "xd-btn-icon text-sm",
-                          onClick: ($event) => vue.unref(removeEntry)(entry.id)
-                        }, "×", 8, _hoisted_11$4)
+                          onClick: ($event) => vue.unref(removeEntry)(entry.id, entry.tweetId)
+                        }, "×", 8, _hoisted_19$2)
                       ])
                     ]),
-                    vue.createElementVNode("div", _hoisted_12$4, [
-                      entry.filters.retweet ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_13$3, vue.toDisplayString(vue.unref(t2)("hasRetweeted")), 1)) : vue.createCommentVNode("", true),
-                      entry.filters.like ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_14$3, vue.toDisplayString(vue.unref(t2)("hasLiked")), 1)) : vue.createCommentVNode("", true),
-                      entry.filters.quote ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15$2, vue.toDisplayString(vue.unref(t2)("hasQuoted")), 1)) : vue.createCommentVNode("", true),
-                      entry.filters.followed_by ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16$2, vue.toDisplayString(vue.unref(t2)("followingMe")), 1)) : vue.createCommentVNode("", true)
+                    vue.createElementVNode("div", _hoisted_20$2, [
+                      entry.filters?.retweet ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_21$2, vue.toDisplayString(vue.unref(t2)("hasRetweeted")), 1)) : vue.createCommentVNode("", true),
+                      entry.filters?.like ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_22$2, vue.toDisplayString(vue.unref(t2)("hasLiked")), 1)) : vue.createCommentVNode("", true),
+                      entry.filters?.quote ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_23$2, vue.toDisplayString(vue.unref(t2)("hasQuoted")), 1)) : vue.createCommentVNode("", true),
+                      entry.filters?.reply ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_24$2, vue.toDisplayString(vue.unref(t2)("hasReplied")), 1)) : vue.createCommentVNode("", true),
+                      entry.filters?.followed_by ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_25$2, vue.toDisplayString(vue.unref(t2)("followingMe")), 1)) : vue.createCommentVNode("", true)
                     ]),
-                    vue.createElementVNode("div", _hoisted_17$2, vue.toDisplayString(vue.unref(t2)("winnersLabel")) + " (" + vue.toDisplayString(entry.winners.length) + ")", 1),
-                    vue.createElementVNode("div", _hoisted_18$2, [
+                    vue.createElementVNode("div", _hoisted_26$2, vue.toDisplayString(vue.unref(t2)("winnersLabel")) + " (" + vue.toDisplayString(entry.winners.length) + ")", 1),
+                    vue.createElementVNode("div", _hoisted_27$2, [
                       (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(entry.winners, (winner) => {
                         return vue.openBlock(), vue.createElementBlock("a", {
                           key: winner.handle,
@@ -1807,9 +2330,9 @@
                             src: winner.avatarUrl,
                             alt: winner.username,
                             class: "w-6 h-6 rounded-full"
-                          }, null, 8, _hoisted_20$2),
-                          vue.createElementVNode("span", _hoisted_21$2, "@" + vue.toDisplayString(winner.handle), 1)
-                        ], 8, _hoisted_19$2);
+                          }, null, 8, _hoisted_29$2),
+                          vue.createElementVNode("span", _hoisted_30$2, "@" + vue.toDisplayString(winner.handle), 1)
+                        ], 8, _hoisted_28$2);
                       }), 128))
                     ])
                   ], 2);
@@ -2662,8 +3185,8 @@
     }
     return { templates, activeId, active, setActive, add, remove, update };
   }
-  const _hoisted_1$6 = ["d"];
-  const _sfc_main$8 = vue.defineComponent({
+  const _hoisted_1$7 = ["d"];
+  const _sfc_main$9 = vue.defineComponent({
     __name: "InteractionIcon",
     props: {
       type: {},
@@ -2674,12 +3197,14 @@
         retweet: "M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z",
         like: "M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z",
         quote: "M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L4.41 15.51V19h3.49l11.24-11.242c.2-.195.2-.513 0-.707l-3.38-3.378-.41.595zm-1.42 1.42l3.38 3.378-1.42 1.414-3.38-3.378 1.42-1.414z",
+        reply: "M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z",
         follow: "M12 11.816c1.355 0 2.872-.15 3.84-1.256.814-.93 1.078-2.368.806-4.392-.38-2.825-2.117-4.512-4.646-4.512S7.734 3.343 7.354 6.168c-.272 2.024-.008 3.462.806 4.392.968 1.107 2.485 1.256 3.84 1.256zm-3.16-5.448c.162-1.2.787-3.212 3.16-3.212s2.998 2.013 3.16 3.212c.207 1.55.057 2.627-.45 3.205-.455.52-1.266.743-2.71.743s-2.255-.223-2.71-.743c-.507-.578-.657-1.656-.45-3.205zm11.44 12.868c-.877-3.526-4.282-5.99-8.28-5.99s-7.403 2.464-8.28 5.99c-.172.692-.028 1.4.395 1.94.408.52 1.04.82 1.733.82h12.304c.693 0 1.325-.3 1.733-.82.424-.54.567-1.247.394-1.94zm-1.576 1.016c-.126.16-.316.246-.552.246H5.848c-.235 0-.426-.086-.552-.246-.137-.174-.18-.412-.12-.654.71-2.855 3.517-4.85 6.824-4.85s6.114 1.994 6.824 4.85c.06.242.017.48-.12.654z"
       };
       const COLORS = {
         retweet: "text-[#00ba7c]",
         like: "text-[#f91880]",
         quote: "text-[#ff7a00]",
+        reply: "text-[#1d9bf0]",
         follow: "text-[#1d9bf0]"
       };
       return (_ctx, _cache) => {
@@ -2690,12 +3215,12 @@
         }, [
           vue.createElementVNode("path", {
             d: PATHS[__props.type]
-          }, null, 8, _hoisted_1$6)
+          }, null, 8, _hoisted_1$7)
         ], 2);
       };
     }
   });
-  const _sfc_main$7 = vue.defineComponent({
+  const _sfc_main$8 = vue.defineComponent({
     __name: "InteractionBadge",
     props: {
       type: {},
@@ -2707,13 +3232,14 @@
         retweet: "xd-badge-green",
         like: "xd-badge-pink",
         quote: "xd-badge-orange",
+        reply: "xd-badge-blue",
         follow: "xd-badge-blue"
       };
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("span", {
           class: vue.normalizeClass(["xd-badge", BADGE_VARIANTS[__props.type]])
         }, [
-          vue.createVNode(_sfc_main$8, {
+          vue.createVNode(_sfc_main$9, {
             type: __props.type,
             size: __props.iconSize ?? "w-3.5 h-3.5"
           }, null, 8, ["type", "size"]),
@@ -2724,28 +3250,38 @@
       };
     }
   });
-  const _hoisted_1$5 = { class: "flex items-start gap-3 mb-2" };
-  const _hoisted_2$4 = ["src", "alt"];
-  const _hoisted_3$4 = { class: "min-w-0" };
-  const _hoisted_4$4 = { class: "text-white font-bold truncate" };
-  const _hoisted_5$4 = { class: "text-[#71767b] text-sm" };
-  const _hoisted_6$4 = { class: "flex gap-4 text-sm text-[#71767b]" };
-  const _hoisted_7$4 = { class: "text-white font-bold" };
-  const _hoisted_8$4 = { class: "text-white font-bold" };
-  const _hoisted_9$4 = {
+  const _hoisted_1$6 = { class: "flex items-start gap-3 mb-2" };
+  const _hoisted_2$5 = ["src", "alt"];
+  const _hoisted_3$5 = { class: "min-w-0" };
+  const _hoisted_4$5 = { class: "text-white font-bold truncate" };
+  const _hoisted_5$5 = { class: "text-[#71767b] text-sm" };
+  const _hoisted_6$5 = { class: "flex gap-4 text-sm text-[#71767b]" };
+  const _hoisted_7$5 = { class: "text-white font-bold" };
+  const _hoisted_8$5 = { class: "text-white font-bold" };
+  const _hoisted_9$5 = {
     key: 1,
     class: "animate-pulse"
   };
-  const _hoisted_10$3 = {
+  const _hoisted_10$4 = {
     key: 0,
     class: "text-[#e7e9ea] text-sm leading-relaxed mt-1"
   };
-  const _hoisted_11$3 = {
+  const _hoisted_11$4 = {
     key: 1,
     class: "text-[#71767b] text-sm italic mt-1"
   };
-  const _hoisted_12$3 = { class: "flex gap-2 mt-2 flex-wrap" };
-  const _sfc_main$6 = vue.defineComponent({
+  const _hoisted_12$4 = { class: "flex gap-2 mt-2 flex-wrap" };
+  const _hoisted_13$3 = {
+    key: 2,
+    class: "mt-2.5 pt-2 border-t border-[#38444d]/60 text-xs"
+  };
+  const _hoisted_14$3 = { class: "text-[#71767b] mb-1 flex items-center justify-between" };
+  const _hoisted_15$3 = {
+    key: 0,
+    class: "text-[10px] text-[#1d9bf0] font-medium"
+  };
+  const _hoisted_16$2 = { class: "text-[#e7e9ea] line-clamp-2 italic" };
+  const _sfc_main$7 = vue.defineComponent({
     __name: "UserTooltip",
     props: {
       user: {},
@@ -2759,95 +3295,113 @@
           class: "fixed z-[10003] w-72 bg-[#1e2d3d] border border-[#38444d] rounded-xl shadow-xl p-4 pointer-events-none",
           style: vue.normalizeStyle({ left: __props.x + "px", top: __props.y - 8 + "px", transform: "translate(-50%, -100%)" })
         }, [
-          vue.createElementVNode("div", _hoisted_1$5, [
+          vue.createElementVNode("div", _hoisted_1$6, [
             vue.createElementVNode("img", {
               src: __props.user.avatarUrl,
               alt: __props.user.username,
               class: "w-12 h-12 rounded-full shrink-0"
-            }, null, 8, _hoisted_2$4),
-            vue.createElementVNode("div", _hoisted_3$4, [
-              vue.createElementVNode("div", _hoisted_4$4, vue.toDisplayString(__props.user.username), 1),
-              vue.createElementVNode("div", _hoisted_5$4, "@" + vue.toDisplayString(__props.user.handle), 1)
+            }, null, 8, _hoisted_2$5),
+            vue.createElementVNode("div", _hoisted_3$5, [
+              vue.createElementVNode("div", _hoisted_4$5, vue.toDisplayString(__props.user.username), 1),
+              vue.createElementVNode("div", _hoisted_5$5, "@" + vue.toDisplayString(__props.user.handle), 1)
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_6$4, [
+          vue.createElementVNode("div", _hoisted_6$5, [
             __props.user.profileLoaded ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 0 }, [
               vue.createElementVNode("span", null, [
-                vue.createElementVNode("span", _hoisted_7$4, vue.toDisplayString(__props.user.followingCount.toLocaleString()), 1),
+                vue.createElementVNode("span", _hoisted_7$5, vue.toDisplayString(__props.user.followingCount.toLocaleString()), 1),
                 vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followingLabel")), 1)
               ]),
               vue.createElementVNode("span", null, [
-                vue.createElementVNode("span", _hoisted_8$4, vue.toDisplayString(__props.user.followersCount.toLocaleString()), 1),
+                vue.createElementVNode("span", _hoisted_8$5, vue.toDisplayString(__props.user.followersCount.toLocaleString()), 1),
                 vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("followers")), 1)
               ])
-            ], 64)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_9$4, vue.toDisplayString(vue.unref(t2)("loadingProfile")), 1))
+            ], 64)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_9$5, vue.toDisplayString(vue.unref(t2)("loadingProfile")), 1))
           ]),
-          __props.user.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_10$3, vue.toDisplayString(__props.user.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_11$3, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
-          vue.createElementVNode("div", _hoisted_12$3, [
-            __props.user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+          __props.user.bio ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_10$4, vue.toDisplayString(__props.user.bio), 1)) : (vue.openBlock(), vue.createElementBlock("p", _hoisted_11$4, vue.toDisplayString(vue.unref(t2)("noBio")), 1)),
+          vue.createElementVNode("div", _hoisted_12$4, [
+            __props.user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
               key: 0,
               type: "retweet",
               label: vue.unref(t2)("retweetType")
             }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-            __props.user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+            __props.user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
               key: 1,
               type: "like",
               label: vue.unref(t2)("likeType")
             }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-            __props.user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+            __props.user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
               key: 2,
               type: "quote",
               label: vue.unref(t2)("quoteType")
             }, null, 8, ["label"])) : vue.createCommentVNode("", true),
-            __props.user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+            __props.user.hasReply ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
               key: 3,
+              type: "reply",
+              label: vue.unref(t2)("replyType")
+            }, null, 8, ["label"])) : vue.createCommentVNode("", true),
+            __props.user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
+              key: 4,
               type: "follow",
               label: vue.unref(t2)("followingYou")
             }, null, 8, ["label"])) : vue.createCommentVNode("", true)
-          ])
+          ]),
+          __props.user.replyComments && __props.user.replyComments.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_13$3, [
+            vue.createElementVNode("div", _hoisted_14$3, [
+              vue.createElementVNode("span", null, vue.toDisplayString(vue.unref(t2)("comment")), 1),
+              __props.user.replyComments.length > 1 ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15$3, vue.toDisplayString(__props.user.replyComments.length) + " " + vue.toDisplayString(vue.unref(t2)("comments")), 1)) : vue.createCommentVNode("", true)
+            ]),
+            vue.createElementVNode("p", _hoisted_16$2, ' "' + vue.toDisplayString(__props.user.replyComments[0].text) + '" ', 1)
+          ])) : vue.createCommentVNode("", true)
         ], 4);
       };
     }
   });
-  const _hoisted_1$4 = { class: "flex-1 overflow-auto min-h-0" };
-  const _hoisted_2$3 = { class: "px-4 py-4" };
-  const _hoisted_3$3 = { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "12px" } };
-  const _hoisted_4$3 = ["src", "alt", "onMouseenter", "onClick"];
-  const _hoisted_5$3 = { class: "text-center min-w-0 w-full" };
-  const _hoisted_6$3 = { class: "text-white font-medium text-sm truncate" };
-  const _hoisted_7$3 = { class: "text-[#71767b] text-xs truncate" };
-  const _hoisted_8$3 = { class: "flex gap-1" };
-  const _hoisted_9$3 = { class: "px-4 py-3 flex items-center justify-between border-t border-[#38444d]" };
-  const _hoisted_10$2 = { class: "flex items-center gap-2" };
-  const _hoisted_11$2 = ["value"];
-  const _hoisted_12$2 = ["value"];
-  const _hoisted_13$2 = ["title"];
-  const _hoisted_14$2 = { class: "flex gap-2" };
-  const _hoisted_15$1 = { class: "flex-1 overflow-auto min-h-0 p-4 space-y-4" };
-  const _hoisted_16$1 = { class: "flex items-center gap-2" };
-  const _hoisted_17$1 = ["value"];
-  const _hoisted_18$1 = ["value"];
-  const _hoisted_19$1 = ["title"];
-  const _hoisted_20$1 = ["title"];
+  const _hoisted_1$5 = { class: "flex-1 overflow-auto min-h-0" };
+  const _hoisted_2$4 = {
+    key: 0,
+    class: "px-4 pt-4 pb-0 flex gap-1.5 flex-wrap"
+  };
+  const _hoisted_3$4 = { class: "px-4 py-4" };
+  const _hoisted_4$4 = { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "12px" } };
+  const _hoisted_5$4 = ["src", "alt", "onMouseenter", "onClick"];
+  const _hoisted_6$4 = { class: "text-center min-w-0 w-full" };
+  const _hoisted_7$4 = { class: "text-white font-medium text-sm truncate" };
+  const _hoisted_8$4 = { class: "text-[#71767b] text-xs truncate" };
+  const _hoisted_9$4 = ["title"];
+  const _hoisted_10$3 = { class: "flex gap-1" };
+  const _hoisted_11$3 = { class: "px-4 py-3 flex items-center justify-between border-t border-[#38444d]" };
+  const _hoisted_12$3 = { class: "flex items-center gap-2" };
+  const _hoisted_13$2 = ["value"];
+  const _hoisted_14$2 = ["value"];
+  const _hoisted_15$2 = ["title"];
+  const _hoisted_16$1 = { class: "flex gap-2" };
+  const _hoisted_17$1 = { class: "flex-1 overflow-auto min-h-0 p-4 space-y-4" };
+  const _hoisted_18$1 = { class: "flex items-center gap-2" };
+  const _hoisted_19$1 = ["value"];
+  const _hoisted_20$1 = ["value"];
   const _hoisted_21$1 = ["title"];
-  const _hoisted_22$1 = { class: "bg-[#273340] rounded-xl p-3" };
-  const _hoisted_23$1 = { class: "flex items-center justify-between mb-2" };
-  const _hoisted_24$1 = { class: "text-xs text-[#71767b] font-medium" };
-  const _hoisted_25$1 = ["value"];
-  const _hoisted_26$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
-  const _hoisted_27$1 = { class: "opacity-60" };
-  const _hoisted_28$1 = { class: "text-[#e7e9ea] ml-1" };
-  const _hoisted_29$1 = { class: "bg-[#273340] rounded-xl p-3" };
-  const _hoisted_30$1 = { class: "flex items-center justify-between mb-2" };
-  const _hoisted_31$1 = { class: "text-xs text-[#71767b] font-medium" };
-  const _hoisted_32$1 = ["value"];
-  const _hoisted_33$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
-  const _hoisted_34$1 = { class: "opacity-60" };
-  const _hoisted_35$1 = { class: "text-[#e7e9ea] ml-1" };
-  const _sfc_main$5 = vue.defineComponent({
+  const _hoisted_22$1 = ["title"];
+  const _hoisted_23$1 = ["title"];
+  const _hoisted_24$1 = { class: "bg-[#273340] rounded-xl p-3" };
+  const _hoisted_25$1 = { class: "flex items-center justify-between mb-2" };
+  const _hoisted_26$1 = { class: "text-xs text-[#71767b] font-medium" };
+  const _hoisted_27$1 = ["value"];
+  const _hoisted_28$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
+  const _hoisted_29$1 = { class: "opacity-60" };
+  const _hoisted_30$1 = { class: "text-[#e7e9ea] ml-1" };
+  const _hoisted_31$1 = { class: "bg-[#273340] rounded-xl p-3" };
+  const _hoisted_32$1 = { class: "flex items-center justify-between mb-2" };
+  const _hoisted_33$1 = { class: "text-xs text-[#71767b] font-medium" };
+  const _hoisted_34$1 = ["value"];
+  const _hoisted_35$1 = { class: "mt-2 text-xs text-[#71767b] bg-[#15202b] rounded-lg p-2 break-words whitespace-pre-wrap" };
+  const _hoisted_36$1 = { class: "opacity-60" };
+  const _hoisted_37$1 = { class: "text-[#e7e9ea] ml-1" };
+  const _sfc_main$6 = vue.defineComponent({
     __name: "DrawResult",
     props: {
-      winners: {}
+      winners: {},
+      filters: {}
     },
     emits: ["close"],
     setup(__props, { emit: __emit }) {
@@ -2863,6 +3417,16 @@
       const nameInput = vue.ref("");
       const hoveredUser = vue.ref(null);
       const tooltipPos = vue.ref({ x: 0, y: 0 });
+      const activeFilters = vue.computed(() => {
+        if (!props.filters) return [];
+        const list = [];
+        if (props.filters.retweet) list.push({ key: "retweet", label: t2("hasRetweeted"), badgeClass: "xd-badge-green" });
+        if (props.filters.like) list.push({ key: "like", label: t2("hasLiked"), badgeClass: "xd-badge-pink" });
+        if (props.filters.quote) list.push({ key: "quote", label: t2("hasQuoted"), badgeClass: "xd-badge-orange" });
+        if (props.filters.reply) list.push({ key: "reply", label: t2("hasReplied"), badgeClass: "xd-badge-blue" });
+        if (props.filters.followed_by) list.push({ key: "followed_by", label: t2("followingMe"), badgeClass: "xd-badge-blue" });
+        return list;
+      });
       function getTweetUrl() {
         const tweetId = getTweetIdFromUrl();
         return tweetId ? window.location.href.split("?")[0] : "";
@@ -2942,15 +3506,15 @@
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(_sfc_main$b, {
+          vue.createVNode(_sfc_main$c, {
             title: vue.unref(t2)("drawResult"),
             "max-width": "700px",
             "z-index": 10001,
             onClose: _cache[3] || (_cache[3] = ($event) => emit("close"))
           }, {
             footer: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_9$3, [
-                vue.createElementVNode("div", _hoisted_10$2, [
+              vue.createElementVNode("div", _hoisted_11$3, [
+                vue.createElementVNode("div", _hoisted_12$3, [
                   vue.createElementVNode("select", {
                     class: "xd-select text-xs",
                     value: vue.unref(tpl).activeId.value,
@@ -2960,9 +3524,9 @@
                       return vue.openBlock(), vue.createElementBlock("option", {
                         key: item.id,
                         value: item.id
-                      }, vue.toDisplayString(item.name), 9, _hoisted_12$2);
+                      }, vue.toDisplayString(item.name), 9, _hoisted_14$2);
                     }), 128))
-                  ], 40, _hoisted_11$2),
+                  ], 40, _hoisted_13$2),
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon text-[#71767b] hover:text-[#1d9bf0]",
                     title: vue.unref(t2)("editTemplate"),
@@ -2978,9 +3542,9 @@
                       vue.createElementVNode("path", { d: "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" }),
                       vue.createElementVNode("path", { d: "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" })
                     ], -1)
-                  ])], 8, _hoisted_13$2)
+                  ])], 8, _hoisted_15$2)
                 ]),
-                vue.createElementVNode("div", _hoisted_14$2, [
+                vue.createElementVNode("div", _hoisted_16$1, [
                   vue.createElementVNode("button", {
                     class: "xd-btn xd-btn-secondary text-sm",
                     onClick: takeScreenshot
@@ -3011,13 +3575,21 @@
               ])
             ]),
             default: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_1$4, [
+              vue.createElementVNode("div", _hoisted_1$5, [
                 vue.createElementVNode("div", {
                   ref_key: "captureRef",
                   ref: captureRef
                 }, [
-                  vue.createElementVNode("div", _hoisted_2$3, [
-                    vue.createElementVNode("div", _hoisted_3$3, [
+                  activeFilters.value.length ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$4, [
+                    (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(activeFilters.value, (item) => {
+                      return vue.openBlock(), vue.createElementBlock("span", {
+                        key: item.key,
+                        class: vue.normalizeClass(["xd-badge", item.badgeClass])
+                      }, vue.toDisplayString(item.label), 3);
+                    }), 128))
+                  ])) : vue.createCommentVNode("", true),
+                  vue.createElementVNode("div", _hoisted_3$4, [
+                    vue.createElementVNode("div", _hoisted_4$4, [
                       (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(__props.winners, (user) => {
                         return vue.openBlock(), vue.createElementBlock("div", {
                           key: user.handle,
@@ -3030,29 +3602,39 @@
                             onMouseenter: ($event) => onAvatarEnter(user, $event),
                             onMouseleave: _cache[0] || (_cache[0] = ($event) => hoveredUser.value = null),
                             onClick: ($event) => onAvatarClick(user)
-                          }, null, 40, _hoisted_4$3),
-                          vue.createElementVNode("div", _hoisted_5$3, [
-                            vue.createElementVNode("div", _hoisted_6$3, vue.toDisplayString(user.username), 1),
-                            vue.createElementVNode("div", _hoisted_7$3, "@" + vue.toDisplayString(user.handle), 1)
+                          }, null, 40, _hoisted_5$4),
+                          vue.createElementVNode("div", _hoisted_6$4, [
+                            vue.createElementVNode("div", _hoisted_7$4, vue.toDisplayString(user.username), 1),
+                            vue.createElementVNode("div", _hoisted_8$4, "@" + vue.toDisplayString(user.handle), 1),
+                            user.replyComments && user.replyComments.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", {
+                              key: 0,
+                              class: "text-[11px] text-[#71767b] truncate italic mt-0.5 px-1",
+                              title: user.replyComments[0].text
+                            }, ' "' + vue.toDisplayString(user.replyComments[0].text) + '" ', 9, _hoisted_9$4)) : vue.createCommentVNode("", true)
                           ]),
-                          vue.createElementVNode("div", _hoisted_8$3, [
-                            user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                          vue.createElementVNode("div", _hoisted_10$3, [
+                            user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
                               key: 0,
                               type: "retweet",
                               "icon-size": "w-3 h-3"
                             })) : vue.createCommentVNode("", true),
-                            user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                            user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
                               key: 1,
                               type: "like",
                               "icon-size": "w-3 h-3"
                             })) : vue.createCommentVNode("", true),
-                            user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                            user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
                               key: 2,
                               type: "quote",
                               "icon-size": "w-3 h-3"
                             })) : vue.createCommentVNode("", true),
-                            user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+                            user.hasReply ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
                               key: 3,
+                              type: "reply",
+                              "icon-size": "w-3 h-3"
+                            })) : vue.createCommentVNode("", true),
+                            user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$8, {
+                              key: 4,
                               type: "follow",
                               "icon-size": "w-3 h-3"
                             })) : vue.createCommentVNode("", true)
@@ -3066,7 +3648,7 @@
             ]),
             _: 1
           }, 8, ["title"]),
-          showTemplateEditor.value ? (vue.openBlock(), vue.createBlock(_sfc_main$b, {
+          showTemplateEditor.value ? (vue.openBlock(), vue.createBlock(_sfc_main$c, {
             key: 0,
             title: vue.unref(t2)("editTemplate"),
             "max-width": "520px",
@@ -3074,8 +3656,8 @@
             onClose: _cache[8] || (_cache[8] = ($event) => showTemplateEditor.value = false)
           }, {
             default: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_15$1, [
-                vue.createElementVNode("div", _hoisted_16$1, [
+              vue.createElementVNode("div", _hoisted_17$1, [
+                vue.createElementVNode("div", _hoisted_18$1, [
                   vue.createElementVNode("select", {
                     class: "xd-select text-sm flex-1",
                     value: vue.unref(tpl).activeId.value,
@@ -3085,9 +3667,9 @@
                       return vue.openBlock(), vue.createElementBlock("option", {
                         key: item.id,
                         value: item.id
-                      }, vue.toDisplayString(item.name), 9, _hoisted_18$1);
+                      }, vue.toDisplayString(item.name), 9, _hoisted_20$1);
                     }), 128))
-                  ], 40, _hoisted_17$1),
+                  ], 40, _hoisted_19$1),
                   editingName.value ? vue.withDirectives((vue.openBlock(), vue.createElementBlock("input", {
                     key: 0,
                     "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => nameInput.value = $event),
@@ -3113,7 +3695,7 @@
                       vue.createElementVNode("path", { d: "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" }),
                       vue.createElementVNode("path", { d: "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" })
                     ], -1)
-                  ])], 8, _hoisted_19$1)),
+                  ])], 8, _hoisted_21$1)),
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon text-[#71767b] hover:text-[#00ba7c]",
                     title: vue.unref(t2)("addTemplate"),
@@ -3139,7 +3721,7 @@
                         y2: "12"
                       })
                     ], -1)
-                  ])], 8, _hoisted_20$1),
+                  ])], 8, _hoisted_22$1),
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon text-[#71767b] hover:text-[#f4212e]",
                     title: vue.unref(t2)("deleteTemplate"),
@@ -3156,11 +3738,11 @@
                       vue.createElementVNode("polyline", { points: "3 6 5 6 21 6" }),
                       vue.createElementVNode("path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })
                     ], -1)
-                  ])], 12, _hoisted_21$1)
+                  ])], 12, _hoisted_23$1)
                 ]),
-                vue.createElementVNode("div", _hoisted_22$1, [
-                  vue.createElementVNode("div", _hoisted_23$1, [
-                    vue.createElementVNode("span", _hoisted_24$1, vue.toDisplayString(vue.unref(t2)("dmTemplate")), 1),
+                vue.createElementVNode("div", _hoisted_24$1, [
+                  vue.createElementVNode("div", _hoisted_25$1, [
+                    vue.createElementVNode("span", _hoisted_26$1, vue.toDisplayString(vue.unref(t2)("dmTemplate")), 1),
                     _cache[14] || (_cache[14] = vue.createElementVNode("span", { class: "text-[10px] text-[#71767b] opacity-60 flex gap-2" }, [
                       vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{winner}"),
                       vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{tweet}")
@@ -3171,15 +3753,15 @@
                     class: "xd-input w-full text-sm resize-none",
                     rows: "3",
                     onInput: _cache[6] || (_cache[6] = ($event) => vue.unref(tpl).update(vue.unref(tpl).activeId.value, { dm: $event.target.value }))
-                  }, null, 40, _hoisted_25$1),
-                  vue.createElementVNode("div", _hoisted_26$1, [
-                    vue.createElementVNode("span", _hoisted_27$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
-                    vue.createElementVNode("span", _hoisted_28$1, vue.toDisplayString(dmPreview.value), 1)
+                  }, null, 40, _hoisted_27$1),
+                  vue.createElementVNode("div", _hoisted_28$1, [
+                    vue.createElementVNode("span", _hoisted_29$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
+                    vue.createElementVNode("span", _hoisted_30$1, vue.toDisplayString(dmPreview.value), 1)
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_29$1, [
-                  vue.createElementVNode("div", _hoisted_30$1, [
-                    vue.createElementVNode("span", _hoisted_31$1, vue.toDisplayString(vue.unref(t2)("notifyTemplate")), 1),
+                vue.createElementVNode("div", _hoisted_31$1, [
+                  vue.createElementVNode("div", _hoisted_32$1, [
+                    vue.createElementVNode("span", _hoisted_33$1, vue.toDisplayString(vue.unref(t2)("notifyTemplate")), 1),
                     _cache[15] || (_cache[15] = vue.createElementVNode("span", { class: "text-[10px] text-[#71767b] opacity-60 flex gap-2" }, [
                       vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{winners}"),
                       vue.createElementVNode("code", { class: "bg-[#15202b] px-1 py-0.5 rounded" }, "{tweet}")
@@ -3190,17 +3772,17 @@
                     class: "xd-input w-full text-sm resize-none",
                     rows: "3",
                     onInput: _cache[7] || (_cache[7] = ($event) => vue.unref(tpl).update(vue.unref(tpl).activeId.value, { notify: $event.target.value }))
-                  }, null, 40, _hoisted_32$1),
-                  vue.createElementVNode("div", _hoisted_33$1, [
-                    vue.createElementVNode("span", _hoisted_34$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
-                    vue.createElementVNode("span", _hoisted_35$1, vue.toDisplayString(notifyPreview.value), 1)
+                  }, null, 40, _hoisted_34$1),
+                  vue.createElementVNode("div", _hoisted_35$1, [
+                    vue.createElementVNode("span", _hoisted_36$1, vue.toDisplayString(vue.unref(t2)("preview")) + ":", 1),
+                    vue.createElementVNode("span", _hoisted_37$1, vue.toDisplayString(notifyPreview.value), 1)
                   ])
                 ])
               ])
             ]),
             _: 1
           }, 8, ["title"])) : vue.createCommentVNode("", true),
-          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
             key: 1,
             user: hoveredUser.value,
             x: tooltipPos.value.x,
@@ -3210,28 +3792,29 @@
       };
     }
   });
-  const _hoisted_1$3 = { class: "p-5 space-y-3" };
-  const _hoisted_2$2 = { class: "text-sm text-[#71767b] mb-2" };
-  const _hoisted_3$2 = ["checked", "onChange"];
-  const _hoisted_4$2 = { class: "text-[#e7e9ea] text-sm" };
-  const _hoisted_5$2 = { class: "px-5 pb-2" };
-  const _hoisted_6$2 = { class: "text-[#e7e9ea] text-sm" };
-  const _hoisted_7$2 = { class: "px-5 pb-4 flex items-center justify-between" };
-  const _hoisted_8$2 = { class: "text-sm text-[#71767b]" };
-  const _hoisted_9$2 = { class: "text-white font-bold" };
-  const _hoisted_10$1 = { class: "flex items-center gap-2" };
-  const _hoisted_11$1 = { class: "text-sm text-[#71767b]" };
-  const _hoisted_12$1 = { class: "text-sm text-[#71767b]" };
-  const _hoisted_13$1 = { class: "px-5 py-4 flex justify-between" };
-  const _hoisted_14$1 = { key: 1 };
-  const _sfc_main$4 = vue.defineComponent({
+  const _hoisted_1$4 = { class: "p-5 space-y-3" };
+  const _hoisted_2$3 = { class: "text-sm text-[#71767b] mb-2" };
+  const _hoisted_3$3 = ["checked", "onChange"];
+  const _hoisted_4$3 = { class: "text-[#e7e9ea] text-sm flex-1" };
+  const _hoisted_5$3 = ["title"];
+  const _hoisted_6$3 = { class: "px-5 pb-2" };
+  const _hoisted_7$3 = { class: "text-[#e7e9ea] text-sm" };
+  const _hoisted_8$3 = { class: "px-5 pb-4 flex items-center justify-between" };
+  const _hoisted_9$3 = { class: "text-sm text-[#71767b]" };
+  const _hoisted_10$2 = { class: "text-white font-bold" };
+  const _hoisted_11$2 = { class: "flex items-center gap-2" };
+  const _hoisted_12$2 = { class: "text-sm text-[#71767b]" };
+  const _hoisted_13$1 = { class: "text-sm text-[#71767b]" };
+  const _hoisted_14$1 = { class: "px-5 py-4 flex justify-between" };
+  const _hoisted_15$1 = { key: 1 };
+  const _sfc_main$5 = vue.defineComponent({
     __name: "DrawSettings",
     emits: ["close", "draw"],
     setup(__props, { emit: __emit }) {
       const emit = __emit;
       const { t: t2 } = useI18n();
       const drawData = useDrawData();
-      const { history } = useDrawHistory(drawData.lastTweetId);
+      const { history, confirmedWinnerKeys } = useDrawHistory(drawData.lastTweetId);
       const { show: showToast } = useToast();
       const excludePastWinners = vue.ref(false);
       const showLastResult = vue.ref(false);
@@ -3245,21 +3828,21 @@
         { key: "retweet", icon: "retweet" },
         { key: "like", icon: "like" },
         { key: "quote", icon: "quote" },
+        { key: "reply", icon: "reply" },
         { key: "followed_by", icon: "follow" }
       ];
       function getFilterLabel(key) {
         if (key === "retweet") return t2("hasRetweeted");
         if (key === "like") return t2("hasLiked");
         if (key === "quote") return t2("hasQuoted");
+        if (key === "reply") return t2("hasReplied");
         return t2("followingMe");
       }
       const qualifiedCount = vue.computed(() => drawData.qualifiedUsers.value.length);
       function handleDraw() {
-        const tweetId = drawData.lastTweetId.value;
-        const exclude = excludePastWinners.value && tweetId ? new Set(
-          history.value.filter((entry) => entry.confirmed && entry.tweetId === tweetId).flatMap((entry) => entry.winners.map((winner) => winner.handle))
-        ) : void 0;
-        const result = drawData.performDraw({ excludeHandles: exclude });
+        const result = drawData.performDraw({
+          excludeWinnerKeys: excludePastWinners.value ? confirmedWinnerKeys.value : void 0
+        });
         if (!result.success) {
           if (result.message === "notEnoughUsers") {
             showToast(t2("notEnoughUsers", { count: String(result.count) }), "error");
@@ -3272,19 +3855,19 @@
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(_sfc_main$b, {
+          vue.createVNode(_sfc_main$c, {
             title: vue.unref(t2)("startDraw"),
             "max-width": "400px",
             "z-index": 10001,
-            onClose: _cache[3] || (_cache[3] = ($event) => emit("close"))
+            onClose: _cache[4] || (_cache[4] = ($event) => emit("close"))
           }, {
             footer: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_13$1, [
+              vue.createElementVNode("div", _hoisted_14$1, [
                 lastWinners.value.length ? (vue.openBlock(), vue.createElementBlock("button", {
                   key: 0,
                   class: "xd-btn xd-btn-secondary text-sm",
-                  onClick: _cache[2] || (_cache[2] = ($event) => showLastResult.value = true)
-                }, vue.toDisplayString(vue.unref(t2)("lastResult")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_14$1)),
+                  onClick: _cache[3] || (_cache[3] = ($event) => showLastResult.value = true)
+                }, vue.toDisplayString(vue.unref(t2)("lastResult")), 1)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_15$1)),
                 vue.createElementVNode("button", {
                   class: "xd-btn xd-btn-primary text-sm",
                   style: vue.normalizeStyle({ opacity: qualifiedCount.value === 0 ? 0.5 : 1 }),
@@ -3293,8 +3876,8 @@
               ])
             ]),
             default: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_1$3, [
-                vue.createElementVNode("div", _hoisted_2$2, vue.toDisplayString(vue.unref(t2)("selectFilters")), 1),
+              vue.createElementVNode("div", _hoisted_1$4, [
+                vue.createElementVNode("div", _hoisted_2$3, vue.toDisplayString(vue.unref(t2)("selectFilters")), 1),
                 (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(filterOptions, (opt) => {
                   return vue.createElementVNode("label", {
                     key: opt.key,
@@ -3305,46 +3888,53 @@
                       checked: vue.unref(drawData).filters.value[opt.key],
                       class: "xd-checkbox",
                       onChange: ($event) => vue.unref(drawData).toggleFilter(opt.key)
-                    }, null, 40, _hoisted_3$2),
-                    vue.createVNode(_sfc_main$8, {
+                    }, null, 40, _hoisted_3$3),
+                    vue.createVNode(_sfc_main$9, {
                       type: opt.icon
                     }, null, 8, ["type"]),
-                    vue.createElementVNode("span", _hoisted_4$2, vue.toDisplayString(getFilterLabel(opt.key)), 1)
+                    vue.createElementVNode("span", _hoisted_4$3, vue.toDisplayString(getFilterLabel(opt.key)), 1),
+                    opt.key === "reply" ? (vue.openBlock(), vue.createElementBlock("span", {
+                      key: 0,
+                      class: "text-[#71767b] hover:text-[#1d9bf0] cursor-help text-xs",
+                      title: vue.unref(t2)("replyNotice"),
+                      onClick: _cache[0] || (_cache[0] = vue.withModifiers(() => {
+                      }, ["stop"]))
+                    }, "ⓘ", 8, _hoisted_5$3)) : vue.createCommentVNode("", true)
                   ], 2);
                 }), 64))
               ]),
-              vue.createElementVNode("div", _hoisted_5$2, [
+              vue.createElementVNode("div", _hoisted_6$3, [
                 vue.createElementVNode("label", {
                   class: vue.normalizeClass(["flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors", excludePastWinners.value ? "bg-[#3d1f00]" : "hover:bg-[#273340]/50"])
                 }, [
                   vue.withDirectives(vue.createElementVNode("input", {
                     type: "checkbox",
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => excludePastWinners.value = $event),
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => excludePastWinners.value = $event),
                     class: "xd-checkbox"
                   }, null, 512), [
                     [vue.vModelCheckbox, excludePastWinners.value]
                   ]),
-                  _cache[5] || (_cache[5] = vue.createElementVNode("svg", {
+                  _cache[6] || (_cache[6] = vue.createElementVNode("svg", {
                     viewBox: "0 0 24 24",
                     class: "w-4 h-4 text-[#ffd700]",
                     fill: "currentColor"
                   }, [
                     vue.createElementVNode("path", { d: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" })
                   ], -1)),
-                  vue.createElementVNode("span", _hoisted_6$2, vue.toDisplayString(vue.unref(t2)("excludePastWinners")), 1)
+                  vue.createElementVNode("span", _hoisted_7$3, vue.toDisplayString(vue.unref(t2)("excludePastWinners")), 1)
                 ], 2)
               ]),
-              vue.createElementVNode("div", _hoisted_7$2, [
-                vue.createElementVNode("div", _hoisted_8$2, [
+              vue.createElementVNode("div", _hoisted_8$3, [
+                vue.createElementVNode("div", _hoisted_9$3, [
                   vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("qualifiedUsers")) + "：", 1),
-                  vue.createElementVNode("span", _hoisted_9$2, vue.toDisplayString(qualifiedCount.value), 1),
+                  vue.createElementVNode("span", _hoisted_10$2, vue.toDisplayString(qualifiedCount.value), 1),
                   vue.createTextVNode(" " + vue.toDisplayString(vue.unref(t2)("people")), 1)
                 ]),
-                vue.createElementVNode("div", _hoisted_10$1, [
-                  vue.createElementVNode("span", _hoisted_11$1, vue.toDisplayString(vue.unref(t2)("draw")), 1),
+                vue.createElementVNode("div", _hoisted_11$2, [
+                  vue.createElementVNode("span", _hoisted_12$2, vue.toDisplayString(vue.unref(t2)("draw")), 1),
                   vue.withDirectives(vue.createElementVNode("input", {
                     type: "number",
-                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => vue.unref(drawData).drawCount.value = $event),
+                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => vue.unref(drawData).drawCount.value = $event),
                     min: "1",
                     class: "xd-input w-16 text-center"
                   }, null, 512), [
@@ -3355,31 +3945,32 @@
                       { number: true }
                     ]
                   ]),
-                  vue.createElementVNode("span", _hoisted_12$1, vue.toDisplayString(vue.unref(t2)("people")), 1)
+                  vue.createElementVNode("span", _hoisted_13$1, vue.toDisplayString(vue.unref(t2)("people")), 1)
                 ])
               ])
             ]),
             _: 1
           }, 8, ["title"]),
-          showLastResult.value ? (vue.openBlock(), vue.createBlock(_sfc_main$5, {
+          showLastResult.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
             key: 0,
             winners: lastWinners.value,
-            onClose: _cache[4] || (_cache[4] = ($event) => showLastResult.value = false)
-          }, null, 8, ["winners"])) : vue.createCommentVNode("", true)
+            filters: lastEntry.value?.filters,
+            onClose: _cache[5] || (_cache[5] = ($event) => showLastResult.value = false)
+          }, null, 8, ["winners", "filters"])) : vue.createCommentVNode("", true)
         ], 64);
       };
     }
   });
-  const _hoisted_1$2 = { class: "flex-1 overflow-auto min-h-0 p-5 space-y-6" };
-  const _hoisted_2$1 = { style: { color: "#e7e9ea", fontWeight: 700, fontSize: "14px", marginBottom: "4px" } };
-  const _hoisted_3$1 = { style: { color: "#71767b", fontSize: "12px", marginBottom: "12px", lineHeight: "1.4" } };
-  const _hoisted_4$1 = { class: "space-y-3" };
-  const _hoisted_5$1 = { style: { color: "#71767b", fontSize: "12px", display: "block", marginBottom: "4px" } };
-  const _hoisted_6$1 = ["onUpdate:modelValue", "placeholder"];
-  const _hoisted_7$1 = { style: { display: "flex", gap: "8px", marginTop: "12px" } };
-  const _hoisted_8$1 = { style: { color: "#e7e9ea", fontWeight: 700, fontSize: "14px", marginBottom: "12px" } };
-  const _hoisted_9$1 = { style: { display: "flex", gap: "8px" } };
-  const _sfc_main$3 = vue.defineComponent({
+  const _hoisted_1$3 = { class: "flex-1 overflow-auto min-h-0 p-5 space-y-6" };
+  const _hoisted_2$2 = { style: { color: "#e7e9ea", fontWeight: 700, fontSize: "14px", marginBottom: "4px" } };
+  const _hoisted_3$2 = { style: { color: "#71767b", fontSize: "12px", marginBottom: "12px", lineHeight: "1.4" } };
+  const _hoisted_4$2 = { class: "space-y-3" };
+  const _hoisted_5$2 = { style: { color: "#71767b", fontSize: "12px", display: "block", marginBottom: "4px" } };
+  const _hoisted_6$2 = ["onUpdate:modelValue", "placeholder"];
+  const _hoisted_7$2 = { style: { display: "flex", gap: "8px", marginTop: "12px" } };
+  const _hoisted_8$2 = { style: { color: "#e7e9ea", fontWeight: 700, fontSize: "14px", marginBottom: "12px" } };
+  const _hoisted_9$2 = { style: { display: "flex", gap: "8px" } };
+  const _sfc_main$4 = vue.defineComponent({
     __name: "Settings",
     props: {
       tweetId: {}
@@ -3395,7 +3986,8 @@
       const endpoints = vue.ref({
         retweeters: extractQueryId(saved.retweeters ?? ""),
         favoriters: extractQueryId(saved.favoriters ?? ""),
-        searchTimeline: extractQueryId(saved.searchTimeline ?? "")
+        searchTimeline: extractQueryId(saved.searchTimeline ?? ""),
+        replies: extractQueryId(saved.replies ?? "")
       });
       function extractQueryId(endpoint) {
         return endpoint.includes("/") ? endpoint.split("/")[0] : endpoint;
@@ -3410,7 +4002,7 @@
         showToast(t2("saved"), "success");
       }
       function handleReset() {
-        endpoints.value = { retweeters: "", favoriters: "", searchTimeline: "" };
+        endpoints.value = { retweeters: "", favoriters: "", searchTimeline: "", replies: "" };
         gmStorage.set(STORAGE_KEYS.CUSTOM_ENDPOINTS, {});
         updateEndpoints({});
         showToast(t2("saved"), "success");
@@ -3443,38 +4035,39 @@
       const ENDPOINT_FIELDS = [
         { key: "retweeters", label: "retweetersEndpoint" },
         { key: "favoriters", label: "favoritersEndpoint" },
-        { key: "searchTimeline", label: "searchEndpoint" }
+        { key: "searchTimeline", label: "searchEndpoint" },
+        { key: "replies", label: "tweetDetailEndpoint" }
       ];
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createBlock(_sfc_main$b, {
+        return vue.openBlock(), vue.createBlock(_sfc_main$c, {
           title: vue.unref(t2)("settings"),
           "max-width": "480px",
           "z-index": 10001,
           onClose: _cache[0] || (_cache[0] = ($event) => emit("close"))
         }, {
           default: vue.withCtx(() => [
-            vue.createElementVNode("div", _hoisted_1$2, [
+            vue.createElementVNode("div", _hoisted_1$3, [
               vue.createElementVNode("div", null, [
-                vue.createElementVNode("h3", _hoisted_2$1, vue.toDisplayString(vue.unref(t2)("apiEndpoints")), 1),
-                vue.createElementVNode("p", _hoisted_3$1, vue.toDisplayString(vue.unref(t2)("apiEndpointsDesc")), 1),
-                vue.createElementVNode("div", _hoisted_4$1, [
+                vue.createElementVNode("h3", _hoisted_2$2, vue.toDisplayString(vue.unref(t2)("apiEndpoints")), 1),
+                vue.createElementVNode("p", _hoisted_3$2, vue.toDisplayString(vue.unref(t2)("apiEndpointsDesc")), 1),
+                vue.createElementVNode("div", _hoisted_4$2, [
                   (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(ENDPOINT_FIELDS, (field) => {
                     return vue.createElementVNode("div", {
                       key: field.key
                     }, [
-                      vue.createElementVNode("label", _hoisted_5$1, vue.toDisplayString(vue.unref(t2)(field.label)), 1),
+                      vue.createElementVNode("label", _hoisted_5$2, vue.toDisplayString(vue.unref(t2)(field.label)), 1),
                       vue.withDirectives(vue.createElementVNode("input", {
                         "onUpdate:modelValue": ($event) => endpoints.value[field.key] = $event,
                         type: "text",
                         class: "xd-input w-full text-sm",
                         placeholder: vue.unref(t2)("autoDetected")
-                      }, null, 8, _hoisted_6$1), [
+                      }, null, 8, _hoisted_6$2), [
                         [vue.vModelText, endpoints.value[field.key]]
                       ])
                     ]);
                   }), 64))
                 ]),
-                vue.createElementVNode("div", _hoisted_7$1, [
+                vue.createElementVNode("div", _hoisted_7$2, [
                   vue.createElementVNode("button", {
                     class: "xd-btn xd-btn-primary text-sm",
                     onClick: handleSave
@@ -3486,8 +4079,8 @@
                 ])
               ]),
               vue.createElementVNode("div", null, [
-                vue.createElementVNode("h3", _hoisted_8$1, vue.toDisplayString(vue.unref(t2)("dataManagement")), 1),
-                vue.createElementVNode("div", _hoisted_9$1, [
+                vue.createElementVNode("h3", _hoisted_8$2, vue.toDisplayString(vue.unref(t2)("dataManagement")), 1),
+                vue.createElementVNode("div", _hoisted_9$2, [
                   vue.createElementVNode("button", {
                     class: "xd-btn xd-btn-secondary text-sm",
                     onClick: handleClearCache
@@ -3506,8 +4099,8 @@
       };
     }
   });
-  const _hoisted_1$1 = { class: "fixed top-4 left-1/2 -translate-x-1/2 z-[99999] flex flex-col gap-2 pointer-events-none" };
-  const _sfc_main$2 = vue.defineComponent({
+  const _hoisted_1$2 = { class: "fixed top-4 left-1/2 -translate-x-1/2 z-[99999] flex flex-col gap-2 pointer-events-none" };
+  const _sfc_main$3 = vue.defineComponent({
     __name: "Toast",
     setup(__props) {
       const { toasts: toasts2 } = useToast();
@@ -3518,7 +4111,7 @@
       };
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createBlock(vue.Teleport, { to: "body" }, [
-          vue.createElementVNode("div", _hoisted_1$1, [
+          vue.createElementVNode("div", _hoisted_1$2, [
             vue.createVNode(vue.TransitionGroup, { name: "toast" }, {
               default: vue.withCtx(() => [
                 (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(vue.unref(toasts2), (toast) => {
@@ -3542,11 +4135,99 @@
     }
     return target;
   };
-  const Toast = _export_sfc(_sfc_main$2, [["__scopeId", "data-v-82edf3f7"]]);
+  const Toast = _export_sfc(_sfc_main$3, [["__scopeId", "data-v-82edf3f7"]]);
+  const _hoisted_1$1 = { class: "px-5 py-3 border-b border-[#38444d] flex items-center justify-between bg-[#192734]/50 shrink-0" };
+  const _hoisted_2$1 = { class: "flex items-center gap-3 min-w-0" };
+  const _hoisted_3$1 = ["src", "alt"];
+  const _hoisted_4$1 = { class: "min-w-0" };
+  const _hoisted_5$1 = { class: "text-white font-bold text-sm truncate" };
+  const _hoisted_6$1 = { class: "text-[#71767b] text-xs truncate" };
+  const _hoisted_7$1 = { class: "text-xs text-[#1d9bf0] font-medium bg-[#1d9bf0]/10 px-2.5 py-1 rounded-full shrink-0" };
+  const _hoisted_8$1 = { class: "flex-1 overflow-auto min-h-0 p-5 space-y-3" };
+  const _hoisted_9$1 = { class: "text-sm text-[#e7e9ea] leading-relaxed break-words whitespace-pre-wrap select-text" };
+  const _hoisted_10$1 = { class: "flex items-center justify-between text-xs text-[#71767b] pt-2 border-t border-[#38444d]/40" };
+  const _hoisted_11$1 = ["href"];
+  const _hoisted_12$1 = {
+    key: 1,
+    class: "text-center py-10 text-sm text-[#71767b]"
+  };
+  const _sfc_main$2 = vue.defineComponent({
+    __name: "UserCommentsModal",
+    props: {
+      user: {}
+    },
+    emits: ["close"],
+    setup(__props, { emit: __emit }) {
+      const emit = __emit;
+      const { t: t2 } = useI18n();
+      function formatCommentDate(dateStr) {
+        if (!dateStr) return "";
+        const parsed = new Date(dateStr).getTime();
+        if (isNaN(parsed)) return dateStr;
+        return formatDateTime(parsed);
+      }
+      return (_ctx, _cache) => {
+        return __props.user ? (vue.openBlock(), vue.createBlock(_sfc_main$c, {
+          key: 0,
+          title: vue.unref(t2)("userReplies", { user: `@${__props.user.handle}` }),
+          "max-width": "560px",
+          "max-height": "620px",
+          "z-index": 10002,
+          onClose: _cache[0] || (_cache[0] = ($event) => emit("close"))
+        }, {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("div", _hoisted_1$1, [
+              vue.createElementVNode("div", _hoisted_2$1, [
+                vue.createElementVNode("img", {
+                  src: __props.user.avatarUrl,
+                  alt: __props.user.username,
+                  class: "w-10 h-10 rounded-full shrink-0"
+                }, null, 8, _hoisted_3$1),
+                vue.createElementVNode("div", _hoisted_4$1, [
+                  vue.createElementVNode("div", _hoisted_5$1, vue.toDisplayString(__props.user.username), 1),
+                  vue.createElementVNode("div", _hoisted_6$1, "@" + vue.toDisplayString(__props.user.handle), 1)
+                ])
+              ]),
+              vue.createElementVNode("span", _hoisted_7$1, vue.toDisplayString(__props.user.replyComments?.length ?? 0) + " " + vue.toDisplayString(vue.unref(t2)("comments")), 1)
+            ]),
+            vue.createElementVNode("div", _hoisted_8$1, [
+              __props.user.replyComments && __props.user.replyComments.length > 0 ? (vue.openBlock(true), vue.createElementBlock(vue.Fragment, { key: 0 }, vue.renderList(__props.user.replyComments, (comment, index) => {
+                return vue.openBlock(), vue.createElementBlock("div", {
+                  key: comment.id || index,
+                  class: "p-4 bg-[#273340] rounded-xl border border-[#38444d]/60 space-y-2 hover:border-[#38444d] transition-colors"
+                }, [
+                  vue.createElementVNode("div", _hoisted_9$1, vue.toDisplayString(comment.text?.trim() ? comment.text : vue.unref(t2)("emptyCommentText")), 1),
+                  vue.createElementVNode("div", _hoisted_10$1, [
+                    vue.createElementVNode("span", null, vue.toDisplayString(formatCommentDate(comment.createdAt)), 1),
+                    comment.url ? (vue.openBlock(), vue.createElementBlock("a", {
+                      key: 0,
+                      href: comment.url,
+                      target: "_blank",
+                      class: "text-[#1d9bf0] hover:underline flex items-center gap-1 font-medium"
+                    }, [
+                      vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("viewOnX")) + " ", 1),
+                      _cache[1] || (_cache[1] = vue.createElementVNode("svg", {
+                        class: "w-3 h-3",
+                        viewBox: "0 0 24 24",
+                        fill: "currentColor"
+                      }, [
+                        vue.createElementVNode("path", { d: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" })
+                      ], -1))
+                    ], 8, _hoisted_11$1)) : vue.createCommentVNode("", true)
+                  ])
+                ]);
+              }), 128)) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_12$1, vue.toDisplayString(vue.unref(t2)("noCommentText")), 1))
+            ])
+          ]),
+          _: 1
+        }, 8, ["title"])) : vue.createCommentVNode("", true);
+      };
+    }
+  });
   const _hoisted_1 = ["value"];
   const _hoisted_2 = ["value"];
   const _hoisted_3 = ["title"];
-  const _hoisted_4 = { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", borderBottom: "1px solid #38444d", flexShrink: 0, overflowX: "auto" } };
+  const _hoisted_4 = { style: { display: "grid", gridTemplateColumns: "repeat(6, 1fr)", borderBottom: "1px solid #38444d", flexShrink: 0, overflowX: "auto" } };
   const _hoisted_5 = { class: "flex flex-col items-center py-3 border-r border-[#38444d]" };
   const _hoisted_6 = { class: "text-xs text-[#71767b]" };
   const _hoisted_7 = { class: "text-xl font-bold text-white" };
@@ -3571,110 +4252,111 @@
     key: 0,
     class: "mt-1 text-[11px] text-[#71767b] flex items-center gap-1"
   };
-  const _hoisted_20 = { class: "flex flex-col items-center py-3" };
-  const _hoisted_21 = { class: "text-xs text-[#71767b]" };
-  const _hoisted_22 = { class: "text-xl font-bold text-[#1d9bf0]" };
-  const _hoisted_23 = {
+  const _hoisted_20 = { class: "flex flex-col items-center py-3 border-r border-[#38444d]" };
+  const _hoisted_21 = { class: "text-xs text-[#71767b] flex items-center gap-1" };
+  const _hoisted_22 = ["title"];
+  const _hoisted_23 = { class: "text-xl font-bold text-[#1d9bf0]" };
+  const _hoisted_24 = {
+    key: 0,
+    class: "mt-1 text-[11px] text-[#71767b] flex items-center gap-1"
+  };
+  const _hoisted_25 = { class: "flex flex-col items-center py-3" };
+  const _hoisted_26 = { class: "text-xs text-[#71767b]" };
+  const _hoisted_27 = { class: "text-xl font-bold text-[#1d9bf0]" };
+  const _hoisted_28 = {
     key: 0,
     class: "px-5 py-2 border-b border-[#f4212e]/40 bg-[#f4212e]/10 text-xs text-[#ff7a85]"
   };
-  const _hoisted_24 = { class: "px-5 py-2.5 border-b border-[#38444d] shrink-0 flex flex-col gap-2" };
-  const _hoisted_25 = { class: "flex items-center justify-between" };
-  const _hoisted_26 = { class: "xd-tab-group" };
-  const _hoisted_27 = ["onClick"];
-  const _hoisted_28 = { class: "ml-1 opacity-60 text-[11px]" };
-  const _hoisted_29 = { class: "flex items-center gap-2" };
-  const _hoisted_30 = { class: "flex items-center gap-2" };
-  const _hoisted_31 = {
+  const _hoisted_29 = { class: "px-5 py-2.5 border-b border-[#38444d] shrink-0 flex flex-col gap-2" };
+  const _hoisted_30 = { class: "flex items-center justify-between" };
+  const _hoisted_31 = { class: "xd-tab-group" };
+  const _hoisted_32 = ["onClick"];
+  const _hoisted_33 = { class: "ml-1 opacity-60 text-[11px]" };
+  const _hoisted_34 = { class: "flex items-center gap-2" };
+  const _hoisted_35 = { class: "flex items-center gap-2" };
+  const _hoisted_36 = {
     class: "flex items-center flex-1",
     style: { background: "#273340", border: "1px solid #38444d", borderRadius: "9999px", padding: "0 12px", gap: "8px" }
   };
-  const _hoisted_32 = {
+  const _hoisted_37 = {
     class: "w-4 h-4 shrink-0",
     style: { color: "#71767b" },
     viewBox: "0 0 24 24",
     fill: "currentColor"
   };
-  const _hoisted_33 = ["placeholder"];
-  const _hoisted_34 = ["title"];
-  const _hoisted_35 = { key: 0 };
-  const _hoisted_36 = { class: "flex-1 overflow-auto min-h-0" };
-  const _hoisted_37 = { class: "w-full text-sm border-collapse" };
-  const _hoisted_38 = { class: "sticky top-0 bg-[#15202b] z-[1]" };
-  const _hoisted_39 = { class: "text-left border-b border-[#38444d]" };
-  const _hoisted_40 = { class: "text-xs opacity-50" };
-  const _hoisted_41 = { class: "text-xs opacity-50" };
-  const _hoisted_42 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_43 = { class: "text-xs opacity-50" };
-  const _hoisted_44 = { class: "inline-flex items-center justify-center gap-1" };
+  const _hoisted_38 = ["placeholder"];
+  const _hoisted_39 = ["title"];
+  const _hoisted_40 = { key: 0 };
+  const _hoisted_41 = { class: "flex-1 overflow-auto min-h-0" };
+  const _hoisted_42 = { class: "w-full text-sm border-collapse" };
+  const _hoisted_43 = { class: "sticky top-0 bg-[#15202b] z-[1]" };
+  const _hoisted_44 = { class: "text-left border-b border-[#38444d]" };
   const _hoisted_45 = { class: "text-xs opacity-50" };
-  const _hoisted_46 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_47 = { class: "text-xs opacity-50" };
-  const _hoisted_48 = { class: "inline-flex items-center justify-center gap-1" };
-  const _hoisted_49 = { class: "text-xs opacity-50" };
-  const _hoisted_50 = { class: "inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium" };
-  const _hoisted_51 = { class: "opacity-50" };
-  const _hoisted_52 = { class: "w-16 px-4 py-2.5 text-center text-[#71767b] font-medium text-xs" };
-  const _hoisted_53 = { class: "w-14 px-4 text-[#71767b]" };
-  const _hoisted_54 = { class: "px-4" };
-  const _hoisted_55 = { class: "flex items-center gap-3" };
-  const _hoisted_56 = ["src", "alt", "onMouseenter"];
-  const _hoisted_57 = ["onClick"];
-  const _hoisted_58 = { class: "w-40 px-4 text-[#71767b] truncate" };
-  const _hoisted_59 = { class: "w-20 px-4 text-center" };
-  const _hoisted_60 = {
-    key: 1,
-    class: "text-[#38444d]"
-  };
-  const _hoisted_61 = { class: "w-20 px-4 text-center" };
-  const _hoisted_62 = {
-    key: 1,
-    class: "text-[#38444d]"
-  };
-  const _hoisted_63 = { class: "w-20 px-4 text-center" };
-  const _hoisted_64 = {
-    key: 1,
-    class: "text-[#38444d]"
-  };
-  const _hoisted_65 = { class: "w-20 px-4 text-center" };
+  const _hoisted_46 = { class: "text-xs opacity-50" };
+  const _hoisted_47 = { class: "w-32 px-3 py-2.5 text-center text-[#71767b] font-medium" };
+  const _hoisted_48 = { class: "px-4 py-2.5 text-left text-[#71767b] font-medium min-w-[200px]" };
+  const _hoisted_49 = { class: "inline-flex items-center justify-center gap-1 text-xs text-[#71767b] font-medium" };
+  const _hoisted_50 = { class: "opacity-50" };
+  const _hoisted_51 = { class: "w-16 px-4 py-2.5 text-center text-[#71767b] font-medium text-xs" };
+  const _hoisted_52 = { class: "w-14 px-4 text-[#71767b]" };
+  const _hoisted_53 = { class: "px-4" };
+  const _hoisted_54 = { class: "flex items-center gap-3" };
+  const _hoisted_55 = ["src", "alt", "onMouseenter"];
+  const _hoisted_56 = ["onClick"];
+  const _hoisted_57 = { class: "w-36 px-4 text-[#71767b] truncate" };
+  const _hoisted_58 = { class: "w-32 px-3 text-center" };
+  const _hoisted_59 = { class: "inline-flex items-center justify-center gap-1 flex-wrap" };
+  const _hoisted_60 = ["title"];
+  const _hoisted_61 = ["title"];
+  const _hoisted_62 = ["title"];
+  const _hoisted_63 = ["title"];
+  const _hoisted_64 = ["title"];
+  const _hoisted_65 = { class: "px-4 py-2 min-w-[200px]" };
   const _hoisted_66 = {
-    key: 1,
+    key: 0,
+    class: "flex items-center gap-2 max-w-[340px]"
+  };
+  const _hoisted_67 = ["title", "onClick"];
+  const _hoisted_68 = ["title", "onClick"];
+  const _hoisted_69 = ["title"];
+  const _hoisted_70 = {
+    key: 2,
     class: "text-[#38444d]"
   };
-  const _hoisted_67 = { class: "w-24 px-4 text-center text-[#71767b] text-xs" };
-  const _hoisted_68 = { class: "w-16 px-4 text-center" };
-  const _hoisted_69 = {
+  const _hoisted_71 = { class: "w-24 px-4 text-center text-[#71767b] text-xs" };
+  const _hoisted_72 = { class: "w-16 px-4 text-center" };
+  const _hoisted_73 = {
     key: 0,
     class: "text-[#ffd700] font-bold text-sm"
   };
-  const _hoisted_70 = {
+  const _hoisted_74 = {
     key: 1,
     class: "text-[#38444d]"
   };
-  const _hoisted_71 = { key: 1 };
-  const _hoisted_72 = {
-    colspan: "9",
+  const _hoisted_75 = { key: 1 };
+  const _hoisted_76 = {
+    colspan: "7",
     class: "text-center py-12 text-[#71767b]"
   };
-  const _hoisted_73 = {
+  const _hoisted_77 = {
     key: 1,
     class: "flex items-center justify-center px-5 py-2.5 border-t border-[#38444d] shrink-0"
   };
-  const _hoisted_74 = { class: "flex items-center gap-1" };
-  const _hoisted_75 = {
+  const _hoisted_78 = { class: "flex items-center gap-1" };
+  const _hoisted_79 = {
     key: 0,
     class: "px-1 text-[#71767b]"
   };
-  const _hoisted_76 = ["onClick"];
-  const _hoisted_77 = { class: "px-5 py-2 flex items-center justify-between text-xs text-[#71767b]" };
-  const _hoisted_78 = { class: "flex items-center gap-2" };
-  const _hoisted_79 = { class: "opacity-60" };
-  const _hoisted_80 = {
+  const _hoisted_80 = ["onClick"];
+  const _hoisted_81 = { class: "px-5 py-2 flex items-center justify-between text-xs text-[#71767b]" };
+  const _hoisted_82 = { class: "flex items-center gap-2" };
+  const _hoisted_83 = { class: "opacity-60" };
+  const _hoisted_84 = {
     key: 0,
     class: "text-[#71767b] cursor-default",
     disabled: ""
   };
-  const _hoisted_81 = {
+  const _hoisted_85 = {
     key: 2,
     class: "text-[#00ba7c] cursor-default"
   };
@@ -3700,6 +4382,7 @@
         { key: "retweet", labelKey: "retweets", statKey: "retweets" },
         { key: "like", labelKey: "likes", statKey: "likes" },
         { key: "quote", labelKey: "quotes", statKey: "quotes" },
+        { key: "reply", labelKey: "replies", statKey: "replies" },
         { key: "followed_by", labelKey: "followingMe", statKey: "followers" }
       ];
       const activeFilter = vue.ref("all");
@@ -3711,6 +4394,7 @@
       const showSettingsPanel = vue.ref(false);
       const winners = vue.ref([]);
       const hoveredUser = vue.ref(null);
+      const selectedCommentUser = vue.ref(null);
       const tooltipPos = vue.ref({ x: 0, y: 0 });
       const sortKey = vue.ref(null);
       const sortDir = vue.ref("asc");
@@ -3729,6 +4413,7 @@
         if (activeFilter.value === "retweet") return users.filter((u) => u.hasRetweet);
         if (activeFilter.value === "like") return users.filter((u) => u.hasLike);
         if (activeFilter.value === "quote") return users.filter((u) => u.hasQuote);
+        if (activeFilter.value === "reply") return users.filter((u) => u.hasReply);
         if (activeFilter.value === "followed_by") return users.filter((u) => u.followed_by);
         return users;
       });
@@ -3748,10 +4433,6 @@
           if (key === "username") return dir * a.username.localeCompare(b.username);
           if (key === "handle") return dir * a.handle.localeCompare(b.handle);
           if (key === "followersCount") return dir * (a.followersCount - b.followersCount);
-          if (key === "retweet") return dir * (Number(!!b.hasRetweet) - Number(!!a.hasRetweet));
-          if (key === "like") return dir * (Number(!!b.hasLike) - Number(!!a.hasLike));
-          if (key === "quote") return dir * (Number(!!b.hasQuote) - Number(!!a.hasQuote));
-          if (key === "followed_by") return dir * (Number(!!b.followed_by) - Number(!!a.followed_by));
           return 0;
         });
       });
@@ -3808,7 +4489,8 @@
       const interactionSourceLabels = {
         retweets: "retweets",
         likes: "likes",
-        quotes: "quotes"
+        quotes: "quotes",
+        replies: "replies"
       };
       function handleRefresh() {
         drawData.fetchInteractionData().then(({ failedSources: failedSources2 }) => {
@@ -3816,7 +4498,7 @@
           const labels = failedSources2.map((source) => t2(interactionSourceLabels[source])).join("、");
           showToast(t2("partialFetchFailed", { sources: labels }), "error", TIMING.TOAST_DURATION * 2);
         }).catch((err) => {
-          if (err instanceof DOMException && err.name === "AbortError") return;
+          if (err?.name === "AbortError" || err?.message === "Aborted" || err instanceof DOMException && err.name === "AbortError") return;
           const message = String(err?.message || "loginRequired");
           if (message.startsWith("missingEndpoint:")) {
             const source = message.slice("missingEndpoint:".length);
@@ -3860,7 +4542,8 @@
         exportCsv({
           retweets: drawData.retweets.value,
           likes: drawData.likes.value,
-          quotes: drawData.quotes.value
+          quotes: drawData.quotes.value,
+          replies: drawData.replies.value
         });
       }
       function handleLangChange(e) {
@@ -3878,11 +4561,11 @@
       }
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createVNode(_sfc_main$b, {
+          vue.createVNode(_sfc_main$c, {
             title: vue.unref(t2)("drawHelper"),
             "max-width": "1080px",
             "max-height": "700px",
-            onClose: _cache[15] || (_cache[15] = ($event) => emit("close"))
+            onClose: _cache[11] || (_cache[11] = ($event) => emit("close"))
           }, {
             "header-controls": vue.withCtx(() => [
               vue.createElementVNode("select", {
@@ -3901,7 +4584,7 @@
                 class: "xd-btn-icon",
                 title: vue.unref(t2)("settings"),
                 onClick: _cache[0] || (_cache[0] = ($event) => showSettingsPanel.value = true)
-              }, [..._cache[20] || (_cache[20] = [
+              }, [..._cache[17] || (_cache[17] = [
                 vue.createElementVNode("svg", {
                   viewBox: "0 0 24 24",
                   class: "w-4 h-4",
@@ -3912,25 +4595,25 @@
               ])], 8, _hoisted_3)
             ]),
             footer: vue.withCtx(() => [
-              vue.createElementVNode("div", _hoisted_77, [
+              vue.createElementVNode("div", _hoisted_81, [
                 vue.createElementVNode("span", null, [
                   vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("madeWith")) + " ", 1),
-                  _cache[28] || (_cache[28] = vue.createElementVNode("a", {
+                  _cache[26] || (_cache[26] = vue.createElementVNode("a", {
                     href: "https://github.com/yueby",
                     target: "_blank",
                     class: "text-[#1d9bf0] hover:underline"
                   }, "Yueby", -1))
                 ]),
-                vue.createElementVNode("span", _hoisted_78, [
-                  vue.createElementVNode("span", _hoisted_79, vue.toDisplayString(vue.unref(t2)("version", { version: vue.unref(versionCheck).currentVersion.value })), 1),
-                  vue.unref(versionCheck).checking.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_80, vue.toDisplayString(vue.unref(t2)("checking")), 1)) : vue.unref(versionCheck).hasUpdate.value ? (vue.openBlock(), vue.createElementBlock("button", {
+                vue.createElementVNode("span", _hoisted_82, [
+                  vue.createElementVNode("span", _hoisted_83, vue.toDisplayString(vue.unref(t2)("version", { version: vue.unref(versionCheck).currentVersion.value })), 1),
+                  vue.unref(versionCheck).checking.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_84, vue.toDisplayString(vue.unref(t2)("checking")), 1)) : vue.unref(versionCheck).hasUpdate.value ? (vue.openBlock(), vue.createElementBlock("button", {
                     key: 1,
                     class: "text-[#1d9bf0] hover:underline cursor-pointer",
-                    onClick: _cache[13] || (_cache[13] = ($event) => vue.unref(versionCheck).openInstallPage())
-                  }, vue.toDisplayString(vue.unref(t2)("updateAvailable", { version: vue.unref(versionCheck).latestVersion.value })), 1)) : vue.unref(versionCheck).latestVersion.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_81, vue.toDisplayString(vue.unref(t2)("latestVersion")), 1)) : (vue.openBlock(), vue.createElementBlock("button", {
+                    onClick: _cache[9] || (_cache[9] = ($event) => vue.unref(versionCheck).openInstallPage())
+                  }, vue.toDisplayString(vue.unref(t2)("updateAvailable", { version: vue.unref(versionCheck).latestVersion.value })), 1)) : vue.unref(versionCheck).latestVersion.value ? (vue.openBlock(), vue.createElementBlock("button", _hoisted_85, vue.toDisplayString(vue.unref(t2)("latestVersion")), 1)) : (vue.openBlock(), vue.createElementBlock("button", {
                     key: 3,
                     class: "hover:text-[#1d9bf0] cursor-pointer transition-colors",
-                    onClick: _cache[14] || (_cache[14] = ($event) => vue.unref(versionCheck).checkUpdate())
+                    onClick: _cache[10] || (_cache[10] = ($event) => vue.unref(versionCheck).checkUpdate())
                   }, vue.toDisplayString(vue.unref(t2)("checkUpdate")), 1))
                 ])
               ])
@@ -3945,7 +4628,7 @@
                   vue.createElementVNode("span", _hoisted_9, vue.toDisplayString(vue.unref(t2)("retweets")), 1),
                   vue.createElementVNode("span", _hoisted_10, vue.toDisplayString(stats.value.retweets), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_11, [
-                    _cache[21] || (_cache[21] = vue.createElementVNode("svg", {
+                    _cache[18] || (_cache[18] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#00ba7c]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -3971,7 +4654,7 @@
                   vue.createElementVNode("span", _hoisted_13, vue.toDisplayString(vue.unref(t2)("likes")), 1),
                   vue.createElementVNode("span", _hoisted_14, vue.toDisplayString(stats.value.likes), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_15, [
-                    _cache[22] || (_cache[22] = vue.createElementVNode("svg", {
+                    _cache[19] || (_cache[19] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#f91880]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -3997,7 +4680,7 @@
                   vue.createElementVNode("span", _hoisted_17, vue.toDisplayString(vue.unref(t2)("quotes")), 1),
                   vue.createElementVNode("span", _hoisted_18, vue.toDisplayString(stats.value.quotes), 1),
                   vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_19, [
-                    _cache[23] || (_cache[23] = vue.createElementVNode("svg", {
+                    _cache[20] || (_cache[20] = vue.createElementVNode("svg", {
                       class: "animate-spin h-3 w-3 text-[#ff7a00]",
                       viewBox: "0 0 24 24",
                       fill: "none"
@@ -4020,16 +4703,48 @@
                   ])) : vue.createCommentVNode("", true)
                 ]),
                 vue.createElementVNode("div", _hoisted_20, [
-                  vue.createElementVNode("span", _hoisted_21, vue.toDisplayString(vue.unref(t2)("followingMe")), 1),
-                  vue.createElementVNode("span", _hoisted_22, vue.toDisplayString(stats.value.followers), 1)
+                  vue.createElementVNode("span", _hoisted_21, [
+                    vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("replies")) + " ", 1),
+                    vue.createElementVNode("span", {
+                      title: vue.unref(t2)("replyNotice"),
+                      class: "cursor-help opacity-70 hover:opacity-100"
+                    }, "ⓘ", 8, _hoisted_22)
+                  ]),
+                  vue.createElementVNode("span", _hoisted_23, vue.toDisplayString(stats.value.replies), 1),
+                  vue.unref(drawData).loading.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_24, [
+                    _cache[21] || (_cache[21] = vue.createElementVNode("svg", {
+                      class: "animate-spin h-3 w-3 text-[#1d9bf0]",
+                      viewBox: "0 0 24 24",
+                      fill: "none"
+                    }, [
+                      vue.createElementVNode("circle", {
+                        class: "opacity-25",
+                        cx: "12",
+                        cy: "12",
+                        r: "10",
+                        stroke: "currentColor",
+                        "stroke-width": "4"
+                      }),
+                      vue.createElementVNode("path", {
+                        class: "opacity-75",
+                        fill: "currentColor",
+                        d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      })
+                    ], -1)),
+                    vue.createElementVNode("span", null, vue.toDisplayString(vue.unref(drawData).replyProgress.value), 1)
+                  ])) : vue.createCommentVNode("", true)
+                ]),
+                vue.createElementVNode("div", _hoisted_25, [
+                  vue.createElementVNode("span", _hoisted_26, vue.toDisplayString(vue.unref(t2)("followingMe")), 1),
+                  vue.createElementVNode("span", _hoisted_27, vue.toDisplayString(stats.value.followers), 1)
                 ])
               ]),
-              vue.unref(drawData).failedSources.value.length ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_23, vue.toDisplayString(vue.unref(t2)("partialFetchFailed", {
+              vue.unref(drawData).failedSources.value.length ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_28, vue.toDisplayString(vue.unref(t2)("partialFetchFailed", {
                 sources: vue.unref(drawData).failedSources.value.map((source) => vue.unref(t2)(interactionSourceLabels[source])).join("、")
               })), 1)) : vue.createCommentVNode("", true),
-              vue.createElementVNode("div", _hoisted_24, [
-                vue.createElementVNode("div", _hoisted_25, [
-                  vue.createElementVNode("div", _hoisted_26, [
+              vue.createElementVNode("div", _hoisted_29, [
+                vue.createElementVNode("div", _hoisted_30, [
+                  vue.createElementVNode("div", _hoisted_31, [
                     (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(TAB_CONFIG, (tab) => {
                       return vue.createElementVNode("button", {
                         key: tab.key,
@@ -4037,11 +4752,11 @@
                         onClick: ($event) => activeFilter.value = tab.key
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)(tab.labelKey)) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_28, vue.toDisplayString(stats.value[tab.statKey]), 1)
-                      ], 10, _hoisted_27);
+                        vue.createElementVNode("span", _hoisted_33, vue.toDisplayString(stats.value[tab.statKey]), 1)
+                      ], 10, _hoisted_32);
                     }), 64))
                   ]),
-                  vue.createElementVNode("div", _hoisted_29, [
+                  vue.createElementVNode("div", _hoisted_34, [
                     vue.createElementVNode("button", {
                       class: "xd-btn xd-btn-primary text-sm",
                       onClick: handleDraw
@@ -4056,9 +4771,9 @@
                     }, vue.toDisplayString(vue.unref(t2)("export")), 1)
                   ])
                 ]),
-                vue.createElementVNode("div", _hoisted_30, [
-                  vue.createElementVNode("div", _hoisted_31, [
-                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_32, [..._cache[24] || (_cache[24] = [
+                vue.createElementVNode("div", _hoisted_35, [
+                  vue.createElementVNode("div", _hoisted_36, [
+                    (vue.openBlock(), vue.createElementBlock("svg", _hoisted_37, [..._cache[22] || (_cache[22] = [
                       vue.createElementVNode("path", { d: "M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z" }, null, -1)
                     ])])),
                     vue.withDirectives(vue.createElementVNode("input", {
@@ -4066,7 +4781,7 @@
                       type: "text",
                       placeholder: vue.unref(t2)("search"),
                       style: { flex: "1", background: "transparent", border: "none", color: "#fff", fontSize: "14px", padding: "6px 0", outline: "none", appearance: "none" }
-                    }, null, 8, _hoisted_33), [
+                    }, null, 8, _hoisted_38), [
                       [vue.vModelText, searchQuery.value]
                     ])
                   ]),
@@ -4080,78 +4795,44 @@
                       viewBox: "0 0 24 24",
                       class: vue.normalizeClass(["w-3.5 h-3.5", { "animate-spin": vue.unref(drawData).loading.value }]),
                       fill: "currentColor"
-                    }, [..._cache[25] || (_cache[25] = [
+                    }, [..._cache[23] || (_cache[23] = [
                       vue.createElementVNode("path", { d: "M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" }, null, -1)
                     ])], 2)),
-                    cacheAge.value ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_35, vue.toDisplayString(cacheAge.value), 1)) : vue.createCommentVNode("", true)
-                  ], 8, _hoisted_34)
+                    cacheAge.value ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_40, vue.toDisplayString(cacheAge.value), 1)) : vue.createCommentVNode("", true)
+                  ], 8, _hoisted_39)
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_36, [
-                vue.createElementVNode("table", _hoisted_37, [
-                  vue.createElementVNode("thead", _hoisted_38, [
-                    vue.createElementVNode("tr", _hoisted_39, [
-                      _cache[26] || (_cache[26] = vue.createElementVNode("th", { class: "w-14 px-4 py-2.5 text-[#71767b] font-medium" }, "#", -1)),
+              vue.createElementVNode("div", _hoisted_41, [
+                vue.createElementVNode("table", _hoisted_42, [
+                  vue.createElementVNode("thead", _hoisted_43, [
+                    vue.createElementVNode("tr", _hoisted_44, [
+                      _cache[24] || (_cache[24] = vue.createElementVNode("th", { class: "w-14 px-4 py-2.5 text-[#71767b] font-medium" }, "#", -1)),
                       vue.createElementVNode("th", {
                         class: "xd-th px-4 py-2.5",
                         onClick: _cache[3] || (_cache[3] = ($event) => toggleSort("username"))
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("username")) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_40, vue.toDisplayString(getSortIcon("username")), 1)
+                        vue.createElementVNode("span", _hoisted_45, vue.toDisplayString(getSortIcon("username")), 1)
                       ]),
                       vue.createElementVNode("th", {
-                        class: "xd-th w-40 px-4 py-2.5",
+                        class: "xd-th w-36 px-4 py-2.5",
                         onClick: _cache[4] || (_cache[4] = ($event) => toggleSort("handle"))
                       }, [
                         vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("handle")) + " ", 1),
-                        vue.createElementVNode("span", _hoisted_41, vue.toDisplayString(getSortIcon("handle")), 1)
+                        vue.createElementVNode("span", _hoisted_46, vue.toDisplayString(getSortIcon("handle")), 1)
                       ]),
-                      vue.createElementVNode("th", {
-                        class: "xd-th w-20 px-4 py-2.5 text-center",
-                        onClick: _cache[5] || (_cache[5] = ($event) => toggleSort("retweet"))
-                      }, [
-                        vue.createElementVNode("span", _hoisted_42, [
-                          vue.createVNode(_sfc_main$8, { type: "retweet" }),
-                          vue.createElementVNode("span", _hoisted_43, vue.toDisplayString(getSortIcon("retweet")), 1)
-                        ])
-                      ]),
-                      vue.createElementVNode("th", {
-                        class: "xd-th w-20 px-4 py-2.5 text-center",
-                        onClick: _cache[6] || (_cache[6] = ($event) => toggleSort("like"))
-                      }, [
-                        vue.createElementVNode("span", _hoisted_44, [
-                          vue.createVNode(_sfc_main$8, { type: "like" }),
-                          vue.createElementVNode("span", _hoisted_45, vue.toDisplayString(getSortIcon("like")), 1)
-                        ])
-                      ]),
-                      vue.createElementVNode("th", {
-                        class: "xd-th w-20 px-4 py-2.5 text-center",
-                        onClick: _cache[7] || (_cache[7] = ($event) => toggleSort("quote"))
-                      }, [
-                        vue.createElementVNode("span", _hoisted_46, [
-                          vue.createVNode(_sfc_main$8, { type: "quote" }),
-                          vue.createElementVNode("span", _hoisted_47, vue.toDisplayString(getSortIcon("quote")), 1)
-                        ])
-                      ]),
-                      vue.createElementVNode("th", {
-                        class: "xd-th w-20 px-4 py-2.5 text-center",
-                        onClick: _cache[8] || (_cache[8] = ($event) => toggleSort("followed_by"))
-                      }, [
-                        vue.createElementVNode("span", _hoisted_48, [
-                          vue.createVNode(_sfc_main$8, { type: "follow" }),
-                          vue.createElementVNode("span", _hoisted_49, vue.toDisplayString(getSortIcon("followed_by")), 1)
-                        ])
-                      ]),
+                      vue.createElementVNode("th", _hoisted_47, vue.toDisplayString(vue.unref(t2)("interactions")), 1),
+                      vue.createElementVNode("th", _hoisted_48, vue.toDisplayString(vue.unref(t2)("comment")), 1),
                       vue.createElementVNode("th", {
                         class: "xd-th w-24 px-4 py-2.5 text-center",
-                        onClick: _cache[9] || (_cache[9] = ($event) => toggleSort("followersCount"))
+                        onClick: _cache[5] || (_cache[5] = ($event) => toggleSort("followersCount"))
                       }, [
-                        vue.createElementVNode("span", _hoisted_50, [
+                        vue.createElementVNode("span", _hoisted_49, [
                           vue.createTextVNode(vue.toDisplayString(vue.unref(t2)("followers")) + " ", 1),
-                          vue.createElementVNode("span", _hoisted_51, vue.toDisplayString(getSortIcon("followersCount")), 1)
+                          vue.createElementVNode("span", _hoisted_50, vue.toDisplayString(getSortIcon("followersCount")), 1)
                         ])
                       ]),
-                      vue.createElementVNode("th", _hoisted_52, vue.toDisplayString(vue.unref(t2)("winCount")), 1)
+                      vue.createElementVNode("th", _hoisted_51, vue.toDisplayString(vue.unref(t2)("winCount")), 1)
                     ])
                   ]),
                   vue.createElementVNode("tbody", null, [
@@ -4160,50 +4841,94 @@
                         key: user.handle,
                         class: "border-b border-[#38444d]/30 hover:bg-white/[0.03] transition-colors h-12"
                       }, [
-                        vue.createElementVNode("td", _hoisted_53, vue.toDisplayString(pageOffset.value + i + 1), 1),
-                        vue.createElementVNode("td", _hoisted_54, [
-                          vue.createElementVNode("div", _hoisted_55, [
+                        vue.createElementVNode("td", _hoisted_52, vue.toDisplayString(pageOffset.value + i + 1), 1),
+                        vue.createElementVNode("td", _hoisted_53, [
+                          vue.createElementVNode("div", _hoisted_54, [
                             vue.createElementVNode("img", {
                               src: user.avatarUrl,
                               alt: user.username,
                               class: "w-8 h-8 rounded-full shrink-0 cursor-pointer",
                               onMouseenter: ($event) => onRowEnter(user, $event),
-                              onMouseleave: _cache[10] || (_cache[10] = ($event) => hoveredUser.value = null)
-                            }, null, 40, _hoisted_56),
+                              onMouseleave: _cache[6] || (_cache[6] = ($event) => hoveredUser.value = null)
+                            }, null, 40, _hoisted_55),
                             vue.createElementVNode("span", {
-                              class: "font-medium text-[#1d9bf0] truncate max-w-[240px] cursor-pointer hover:underline",
+                              class: "font-medium text-[#1d9bf0] truncate max-w-[220px] cursor-pointer hover:underline",
                               onClick: ($event) => openProfile(user.handle)
-                            }, vue.toDisplayString(user.username), 9, _hoisted_57)
+                            }, vue.toDisplayString(user.username), 9, _hoisted_56)
                           ])
                         ]),
-                        vue.createElementVNode("td", _hoisted_58, "@" + vue.toDisplayString(user.handle), 1),
-                        vue.createElementVNode("td", _hoisted_59, [
-                          user.hasRetweet ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
-                            key: 0,
-                            type: "retweet"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_60, "—"))
-                        ]),
-                        vue.createElementVNode("td", _hoisted_61, [
-                          user.hasLike ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
-                            key: 0,
-                            type: "like"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_62, "—"))
-                        ]),
-                        vue.createElementVNode("td", _hoisted_63, [
-                          user.hasQuote ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
-                            key: 0,
-                            type: "quote"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_64, "—"))
+                        vue.createElementVNode("td", _hoisted_57, "@" + vue.toDisplayString(user.handle), 1),
+                        vue.createElementVNode("td", _hoisted_58, [
+                          vue.createElementVNode("div", _hoisted_59, [
+                            user.hasRetweet ? (vue.openBlock(), vue.createElementBlock("span", {
+                              key: 0,
+                              title: vue.unref(t2)("hasRetweeted")
+                            }, [
+                              vue.createVNode(_sfc_main$8, {
+                                type: "retweet",
+                                "icon-size": "w-3 h-3"
+                              })
+                            ], 8, _hoisted_60)) : vue.createCommentVNode("", true),
+                            user.hasLike ? (vue.openBlock(), vue.createElementBlock("span", {
+                              key: 1,
+                              title: vue.unref(t2)("hasLiked")
+                            }, [
+                              vue.createVNode(_sfc_main$8, {
+                                type: "like",
+                                "icon-size": "w-3 h-3"
+                              })
+                            ], 8, _hoisted_61)) : vue.createCommentVNode("", true),
+                            user.hasQuote ? (vue.openBlock(), vue.createElementBlock("span", {
+                              key: 2,
+                              title: vue.unref(t2)("hasQuoted")
+                            }, [
+                              vue.createVNode(_sfc_main$8, {
+                                type: "quote",
+                                "icon-size": "w-3 h-3"
+                              })
+                            ], 8, _hoisted_62)) : vue.createCommentVNode("", true),
+                            user.hasReply ? (vue.openBlock(), vue.createElementBlock("span", {
+                              key: 3,
+                              title: vue.unref(t2)("hasReplied")
+                            }, [
+                              vue.createVNode(_sfc_main$8, {
+                                type: "reply",
+                                "icon-size": "w-3 h-3"
+                              })
+                            ], 8, _hoisted_63)) : vue.createCommentVNode("", true),
+                            user.followed_by ? (vue.openBlock(), vue.createElementBlock("span", {
+                              key: 4,
+                              title: vue.unref(t2)("followingMe")
+                            }, [
+                              vue.createVNode(_sfc_main$8, {
+                                type: "follow",
+                                "icon-size": "w-3 h-3"
+                              })
+                            ], 8, _hoisted_64)) : vue.createCommentVNode("", true)
+                          ])
                         ]),
                         vue.createElementVNode("td", _hoisted_65, [
-                          user.followed_by ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
-                            key: 0,
-                            type: "follow"
-                          })) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_66, "—"))
+                          user.replyComments && user.replyComments.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_66, [
+                            vue.createElementVNode("span", {
+                              class: vue.normalizeClass(["text-xs truncate cursor-pointer hover:text-[#1d9bf0] transition-colors select-text inline-block min-w-[36px]", user.replyComments[0].text?.trim() ? "text-[#e7e9ea]" : "text-[#71767b] italic"]),
+                              title: user.replyComments[0].text?.trim() ? user.replyComments[0].text : vue.unref(t2)("emptyCommentText"),
+                              onClick: ($event) => selectedCommentUser.value = user
+                            }, vue.toDisplayString(user.replyComments[0].text?.trim() ? user.replyComments[0].text : vue.unref(t2)("emptyCommentText")), 11, _hoisted_67),
+                            user.replyComments.length > 1 ? (vue.openBlock(), vue.createElementBlock("button", {
+                              key: 0,
+                              class: "shrink-0 text-[10px] font-semibold bg-[#1d9bf0]/15 text-[#1d9bf0] px-1.5 py-0.5 rounded-full hover:bg-[#1d9bf0]/25 transition-colors",
+                              title: vue.unref(t2)("viewAllComments", { count: user.replyComments.length }),
+                              onClick: ($event) => selectedCommentUser.value = user
+                            }, " +" + vue.toDisplayString(user.replyComments.length - 1), 9, _hoisted_68)) : vue.createCommentVNode("", true)
+                          ])) : user.hasReply ? (vue.openBlock(), vue.createElementBlock("span", {
+                            key: 1,
+                            class: "text-xs text-[#71767b] italic opacity-60",
+                            title: vue.unref(t2)("noCommentText")
+                          }, vue.toDisplayString(vue.unref(t2)("noCommentText")), 9, _hoisted_69)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_70, "—"))
                         ]),
-                        vue.createElementVNode("td", _hoisted_67, vue.toDisplayString(user.followersCount.toLocaleString()), 1),
-                        vue.createElementVNode("td", _hoisted_68, [
-                          vue.unref(getWinCount)(user.handle) ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_69, vue.toDisplayString(vue.unref(getWinCount)(user.handle)), 1)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_70, "—"))
+                        vue.createElementVNode("td", _hoisted_71, vue.toDisplayString(user.followersCount.toLocaleString()), 1),
+                        vue.createElementVNode("td", _hoisted_72, [
+                          vue.unref(getWinCount)(user) ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_73, vue.toDisplayString(vue.unref(getWinCount)(user)), 1)) : (vue.openBlock(), vue.createElementBlock("span", _hoisted_74, "—"))
                         ])
                       ]);
                     }), 128)),
@@ -4211,7 +4936,7 @@
                       return vue.openBlock(), vue.createElementBlock("tr", {
                         key: "sk-" + i,
                         class: "border-b border-[#38444d]/30 h-12"
-                      }, [..._cache[27] || (_cache[27] = [
+                      }, [..._cache[25] || (_cache[25] = [
                         vue.createElementVNode("td", { class: "w-14 px-4" }, [
                           vue.createElementVNode("div", { class: "h-3 w-6 bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1),
@@ -4221,20 +4946,14 @@
                             vue.createElementVNode("div", { class: "h-3 w-24 bg-[#38444d]/50 rounded animate-pulse" })
                           ])
                         ], -1),
-                        vue.createElementVNode("td", { class: "w-40 px-4" }, [
+                        vue.createElementVNode("td", { class: "w-36 px-4" }, [
                           vue.createElementVNode("div", { class: "h-3 w-20 bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1),
-                        vue.createElementVNode("td", { class: "w-20 px-4" }, [
-                          vue.createElementVNode("div", { class: "h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
+                        vue.createElementVNode("td", { class: "w-32 px-3" }, [
+                          vue.createElementVNode("div", { class: "h-3 w-16 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1),
-                        vue.createElementVNode("td", { class: "w-20 px-4" }, [
-                          vue.createElementVNode("div", { class: "h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
-                        ], -1),
-                        vue.createElementVNode("td", { class: "w-20 px-4" }, [
-                          vue.createElementVNode("div", { class: "h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
-                        ], -1),
-                        vue.createElementVNode("td", { class: "w-20 px-4" }, [
-                          vue.createElementVNode("div", { class: "h-3 w-8 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
+                        vue.createElementVNode("td", { class: "px-4" }, [
+                          vue.createElementVNode("div", { class: "h-3 w-40 bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1),
                         vue.createElementVNode("td", { class: "w-24 px-4" }, [
                           vue.createElementVNode("div", { class: "h-3 w-12 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
@@ -4243,67 +4962,73 @@
                           vue.createElementVNode("div", { class: "h-3 w-6 mx-auto bg-[#38444d]/50 rounded animate-pulse" })
                         ], -1)
                       ])]);
-                    }), 128)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_71, [
-                      vue.createElementVNode("td", _hoisted_72, vue.toDisplayString(vue.unref(t2)("noUsers")), 1)
+                    }), 128)) : sortedUsers.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("tr", _hoisted_75, [
+                      vue.createElementVNode("td", _hoisted_76, vue.toDisplayString(vue.unref(t2)("noUsers")), 1)
                     ])) : vue.createCommentVNode("", true)
                   ])
                 ])
               ]),
-              totalPages.value > 1 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_73, [
-                vue.createElementVNode("div", _hoisted_74, [
+              totalPages.value > 1 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_77, [
+                vue.createElementVNode("div", _hoisted_78, [
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon",
                     style: vue.normalizeStyle({ opacity: currentPage.value <= 1 ? 0.3 : 1, pointerEvents: currentPage.value <= 1 ? "none" : "auto" }),
-                    onClick: _cache[11] || (_cache[11] = ($event) => currentPage.value--)
+                    onClick: _cache[7] || (_cache[7] = ($event) => currentPage.value--)
                   }, "«", 4),
                   (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(visiblePages.value, (p) => {
                     return vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: p }, [
-                      typeof p === "string" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_75, "…")) : (vue.openBlock(), vue.createElementBlock("button", {
+                      typeof p === "string" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_79, "…")) : (vue.openBlock(), vue.createElementBlock("button", {
                         key: 1,
                         class: vue.normalizeClass(["xd-tab", { active: currentPage.value === p }]),
                         onClick: ($event) => currentPage.value = p
-                      }, vue.toDisplayString(p), 11, _hoisted_76))
+                      }, vue.toDisplayString(p), 11, _hoisted_80))
                     ], 64);
                   }), 128)),
                   vue.createElementVNode("button", {
                     class: "xd-btn-icon",
                     style: vue.normalizeStyle({ opacity: currentPage.value >= totalPages.value ? 0.3 : 1, pointerEvents: currentPage.value >= totalPages.value ? "none" : "auto" }),
-                    onClick: _cache[12] || (_cache[12] = ($event) => currentPage.value++)
+                    onClick: _cache[8] || (_cache[8] = ($event) => currentPage.value++)
                   }, "»", 4)
                 ])
               ])) : vue.createCommentVNode("", true)
             ]),
             _: 1
           }, 8, ["title"]),
-          showSettings.value ? (vue.openBlock(), vue.createBlock(_sfc_main$4, {
+          showSettings.value ? (vue.openBlock(), vue.createBlock(_sfc_main$5, {
             key: 0,
-            onClose: _cache[16] || (_cache[16] = ($event) => showSettings.value = false),
+            onClose: _cache[12] || (_cache[12] = ($event) => showSettings.value = false),
             onDraw: onDrawResult
           })) : vue.createCommentVNode("", true),
-          showAnimation.value ? (vue.openBlock(), vue.createBlock(_sfc_main$a, {
+          showAnimation.value ? (vue.openBlock(), vue.createBlock(_sfc_main$b, {
             key: 1,
             pool: vue.unref(drawData).mergedUsers.value,
             winners: winners.value,
             onDone: onAnimationDone
           }, null, 8, ["pool", "winners"])) : vue.createCommentVNode("", true),
-          showResult.value ? (vue.openBlock(), vue.createBlock(_sfc_main$5, {
+          showResult.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
             key: 2,
             winners: winners.value,
-            onClose: _cache[17] || (_cache[17] = ($event) => showResult.value = false)
-          }, null, 8, ["winners"])) : vue.createCommentVNode("", true),
-          showHistory.value ? (vue.openBlock(), vue.createBlock(_sfc_main$9, {
+            filters: vue.unref(drawData).filters.value,
+            onClose: _cache[13] || (_cache[13] = ($event) => showResult.value = false)
+          }, null, 8, ["winners", "filters"])) : vue.createCommentVNode("", true),
+          showHistory.value ? (vue.openBlock(), vue.createBlock(_sfc_main$a, {
             key: 3,
             "tweet-id": props.tweetId,
-            onClose: _cache[18] || (_cache[18] = ($event) => showHistory.value = false)
+            onClose: _cache[14] || (_cache[14] = ($event) => showHistory.value = false)
           }, null, 8, ["tweet-id"])) : vue.createCommentVNode("", true),
-          showSettingsPanel.value ? (vue.openBlock(), vue.createBlock(_sfc_main$3, {
+          showSettingsPanel.value ? (vue.openBlock(), vue.createBlock(_sfc_main$4, {
             key: 4,
             "tweet-id": props.tweetId,
-            onClose: _cache[19] || (_cache[19] = ($event) => showSettingsPanel.value = false)
+            onClose: _cache[15] || (_cache[15] = ($event) => showSettingsPanel.value = false)
           }, null, 8, ["tweet-id"])) : vue.createCommentVNode("", true),
-          vue.createVNode(Toast),
-          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$6, {
+          selectedCommentUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$2, {
             key: 5,
+            user: selectedCommentUser.value,
+            onClose: _cache[16] || (_cache[16] = ($event) => selectedCommentUser.value = null)
+          }, null, 8, ["user"])) : vue.createCommentVNode("", true),
+          vue.createVNode(Toast),
+          hoveredUser.value ? (vue.openBlock(), vue.createBlock(_sfc_main$7, {
+            key: 6,
             user: hoveredUser.value,
             x: tooltipPos.value.x,
             y: tooltipPos.value.y
@@ -4344,7 +5069,7 @@
         triggerContainer.style.alignItems = "center";
         actionBar.appendChild(triggerContainer);
         triggerApp = vue.createApp({
-          render: () => vue.h(_sfc_main$c, {
+          render: () => vue.h(_sfc_main$d, {
             onClick: () => {
               showPanel.value = true;
             }
@@ -4404,7 +5129,7 @@
       };
     }
   });
-  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10003\\]{z-index:10003}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-8{height:calc(var(--spacing) * 8)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[240px\\]{max-width:240px}.min-w-0{min-width:calc(var(--spacing) * 0)}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.border-\\[\\#f4212e\\]\\/40{border-color:#f4212e66}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.bg-\\[\\#f4212e\\]\\/10{background-color:#f4212e1a}.p-2{padding:calc(var(--spacing) * 2)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-12{padding-block:calc(var(--spacing) * 12)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.break-words{overflow-wrap:break-word}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ff7a85\\]{color:#ff7a85}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#00ba7c\\]:hover{color:#00ba7c}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:text-\\[\\#f4212e\\]:hover{color:#f4212e}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:ring-2:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.hover\\:ring-\\[\\#1d9bf0\\]:hover{--tw-ring-color:#1d9bf0}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
+  const styleCss = `/*! tailwindcss v4.2.2 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-duration:initial}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--leading-relaxed:1.625;--radius-lg:.5rem;--radius-xl:.75rem;--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.top-4{top:calc(var(--spacing) * 4)}.left-1\\/2{left:50%}.z-\\[1\\]{z-index:1}.z-\\[10003\\]{z-index:10003}.z-\\[99999\\]{z-index:99999}.mx-auto{margin-inline:auto}.mt-0\\.5{margin-top:calc(var(--spacing) * .5)}.mt-1{margin-top:calc(var(--spacing) * 1)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-2\\.5{margin-top:calc(var(--spacing) * 2.5)}.mb-1{margin-bottom:calc(var(--spacing) * 1)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.ml-1{margin-left:calc(var(--spacing) * 1)}.line-clamp-2{-webkit-line-clamp:2;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.h-3{height:calc(var(--spacing) * 3)}.h-3\\.5{height:calc(var(--spacing) * 3.5)}.h-4{height:calc(var(--spacing) * 4)}.h-5{height:calc(var(--spacing) * 5)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-14{height:calc(var(--spacing) * 14)}.h-\\[18\\.75px\\]{height:18.75px}.h-\\[34\\.75px\\]{height:34.75px}.h-full{height:100%}.min-h-0{min-height:calc(var(--spacing) * 0)}.w-3{width:calc(var(--spacing) * 3)}.w-3\\.5{width:calc(var(--spacing) * 3.5)}.w-4{width:calc(var(--spacing) * 4)}.w-5{width:calc(var(--spacing) * 5)}.w-6{width:calc(var(--spacing) * 6)}.w-8{width:calc(var(--spacing) * 8)}.w-10{width:calc(var(--spacing) * 10)}.w-12{width:calc(var(--spacing) * 12)}.w-14{width:calc(var(--spacing) * 14)}.w-16{width:calc(var(--spacing) * 16)}.w-20{width:calc(var(--spacing) * 20)}.w-24{width:calc(var(--spacing) * 24)}.w-32{width:calc(var(--spacing) * 32)}.w-36{width:calc(var(--spacing) * 36)}.w-40{width:calc(var(--spacing) * 40)}.w-72{width:calc(var(--spacing) * 72)}.w-\\[18\\.75px\\]{width:18.75px}.w-\\[34\\.75px\\]{width:34.75px}.w-full{width:100%}.max-w-\\[220px\\]{max-width:220px}.max-w-\\[340px\\]{max-width:340px}.min-w-0{min-width:calc(var(--spacing) * 0)}.min-w-\\[36px\\]{min-width:36px}.min-w-\\[200px\\]{min-width:200px}.flex-1{flex:1}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1\\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-default{cursor:default}.cursor-help{cursor:help}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-around{justify-content:space-around}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-1\\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-2\\.5{gap:calc(var(--spacing) * 2.5)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-6{gap:calc(var(--spacing) * 6)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-auto{overflow:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-\\[\\#38444d\\]{border-color:#38444d}.border-\\[\\#38444d\\]\\/30{border-color:#38444d4d}.border-\\[\\#38444d\\]\\/40{border-color:#38444d66}.border-\\[\\#38444d\\]\\/50{border-color:#38444d80}.border-\\[\\#38444d\\]\\/60{border-color:#38444d99}.border-\\[\\#f4212e\\]\\/40{border-color:#f4212e66}.bg-\\[\\#00ba7c\\]{background-color:#00ba7c}.bg-\\[\\#1d9bf0\\]{background-color:#1d9bf0}.bg-\\[\\#1d9bf0\\]\\/10{background-color:#1d9bf01a}.bg-\\[\\#1d9bf0\\]\\/15{background-color:#1d9bf026}.bg-\\[\\#1e2d3d\\]{background-color:#1e2d3d}.bg-\\[\\#1e2d3d\\]\\/50{background-color:#1e2d3d80}.bg-\\[\\#3d1f00\\]{background-color:#3d1f00}.bg-\\[\\#15202b\\]{background-color:#15202b}.bg-\\[\\#38444d\\]\\/50{background-color:#38444d80}.bg-\\[\\#192734\\]\\/50{background-color:#19273480}.bg-\\[\\#273340\\]{background-color:#273340}.bg-\\[\\#f4212e\\]{background-color:#f4212e}.bg-\\[\\#f4212e\\]\\/10{background-color:#f4212e1a}.p-2{padding:calc(var(--spacing) * 2)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-8{padding:calc(var(--spacing) * 8)}.px-1{padding-inline:calc(var(--spacing) * 1)}.px-1\\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-0\\.5{padding-block:calc(var(--spacing) * .5)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-2\\.5{padding-block:calc(var(--spacing) * 2.5)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-10{padding-block:calc(var(--spacing) * 10)}.py-12{padding-block:calc(var(--spacing) * 12)}.pt-2{padding-top:calc(var(--spacing) * 2)}.pt-4{padding-top:calc(var(--spacing) * 4)}.pb-0{padding-bottom:calc(var(--spacing) * 0)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-4{padding-bottom:calc(var(--spacing) * 4)}.text-center{text-align:center}.text-left{text-align:left}.font-mono{font-family:var(--font-mono)}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\\[10px\\]{font-size:10px}.text-\\[11px\\]{font-size:11px}.leading-relaxed{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.break-words{overflow-wrap:break-word}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-\\[\\#00ba7c\\]{color:#00ba7c}.text-\\[\\#1d9bf0\\]{color:#1d9bf0}.text-\\[\\#38444d\\]{color:#38444d}.text-\\[\\#71767b\\]{color:#71767b}.text-\\[\\#e7e9ea\\]{color:#e7e9ea}.text-\\[\\#f4212e\\]{color:#f4212e}.text-\\[\\#f91880\\]{color:#f91880}.text-\\[\\#ff7a00\\]{color:#ff7a00}.text-\\[\\#ff7a85\\]{color:#ff7a85}.text-\\[\\#ffd700\\]{color:gold}.text-white{color:var(--color-white)}.italic{font-style:italic}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.select-text{-webkit-user-select:text;user-select:text}@media (hover:hover){.group-hover\\:text-\\[\\#1d9bf0\\]:is(:where(.group):hover *){color:#1d9bf0}.hover\\:border-\\[\\#38444d\\]:hover{border-color:#38444d}.hover\\:bg-\\[\\#1d9bf0\\]\\/10:hover{background-color:#1d9bf01a}.hover\\:bg-\\[\\#1d9bf0\\]\\/25:hover{background-color:#1d9bf040}.hover\\:bg-\\[\\#38444d\\]:hover{background-color:#38444d}.hover\\:bg-\\[\\#273340\\]\\/50:hover{background-color:#27334080}.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:#ffffff08}@supports (color:color-mix(in lab,red,red)){.hover\\:bg-white\\/\\[0\\.03\\]:hover{background-color:color-mix(in oklab,var(--color-white) 3%,transparent)}}.hover\\:text-\\[\\#00ba7c\\]:hover{color:#00ba7c}.hover\\:text-\\[\\#1d9bf0\\]:hover{color:#1d9bf0}.hover\\:text-\\[\\#f4212e\\]:hover{color:#f4212e}.hover\\:underline:hover{text-decoration-line:underline}.hover\\:opacity-100:hover{opacity:1}.hover\\:ring-2:hover{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.hover\\:ring-\\[\\#1d9bf0\\]:hover{--tw-ring-color:#1d9bf0}}}#x-draw-helper{--xd-bg:#15202b;--xd-bg-elevated:#1e2d3d;--xd-bg-secondary:#273340;--xd-border:#38444d;--xd-text:#e7e9ea;--xd-text-muted:#71767b;--xd-blue:#1d9bf0;--xd-blue-hover:#1a8cd8;--xd-green:#00ba7c;--xd-green-hover:#00a36d;--xd-pink:#f91880;--xd-pink-hover:#e0167a;color:var(--xd-text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}#x-draw-helper .xd-btn{cursor:pointer;white-space:nowrap;box-sizing:border-box;appearance:none;border:none;border-radius:9999px;outline:none;justify-content:center;align-items:center;gap:6px;padding:6px 16px;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;transition:background-color .2s,opacity .2s;display:inline-flex}#x-draw-helper .xd-btn-primary{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-btn-primary:hover{background-color:var(--xd-blue-hover)}#x-draw-helper .xd-btn-success{background-color:var(--xd-green);color:#fff}#x-draw-helper .xd-btn-success:hover{background-color:var(--xd-green-hover)}#x-draw-helper .xd-btn-ghost{color:var(--xd-text);background-color:#0000}#x-draw-helper .xd-btn-ghost:hover{background-color:#ffffff1a}#x-draw-helper .xd-btn-secondary{background-color:var(--xd-bg-secondary);color:var(--xd-text)}#x-draw-helper .xd-btn-secondary:hover{background-color:var(--xd-border)}#x-draw-helper .xd-btn-icon{width:32px;height:32px;color:var(--xd-text-muted);cursor:pointer;appearance:none;background:0 0;border:none;border-radius:50%;justify-content:center;align-items:center;padding:0;font-size:18px;line-height:1;transition:background-color .2s,color .2s;display:inline-flex}#x-draw-helper .xd-btn-icon:hover{color:#fff;background-color:#ffffff1a}#x-draw-helper .xd-input{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:textfield;border-radius:6px;outline:none;padding:6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-input::-webkit-inner-spin-button{opacity:1}#x-draw-helper .xd-input::-webkit-outer-spin-button{opacity:1}#x-draw-helper .xd-input:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select{background-color:var(--xd-bg-secondary);border:1px solid var(--xd-border);color:#fff;cursor:pointer;box-sizing:border-box;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371767b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-position:right 8px center;background-repeat:no-repeat;border-radius:6px;outline:none;padding:6px 28px 6px 10px;font-size:14px;line-height:20px;transition:border-color .2s}#x-draw-helper .xd-select:focus{border-color:var(--xd-blue)}#x-draw-helper .xd-select option{background-color:var(--xd-bg-secondary);color:#fff}#x-draw-helper .xd-tab-group{background-color:var(--xd-bg-secondary);border-radius:8px;gap:2px;padding:3px;display:inline-flex}#x-draw-helper .xd-tab{color:var(--xd-text);cursor:pointer;white-space:nowrap;appearance:none;background:0 0;border:none;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;transition:background-color .2s,color .2s}#x-draw-helper .xd-tab:hover:not(.active){background-color:#ffffff0d}#x-draw-helper .xd-tab.active{background-color:var(--xd-blue);color:#fff}#x-draw-helper .xd-badge{border-radius:9999px;justify-content:center;align-items:center;gap:4px;padding:3px 8px;font-size:12px;font-weight:500;line-height:16px;display:inline-flex}#x-draw-helper .xd-badge-green{color:var(--xd-green);background-color:#00ba7c26}#x-draw-helper .xd-badge-pink{color:var(--xd-pink);background-color:#f9188026}#x-draw-helper .xd-badge-blue{color:var(--xd-blue);background-color:#1d9bf026}#x-draw-helper .xd-badge-orange{color:#ff7a00;background-color:#ff7a0026}#x-draw-helper .xd-th{cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--xd-text-muted);font-weight:500;transition:color .2s}#x-draw-helper .xd-th:hover{color:#fff}#x-draw-helper .xd-checkbox{border:2px solid var(--xd-border);cursor:pointer;appearance:none;background:0 0;border-radius:4px;flex-shrink:0;width:18px;height:18px;transition:background-color .2s,border-color .2s;position:relative}#x-draw-helper .xd-checkbox:checked{background-color:var(--xd-blue);border-color:var(--xd-blue)}#x-draw-helper .xd-checkbox:checked:after{content:"";border:2px solid #fff;border-width:0 2px 2px 0;width:6px;height:10px;position:absolute;top:1px;left:4px;transform:rotate(45deg)}#x-draw-helper ::-webkit-scrollbar{width:6px}#x-draw-helper ::-webkit-scrollbar-track{background:0 0}#x-draw-helper ::-webkit-scrollbar-thumb{background-color:var(--xd-border);border-radius:3px}#x-draw-helper ::-webkit-scrollbar-thumb:hover{background-color:var(--xd-text-muted)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}`;
   importCSS(styleCss);
   migrateStorageKeys();
   initTxIdCapture();
